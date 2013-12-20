@@ -3,19 +3,26 @@ var cp = require('child_process'),
 	_ = require('underscore'),
 	chance = new (require('chance'))(),
 	config = require('../config'),
+	isTest = config.isTest,
 	rootDir = config.rootDir,
 	Users = require('../models/users'),
 	User = Users.model,
 	numUsers = 200,
-	users = Users.forge();
+	users = Users.forge(),
+	sqlFile = __dirname + '/db' + (isTest ? '_test' : '') + '.sql';
 
-// reset database
-var cmd = 'node ' + rootDir + '/lib/execsql' + ' ' + __dirname + '/db.sql';
+// create databases
+var cmd = 'node ' + rootDir + '/lib/execsql' + ' ' + sqlFile;
 cp.exec(cmd, function (err) {
 	if (err) {
 		throw err;
 	}
-	addRecords();
+	console.log('database has been setup');
+	if (isTest) {
+		addRecords();
+	} else {
+		process.exit();
+	}
 });
 
 function addRecords() {

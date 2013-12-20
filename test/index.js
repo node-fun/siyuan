@@ -1,3 +1,5 @@
+process.env['test'] = true;
+
 var cp = require('child_process'),
 	assert = require('assert'),
 	config = require('../config'),
@@ -20,6 +22,18 @@ describe('server', function () {
 			if (/started/.test(data)) {
 				done();
 			}
+		});
+	});
+});
+
+describe('test database', function () {
+	it('setups', function (done) {
+		var cmd = 'node ' + rootDir + '/setup test';
+		cp.exec(cmd, function (err) {
+			if (err) {
+				throw err;
+			}
+			done();
 		});
 	});
 });

@@ -1,0 +1,28 @@
+# System #
+*~
+~*
+*.bak
+
+# IDEs #
+.idea
+*.sublime-*
+
+# Bower #
+bower_components
+
+# Node.js #
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+pids
+logs
+results
+node_modules
+
+# Custom #
+README.htm*

@@ -1,6 +1,4 @@
-/**
- * Module dependencies.
- */
+process.title = 'siyuan';
 
 var path = require('path'),
 	express = require('express'),
@@ -43,5 +41,6 @@ routes(app);
 
 // listen on port
 app.listen(port, function () {
-	console.log('server started at %d\n', port);
+	console.log('server started');
+	console.log('port: %d, pid: %d', port, process.pid);
 });

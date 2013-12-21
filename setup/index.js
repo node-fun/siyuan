@@ -1,10 +1,9 @@
-var cp = require('child_process'),
-	assert = require('assert'),
-	_ = require('underscore'),
-	chance = new (require('chance'))(),
+var _ = require('underscore'),
+	execsql = require('execsql'),
 	config = require('../config'),
 	isTest = config.isTest,
 	rootDir = config.rootDir,
+	connConfig = config.db.connection,
 	Users = require('../models/users'),
 	User = Users.model,
 	numUsers = 200,
@@ -12,8 +11,7 @@ var cp = require('child_process'),
 	sqlFile = __dirname + '/db' + (isTest ? '_test' : '') + '.sql';
 
 // create databases
-var cmd = 'node ' + rootDir + '/lib/execsql' + ' ' + sqlFile;
-cp.exec(cmd, function (err) {
+execsql.config(connConfig).exec(sqlFile, function(err, results){
 	if (err) {
 		throw err;
 	}

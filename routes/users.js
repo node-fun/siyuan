@@ -41,7 +41,7 @@ module.exports = function (app) {
 	app.get('/api/users/:id', function (req, res) {
 		var _id = req.params['id'], id;
 		if (!/^\d+$/.test(_id)) {
-			return res.send(err101);
+			return res.sendErr(err101);
 		}
 		id = ~~_id;
 		User.forge({
@@ -49,7 +49,7 @@ module.exports = function (app) {
 		}).fetch()
 			.then(function (user) {
 				if (!user) {
-					return res.send(err102);
+					return res.sendErr(err102);
 				}
 				// omit some attributes
 				// `user` here is a `Model`

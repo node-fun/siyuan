@@ -26,7 +26,7 @@ describe('server', function () {
 	});
 });
 
-describe('test database', function () {
+describe('database for test', function () {
 	it('setups', function (done) {
 		var cmd = 'node ' + rootDir + '/setup test';
 		cp.exec(cmd, function (err) {

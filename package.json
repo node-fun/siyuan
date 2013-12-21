@@ -20,7 +20,6 @@
 		"mocha": "1.15.1"
 	},
 	"scripts": {
-		"start": "node .",
 		"test": "./node_modules/mocha/bin/mocha -R spec"
 	}
 }

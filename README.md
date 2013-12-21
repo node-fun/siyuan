@@ -24,7 +24,7 @@ An SNS backend framework, with Node and MySQL
 ## Run
 
 ```shell
-npm start
+node .
 ```
 
 ## Test

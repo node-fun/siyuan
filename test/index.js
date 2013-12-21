@@ -1,9 +1,7 @@
 process.env['test'] = true;
 
 var cp = require('child_process'),
-	assert = require('assert'),
 	config = require('../config'),
-	port = config.port,
 	rootDir = config.rootDir;
 
 describe('server', function () {
@@ -14,8 +12,7 @@ describe('server', function () {
 			server.kill();
 		});
 		server.stderr.on('data', function (data) {
-			console.log('server can not start');
-			console.log('make sure port %d is available', port);
+			process.stderr.write(data);
 			process.exit();
 		});
 		server.stdout.on('data', function (data) {

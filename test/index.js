@@ -15,6 +15,7 @@ describe('server', function () {
 			process.stderr.write(data);
 			process.exit();
 		});
+		server.stdout.pipe(process.stdout);
 		server.stdout.on('data', function (data) {
 			if (/started/.test(data)) {
 				done();

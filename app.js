@@ -3,7 +3,7 @@ process.title = 'siyuan';
 var path = require('path'),
 	express = require('express'),
 	lessMiddleware = require('less-middleware'),
-// overwrite `Error` to `XError`
+	// overwrite `Error` to `XError`
 	Error = global.Error = require('xerror'),
 	apiErrSender = require('./lib/api-err-sender'),
 	routes = require('./routes'),
@@ -41,6 +41,6 @@ routes(app);
 
 // listen on port
 app.listen(port, function () {
-	console.log('server started');
-	console.log('port: %d, pid: %d', port, process.pid);
+	console.log('server started\n');
+	console.log('port: %d, pid: %d\n', port, process.pid);
 });

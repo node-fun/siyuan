@@ -1,8 +1,9 @@
 var _ = require('underscore'),
+	createError = require('../lib/err-creator'),
 	Users = require('../models/users'),
 	User = Users.prototype.model,
-	err101 = new Error('invalid id', 101),
-	err102 = new Error('no such user', 102),
+	err101 = createError(101, 'invalid id'),
+	err102 = createError(102, 'no such user'),
 	privateAttrs = ['password'];
 
 module.exports = function (app) {
@@ -42,7 +43,7 @@ module.exports = function (app) {
 	// find user by id
 	app.get('/api/users/:id', function (req, res) {
 		var _id = req.params['id'], id;
-		if (!/^\d+$/.test(_id)) {
+		if (! (/^\d+$/.test(_id) && Number(_id) > 0)) {
 			return res.sendErr(err101);
 		}
 		id = ~~_id;

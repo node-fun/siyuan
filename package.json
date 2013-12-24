@@ -13,8 +13,7 @@
 		"bookshelf": "0.6.1",
 		"jade": "0.35.0",
 		"less-middleware": "0.1.14",
-		"execsql": "0.0.1",
-		"xerror": "0.0.4"
+		"execsql": "0.0.1"
 	},
 	"devDependencies": {
 		"mocha": "1.15.1"

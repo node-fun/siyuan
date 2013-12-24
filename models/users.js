@@ -5,7 +5,7 @@ var _ = require('underscore'),
 
 User = syBookshelf.Model.extend({
 	tableName: 'users',
-	permittedAttrs: ['id', 'username', 'password', 'email', 'regtime'],
+	permittedAttrs: ['id', 'username', 'password', 'regtime', 'isonline'],
 
 	initialize: function () {
 		return this.constructor.__super__

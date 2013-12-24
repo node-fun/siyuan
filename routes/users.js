@@ -3,7 +3,7 @@ var _ = require('underscore'),
 	User = Users.prototype.model,
 	err101 = new Error('invalid id', 101),
 	err102 = new Error('no such user', 102),
-	omittedAttrs = ['password'];
+	privateAttrs = ['password'];
 
 module.exports = function (app) {
 	// list users
@@ -24,14 +24,16 @@ module.exports = function (app) {
 		} else {
 			offset = ~~req.query['offset'];
 		}
-		Users.forge().query()
-			.offset(offset).limit(limit).select()
+		Users.forge()
+			.query('offset', offset)
+			.query('limit', limit)
+			.fetch()
 			.then(function (users) {
-				_.each(users, function (user, i) {
+				_.each(users, function (user, i, list) {
 					// omit some attributes
-					// `user` here is just an object
-					// without `.attributes`
-					users[i] = _.omit(user, omittedAttrs);
+					// `user` here is just a normal object
+					// containing keys
+					list[i] = _.omit(user, privateAttrs);
 				});
 				res.send(users);
 			});
@@ -54,7 +56,7 @@ module.exports = function (app) {
 				// omit some attributes
 				// `user` here is a `Model`
 				// with `.attributes`
-				user = _.omit(user.attributes, omittedAttrs);
+				user = user.omit(privateAttrs);
 				res.send(user);
 			});
 	});

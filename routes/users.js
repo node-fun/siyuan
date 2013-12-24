@@ -1,6 +1,6 @@
 var _ = require('underscore'),
 	Users = require('../models/users'),
-	User = Users.model,
+	User = Users.prototype.model,
 	err101 = new Error('invalid id', 101),
 	err102 = new Error('no such user', 102),
 	omittedAttrs = ['password'];

@@ -6,18 +6,39 @@ var _ = require('underscore'),
 	syModel = syBookshelf.Model,
 	syCollection = syBookshelf.Collection;
 
-syModel = syModel.extend({
-	// TODO
-	// see Ghost as reference
-	tableName: ''
+syBookshelf.Model = syModel.extend({
+	tableName: '',
+	permittedAttrs: [],
+
+	initialize: function () {
+		this.on('saving', this.saving, this);
+	},
+
+	saving: function () {
+		this.attributes = this.pick(this.permittedAttrs);
+	},
+
+	// Jayin needs Timestamp as Datetime
+	forTimestamp: function (attrs) {
+		_.each(attrs, function (val, key, list) {
+			if (val instanceof Date) {
+				list[key] = val.getTime();
+			}
+		});
+		return attrs;
+	},
+
+	toJSON: function (options) {
+		// clone
+		var attrs = _.clone(this.attributes);
+		// for timestamp
+		attrs = this.forTimestamp(attrs);
+		return attrs;
+	}
 }, {
 
 });
 
-syCollection = syCollection.extend({
-	// for prototype
-	model: syModel
-}, {
-	// for static
+syBookshelf.Collection = syCollection.extend({
 	model: syModel
 });

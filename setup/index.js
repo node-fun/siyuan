@@ -2,10 +2,9 @@ var _ = require('underscore'),
 	execsql = require('execsql'),
 	config = require('../config'),
 	isTest = config.isTest,
-	rootDir = config.rootDir,
 	connConfig = config.db.connection,
 	Users = require('../models/users'),
-	User = Users.model,
+	User = Users.prototype.model,
 	numUsers = 200,
 	users = Users.forge(),
 	sqlFile = __dirname + '/db' + (isTest ? '_test' : '') + '.sql';
@@ -27,7 +26,7 @@ function addRecords() {
 	// add a set of random users
 	var user;
 	_.times(numUsers, function (i) {
-		users.add(User.createRandomUser());
+		users.add(User.createRandom());
 	});
 
 	// save into database

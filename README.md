@@ -16,16 +16,22 @@ An SNS backend framework, with Node and MySQL
 	npm install -d
 	```
 
-4. Setup the database
+4. Setup the databases (for production & test)
 	```shell
 	node setup
 	```
 
 ## Run
 
-```shell
-node .
-```
+- For production
+	```shell
+	node .
+	```
+
+- For test
+	```shell
+	test=1 node .
+	```
 
 ## Test
 

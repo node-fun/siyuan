@@ -1,8 +1,7 @@
 var assert = require('assert'),
 	_ = require('underscore'),
-	chance = new (require('chance'))(),
-	Users = require('../../models/users'),
-	User = Users.prototype.model;
+	User = require('../../models/user'),
+	Users = User.Collection;
 
 describe('models', function () {
 	describe('users', function () {
@@ -13,7 +12,7 @@ describe('models', function () {
 		it('saves', function (done) {
 			users = Users.forge();
 			_.times(numUsers, function (i) {
-				users.add(User.createRandom());
+				users.add(User.randomForge());
 			});
 			users.invokeThen('save').then(function () {
 				assert.ok(_.every(users.models, function (m) {

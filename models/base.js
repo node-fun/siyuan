@@ -6,16 +6,16 @@ var _ = require('underscore'),
 	syModel = syBookshelf.Model,
 	syCollection = syBookshelf.Collection;
 
-syBookshelf.Model = syModel.extend({
+syModel = syBookshelf.Model = syModel.extend({
 	tableName: '',
-	permittedAttrs: [],
+	fields: [],
 
 	initialize: function () {
 		this.on('saving', this.saving, this);
 	},
 
 	saving: function () {
-		this.attributes = this.pick(this.permittedAttrs);
+		this.attributes = this.pick(this.fields);
 	},
 
 	// Jayin needs Timestamp as Datetime
@@ -39,6 +39,6 @@ syBookshelf.Model = syModel.extend({
 
 });
 
-syBookshelf.Collection = syCollection.extend({
-	model: syModel
+syCollection = syModel.Collection = syCollection.extend({
+	mode: syModel
 });

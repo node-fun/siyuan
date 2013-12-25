@@ -3,6 +3,7 @@ process.title = 'siyuan';
 var path = require('path'),
 	express = require('express'),
 	lessMiddleware = require('less-middleware'),
+	apiParser = require('./lib/api-parser'),
 	errSender = require('./lib/err-sender'),
 	routes = require('./routes'),
 	config = require('./config'),
@@ -32,6 +33,8 @@ if ('development' == app.get('env')) {
 	app.use(express.errorHandler());
 }
 
+// params parser with api
+app.use('/api', apiParser);
 // error sending with api
 app.use('/api', errSender);
 // routes

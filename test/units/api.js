@@ -1,6 +1,6 @@
 var assert = require('assert'),
 	_ = require('underscore'),
-	request = require('request'),
+	request = require('request').defaults({json: true}),
 	config = require('../../config'),
 	apiHost = 'http://localhost:' + config.port + '/api',
 	url;
@@ -9,16 +9,15 @@ describe('api', function () {
 	describe('users', function () {
 		// assuming that there are
 		// 200+ testing records
-		describe('finds list', function () {
-			var url = apiHost + '/users';
+		describe('finds', function () {
+			var url = apiHost + '/users/find';
 			it('with offset/limit', function (done) {
 				request(url, {
 					qs: {
 						offset: 50,
 						limit: 5
 					}
-				}, function (err, res, json) {
-					var users = JSON.parse(json);
+				}, function (err, res, users) {
 					assert.equal(users.length, 5);
 					done();
 				});
@@ -29,37 +28,33 @@ describe('api', function () {
 						page: 3,
 						limit: 7
 					}
-				}, function (err, res, json) {
-					var users = JSON.parse(json);
+				}, function (err, res, users) {
 					assert.equal(users.length, 7);
 					done();
 				});
 			});
-		});
-		describe('finds one', function () {
-			it('that exists', function (done) {
-				url = apiHost + '/users/2';
-				request(url, function (err, res, json) {
-					var user = JSON.parse(json);
-					assert.equal(user.id, 2);
+			it('with id that exists', function (done) {
+				var id = 6, user;
+				request(url, {
+					qs: {
+						id: id
+					}
+				}, function (err, res, users) {
+					assert.equal(users.length, 1);
+					user = users[0];
+					assert.equal(user.id, id);
+					assert.equal('password' in user, false);
 					done();
 				});
 			});
-			it('with invalid id', function (done) {
-				url = apiHost + '/users/sad';
-				request(url, function (err, res, json) {
-					var error = JSON.parse(json);
-					assert.ok(error.request);
-					assert.ok(error.errMsg);
-					assert.equal(error.errCode, 101);
-					done();
-				});
-			});
-			it('that does not exist', function (done) {
-				url = apiHost + '/users/66651';
-				request(url, function (err, res, json) {
-					var error = JSON.parse(json);
-					assert.equal(error.errCode, 102);
+			it('with id that does not exist', function (done) {
+				var id = -1;
+				request(url, {
+					qs: {
+						id: id
+					}
+				}, function (err, res, users) {
+					assert.equal(users.length, 0);
 					done();
 				});
 			});

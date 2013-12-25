@@ -11,10 +11,13 @@ describe('server', function () {
 			// kill server finally
 			server.kill();
 		});
-		server.stderr.on('data', function (data) {
-			process.stderr.write(data);
-			process.exit();
-		});
+		server.stderr
+			.on('data', function (data) {
+				process.stderr.write(data);
+			})
+			.on('end', function () {
+				process.exit();
+			});
 		server.stdout.pipe(process.stdout);
 		server.stdout.on('data', function (data) {
 			if (/started/.test(data)) {

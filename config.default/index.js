@@ -26,7 +26,6 @@ module.exports = {
 			host: 'localhost',
 			user: 'root',
 			password: 'root'
-			// `charset: "utf8"` removed
 		}
 	}
 }

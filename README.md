@@ -16,7 +16,12 @@ An SNS backend framework, with Node and MySQL
 	npm install -d
 	```
 
-4. Setup the databases (for production & test)
+4. Copy the `config` directory, and modify it if you need
+	```shell
+	cp config.default config
+	```
+
+5. Setup the databases (for production & test)
 	```shell
 	node setup
 	```

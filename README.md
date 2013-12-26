@@ -21,7 +21,7 @@ An SNS backend framework, with Node and MySQL
 4. Copy the `config` directory, and modify it if you need
 
 	```shell
-	cp config.default config
+	cp -r config.default config
 	```
 
 5. Setup the database for production

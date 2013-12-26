@@ -43,6 +43,21 @@ CREATE TABLE IF NOT EXISTS `siyuan`.`user_profile` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `siyuan`.`admin`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `siyuan`.`admin` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(45) NULL,
+  `password` VARCHAR(45) NULL,
+  `email` VARCHAR(45) NULL,
+  `regdate` DATETIME NULL,
+  `lastip` VARCHAR(45) NULL,
+  `lastdate` DATETIME NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

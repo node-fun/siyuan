@@ -29,12 +29,11 @@ describe('server', function () {
 
 describe('database for test', function () {
 	it('setups', function (done) {
-		var cmd = 'node ' + rootDir + '/setup test';
+		// might take long for db creating
+		this.timeout(10000);
+		var cmd = 'node ' + rootDir + '/setup';
 		cp.exec(cmd, function (err) {
-			if (err) {
-				throw err;
-			}
-			done();
+			done(err);
 		});
 	});
 });

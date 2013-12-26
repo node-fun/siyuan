@@ -44,13 +44,13 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `siyuan`.`admin`
+-- Table `siyuan_test`.`admin`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `siyuan`.`admin` (
+CREATE TABLE IF NOT EXISTS `siyuan_test`.`admin` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `username` VARCHAR(45) NOT NULL,
-  `password` VARCHAR(45) NOT NULL,
-  `email` VARCHAR(45) NOT NULL,
+  `username` VARCHAR(45) NULL,
+  `password` VARCHAR(45) NULL,
+  `email` VARCHAR(45) NULL,
   `regdate` DATETIME NULL,
   `lastip` VARCHAR(45) NULL,
   `lastdate` DATETIME NULL,

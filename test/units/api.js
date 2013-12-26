@@ -15,7 +15,8 @@ describe('api', function () {
 						page: 3,
 						limit: 7
 					}
-				}, function (err, res, users) {
+				}, function (err, res, data) {
+					var users = data['users'];
 					assert.equal(users.length, 7);
 					done();
 				});
@@ -26,7 +27,8 @@ describe('api', function () {
 					qs: {
 						id: id
 					}
-				}, function (err, res, users) {
+				}, function (err, res, data) {
+					var users = data['users'];
 					assert.equal(users.length, 1);
 					user = users[0];
 					assert.equal(user.id, id);
@@ -42,7 +44,8 @@ describe('api', function () {
 					qs: {
 						username: 'e'
 					}
-				}, function (err, res, users) {
+				}, function (err, res, data) {
+					var users = data['users'];
 					assert.ok(users.length > 0);
 					done();
 				});

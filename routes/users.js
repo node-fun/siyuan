@@ -12,7 +12,9 @@ module.exports = function (app) {
 				users.each(function (user) {
 					user.attributes = user.omit(privateAttrs);
 				});
-				res.send(users);
+				res.api.send({
+					users: users
+				});
 			});
 	});
 
@@ -25,7 +27,9 @@ module.exports = function (app) {
 				users.each(function (user) {
 					user.attributes = user.omit(privateAttrs);
 				});
-				res.send(users);
+				res.api.send({
+					users: users
+				});
 			});
 	});
 }

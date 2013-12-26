@@ -46,15 +46,17 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 
 	search: function (match, offset, limit) {
-		var accepts = ['username'];
+		var accepts = ['username'],
+			count = 0;
 		return Users.forge().query(function (qb) {
 			_.each(accepts, function (k) {
 				if (k in match) {
 					qb.where(k, 'like', '%' + match[k] + '%');
+					count++;
 				}
 			});
 		}).query('offset', offset)
-			.query('limit', limit)
+			.query('limit', count ? limit : 0)
 			.fetch();
 	}
 });

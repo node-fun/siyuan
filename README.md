@@ -24,10 +24,16 @@ An SNS backend framework, with Node and MySQL
 	cp config.default config
 	```
 
-5. Setup the databases (for production & test)
+5. Setup the database for production
 
 	```shell
 	node setup
+	```
+	
+6. Setup the database for test
+
+	```shell
+	test=1 node setup
 	```
 
 ## Run

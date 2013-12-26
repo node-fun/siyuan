@@ -1,9 +1,7 @@
 var assert = require('assert'),
-	_ = require('underscore'),
 	request = require('request').defaults({json: true}),
 	config = require('../../config'),
-	apiHost = 'http://localhost:' + config.port + '/api',
-	url;
+	apiHost = 'http://localhost:' + config.port + '/api';
 
 describe('api', function () {
 	describe('users', function () {
@@ -11,17 +9,6 @@ describe('api', function () {
 		// 200+ testing records
 		describe('finds', function () {
 			var url = apiHost + '/users/find';
-			it('with offset/limit', function (done) {
-				request(url, {
-					qs: {
-						offset: 50,
-						limit: 5
-					}
-				}, function (err, res, users) {
-					assert.equal(users.length, 5);
-					done();
-				});
-			});
 			it('with page/limit', function (done) {
 				request(url, {
 					qs: {
@@ -33,7 +20,7 @@ describe('api', function () {
 					done();
 				});
 			});
-			it('with id that exists', function (done) {
+			it('with id', function (done) {
 				var id = 6, user;
 				request(url, {
 					qs: {
@@ -47,14 +34,16 @@ describe('api', function () {
 					done();
 				});
 			});
-			it('with id that does not exist', function (done) {
-				var id = -1;
+		});
+		describe('searches', function () {
+			var url = apiHost + '/users/search';
+			it('with username', function (done) {
 				request(url, {
 					qs: {
-						id: id
+						username: 'e'
 					}
 				}, function (err, res, users) {
-					assert.equal(users.length, 0);
+					assert.ok(users.length > 0);
 					done();
 				});
 			});

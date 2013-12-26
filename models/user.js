@@ -32,12 +32,28 @@ User = module.exports = syBookshelf.Model.extend({
 		});
 	},
 
-	find: function (query, offset, limit) {
-		return Users.forge()
-			.query({
-				where: _.pick(query, User.prototype.fields)
-			})
-			.query('offset', offset)
+	find: function (match, offset, limit) {
+		var accepts = ['id', 'username', 'email', 'isonline'];
+		return Users.forge().query(function (qb) {
+			_.each(accepts, function (k) {
+				if (k in match) {
+					qb.where(k, '=', match[k]);
+				}
+			});
+		}).query('offset', offset)
+			.query('limit', limit)
+			.fetch();
+	},
+
+	search: function (match, offset, limit) {
+		var accepts = ['username'];
+		return Users.forge().query(function (qb) {
+			_.each(accepts, function (k) {
+				if (k in match) {
+					qb.where(k, 'like', '%' + match[k] + '%');
+				}
+			});
+		}).query('offset', offset)
 			.query('limit', limit)
 			.fetch();
 	}

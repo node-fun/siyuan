@@ -25,7 +25,7 @@ module.exports = {
 			database: 'siyuan' + (isTest ? '_test' : ''),
 			host: 'localhost',
 			user: 'root',
-			password: 'root'
+			password: 'xo5506589'
 		}
 	}
 }

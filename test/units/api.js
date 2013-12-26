@@ -1,7 +1,7 @@
 var assert = require('assert'),
 	_ = require('underscore'),
 	request = require('request').defaults({json: true}),
-	config = require('../../config'),
+	config = require('../../config.default'),
 	apiHost = 'http://localhost:' + config.port + '/api',
 	url;
 

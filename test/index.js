@@ -1,7 +1,7 @@
 process.env['test'] = true;
 
 var cp = require('child_process'),
-	config = require('../config'),
+	config = require('../config.default'),
 	rootDir = config.rootDir;
 
 describe('server', function () {

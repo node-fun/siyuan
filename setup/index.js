@@ -1,6 +1,6 @@
 var _ = require('underscore'),
 	execsql = require('execsql'),
-	config = require('../config'),
+	config = require('../config.default'),
 	isTest = config.isTest,
 	connConfig = config.db.connection,
 	User = require('../models/user'),

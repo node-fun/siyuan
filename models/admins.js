@@ -8,7 +8,7 @@ var _ = require('underscore'),
 
 Admin = syBookshelf.Model.extend({
     tableName: 'admin',
-    permittedAttrs: ['id', 'username', 'password', 'email', 'regdate', 'lastip', 'lastdate'],
+    fields: ['id', 'username', 'password', 'email', 'regdate', 'lastip', 'lastdate'],
     initialize: function () {
         return this.constructor.__super__.initialize.apply(this, arguments);
     },
@@ -24,7 +24,7 @@ Admin = syBookshelf.Model.extend({
         return ret;
     }
 }, {
-    createRandom: function() {
+    randomForge: function () {
         return this.forge({
             username: chance.word(),
             password: chance.string(),
@@ -33,6 +33,16 @@ Admin = syBookshelf.Model.extend({
             lastip: chance.ip(),
             lastdate: chance.date()
         });
+    },
+
+    find: function (query, offset, limit) {
+        return Admins.forge()
+            .query({
+                where: _.pick(query, Admin.prototype.fields)
+            })
+            .query('offset', offset)
+            .query('limit', limit)
+            .fetch();
     }
 });
 

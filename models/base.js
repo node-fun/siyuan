@@ -1,6 +1,6 @@
 var _ = require('underscore'),
 	Bookshelf = require('bookshelf'),
-	config = require('../config/'),
+	config = require('../config.default/'),
 	dbConfig = config.db,
 	syBookshelf = module.exports = Bookshelf.initialize(dbConfig),
 	syModel = syBookshelf.Model,

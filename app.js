@@ -1,7 +1,6 @@
 process.title = 'siyuan';
 
-var path = require('path'),
-	express = require('express'),
+var express = require('express'),
 	lessMiddleware = require('less-middleware'),
 	apiParser = require('./lib/api/parser'),
 	apiSender = require('./lib/api/sender'),

@@ -5,38 +5,44 @@ var _ = require('underscore'),
 	connConfig = config.db.connection,
 	User = require('../models/user'),
 	Users = User.Collection,
+	UserProfile = require('../models/user-profile'),
+	UserProfiles = UserProfile.Collection,
 	numUsers = 200,
-	users = Users.forge(),
 	sqlFile = __dirname + '/db' + (isTest ? '_test' : '') + '.sql';
 
-// create databases
-execsql.config(connConfig).exec(sqlFile, function(err, results){
-	if (err) {
-		throw err;
-	}
-	console.log('database has been setup');
-	if (isTest) {
-		addRecords();
-	} else {
-		process.exit();
-	}
-});
+// create database for test
+execsql.config(connConfig)
+	.exec(sqlFile, function (err) {
+		if (err) {
+			throw err;
+		}
+		console.log('database has been setup');
+		if (isTest) {
+			addRecords();
+		} else {
+			process.exit();
+		}
+	});
 
 function addRecords() {
-	// add a set of random users
-	var user;
+	// add users
+	var users = Users.forge(),
+		userProfiles = UserProfiles.forge();
 	_.times(numUsers, function (i) {
 		users.add(User.randomForge());
+		userProfiles.add(UserProfile.randomForge());
 	});
-
-	// save into database
-	users.invokeThen('save').then(function () {
-		if (!_.every(users.model, function (m) {
-			return m.id;
-		})) {
-			return console.log('failed');
-		}
-		console.log('%d records inserted', numUsers);
-		process.exit();
-	});
+	users.invokeThen('save')
+		.then(function () {
+			var firstId = users.at(0).id;
+			userProfiles.each(function (profile, i) {
+				profile.set({
+					userid: firstId + i
+				});
+			});
+			return userProfiles.invokeThen('save');
+		}).then(function () {
+			console.log('%d records inserted', numUsers);
+			process.exit();
+		});
 }

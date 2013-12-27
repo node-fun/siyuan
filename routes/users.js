@@ -1,6 +1,5 @@
 var _ = require('underscore'),
-	User = require('../models/user'),
-	privateAttrs = ['password'];
+	User = require('../models/user');
 
 module.exports = function (app) {
 	app.get('/api/users/find', function (req, res) {
@@ -10,7 +9,7 @@ module.exports = function (app) {
 		User.find(match, offset, limit)
 			.then(function (users) {
 				users.each(function (user) {
-					user.attributes = user.omit(privateAttrs);
+					user.attributes = user.omit();
 				});
 				res.api.send({
 					users: users
@@ -25,11 +24,25 @@ module.exports = function (app) {
 		User.search(match, offset, limit)
 			.then(function (users) {
 				users.each(function (user) {
-					user.attributes = user.omit(privateAttrs);
+					user.attributes = user.omit(['password', 'regtime']);
 				});
 				res.api.send({
 					users: users
 				});
+			});
+	});
+
+	app.get('/api/users/view', function (req, res) {
+		var id = req.api.id;
+		User.view(id)
+			.then(function (user) {
+				if (user) {
+					res.api.send({
+						user: user
+					});
+				} else {
+					res.api.sendErr(20003, 'user not found');
+				}
 			});
 	});
 }

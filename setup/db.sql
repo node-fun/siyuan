@@ -22,30 +22,36 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `siyuan`.`user_profile`
+-- Table `siyuan`.`user_profiles`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `siyuan`.`user_profile` ;
+DROP TABLE IF EXISTS `siyuan`.`user_profiles` ;
 
-CREATE TABLE IF NOT EXISTS `siyuan`.`user_profile` (
+CREATE TABLE IF NOT EXISTS `siyuan`.`user_profiles` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(45) NULL,
+  `userid` INT NULL,
   `email` VARCHAR(45) NULL,
-  `sex` TINYINT(1) NULL,
+  `nickname` VARCHAR(45) NULL,
+  `name` VARCHAR(45) NULL,
+  `gender` ENUM('male','female') NULL,
   `age` TINYINT NULL,
+  `grade` YEAR NULL,
   `university` VARCHAR(45) NULL,
   `major` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `fk_user_profile_1`
-    FOREIGN KEY (`id`)
+  INDEX `id_idx` (`userid` ASC),
+  CONSTRAINT `id`
+    FOREIGN KEY (`userid`)
     REFERENCES `siyuan`.`users` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `siyuan`.`admin`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `siyuan`.`admin` ;
+
 CREATE TABLE IF NOT EXISTS `siyuan`.`admin` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(45) NULL,

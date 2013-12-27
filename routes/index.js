@@ -3,7 +3,7 @@ module.exports = function (app) {
 	require('./users')(app);
 
 	app.use('/api', function (req, res) {
-		res.api.sendErr(404, 1, 'no such api');
+		res.api.sendErr(10020, 'api not found');
 	});
 
 	// home page

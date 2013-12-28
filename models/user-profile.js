@@ -11,7 +11,7 @@ UserProfile = module.exports = syBookshelf.Model.extend({
 	],
 
 	ranges: {
-		gender: [null, 'male', 'female']
+		gender: [null, 'm', 'f']
 	},
 
 	initialize: function () {
@@ -41,7 +41,7 @@ UserProfile = module.exports = syBookshelf.Model.extend({
 			email: chance.email(),
 			nickname: chance.name(),
 			name: chance.name(),
-			gender: _.sample(['male', 'female']),
+			gender: _.sample(['m', 'f']),
 			age: _.random(20, 60),
 			grade: _.random(2013, 1973),
 			university: chance.city() + ' University',

@@ -5,23 +5,22 @@ var _ = require('underscore'),
 	connConfig = config.db.connection,
 	User = require('../models/user'),
 	Users = User.Collection,
-	UserProfile = require('../models/user-profile'),
-	UserProfiles = UserProfile.Collection,
 	numUsers = 200,
-	sqlFile = __dirname + '/db' + (isTest ? '_test' : '') + '.sql';
+	sqlFile = __dirname + '/db.sql';
 
 // create database for test
 execsql.config(connConfig)
-	.exec(sqlFile, function (err) {
-		if (err) {
-			throw err;
-		}
-		console.log('database has been setup');
-		if (isTest) {
-			addUsers();
-		} else {
-			process.exit();
-		}
+	.exec('use ' + connConfig.database + ';', function (err) {
+		if (err) throw err;
+		execsql.execFile(sqlFile, function (err) {
+			if (err) throw err;
+			console.log('database has been setup');
+			if (isTest) {
+				addUsers();
+			} else {
+				done();
+			}
+		});
 	});
 
 function addUsers() {
@@ -30,8 +29,13 @@ function addUsers() {
 		users.add(User.randomForge());
 	});
 	users.invokeThen('register')
-		.then(function(){
+		.then(function () {
 			console.log('%d users added', numUsers);
-			process.exit();
+			done();
 		});
+}
+
+function done() {
+	execsql.end();
+	process.exit();
 }

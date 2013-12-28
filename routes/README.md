@@ -37,19 +37,19 @@ Routes in `siyuan`
 	```js
 	// GET /api/users/find?isonline=1&gender=female&limit=2&page=3
 	{
-	  "users": [
-		{
-		  "id": 32,
-		  "username": "lu",
-		  "isonline": 1
-		},
-		{
-		  "id": 35,
-		  "username": "bidak",
-		  "isonline": 1
-		}
-	  ]
-	}
+      "users": [
+        {
+          "id": 9,
+          "username": "do",
+          "isonline": 1
+        },
+        {
+          "id": 17,
+          "username": "hur",
+          "isonline": 1
+        }
+      ]
+    }
 	```
 
 - `GET /api/users/search`
@@ -66,18 +66,18 @@ Routes in `siyuan`
 	{
       "user": {
         "id": 102,
-        "username": "vipfef",
-        "regtime": 1363320733000,
-        "isonline": 1,
+        "username": "jugus",
+        "regtime": 1365013074000,
+        "isonline": 0,
         "profile": {
-          "email": "motarcip@mafin.gov",
-          "nickname": "Stephen Drake",
-          "name": "Carlos Gibson",
-          "gender": "female",
-          "age": 30,
-          "grade": 1999,
-          "university": "Icibira University",
-          "major": "Rokemem"
+          "email": "ijegafi@otaluja.co.uk",
+          "nickname": "Sophia Bowers",
+          "name": "Liam Marshall",
+          "gender": "m",
+          "age": 32,
+          "grade": 2010,
+          "university": "Aknajvok University",
+          "major": "Ufoga"
         }
       }
     }

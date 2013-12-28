@@ -53,7 +53,7 @@ User = module.exports = syBookshelf.Model.extend({
 			.query(function (qb) {
 				_.each(accepts, function (k) {
 					if (k in match) {
-						qb.where(k, '=', match[k]);
+						qb.where(k, match[k]);
 					}
 				});
 			}).query('offset', offset)

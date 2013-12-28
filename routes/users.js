@@ -33,7 +33,7 @@ module.exports = function (app) {
 	});
 
 	app.get('/api/users/view', function (req, res) {
-		var id = req.api.id;
+		var id = req.query['id'];
 		User.view(id)
 			.then(function (user) {
 				if (user) {

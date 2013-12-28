@@ -37,13 +37,14 @@ UserProfile = module.exports = syBookshelf.Model.extend({
 	}
 }, {
 	randomForge: function () {
+		var age = _.random(20, 60);
 		return UserProfile.forge({
 			email: chance.email(),
 			nickname: chance.name(),
 			name: chance.name(),
 			gender: _.sample(['m', 'f']),
-			age: _.random(20, 60),
-			grade: _.random(2013, 1973),
+			age: age,
+			grade: 2011 - age + 20 + _.random(-2, 2),
 			university: chance.city() + ' University',
 			major: chance.capitalize(chance.word())
 		});

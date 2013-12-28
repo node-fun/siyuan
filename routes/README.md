@@ -66,18 +66,18 @@ Routes in `siyuan`
 	{
       "user": {
         "id": 102,
-        "username": "jugus",
-        "regtime": 1365013074000,
+        "username": "sa",
+        "regtime": 1361749057000,
         "isonline": 0,
         "profile": {
-          "email": "ijegafi@otaluja.co.uk",
-          "nickname": "Sophia Bowers",
-          "name": "Liam Marshall",
-          "gender": "m",
-          "age": 32,
-          "grade": 2010,
-          "university": "Aknajvok University",
-          "major": "Ufoga"
+          "email": "lakcet@acegul.io",
+          "nickname": "Vivian Schwartz",
+          "name": "Brianna Wade",
+          "gender": "f",
+          "age": 39,
+          "grade": 1991,
+          "university": "Kigcokson University",
+          "major": "Tupiw"
         }
       }
     }

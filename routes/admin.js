@@ -1,18 +1,48 @@
 var _ = require('underscore'),
-    Admin = require('../models/admin'),
-    Admins = Admin.Collection,
-    privateAttrs = ['password'];
+    Admin = require('../models/admin');
 
-module.exports = function(app) {
-    //list admins
-    var offset = req.api.offset,
-        limit = req.api.limit,
-        query = req.query;
-    Admin.find(query, offset, limit)
-        .then(function(admins) {
-           admins.each(function(admin) {
-               admin.attributes = admin.omit(privateAttrs);
-           });
-            res.send(admins);
-        });
+module.exports = function (app) {
+    app.get('/api/admins/find', function (req, res) {
+        var offset = req.api.offset,
+            limit = req.api.limit,
+            match = req.query;
+        Admin.find(match, offset, limit)
+            .then(function (admins) {
+                admins.each(function (admin) {
+                    admin.attributes = admin.omit(['regtime']);
+                });
+                res.api.send({
+                    admins: admins
+                });
+            });
+    });
+
+    app.get('/api/admins/search', function (req, res) {
+        var offset = req.api.offset,
+            limit = req.api.limit,
+            match = req.query;
+        Admin.search(match, offset, limit)
+            .then(function (admins) {
+                admins.each(function (admin) {
+                    admin.attributes = admin.omit(['regtime']);
+                });
+                res.api.send({
+                    admins: admins
+                });
+            });
+    });
+
+    app.get('api/admins/view', function (req, res) {
+        var id = req.api.id;
+        Admin.view(id)
+            .then(function (admin) {
+                if (admin) {
+                    res.api.send({
+                        admin: admin
+                    });
+                } else {
+                    res.api.sendErr(20003, 'admin not found')
+                }
+            });
+    });
 }

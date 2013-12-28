@@ -18,6 +18,14 @@ Routes in `siyuan`
 
 	Most error codes and messages are learnt from -<br>
 	<http://open.weibo.com/wiki/Error_code>
+	```js
+	// GET /api/users/view?id=102
+	{
+      "request": "/api/users/view?id=102",
+      "error_code": 20003,
+      "error": "user not found"
+    }
+	```
 
 - Timestamps
 
@@ -39,13 +47,13 @@ Routes in `siyuan`
 	{
       "users": [
         {
-          "id": 9,
-          "username": "do",
+          "id": 14,
+          "username": "nemjoptaz",
           "isonline": 1
         },
         {
-          "id": 17,
-          "username": "hur",
+          "id": 20,
+          "username": "pa",
           "isonline": 1
         }
       ]
@@ -62,23 +70,35 @@ Routes in `siyuan`
 	Return a detailed user, including `profile`<br>
 	Accepts: `id`
 	```js
-	// GET /api/users/view?id=102
+	// GET /api/users/view?id=88
 	{
       "user": {
-        "id": 102,
-        "username": "sa",
-        "regtime": 1361749057000,
-        "isonline": 0,
+        "id": 88,
+        "username": "zodisukeg",
+        "regtime": 1357441421000,
+        "isonline": 1,
         "profile": {
-          "email": "lakcet@acegul.io",
-          "nickname": "Vivian Schwartz",
-          "name": "Brianna Wade",
-          "gender": "f",
-          "age": 39,
-          "grade": 1991,
-          "university": "Kigcokson University",
-          "major": "Tupiw"
+          "email": "rofno@alube.net",
+          "nickname": "Brady Robertson",
+          "name": "Stephen Brady",
+          "gender": "m",
+          "age": 46,
+          "grade": 1986,
+          "university": "Sihijsa University",
+          "major": "Viwrun"
         }
       }
+    }
+	```
+
+- `POST /api/users/reg`
+
+	Perform a user register
+	```js
+	// POST /api/users/reg
+	//   username, password, profile[email],
+	//   profile[nickname], profile[name] ...
+	{
+      "id": 101
     }
 	```

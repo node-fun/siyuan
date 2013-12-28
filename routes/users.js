@@ -11,9 +11,7 @@ module.exports = function (app) {
 				users.each(function (user) {
 					user.attributes = user.omit(['regtime']);
 				});
-				res.api.send({
-					users: users
-				});
+				res.api.send({users: users});
 			});
 	});
 
@@ -26,9 +24,7 @@ module.exports = function (app) {
 				users.each(function (user) {
 					user.attributes = user.omit(['regtime']);
 				});
-				res.api.send({
-					users: users
-				});
+				res.api.send({users: users});
 			});
 	});
 
@@ -36,13 +32,19 @@ module.exports = function (app) {
 		var id = req.query['id'];
 		User.view(id)
 			.then(function (user) {
-				if (user) {
-					res.api.send({
-						user: user
-					});
-				} else {
+				if (!user) {
 					res.api.sendErr(20003, 'user not found');
+					return;
 				}
+				res.api.send({user: user});
+			});
+	});
+
+	app.post('/api/users/reg', function (req, res) {
+		var userData = req.body;
+		User.forge(userData).register()
+			.then(function (user) {
+				res.api.send({id: user.id});
 			});
 	});
 }

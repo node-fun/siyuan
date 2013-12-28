@@ -5,7 +5,7 @@ var _ = require('underscore'),
 	connConfig = config.db.connection,
 	User = require('../models/user'),
 	Users = User.Collection,
-	numUsers = 200,
+	numUsers = 100,
 	sqlFile = __dirname + '/db.sql';
 
 // create database for test

@@ -4,6 +4,17 @@ var cp = require('child_process'),
 	config = require('../config'),
 	rootDir = config.rootDir;
 
+describe('database for test', function () {
+	it('setups', function (done) {
+		// might take long for db creating
+		this.timeout(10000);
+		var cmd = 'node ' + rootDir + '/setup';
+		cp.exec(cmd, function (err) {
+			done(err);
+		});
+	});
+});
+
 describe('server', function () {
 	it('starts', function (done) {
 		var server = cp.spawn('node', [rootDir]);
@@ -27,16 +38,4 @@ describe('server', function () {
 	});
 });
 
-describe('database for test', function () {
-	it('setups', function (done) {
-		// might take long for db creating
-		this.timeout(10000);
-		var cmd = 'node ' + rootDir + '/setup';
-		cp.exec(cmd, function (err) {
-			done(err);
-		});
-	});
-});
-
-require('./units/models');
-require('./units/api');
+require('./units/users');

@@ -18,9 +18,15 @@ User = module.exports = syBookshelf.Model.extend({
 		var ret = User.__super__
 			.saving.apply(this, arguments);
 		// append `regtime`
-		if (!this.get('regtime')) {
+		if (!this.has('regtime')) {
 			this.set({
 				'regtime': new Date()
+			});
+		}
+		// append `isonline`
+		if (!this.has('isonline')) {
+			this.set({
+				'isonline': 0
 			});
 		}
 		// fix lower case
@@ -40,11 +46,15 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 
 	register: function () {
+		this.attributes = this.pick(['username', 'password']);
 		var profileData = this.get('profile'),
 			profile = UserProfile.forge(profileData);
 		return this.save()
 			.then(function (user) {
-				return profile.set({userid: user.id}).save();
+				return profile.set(fkProfile, user.id)
+					.save().then(function () {
+						return user;
+					});
 			});
 	}
 }, {

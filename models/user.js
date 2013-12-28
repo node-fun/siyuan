@@ -37,15 +37,27 @@ User = module.exports = syBookshelf.Model.extend({
 
 	profile: function () {
 		return this.hasOne(UserProfile, fkProfile);
+	},
+
+	register: function () {
+		var profileData = this.get('profile'),
+			profile = UserProfile.forge(profileData);
+		return this.save()
+			.then(function (user) {
+				return profile.set({userid: user.id}).save();
+			});
 	}
 }, {
 	randomForge: function () {
-		return User.forge({
-			username: chance.word(),
-			password: chance.string(),
-			regtime: chance.date({year: 2013}),
-			isonline: chance.bool()
-		});
+		return User
+			.forge({
+				username: chance.word(),
+				password: chance.string(),
+				regtime: chance.date({year: 2013}),
+				isonline: chance.bool()
+			}).set({
+				profile: UserProfile.randomForge().attributes
+			});
 	},
 
 	find: function (match, offset, limit) {

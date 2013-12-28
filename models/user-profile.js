@@ -41,10 +41,10 @@ UserProfile = module.exports = syBookshelf.Model.extend({
 			email: chance.email(),
 			nickname: chance.name(),
 			name: chance.name(),
-			gender: _.sample(UserProfile.prototype.ranges.gender),
+			gender: _.sample(['male', 'female']),
 			age: _.random(20, 60),
 			grade: _.random(2013, 1973),
-			university: _.sample([null, chance.city() + ' University']),
+			university: chance.city() + ' University',
 			major: chance.capitalize(chance.word())
 		});
 	}

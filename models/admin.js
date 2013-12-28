@@ -8,7 +8,7 @@ var _ = require('underscore'),
 
 Admin = syBookshelf.Model.extend({
     tableName: 'admin',
-    fields: ['id', 'username', 'password', 'email', 'regdate', 'lastip', 'lastdate'],
+    fields: ['id', 'username', 'password', 'email', 'regtime', 'lastip', 'lasttime'],
     initialize: function () {
         return this.constructor.__super__.initialize.apply(this, arguments);
     },
@@ -21,28 +21,61 @@ Admin = syBookshelf.Model.extend({
                 'regtime': new Date()
             });
         }
+        //fix lower case
+        this.fixLowerCase(['username']);
         return ret;
+    },
+    toJSON: function () {
+        var attrs = Admin.__super__.toJSON.apply(this, arguments);
+        attrs = _.omit(attrs, ['password']);
     }
 }, {
     randomForge: function () {
-        return this.forge({
+        return Admin.forge({
             username: chance.word(),
             password: chance.string(),
             email: chance.email(),
-            regdate: chance.date(),
+            regtime: chance.date(),
             lastip: chance.ip(),
-            lastdate: chance.date()
+            lasttime: chance.date()
         });
     },
 
-    find: function (query, offset, limit) {
+    find: function (match, offset, limit) {
+        var accepts = ['id', 'username'];
         return Admins.forge()
-            .query({
-                where: _.pick(query, Admin.prototype.fields)
+            .query(function (qb) {
+                _.each(accepts, function (k) {
+                    if(k in match) {
+                        qb.where(k, '=', match[k]);
+                    }
+                })
             })
             .query('offset', offset)
             .query('limit', limit)
             .fetch();
+    },
+    search: function (match, offset, limit) {
+        var accepts = ['username'],
+            count = 0;
+        return Admins.forge()
+            .query(function (qb) {
+                _.each(accepts, function (k) {
+                    if(k in match) {
+                        count++;
+                        qb.where(k, 'like', '%' + match[k] + '%');
+                    }
+                });
+            }).query('offset', offset)
+            .query('limit', count ? limit : 0)
+            .fetch();
+    },
+    view: function (id) {
+        return Admin.forge({id: id})
+            .fetch()
+            .then(function(admin) {
+                return admin;
+            });
     }
 });
 

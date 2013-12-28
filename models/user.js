@@ -2,6 +2,7 @@ var _ = require('underscore'),
 	chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
 	UserProfile = require('./user-profile'),
+	fkProfile = 'userid',
 	User, Users;
 
 User = module.exports = syBookshelf.Model.extend({
@@ -35,7 +36,7 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 
 	profile: function () {
-		return this.hasOne(UserProfile, 'userid');
+		return this.hasOne(UserProfile, fkProfile);
 	}
 }, {
 	randomForge: function () {
@@ -48,12 +49,23 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 
 	find: function (match, offset, limit) {
-		var accepts = ['id', 'username', 'isonline'];
+		var forUser = ['id', 'username', 'isonline'],
+			forProfile = ['nickname', 'name', 'gender'],
+			tbUser = User.prototype.tableName,
+			tbProfile = UserProfile.prototype.tableName;
 		return Users.forge()
 			.query(function (qb) {
-				_.each(accepts, function (k) {
+				// FIXME: so dirty, with lots of Coupling here
+				qb.join(tbProfile, tbProfile + '.' + fkProfile,
+					'=', tbUser + '.id');
+				_.each(forUser, function (k) {
 					if (k in match) {
-						qb.where(k, match[k]);
+						qb.where(tbUser + '.' + k, match[k]);
+					}
+				});
+				_.each(forProfile, function (k) {
+					if (k in match) {
+						qb.where(tbProfile + '.' + k, match[k]);
 					}
 				});
 			}).query('offset', offset)
@@ -62,14 +74,25 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 
 	search: function (match, offset, limit) {
-		var accepts = ['username'],
+		var forUser = ['username'],
+			forProfile = ['nickname', 'name'],
+			tbUser = User.prototype.tableName,
+			tbProfile = UserProfile.prototype.tableName,
 			count = 0;
 		return Users.forge()
 			.query(function (qb) {
-				_.each(accepts, function (k) {
+				qb.join(tbProfile, tbProfile + '.' + fkProfile,
+					'=', tbUser + '.id');
+				_.each(forUser, function (k) {
 					if (k in match) {
 						count++;
-						qb.where(k, 'like', '%' + match[k] + '%');
+						qb.where(tbUser + '.' + k, 'like', '%' + match[k] + '%');
+					}
+				});
+				_.each(forProfile, function (k) {
+					if (k in match) {
+						count++;
+						qb.where(tbProfile + '.' + k, 'like', '%' + match[k] + '%');
 					}
 				});
 			}).query('offset', offset)

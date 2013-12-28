@@ -46,9 +46,9 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 
 	register: function () {
-		this.attributes = this.pick(['username', 'password']);
 		var profileData = this.get('profile'),
 			profile = UserProfile.forge(profileData);
+		this.attributes = this.pick(['username', 'password']);
 		return this.save()
 			.then(function (user) {
 				return profile.set(fkProfile, user.id)

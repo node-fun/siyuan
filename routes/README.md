@@ -21,8 +21,7 @@ Routes in `siyuan`
 
 - `offset`/`page`, `limit`
 
-	All `GET` api accept these three parameters,<br>
-	for a pagination.
+	All `GET` api accept these three parameters, for a pagination.
 
 ### Users
 

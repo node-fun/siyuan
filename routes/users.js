@@ -9,7 +9,7 @@ module.exports = function (app) {
 		User.find(match, offset, limit)
 			.then(function (users) {
 				users.each(function (user) {
-					user.attributes = user.omit();
+					user.attributes = user.omit(['regtime']);
 				});
 				res.api.send({
 					users: users
@@ -24,7 +24,7 @@ module.exports = function (app) {
 		User.search(match, offset, limit)
 			.then(function (users) {
 				users.each(function (user) {
-					user.attributes = user.omit(['password', 'regtime']);
+					user.attributes = user.omit(['regtime']);
 				});
 				res.api.send({
 					users: users

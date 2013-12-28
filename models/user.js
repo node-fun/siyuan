@@ -50,7 +50,7 @@ User = module.exports = syBookshelf.Model.extend({
 
 	find: function (match, offset, limit) {
 		var forUser = ['id', 'username', 'isonline'],
-			forProfile = ['nickname', 'name', 'gender'],
+			forProfile = ['email', 'name', 'gender'],
 			tbUser = User.prototype.tableName,
 			tbProfile = UserProfile.prototype.tableName;
 		return Users.forge()
@@ -75,7 +75,7 @@ User = module.exports = syBookshelf.Model.extend({
 
 	search: function (match, offset, limit) {
 		var forUser = ['username'],
-			forProfile = ['nickname', 'name'],
+			forProfile = ['nickname', 'name', 'university', 'major'],
 			tbUser = User.prototype.tableName,
 			tbProfile = UserProfile.prototype.tableName,
 			count = 0;

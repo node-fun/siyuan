@@ -8,7 +8,7 @@ var _ = require('underscore'),
 
 Admin = syBookshelf.Model.extend({
     tableName: 'admin',
-    fields: ['id', 'username', 'password', 'email', 'regdate', 'lastip', 'lastdate'],
+    fields: ['id', 'username', 'password', 'email', 'regtime', 'lastip', 'lasttime'],
     initialize: function () {
         return this.constructor.__super__.initialize.apply(this, arguments);
     },
@@ -37,7 +37,7 @@ Admin = syBookshelf.Model.extend({
             email: chance.email(),
             regtime: chance.date(),
             lastip: chance.ip(),
-            lastdate: chance.date()
+            lasttime: chance.date()
         });
     },
 

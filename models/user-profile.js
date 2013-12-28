@@ -42,8 +42,8 @@ UserProfile = module.exports = syBookshelf.Model.extend({
 			nickname: chance.name(),
 			name: chance.name(),
 			gender: _.sample(UserProfile.prototype.ranges.gender),
-			age: chance.age(),
-			grade: chance.year({min: 2000, max: 2013}),
+			age: _.random(20, 60),
+			grade: _.random(2013, 1973),
 			university: _.sample([null, chance.city() + ' University']),
 			major: chance.capitalize(chance.word())
 		});

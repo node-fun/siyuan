@@ -62,22 +62,22 @@ Routes in `siyuan`
 	Return a detailed user, including `profile`<br>
 	Accepts: `id`
 	```js
-	// GET /api/users/view?id=2
+	// GET /api/users/view?id=102
 	{
       "user": {
-        "id": 2,
-        "username": "jicut",
-        "regtime": 1374873405000,
-        "isonline": 0,
+        "id": 102,
+        "username": "vipfef",
+        "regtime": 1363320733000,
+        "isonline": 1,
         "profile": {
-          "email": "omvowfol@du.co.uk",
-          "nickname": "Lucia Clark",
-          "name": "Elijah Sullivan",
+          "email": "motarcip@mafin.gov",
+          "nickname": "Stephen Drake",
+          "name": "Carlos Gibson",
           "gender": "female",
-          "age": 35,
-          "grade": 2004,
-          "university": "Ebataduhe University",
-          "major": "Sigogil"
+          "age": 30,
+          "grade": 1999,
+          "university": "Icibira University",
+          "major": "Rokemem"
         }
       }
     }

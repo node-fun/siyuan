@@ -35,7 +35,7 @@ Routes in `siyuan`
 	List users with some conditions<br>
 	Accepts: `id`, `username`, `isonline`, `email`, `name`, `gender`
 	```js
-	// GET /api/users/find?isonline=1&gender=female&limit=2&page=3
+	// GET /api/users/find?isonline=1&gender=f&limit=2&page=3
 	{
       "users": [
         {

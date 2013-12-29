@@ -3,6 +3,7 @@ var _ = require('underscore'),
 	config = require('../config'),
 	isTest = config.isTest,
 	connConfig = config.db.connection,
+	dbName = connConfig.database,
 	User = require('../models/user'),
 	Users = User.Collection,
 	numUsers = 100,
@@ -10,7 +11,7 @@ var _ = require('underscore'),
 
 // create database for test
 execsql.config(connConfig)
-	.exec('use ' + connConfig.database + ';', function (err) {
+	.exec('create database ' + dbName + '; use ' + dbName + ';', function (err) {
 		if (err) throw err;
 		execsql.execFile(sqlFile, function (err) {
 			if (err) throw err;

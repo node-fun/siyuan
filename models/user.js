@@ -56,6 +56,22 @@ User = module.exports = syBookshelf.Model.extend({
 						return user;
 					});
 			});
+	},
+
+	login: function () {
+		this.attributes = this.pick(['username', 'password']);
+		return this.fetch()
+			.then(function (user) {
+				if (!user) return null;
+				return user.set({isonline: 1}).save()
+					.then(function () {
+						return user;
+					});
+			});
+	},
+
+	logout: function () {
+		return this.set({isonline: 0}).save();
 	}
 }, {
 	randomForge: function () {

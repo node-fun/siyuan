@@ -43,14 +43,52 @@ describe('users', function () {
 		});
 	});
 
-	var user = User.randomForge();
+	var authData = {
+			username: '_test_',
+			password: '123321'
+		},
+		jar = request.jar(), id;
 	it('registers', function (done) {
 		request.post(apiHost + '/reg', {
-			form: user.attributes
+			form: User.randomForge().set(authData).attributes
 		}, function (err, res, data) {
-			assert.ok(data['id']);
+			assert.ok(data['msg']);
+			assert.ok(id = data['id']);
 			done();
 		});
 	});
-	// TODO
+	it('logins', function (done) {
+		User.forge({id: id}).fetch()
+			.then(function (user) {
+				assert.equal(user.get('isonline'), 0);
+				request.post(apiHost + '/login', {
+					form: authData,
+					jar: jar
+				}, function (err, res, data) {
+					assert.ok(data['msg']);
+					assert.ok(data['id']);
+					User.forge({id: id}).fetch()
+						.then(function (user) {
+							assert.equal(user.get('isonline'), 1);
+							done();
+						});
+				});
+			});
+	});
+	it('logout', function (done) {
+		User.forge({id: id}).fetch()
+			.then(function (user) {
+				assert.equal(user.get('isonline'), 1);
+				request.post(apiHost + '/logout', {
+					jar: jar
+				}, function (err, res, data) {
+					assert.ok(data['msg']);
+					User.forge({id: id}).fetch()
+						.then(function (user) {
+							assert.equal(user.get('isonline'), 0);
+							done();
+						});
+				});
+			});
+	});
 });

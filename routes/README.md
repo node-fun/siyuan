@@ -99,6 +99,28 @@ Routes in `siyuan`
 	//   username, password, profile[email],
 	//   profile[nickname], profile[name] ...
 	{
+	  "msg": "register success",
       "id": 101
+    }
+	```
+- `POST /api/users/login`
+
+	Perform a user login
+	```js
+	// POST /api/users/login
+	//   username, password
+	{
+	  "msg": "login success",
+      "id": 101
+    }
+	```
+
+- `POST /api/users/logout`
+
+	Perform a user logout
+	```js
+	// POST /api/users/logout
+	{
+      "msg": "logout success"
     }
 	```

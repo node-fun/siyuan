@@ -44,7 +44,39 @@ module.exports = function (app) {
 		var userData = req.body;
 		User.forge(userData).register()
 			.then(function (user) {
-				res.api.send({id: user.id});
+				if (!user) {
+					res.api.sendErr(21300, 'register fail');
+					return;
+				}
+				res.api.send({
+					msg: 'register success',
+					id: user.id
+				});
+			});
+	});
+
+	app.post('/api/users/login', function (req, res) {
+		var userData = req.body;
+		User.forge(userData).login()
+			.then(function (user) {
+				if (!user) {
+					res.api.sendErr(21302, 'login fail');
+					return;
+				}
+				res.api.send({
+					msg: 'login success',
+					id: req.session.userid = user.id
+				});
+			});
+	});
+	app.post('/api/users/logout', function (req, res) {
+		User.forge({id: req.session.userid}).logout()
+			.then(function (user) {
+				if (!user) {
+					res.api.sendErr(21301, 'auth fail');
+					return;
+				}
+				res.api.send({msg: 'logout success'});
 			});
 	});
 }

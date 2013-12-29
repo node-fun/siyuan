@@ -11,7 +11,11 @@ var _ = require('underscore'),
 
 // create database for test
 execsql.config(connConfig)
-	.exec('create database ' + dbName + '; use ' + dbName + ';', function (err) {
+	.exec([
+	'DROP SCHEMA IF EXISTS ' + dbName,
+	'CREATE SCHEMA ' + dbName,
+	'USE ' + dbName
+].join('; '), function (err) {
 		if (err) throw err;
 		execsql.execFile(sqlFile, function (err) {
 			if (err) throw err;

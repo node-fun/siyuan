@@ -11,8 +11,6 @@
 		"chance": "0.5.3",
 		"mysql": "2.0.0-rc2",
 		"bookshelf": "0.6.1",
-		"jade": "0.35.0",
-		"less-middleware": "0.1.14",
 		"execsql": "0.0.2"
 	},
 	"devDependencies": {

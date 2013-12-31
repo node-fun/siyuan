@@ -1,14 +1,12 @@
 process.title = 'siyuan';
 
 var express = require('express'),
-	lessMiddleware = require('less-middleware'),
 	apiParser = require('./lib/api/parser'),
 	apiSender = require('./lib/api/sender'),
 	routes = require('./routes'),
 	config = require('./config'),
 	port = config.port,
 	secret = config.secret,
-	publicDir = config.publicDir,
 	app = express();
 
 // all environments
@@ -19,10 +17,6 @@ app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(express.cookieParser(secret));
 app.use(express.session());
-app.use(lessMiddleware({
-	src: publicDir
-}));
-app.use(express.static(publicDir));
 
 // development only
 if ('development' == app.get('env')) {

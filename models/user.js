@@ -140,14 +140,8 @@ User = module.exports = syBookshelf.Model.extend({
 
 	view: function (id) {
 		return User.forge({id: id})
-			.fetch({
-				withRelated: ['profile']
-			}).then(function (user) {
-				if (user) {
-					// append `profile`
-					user.attributes['profile'] = user.related('profile');
-				}
-				return user;
+			.fetch().then(function (user) {
+				return user.load(['profile']);
 			});
 	}
 });

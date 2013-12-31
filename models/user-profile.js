@@ -9,7 +9,6 @@ UserProfile = module.exports = syBookshelf.Model.extend({
 		'id', 'userid', 'email', 'nickname', 'name', 'gender',
 		'age', 'grade', 'university', 'major'
 	],
-
 	ranges: {
 		gender: [null, 'm', 'f']
 	},

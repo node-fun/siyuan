@@ -18,11 +18,6 @@ app.use(express.methodOverride());
 app.use(express.cookieParser(secret));
 app.use(express.session());
 
-// development only
-if ('development' == app.get('env')) {
-	app.use(express.errorHandler());
-}
-
 // api middlewares
 app.use('/api', apiParser);
 app.use('/api', apiSender);

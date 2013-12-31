@@ -75,7 +75,7 @@ describe('users', function () {
 				});
 			});
 	});
-	it('logout', function (done) {
+	it('logouts', function (done) {
 		User.forge({id: id}).fetch()
 			.then(function (user) {
 				assert.equal(user.get('isonline'), 1);

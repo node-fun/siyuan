@@ -39,14 +39,14 @@ syModel = syBookshelf.Model = syModel.extend({
 
 	fixRange: function (key, range) {
 		var attrs = this.attributes;
-		if (! _.contains(range, attrs[key])) {
+		if (!_.contains(range, attrs[key])) {
 			attrs[key] = range[0];
 		}
 	},
 
-	toJSON: function (options) {
-		// clone
-		var attrs = _.clone(this.attributes);
+	toJSON: function () {
+		var attrs = syModel.__super__
+			.toJSON.apply(this, arguments);
 		// for timestamp
 		attrs = this.forTimestamp(attrs);
 		return attrs;

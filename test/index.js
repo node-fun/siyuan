@@ -7,7 +7,7 @@ var cp = require('child_process'),
 describe('database for test', function () {
 	it('setups', function (done) {
 		// might take long for db creating
-		this.timeout(10000);
+		this.timeout(20000);
 		var cmd = 'node ' + rootDir + '/setup';
 		cp.exec(cmd, function (err) {
 			done(err);

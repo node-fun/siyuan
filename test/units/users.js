@@ -39,6 +39,8 @@ describe('users', function () {
 		}, function (err, res, data) {
 			var user = data['user'];
 			assert.equal(user.id, id);
+			assert.ok(user.profile);
+			assert.ok(user.friendship);
 			done();
 		});
 	});

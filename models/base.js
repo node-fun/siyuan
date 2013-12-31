@@ -9,13 +9,20 @@ var _ = require('underscore'),
 syModel = syBookshelf.Model = syModel.extend({
 	tableName: '',
 	fields: [],
+	omitInJSON: [],
 
 	initialize: function () {
+		var ret = syModel.__super__
+			.initialize.apply(this, arguments);
 		this.on('saving', this.saving, this);
+		return ret;
 	},
 
 	saving: function () {
+		var ret = syModel.__super__
+			.initialize.apply(this, arguments);
 		this.attributes = this.pick(this.fields);
+		return ret;
 	},
 
 	// Jayin needs Timestamp as Datetime
@@ -47,6 +54,8 @@ syModel = syBookshelf.Model = syModel.extend({
 	toJSON: function () {
 		var attrs = syModel.__super__
 			.toJSON.apply(this, arguments);
+		// omit
+		attrs = _.omit(attrs, this.omitInJSON);
 		// for timestamp
 		attrs = this.forTimestamp(attrs);
 		return attrs;
@@ -55,6 +64,6 @@ syModel = syBookshelf.Model = syModel.extend({
 
 });
 
-syCollection = syModel.Collection = syCollection.extend({
+syCollection = syModel.Set = syCollection.extend({
 	mode: syModel
 });

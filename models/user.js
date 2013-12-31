@@ -2,20 +2,22 @@ var _ = require('underscore'),
 	chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
 	UserProfile = require('./user-profile'),
-	fkProfile = 'userid',
+	UserFriendship = require('./user-friendship'),
+	fkUser = 'userid',
+	fkFriend = 'friendid',
 	User, Users;
 
 User = module.exports = syBookshelf.Model.extend({
 	tableName: 'users',
 	fields: ['id', 'username', 'password', 'regtime', 'isonline'],
+	omitInJSON: ['password'],
 
-	initialize: function () {
-		return User.__super__
-			.initialize.apply(this, arguments);
+	defaults: {
+		isonline: 0
 	},
 
 	saving: function () {
-		var ret = User.__super__
+		var ret = this.constructor.__super__
 			.saving.apply(this, arguments);
 		// append `regtime`
 		if (!this.has('regtime')) {
@@ -23,26 +25,20 @@ User = module.exports = syBookshelf.Model.extend({
 				'regtime': new Date()
 			});
 		}
-		// append `isonline`
-		if (!this.has('isonline')) {
-			this.set({
-				'isonline': 0
-			});
-		}
 		// fix lower case
 		this.fixLowerCase(['username']);
 		return ret;
 	},
 
-	toJSON: function () {
-		var attrs = User.__super__
-			.toJSON.apply(this, arguments);
-		attrs = _.omit(attrs, ['password']);
-		return attrs;
-	},
-
 	profile: function () {
-		return this.hasOne(UserProfile, fkProfile);
+		return this.hasOne(UserProfile, fkUser);
+	},
+	friendship: function () {
+		return this.hasMany(UserFriendship, fkUser);
+	},
+	friends: function () {
+		return this.hasMany(User, fkFriend)
+			.through(UserFriendship, 'id');
 	},
 
 	register: function () {
@@ -51,27 +47,25 @@ User = module.exports = syBookshelf.Model.extend({
 		this.attributes = this.pick(['username', 'password']);
 		return this.save()
 			.then(function (user) {
-				return profile.set(fkProfile, user.id)
+				return profile.set(fkUser, user.id)
 					.save().then(function () {
 						return user;
 					});
 			});
 	},
-
 	login: function () {
 		this.attributes = this.pick(['username', 'password']);
 		return this.fetch()
 			.then(function (user) {
 				if (!user) return null;
-				return user.set({isonline: 1}).save()
+				return user.set({ isonline: 1 }).save()
 					.then(function () {
 						return user;
 					});
 			});
 	},
-
 	logout: function () {
-		return this.set({isonline: 0}).save();
+		return this.set({ isonline: 0 }).save();
 	}
 }, {
 	randomForge: function () {
@@ -94,7 +88,7 @@ User = module.exports = syBookshelf.Model.extend({
 		return Users.forge()
 			.query(function (qb) {
 				// FIXME: so dirty, with lots of Coupling here
-				qb.join(tbProfile, tbProfile + '.' + fkProfile,
+				qb.join(tbProfile, tbProfile + '.' + fkUser,
 					'=', tbUser + '.id');
 				_.each(forUser, function (k) {
 					if (k in match) {
@@ -119,7 +113,7 @@ User = module.exports = syBookshelf.Model.extend({
 			count = 0;
 		return Users.forge()
 			.query(function (qb) {
-				qb.join(tbProfile, tbProfile + '.' + fkProfile,
+				qb.join(tbProfile, tbProfile + '.' + fkUser,
 					'=', tbUser + '.id');
 				_.each(forUser, function (k) {
 					if (k in match) {
@@ -140,12 +134,24 @@ User = module.exports = syBookshelf.Model.extend({
 
 	view: function (id) {
 		return User.forge({id: id})
-			.fetch().then(function (user) {
-				return user.load(['profile']);
+			.fetch()
+			.then(function (user) {
+				return user.load(['profile', 'friendship']);
+			}).then(function (user) {
+				// FIXME: temporary avatar picture
+				var profile = user.related('profile'),
+					gender = profile.get('gender');
+				return user.set({
+					avatar: [
+						'http://api.randomuser.me/0.2/portraits',
+						gender === 'f' ? 'women' : 'men',
+						_.random(0, 60) + '.jpg'
+					].join('/')
+				});
 			});
 	}
 });
 
-Users = User.Collection = syBookshelf.Collection.extend({
+Users = User.Set = syBookshelf.Collection.extend({
 	model: User
 });

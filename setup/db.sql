@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `user_profiles` (
   `major` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
   INDEX `id_idx` (`userid` ASC),
-  CONSTRAINT `id`
+  CONSTRAINT `fk_user_profiles_1`
     FOREIGN KEY (`userid`)
     REFERENCES `users` (`id`)
     ON DELETE NO ACTION
@@ -58,6 +58,32 @@ CREATE TABLE IF NOT EXISTS `admin` (
   `lastip` VARCHAR(45) NULL,
   `lasttime` DATETIME NULL,
   PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `user_friendship`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `user_friendship` ;
+
+CREATE TABLE IF NOT EXISTS `user_friendship` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `userid` INT NULL,
+  `friendid` INT NULL,
+  `markname` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_user_friendship_1_idx` (`userid` ASC),
+  INDEX `fk_user_friendship_2_idx` (`friendid` ASC),
+  CONSTRAINT `fk_user_friendship_1`
+    FOREIGN KEY (`userid`)
+    REFERENCES `users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_user_friendship_2`
+    FOREIGN KEY (`friendid`)
+    REFERENCES `users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 

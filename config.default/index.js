@@ -1,6 +1,5 @@
 var path = require('path'),
 	rootDir = path.resolve(__dirname, '..'),
-	viewDir = path.resolve(rootDir, 'views'),
 	publicDir = path.resolve(rootDir, 'public'),
 	imgDir = path.resolve(publicDir, 'img'),
 	cssDir = path.resolve(publicDir, 'css'),
@@ -11,7 +10,6 @@ module.exports = {
 	isTest: isTest,
 
 	rootDir: rootDir,
-	viewDir: viewDir,
 	publicDir: publicDir,
 	imgDir: imgDir,
 	cssDir: cssDir,

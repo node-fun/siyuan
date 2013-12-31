@@ -8,13 +8,10 @@ var express = require('express'),
 	config = require('./config'),
 	port = config.port,
 	secret = config.secret,
-	viewDir = config.viewDir,
 	publicDir = config.publicDir,
 	app = express();
 
 // all environments
-app.set('views', viewDir);
-app.set('view engine', 'jade');
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.json());

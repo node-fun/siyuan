@@ -51,7 +51,7 @@ describe('users', function () {
 		},
 		jar = request.jar(), id;
 	it('registers', function (done) {
-		request.post(apiHost + '/reg', {
+		request.post(apiHost + '/register', {
 			form: User.randomForge().set(authData).attributes
 		}, function (err, res, data) {
 			assert.ok(data['msg']);
@@ -64,8 +64,8 @@ describe('users', function () {
 			.then(function (user) {
 				assert.equal(user.get('isonline'), 0);
 				request.post(apiHost + '/login', {
-					form: authData,
-					jar: jar
+					jar: jar,
+					form: authData
 				}, function (err, res, data) {
 					assert.ok(data['msg']);
 					assert.ok(data['id']);
@@ -92,5 +92,20 @@ describe('users', function () {
 						});
 				});
 			});
+	});
+	it('updates', function (done) {
+		request.post(apiHost + '/update', {
+			jar: jar,
+			form: { password: 'another password' }
+		}, function (err, res, data) {
+			assert.ok(data['msg']);
+			request.post(apiHost + '/login', {
+				jar: jar,
+				form: authData
+			}, function (err, res, data) {
+				assert.ok(data['error']);
+				done();
+			});
+		});
 	});
 });

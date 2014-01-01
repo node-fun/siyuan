@@ -34,12 +34,12 @@ module.exports = function (app) {
 		User.view(id)
 			.then(function (user) {
 				res.api.send({ user: user });
-			}).catch(function(err){
+			}).catch(function (err) {
 				res.api.sendErr(err);
 			});
 	});
 
-	app.post('/api/users/reg', function (req, res) {
+	app.post('/api/users/register', function (req, res) {
 		var userData = req.body;
 		User.forge(userData).register()
 			.then(function (user) {
@@ -47,7 +47,7 @@ module.exports = function (app) {
 					msg: 'register success',
 					id: user.id
 				});
-			}).catch(function(err){
+			}).catch(function (err) {
 				res.api.sendErr(err);
 			});
 	});
@@ -60,7 +60,7 @@ module.exports = function (app) {
 					msg: 'login success',
 					id: req.session.userid = user.id
 				});
-			}).catch(function(err){
+			}).catch(function (err) {
 				res.api.sendErr(err);
 			});
 	});
@@ -68,8 +68,16 @@ module.exports = function (app) {
 		User.forge({ id: req.session.userid }).logout()
 			.then(function () {
 				res.api.send({ msg: 'logout success' });
-			}).catch(function(err){
+			}).catch(function (err) {
 				res.api.sendErr(err);
+			});
+	});
+
+	app.post('/api/users/update', function (req, res) {
+		User.forge({ id: req.session.userid })
+			.update(req.body)
+			.then(function () {
+				res.api.send({ msg: 'update success' });
 			});
 	});
 }

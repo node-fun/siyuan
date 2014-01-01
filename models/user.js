@@ -1,4 +1,5 @@
-var _ = require('underscore'),
+var crypto = require('crypto'),
+	_ = require('underscore'),
 	chance = new (require('chance'))(),
 	errors = require('../lib/errors'),
 	syBookshelf = require('./base'),
@@ -20,10 +21,18 @@ User = module.exports = syBookshelf.Model.extend({
 	saving: function () {
 		var ret = this.constructor.__super__
 			.saving.apply(this, arguments);
-		// append `regtime`
-		if (!this.has('regtime')) {
+		if (this.isNew()) {
+			// append `regtime`
+			if (!this.has('regtime')) {
+				this.set({
+					'regtime': new Date()
+				});
+			}
+		}
+		if (this.hasChanged('password')) {
+			// encrypt password before saving
 			this.set({
-				'regtime': new Date()
+				password: User.encrypt(this.get('password'))
 			});
 		}
 		// fix lower case
@@ -57,6 +66,8 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 	login: function () {
 		var loginData = this.pick(['username', 'password']);
+		// encrypt password before matching
+		loginData.password = User.encrypt(loginData.password);
 		return User.forge(loginData).fetch()
 			.then(function (user) {
 				if (!user) throw errors[21302];
@@ -68,8 +79,16 @@ User = module.exports = syBookshelf.Model.extend({
 			if (!user) throw errors[21301];
 			return user.set({ isonline: 0 }).save();
 		});
+	},
+
+	update: function (newData) {
+		return this.set(_.pick(newData, ['password'])).save();
 	}
 }, {
+	encrypt: function (str) {
+		return md5(str);
+	},
+
 	randomForge: function () {
 		return User
 			.forge({
@@ -158,3 +177,7 @@ User = module.exports = syBookshelf.Model.extend({
 Users = User.Set = syBookshelf.Collection.extend({
 	model: User
 });
+
+function md5(str) {
+	return crypto.createHash('md5').update(str).digest('hex');
+}

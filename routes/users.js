@@ -12,7 +12,7 @@ module.exports = function (app) {
 				users.each(function (user) {
 					user.attributes = user.omit(['regtime']);
 				});
-				res.api.send({users: users});
+				res.api.send({ users: users });
 			});
 	});
 
@@ -43,14 +43,12 @@ module.exports = function (app) {
 		var userData = req.body;
 		User.forge(userData).register()
 			.then(function (user) {
-				if (!user) {
-					res.api.sendErr(21300, 'register fail');
-					return;
-				}
 				res.api.send({
 					msg: 'register success',
 					id: user.id
 				});
+			}).catch(function(err){
+				res.api.sendErr(err);
 			});
 	});
 

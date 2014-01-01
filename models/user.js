@@ -49,7 +49,8 @@ User = module.exports = syBookshelf.Model.extend({
 		return User.forge(registerData).save()
 			.then(function (user) {
 				return profile.set(fkUser, user.id)
-					.save().then(function () {
+					.save().then(function (user) {
+						if (!user) throw errors[21300];
 						return user;
 					});
 			});

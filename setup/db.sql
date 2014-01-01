@@ -87,6 +87,28 @@ CREATE TABLE IF NOT EXISTS `user_friendship` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `groups`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `groups` ;
+
+CREATE TABLE IF NOT EXISTS `groups` (
+  `id` INT NOT NULL,
+  `ownerid` INT NULL,
+  `name` VARCHAR(45) NULL,
+  `description` VARCHAR(280) NULL,
+  `createtime` DATETIME NULL,
+  `avatar` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`),
+  INDEX `id_idx` (`ownerid` ASC),
+  CONSTRAINT `ownerid`
+    FOREIGN KEY (`ownerid`)
+    REFERENCES `users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

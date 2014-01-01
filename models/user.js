@@ -1,5 +1,6 @@
 var _ = require('underscore'),
 	chance = new (require('chance'))(),
+	errors = require('../lib/errors'),
 	syBookshelf = require('./base'),
 	UserProfile = require('./user-profile'),
 	UserFriendship = require('./user-friendship'),
@@ -43,29 +44,30 @@ User = module.exports = syBookshelf.Model.extend({
 
 	register: function () {
 		var profileData = this.get('profile'),
-			profile = UserProfile.forge(profileData);
-		this.attributes = this.pick(['username', 'password']);
-		return this.save()
+			profile = UserProfile.forge(profileData),
+			registerData = this.pick(['username', 'password']);
+		return User.forge(registerData).save()
 			.then(function (user) {
 				return profile.set(fkUser, user.id)
-					.save().then(function () {
+					.save().then(function (user) {
+						if (!user) throw errors[21300];
 						return user;
 					});
 			});
 	},
 	login: function () {
-		this.attributes = this.pick(['username', 'password']);
-		return this.fetch()
+		var loginData = this.pick(['username', 'password']);
+		return User.forge(loginData).fetch()
 			.then(function (user) {
-				if (!user) return null;
-				return user.set({ isonline: 1 }).save()
-					.then(function () {
-						return user;
-					});
+				if (!user) throw errors[21302];
+				return user.set({ isonline: 1 }).save();
 			});
 	},
 	logout: function () {
-		return this.set({ isonline: 0 }).save();
+		return this.fetch().then(function (user) {
+			if (!user) throw errors[21301];
+			return user.set({ isonline: 0 }).save();
+		});
 	}
 }, {
 	randomForge: function () {
@@ -73,7 +75,7 @@ User = module.exports = syBookshelf.Model.extend({
 			.forge({
 				username: chance.word(),
 				password: chance.string(),
-				regtime: chance.date({year: 2013}),
+				regtime: chance.date({ year: 2013 }),
 				isonline: chance.bool()
 			}).set({
 				profile: UserProfile.randomForge().attributes
@@ -133,9 +135,10 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 
 	view: function (id) {
-		return User.forge({id: id})
+		return User.forge({ id: id })
 			.fetch()
 			.then(function (user) {
+				if (!user) throw errors[20003];
 				return user.load(['profile', 'friendship']);
 			}).then(function (user) {
 				// FIXME: temporary avatar picture

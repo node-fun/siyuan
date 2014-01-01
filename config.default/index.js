@@ -1,10 +1,16 @@
 var path = require('path'),
 	rootDir = path.resolve(__dirname, '..'),
 	contentDir = path.resolve(rootDir, 'content'),
-	isTest = !!process.env['test'];
+	env = process.env['NODE_ENV'];
+
+// app environment
+if (!env) {
+	env = process.argv && process.argv[2] || 'production';
+	process.env['NODE_ENV'] = env;
+}
 
 module.exports = {
-	isTest: isTest,
+	env: env,
 
 	rootDir: rootDir,
 	contentDir: contentDir,
@@ -14,7 +20,8 @@ module.exports = {
 	db: {
 		client: 'mysql',
 		connection: {
-			database: 'siyuan' + (isTest ? '_test' : ''),
+			database: 'siyuan'
+				+ (env == 'production' ? '' : '_' + env),
 			host: 'localhost',
 			user: 'root',
 			password: 'root'

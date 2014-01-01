@@ -2,7 +2,7 @@ var _ = require('underscore'),
 	chance = new (require('chance'))(),
 	execsql = require('execsql'),
 	config = require('../config'),
-	isTest = config.isTest,
+	env = config.env,
 	connConfig = config.db.connection,
 	dbName = connConfig.database,
 	User = require('../models/user'),
@@ -23,7 +23,7 @@ execsql.config(connConfig)
 		execsql.execFile(sqlFile, function (err) {
 			if (err) throw err;
 			console.log('database setup');
-			if (isTest) {
+			if (env == 'test' || env == 'development') {
 				createUsers()
 					.then(attachFriends)
 					.then(done);

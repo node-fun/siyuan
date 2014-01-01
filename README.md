@@ -24,31 +24,20 @@ An SNS backend framework, with Node and MySQL
 	cp -r config.default config
 	```
 
-5. Setup the database for production
+5. Setup the database
 
 	```shell
-	node setup
+	node setup [environment]
 	```
-	
-6. Setup the database for test
 
-	```shell
-	test=1 node setup
-	```
+	Usually, environment could be either `development` or `production`(default).<br>
+	Testing records will be inserted with a development mode.
 
 ## Run
 
-- For production
-
-	```shell
-	node .
-	```
-
-- For test
-
-	```shell
-	test=1 node .
-	```
+```shell
+node . [environment]
+```
 
 ## Test
 

@@ -42,5 +42,6 @@ node . [environment]
 ## Test
 
 ```shell
+cp -r content content_test
 npm test
 ```

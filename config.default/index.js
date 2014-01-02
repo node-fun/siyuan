@@ -9,7 +9,8 @@ if (!env) {
 
 var path = require('path'),
 	rootDir = path.resolve(__dirname, '..'),
-	contentDir = path.resolve(rootDir, 'content');
+	contentDir = path.resolve(rootDir, 'content')
+		+ (env == 'test' ? '_test' : '');
 
 module.exports = {
 	env: env,
@@ -41,7 +42,7 @@ module.exports = {
 		},
 		{
 			username: 'admin3',
-			passwordd: '123'
+			password: '123'
 		}
 	]
 }

@@ -7,6 +7,8 @@ var _ = require('underscore'),
 	dbName = connConfig.database,
 	User = require('../models/user'),
 	Users = User.Set,
+	Admin = require('../models/admin'),
+	Admins = Admin.Set,
 	numUsers = 100,
 	sqlFile = __dirname + '/db.sql';
 
@@ -24,6 +26,7 @@ execsql.config(connConfig)
 			if (env == 'test' || env == 'development') {
 				createUsers()
 					.then(attachFriends)
+					.then(addAdmins)
 					.then(done);
 			} else {
 				done();
@@ -66,6 +69,23 @@ function createUsers() {
 				}).then(function () {
 					console.log('%d users created', numUsers);
 				});
+		});
+}
+
+function addAdmins() {
+	var admins = Admins.forge(),
+		adminArr = config.admins,
+		numAdmins = adminArr.length;
+	_.times(numAdmins, function (i) {
+		admins.add(Admin.forge({
+			username: adminArr[i].username,
+			password: adminArr[i].password
+		}));
+	});
+	return admins.invokeThen('register')
+		.then(function () {
+			console.log('%d admins added', numAdmins);
+			done();
 		});
 }
 

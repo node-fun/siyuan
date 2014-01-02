@@ -26,5 +26,15 @@ module.exports = {
 			user: 'root',
 			password: 'root'
 		}
-	}
+	},
+	admins: [{
+		username: 'admin1',
+		password: '123'
+	},{
+		username: 'admin2',
+		password: '123'
+	},{
+		username: 'admin3',
+		passwordd: '123'
+	}]
 }

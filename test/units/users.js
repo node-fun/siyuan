@@ -1,7 +1,10 @@
 var assert = require('assert'),
+	fs = require('fs'),
+	_ = require('underscore'),
 	request = require('request').defaults({ json: true }),
 	User = require('../../models/user'),
 	config = require('../../config'),
+	avatarDir = config.avatarDir,
 	apiHost = 'http://localhost:' + config.port + '/api/users';
 
 describe('users', function () {
@@ -49,67 +52,69 @@ describe('users', function () {
 			username: '_test_',
 			password: '123321'
 		},
+		user = User.randomForge().set(authData),
 		jar = request.jar(), id;
 	it('registers', function (done) {
 		request.post(apiHost + '/register', {
-			form: User.randomForge().set(authData).attributes
+			form: user.attributes
 		}, function (err, res, data) {
 			assert.ok(data['msg']);
 			assert.ok(id = data['id']);
 			done();
 		});
 	});
-	it('logins and logouts', function (done) {
+	it('logins', function (done) {
 		request.post(apiHost + '/login', {
 			jar: jar,
 			form: authData
 		}, function (err, res, data) {
-			assert.ok(data['msg']);
-			assert.ok(data['id']);
-			User.forge({ id: id }).fetch()
-				.then(function (user) {
-					assert.equal(user.get('isonline'), 1);
-					request.post(apiHost + '/logout', {
-						jar: jar
-					}, function (err, res, data) {
-						assert.ok(data['msg']);
-						User.forge({ id: id }).fetch()
-							.then(function (user) {
-								assert.equal(user.get('isonline'), 0);
-								done();
-							});
-					});
-				});
+			assert(data['msg']);
+			done();
 		});
 	});
 
-	describe('operates', function () {
-		beforeEach(function (done) {
+	var newPassword = 'another password';
+	it('resets password', function (done) {
+		request.post(apiHost + '/password/reset', {
+			jar: jar,
+			form: {
+				'password': authData['password'],
+				'new-password': newPassword
+			}
+		}, function (err, res, data) {
+			assert.ok(data['msg']);
 			request.post(apiHost + '/login', {
 				jar: jar,
 				form: authData
 			}, function (err, res, data) {
-				assert(data['msg']);
+				assert.ok(data['error']);
+				authData['password'] = newPassword;
 				done();
 			});
 		});
-		it('resets password', function (done) {
-			request.post(apiHost + '/password/reset', {
-				jar: jar,
-				form: {
-					'password': authData['password'],
-					'new-password': 'another password'
-				}
-			}, function (err, res, data) {
-				assert.ok(data['msg']);
-				request.post(apiHost + '/login', {
-					jar: jar,
-					form: authData
-				}, function (err, res, data) {
-					assert.ok(data['error']);
-					done();
-				});
-			});
+	});
+	it('updates profile', function (done) {
+		request.post(apiHost + '/profile/update', {
+			jar: jar,
+			form: { 'nickname': 'hahaha' }
+		}, function (err, res, data) {
+			assert.ok(data['msg']);
+			done();
 		});
+	});
+	it('updates avatar', function (done) {
+		var gender = user.get('profile')['gender'],
+			file = [
+				avatarDir, (gender == 'm' ? 'men' : 'women'),
+				_.random(0, 59) + '.jpg'
+			].join('/'), req, form;
+		req = request.post(apiHost + '/avatar/update', {
+			jar: jar
+		}, function(err, res, data){
+			assert.ok(data['msg']);
+			done();
+		});
+		form = req.form();
+		form.append('avatar', fs.createReadStream(file));
 	});
 });

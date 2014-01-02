@@ -1,14 +1,14 @@
-var path = require('path'),
-	rootDir = path.resolve(__dirname, '..'),
-	contentDir = path.resolve(rootDir, 'content'),
-	defaultEnv = 'production',
-	env = process.env['NODE_ENV'];
-
 // app environment
+var env = process.env['NODE_ENV'];
 if (!env) {
 	env = process.argv && process.argv[2] || defaultEnv;
 	process.env['NODE_ENV'] = env;
 }
+
+var path = require('path'),
+	rootDir = path.resolve(__dirname, '..'),
+	contentDir = path.resolve(rootDir, 'content'),
+	defaultEnv = 'production';
 
 module.exports = {
 	env: env,

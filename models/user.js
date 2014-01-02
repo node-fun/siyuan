@@ -1,10 +1,14 @@
-var _ = require('underscore'),
+var fs = require('fs'),
+	_ = require('underscore'),
 	chance = new (require('chance'))(),
+	Promise = require('bluebird'),
 	errors = require('../lib/errors'),
 	encrypt = require('../lib/encrypt'),
 	syBookshelf = require('./base'),
 	UserProfile = require('./user-profile'),
 	UserFriendship = require('./user-friendship'),
+	config = require('../config'),
+	avatarDir = config.avatarDir,
 	fkUser = 'userid',
 	fkFriend = 'friendid',
 	User, Users;
@@ -19,7 +23,7 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 
 	saving: function () {
-		var ret = this.constructor.__super__
+		var ret = User.__super__
 			.saving.apply(this, arguments);
 		if (this.isNew()) {
 			// append `regtime`
@@ -85,11 +89,30 @@ User = module.exports = syBookshelf.Model.extend({
 		var oldPassword = data['password'],
 			newPassword = data['new-password'],
 			self = this;
-		return this.fetch().then(function(){
-				if (encrypt(oldPassword) != self.get('password'))
-					throw errors[21301];
-				return self.set('password', newPassword).save();
+		return this.fetch().then(function () {
+			if (encrypt(oldPassword) != self.get('password'))
+				throw errors[21301];
+			return self.set('password', newPassword).save();
+		});
+	},
+	updateProfile: function (data) {
+		var self = this;
+		return this.profile().fetch().then(function (profile) {
+			return profile.set(data).save().then(function () {
+				return self;
 			});
+		});
+	},
+	updateAvatar: function (tmp, ext) {
+		ext = ext || 'jpg';
+		var file = avatarDir + '/' + this.id + '.' + ext,
+			self = this;
+		return new Promise(function (resolve, reject) {
+			fs.rename(tmp, file, function (err) {
+				if (err) return reject(errors[30001]);
+				resolve(self);
+			});
+		});
 	},
 
 	addFriend: function (userid, remark) {

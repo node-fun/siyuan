@@ -1,11 +1,12 @@
 var path = require('path'),
 	rootDir = path.resolve(__dirname, '..'),
 	contentDir = path.resolve(rootDir, 'content'),
+	defaultEnv = 'production',
 	env = process.env['NODE_ENV'];
 
 // app environment
 if (!env) {
-	env = process.argv && process.argv[2] || 'production';
+	env = process.argv && process.argv[2] || defaultEnv;
 	process.env['NODE_ENV'] = env;
 }
 
@@ -14,6 +15,7 @@ module.exports = {
 
 	rootDir: rootDir,
 	contentDir: contentDir,
+	avatarDir: path.resolve(contentDir, 'avatars'),
 
 	port: 8088,
 	secret: 'bad',
@@ -21,7 +23,7 @@ module.exports = {
 		client: 'mysql',
 		connection: {
 			database: 'siyuan'
-				+ (env == 'production' ? '' : '_' + env),
+				+ (env == defaultEnv ? '' : '_' + env),
 			host: 'localhost',
 			user: 'root',
 			password: 'root'

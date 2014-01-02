@@ -32,30 +32,27 @@ module.exports = function (app) {
 			});
 	});
 
-	app.get('api/admin/view', function (req, res) {
-		var id = req.api['id'];
+	app.get('/api/admin/view', function (req, res) {
+		var id = req.query['id'];
 		Admin.view(id)
 			.then(function (admin) {
-				if (!admin) {
-					res.api.sendErr(20003, 'admin not found');
-					return;
-				}
-				res.api.send({admin: admin});
+				res.api.send({ admin: admin });
+			}).catch(function (err) {
+				res.api.sendErr(err);
 			});
 	});
 
-	app.post('/api/admin/reg', function (req, res) {
+	app.post('/api/admin/register', function (req, res) {
 		var adminData = req.body;
 		Admin.forge(adminData).register()
 			.then(function (admin) {
-				if (!admin) {
-					res.api.sendErr(21300, 'register fail');
-					return;
-				}
 				res.api.send({
 					msg: 'register success',
 					id: admin.id
 				});
+			})
+			.catch(function (err) {
+				res.api.sendErr(err);
 			});
 	});
 
@@ -63,25 +60,23 @@ module.exports = function (app) {
 		var adminData = req.body;
 		Admin.forge(adminData).login()
 			.then(function (admin) {
-				if (!admin) {
-					res.api.sendErr(21302, 'login fail');
-					return;
-				}
 				res.api.send({
 					msg: 'login success',
-					id: req.session.userid = admin.id
+					id: req.session.adminid = admin.id
 				});
+			})
+			.catch(function (err) {
+				res.api.sendErr(err);
 			});
 	});
 
 	app.post('/api/admin/logout', function (req, res) {
-		Admin.forge({id: req.session.userid}).logout()
-			.then(function (admin) {
-				if (!admin) {
-					res.api.sendErr(21301, 'auth fail');
-					return;
-				}
-				res.api.send({msg: 'logout success'});
+		Admin.forge({ id: req.session.adminid }).logout()
+			.then(function () {
+				res.api.send({ msg: 'logout success' });
+			})
+			.catch(function (err) {
+				res.api.sendErr(err);
 			});
 	});
 }

@@ -1,8 +1,8 @@
 var assert = require('assert'),
-	request = require('request').defaults({json: true}),
+	request = require('request').defaults({ json: true }),
 	Admin = require('../../models/admin'),
 	config = require('../../config'),
-	apiHost = 'http://localhost:' + config.port + 'api/admin';
+	apiHost = 'http://localhost:' + config.port + '/api/admin';
 
 describe('admin', function () {
 	//there are 3 default admins
@@ -10,11 +10,13 @@ describe('admin', function () {
 		request(apiHost + '/find', {
 			qs: {
 				page: 1,
-				limit: 5
+				limit: 3
 			}
 		}, function (err, res, data) {
+			console.log(err);
+			//assert.ok(data);
 			var admins = data['admins'];
-			assert.equal(admins.length, 7);
+			assert.equal(admins.length, 3);
 			done();
 		});
 	});
@@ -44,11 +46,11 @@ describe('admin', function () {
 
 	var authData = {
 			username: 'admin1',
-			password: '123'
+			password: '123456'
 		},
 		jar = request.jar(), id;
 	it('registers', function (done) {
-		request.post(apiHost + '/reg', {
+		request.post(apiHost + '/register', {
 			form: Admin.randomForge().set(authData).attributes
 		}, function (err, res, data) {
 			assert.ok(data['msg']);
@@ -56,7 +58,7 @@ describe('admin', function () {
 			done();
 		});
 	});
-	it('logins', function (done) {
+	/*it('logins', function (done) {
 		Admin.forge({id: id}).fetch()
 			.then(function (admin) {
 				request.post(apiHost + '/login', {
@@ -79,5 +81,28 @@ describe('admin', function () {
 					done();
 				})
 			});
+	});*/
+
+	it('logins and logouts', function(done) {
+		request.post(apiHost + '/login', {
+			jar: jar,
+			form: authData
+		}, function(err, res, data) {
+			assert.ok(data['msg']);
+			assert.ok(data['id']);
+			Admin.forge({ id: id }).fetch()
+				.then(function(admin) {
+					request.post(apiHost + '/logout', {
+						jar: jar
+					}, function(err, res, data) {
+						assert.ok(data['msg']);
+						Admin.forge({ id: id }).fetch()
+							.then(function(admin) {
+								done();
+							});
+					});
+				});
+		});
 	});
+
 });

@@ -48,7 +48,7 @@ Admin = module.exports = syBookshelf.Model.extend({
 			});
 	},
 	logout: function () {
-
+		return this.fetch();
 	}
 }, {
 	randomForge: function () {

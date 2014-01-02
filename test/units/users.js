@@ -83,8 +83,8 @@ describe('users', function () {
 		});
 	});
 
-	describe('operates', function(){
-		beforeEach(function(done){
+	describe('operates', function () {
+		beforeEach(function (done) {
 			request.post(apiHost + '/login', {
 				jar: jar,
 				form: authData

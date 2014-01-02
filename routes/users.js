@@ -73,11 +73,13 @@ module.exports = function (app) {
 			});
 	});
 
-	app.post('/api/users/update', function (req, res) {
+	app.post('/api/users/password/reset', function (req, res) {
 		User.forge({ id: req.session.userid })
-			.update(req.body)
+			.resetPassword(req.body)
 			.then(function () {
-				res.api.send({ msg: 'update success' });
+				res.api.send({ msg: 'password reset' });
+			}).catch(function (err) {
+				res.api.sendErr(err);
 			});
 	});
 }

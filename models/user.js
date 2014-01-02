@@ -81,8 +81,15 @@ User = module.exports = syBookshelf.Model.extend({
 		});
 	},
 
-	update: function (newData) {
-		return this.set(_.pick(newData, ['password'])).save();
+	resetPassword: function (data) {
+		var oldPassword = data['password'],
+			newPassword = data['new-password'],
+			self = this;
+		return this.fetch().then(function(){
+				if (encrypt(oldPassword) != self.get('password'))
+					throw errors[21301];
+				return self.set('password', newPassword).save();
+			});
 	},
 
 	addFriend: function (userid, remark) {

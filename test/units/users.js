@@ -1,5 +1,5 @@
 var assert = require('assert'),
-	request = require('request').defaults({json: true}),
+	request = require('request').defaults({ json: true }),
 	User = require('../../models/user'),
 	config = require('../../config'),
 	apiHost = 'http://localhost:' + config.port + '/api/users';
@@ -59,52 +59,56 @@ describe('users', function () {
 			done();
 		});
 	});
-	it('logins', function (done) {
-		User.forge({id: id}).fetch()
-			.then(function (user) {
-				assert.equal(user.get('isonline'), 0);
-				request.post(apiHost + '/login', {
-					jar: jar,
-					form: authData
-				}, function (err, res, data) {
-					assert.ok(data['msg']);
-					assert.ok(data['id']);
-					User.forge({id: id}).fetch()
-						.then(function (user) {
-							assert.equal(user.get('isonline'), 1);
-							done();
-						});
-				});
-			});
-	});
-	it('logouts', function (done) {
-		User.forge({id: id}).fetch()
-			.then(function (user) {
-				assert.equal(user.get('isonline'), 1);
-				request.post(apiHost + '/logout', {
-					jar: jar
-				}, function (err, res, data) {
-					assert.ok(data['msg']);
-					User.forge({id: id}).fetch()
-						.then(function (user) {
-							assert.equal(user.get('isonline'), 0);
-							done();
-						});
-				});
-			});
-	});
-	it('updates', function (done) {
-		request.post(apiHost + '/update', {
+	it('logins and logouts', function (done) {
+		request.post(apiHost + '/login', {
 			jar: jar,
-			form: { password: 'another password' }
+			form: authData
 		}, function (err, res, data) {
 			assert.ok(data['msg']);
+			assert.ok(data['id']);
+			User.forge({ id: id }).fetch()
+				.then(function (user) {
+					assert.equal(user.get('isonline'), 1);
+					request.post(apiHost + '/logout', {
+						jar: jar
+					}, function (err, res, data) {
+						assert.ok(data['msg']);
+						User.forge({ id: id }).fetch()
+							.then(function (user) {
+								assert.equal(user.get('isonline'), 0);
+								done();
+							});
+					});
+				});
+		});
+	});
+
+	describe('operates', function(){
+		beforeEach(function(done){
 			request.post(apiHost + '/login', {
 				jar: jar,
 				form: authData
 			}, function (err, res, data) {
-				assert.ok(data['error']);
+				assert(data['msg']);
 				done();
+			});
+		});
+		it('resets password', function (done) {
+			request.post(apiHost + '/password/reset', {
+				jar: jar,
+				form: {
+					'password': authData['password'],
+					'new-password': 'another password'
+				}
+			}, function (err, res, data) {
+				assert.ok(data['msg']);
+				request.post(apiHost + '/login', {
+					jar: jar,
+					form: authData
+				}, function (err, res, data) {
+					assert.ok(data['error']);
+					done();
+				});
 			});
 		});
 	});

@@ -6,11 +6,9 @@ var _ = require('underscore'),
 	connConfig = config.db.connection,
 	dbName = connConfig.database,
 	User = require('../models/user'),
-	UserFriendship = require('../models/user-friendship'),
 	Users = User.Set,
 	numUsers = 100,
-	sqlFile = __dirname + '/db.sql',
-	users;
+	sqlFile = __dirname + '/db.sql';
 
 // create database for test
 execsql.config(connConfig)
@@ -34,34 +32,40 @@ execsql.config(connConfig)
 	});
 
 function attachFriends() {
-	return users
-		.mapThen(function (user) {
-			var p = f(user);
-			_.times(_.random(2, 5), function () {
-				p = p.then(f);
+	return Users.forge().fetch().then(function (users) {
+		return users
+			.mapThen(function (user) {
+				var numFriends = _.random(2, 5), p;
+				_.times(numFriends, function () {
+					if (!p) return p = f(user);
+					p = p.then(f);
+				});
+				return p;
+			}).then(function () {
+				console.log('friends attached');
 			});
-			return p;
-		}).then(function () {
-			console.log('friends attached');
-		});
+	});
 	function f(user) {
 		var friendid = _.random(1, numUsers);
-		return UserFriendship
-			.addFriendship(user.id, friendid, chance.word())
-			.then(function () {
-				return user;
-			});
+		return user.addFriend(friendid, chance.word());
 	}
 }
 
 function createUsers() {
-	users = Users.forge();
+	var users = Users.forge();
 	_.times(numUsers, function (i) {
 		users.add(User.randomForge());
 	});
 	return users.invokeThen('register')
 		.then(function () {
-			console.log('%d users created', numUsers);
+			return users
+				.mapThen(function (user) {
+					// login or not
+					if (chance.bool()) return;
+					return user.login();
+				}).then(function () {
+					console.log('%d users created', numUsers);
+				});
 		});
 }
 

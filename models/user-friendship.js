@@ -6,7 +6,7 @@ var _ = require('underscore'),
 UserFriendship = module.exports = syBookshelf.Model.extend({
 	tableName: 'user_friendship',
 	fields: [
-		'id', 'userid', 'friendid', 'markname'
+		'id', 'userid', 'friendid', 'remark'
 	],
 	omitInJSON: ['id', 'userid']
 }, {
@@ -17,23 +17,21 @@ UserFriendship = module.exports = syBookshelf.Model.extend({
 		}).fetch();
 	},
 
-	addFriendship: function (from, to, markname) {
+	addFriendship: function (from, to, remark) {
 		return this.getFriendship(from, to)
 			.then(function (friendship) {
 				if (friendship) {
-					return friendship.set({
-						markname: markname
-					}).save();
+					return friendship.set('remark', remark).save();
 				}
 				return UserFriendship.forge({
 					userid: from,
 					friendid: to,
-					markname: markname
+					remark: remark
 				}).save();
 			});
 	}
 });
 
-UserFriendshipSet = UserFriendship.Collection = syBookshelf.Collection.extend({
+UserFriendshipSet = UserFriendship.Set = syBookshelf.Collection.extend({
 	model: UserFriendship
 });

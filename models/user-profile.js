@@ -39,6 +39,6 @@ UserProfile = module.exports = syBookshelf.Model.extend({
 	}
 });
 
-UserProfiles = UserProfile.Collection = syBookshelf.Collection.extend({
+UserProfiles = UserProfile.Set = syBookshelf.Collection.extend({
 	model: UserProfile
 });

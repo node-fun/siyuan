@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS `user_friendship` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `userid` INT NULL,
   `friendid` INT NULL,
-  `markname` VARCHAR(45) NULL,
+  `remark` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_user_friendship_1_idx` (`userid` ASC),
   INDEX `fk_user_friendship_2_idx` (`friendid` ASC),

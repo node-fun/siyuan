@@ -1,5 +1,7 @@
 // app environment
-var env = process.env['NODE_ENV'];
+// usually -- production | development | test
+var defaultEnv = 'production',
+	env = process.env['NODE_ENV'];
 if (!env) {
 	env = process.argv && process.argv[2] || defaultEnv;
 	process.env['NODE_ENV'] = env;
@@ -7,8 +9,7 @@ if (!env) {
 
 var path = require('path'),
 	rootDir = path.resolve(__dirname, '..'),
-	contentDir = path.resolve(rootDir, 'content'),
-	defaultEnv = 'production';
+	contentDir = path.resolve(rootDir, 'content');
 
 module.exports = {
 	env: env,
@@ -23,20 +24,24 @@ module.exports = {
 		client: 'mysql',
 		connection: {
 			database: 'siyuan'
-				+ (env == defaultEnv ? '' : '_' + env),
+				+ (env == 'test' ? '_test' : ''),
 			host: 'localhost',
 			user: 'root',
 			password: 'root'
 		}
 	},
-	admins: [{
-		username: 'admin1',
-		password: '123'
-	},{
-		username: 'admin2',
-		password: '123'
-	},{
-		username: 'admin3',
-		passwordd: '123'
-	}]
+	admins: [
+		{
+			username: 'admin1',
+			password: '123'
+		},
+		{
+			username: 'admin2',
+			password: '123'
+		},
+		{
+			username: 'admin3',
+			passwordd: '123'
+		}
+	]
 }

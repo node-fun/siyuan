@@ -1,4 +1,4 @@
-process.env['NODE_ENV'] = true;
+process.env['NODE_ENV'] = 'test';
 
 var cp = require('child_process'),
 	config = require('../config'),

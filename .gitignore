@@ -27,3 +27,4 @@ node_modules
 # Custom #
 README.htm*
 /config
+/content/avatars/*.jpg

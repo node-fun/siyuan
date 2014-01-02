@@ -3,7 +3,7 @@
  */
 var _ = require('underscore'),
 	chance = new (require('chance'))(),
-	errors = require('../lib/erros'),
+	errors = require('../lib/errors'),
 	encrypt = require('../lib/encrypt'),
 	syBookshelf = require('./base'),
 	Admin, Admins;

@@ -72,14 +72,21 @@ User = module.exports = syBookshelf.Model.extend({
 			});
 	},
 	login: function () {
-		var loginData = this.pick(['username', 'password']);
-		// encrypt password before matching
-		loginData.password = encrypt(loginData.password);
-		return User.forge(loginData).fetch()
-			.then(function (user) {
-				if (!user) throw errors[21302];
-				return user.set('isonline', 1).save();
-			});
+		try {
+			var loginData = this.pick(['username', 'password']);
+			// encrypt password before matching
+			if (!loginData['username'] || !loginData['password']) {
+				throw errors[21302];
+			}
+			loginData['password'] = encrypt(loginData['password']);
+			return User.forge(loginData).fetch()
+				.then(function (user) {
+					if (!user) throw errors[21302];
+					return user.set('isonline', 1).save();
+				});
+		} catch (err) {
+			return Promise.rejected(err);
+		}
 	},
 	logout: function () {
 		return this.fetch().then(function (user) {
@@ -118,9 +125,23 @@ User = module.exports = syBookshelf.Model.extend({
 		});
 	},
 
-	addFriend: function (userid, remark) {
+	addFriend: function (friendid, remark) {
 		var self = this;
-		return UserFriendship.addFriendship(this.id, userid, remark)
+		return UserFriendship.addFriendship(this.id, friendid, remark)
+			.then(function () {
+				return self;
+			});
+	},
+	removeFriend: function (friendid) {
+		var self = this;
+		return UserFriendship.removeFriendship(this.id, friendid)
+			.then(function () {
+				return self;
+			});
+	},
+	remarkFriend: function (friendid, remark) {
+		var self = this;
+		return UserFriendship.remark(this.id, friendid, remark)
 			.then(function () {
 				return self;
 			});
@@ -173,6 +194,10 @@ User = module.exports = syBookshelf.Model.extend({
 			.query(function (qb) {
 				qb.join(tbProfile, tbProfile + '.' + fkUser,
 					'=', tbUser + '.id');
+				if ('isonline' in match) {
+					count++;
+					qb.where('isonline', match['isonline']);
+				}
 				_.each(forUser, function (k) {
 					if (k in match) {
 						count++;

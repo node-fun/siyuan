@@ -37,22 +37,25 @@ execsql.config(connConfig)
 	});
 
 function attachFriends() {
-	return Users.forge().fetch().then(function (users) {
-		return users
-			.mapThen(function (user) {
+	return Users.forge().fetch()
+		.then(function (users) {
+			return users.mapThen(function (user) {
 				var numFriends = _.random(2, 5), p;
 				_.times(numFriends, function () {
 					if (!p) return p = f(user);
 					p = p.then(f);
 				});
 				return p;
-			}).then(function () {
-				console.log('friends attached');
 			});
-	});
+		}).then(function () {
+			console.log('friends attached');
+		});
 	function f(user) {
 		var friendid = _.random(1, numUsers);
-		return user.addFriend(friendid, chance.word());
+		return user.addFriend(friendid, chance.word())
+			.catch(function () {
+				return user;
+			});
 	}
 }
 
@@ -63,20 +66,19 @@ function createUsers() {
 	});
 	return users.invokeThen('register')
 		.then(function () {
-			return users
-				.mapThen(function (user) {
-					// copy avatar
-					var gender = user.related('profile').get('gender'),
-						face = localface.get(gender);
-					fs.createReadStream(face).pipe(
-						fs.createWriteStream(User.getAvatar(user.id))
-					);
-					// login or not
-					if (chance.bool()) return;
-					return user.login();
-				}).then(function () {
-					console.log('%d users created', numUsers);
-				});
+			return users.mapThen(function (user) {
+				// copy avatar
+				var gender = user.related('profile').get('gender'),
+					face = localface.get(gender);
+				fs.createReadStream(face).pipe(
+					fs.createWriteStream(User.getAvatar(user.id))
+				);
+				// login or not
+				if (chance.bool()) return;
+				return user.login();
+			});
+		}).then(function () {
+			console.log('%d users created', numUsers);
 		});
 }
 
@@ -93,8 +95,7 @@ function addAdmins() {
 	return admins.invokeThen('register')
 		.then(function () {
 			console.log('%d admins added', numAdmins);
-			done();
-		});
+		}).then(done);
 }
 
 function done() {

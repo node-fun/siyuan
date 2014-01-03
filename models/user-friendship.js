@@ -1,5 +1,6 @@
 var _ = require('underscore'),
 	chance = new (require('chance'))(),
+	Promise = require('bluebird'),
 	syBookshelf = require('./base'),
 	UserFriendship, UserFriendshipSet;
 
@@ -21,13 +22,32 @@ UserFriendship = module.exports = syBookshelf.Model.extend({
 		return this.getFriendship(from, to)
 			.then(function (friendship) {
 				if (friendship) {
-					return friendship.set('remark', remark).save();
+					return Promise.rejected(errors[20506]);
 				}
 				return UserFriendship.forge({
 					userid: from,
 					friendid: to,
 					remark: remark
 				}).save();
+			});
+	},
+	removeFriendship: function (from, to) {
+		return this.getFriendship(from, to)
+			.then(function (friendship) {
+				if (!friendship) {
+					return Promise.rejected(errors[20522]);
+				}
+				return friendship.destroy();
+			});
+	},
+
+	remark: function (from, to, remark) {
+		return this.getFriendship(from, to)
+			.then(function (friendship) {
+				if (!friendship) {
+					return Promise.rejected(errors[20522]);
+				}
+				return friendship.set('remark', remark).save();
 			});
 	}
 });

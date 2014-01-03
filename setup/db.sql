@@ -108,6 +108,71 @@ CREATE TABLE IF NOT EXISTS `groups` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+-- -----------------------------------------------------
+-- Table `activity_status`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `activity_status` (
+  `id` TINYINT NOT NULL,
+  `name` VARCHAR(45) NULL COMMENT '活动状态。',
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `activities`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `activities` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `ownerid` INT NOT NULL,
+  `groupid` INT NULL,
+  `content` VARCHAR(45) NOT NULL,
+  `maxnum` SMALLINT NOT NULL COMMENT '最大人数',
+  `createtime` DATETIME NOT NULL,
+  `starttime` DATETIME NOT NULL COMMENT '开始时间',
+  `duration` INT NULL COMMENT '单位为分钟',
+  `statusid` TINYINT NULL COMMENT '状态：接受报名、截止报名、活动结束、活动取消等',
+  PRIMARY KEY (`id`),
+  INDEX `fk_activities_users1_idx` (`ownerid` ASC),
+  INDEX `fk_activities_groups1_idx` (`groupid` ASC),
+  INDEX `statusid_idx` (`statusid` ASC),
+  CONSTRAINT `fk_activities_users1`
+    FOREIGN KEY (`ownerid`)
+    REFERENCES `users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_activities_groups1`
+    FOREIGN KEY (`groupid`)
+    REFERENCES `groups` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `statusid`
+    FOREIGN KEY (`statusid`)
+    REFERENCES `activity_status` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `user_activities`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `user_activities` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `userid` INT NOT NULL,
+  `activityid` INT NOT NULL,
+  `iscanceled` VARCHAR(45) NULL COMMENT '取消报名',
+  PRIMARY KEY (`id`),
+  INDEX `fk_activity_reg_users1_idx` (`userid` ASC),
+  INDEX `fk_activity_reg_activities1_idx` (`activityid` ASC),
+  CONSTRAINT `fk_activity_reg_users1`
+    FOREIGN KEY (`userid`)
+    REFERENCES `users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_activity_reg_activities1`
+    FOREIGN KEY (`activityid`)
+    REFERENCES `activities` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

@@ -1,4 +1,5 @@
-process.env['NODE_ENV'] = 'test';
+var env = 'test';
+process.env['NODE_ENV'] = env;
 
 var cp = require('child_process'),
 	config = require('../config'),
@@ -8,7 +9,7 @@ describe('database for test', function () {
 	it('setups', function (done) {
 		// might take long for db creating
 		this.timeout(20000);
-		var cmd = 'node ' + rootDir + '/setup';
+		var cmd = 'node ' + rootDir + '/setup ' + env;
 		cp.exec(cmd, function (err) {
 			done(err);
 		});
@@ -17,7 +18,7 @@ describe('database for test', function () {
 
 describe('server', function () {
 	it('starts', function (done) {
-		var server = cp.spawn('node', [rootDir]);
+		var server = cp.spawn('node', [rootDir, env]);
 		process.on('exit', function () {
 			// kill server finally
 			server.kill();

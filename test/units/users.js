@@ -2,9 +2,9 @@ var assert = require('assert'),
 	fs = require('fs'),
 	_ = require('underscore'),
 	request = require('request').defaults({ json: true }),
+	localface = require('localface'),
 	User = require('../../models/user'),
 	config = require('../../config'),
-	avatarDir = config.avatarDir,
 	apiHost = 'http://localhost:' + config.port + '/api/users';
 
 describe('users', function () {
@@ -104,13 +104,11 @@ describe('users', function () {
 	});
 	it('updates avatar', function (done) {
 		var gender = user.get('profile')['gender'],
-			file = [
-				avatarDir, (gender == 'm' ? 'men' : 'women'),
-				_.random(0, 59) + '.jpg'
-			].join('/'), req, form;
+			file = localface.get(gender),
+			req, form;
 		req = request.post(apiHost + '/avatar/update', {
 			jar: jar
-		}, function(err, res, data){
+		}, function (err, res, data) {
 			assert.ok(data['msg']);
 			done();
 		});

@@ -9,7 +9,7 @@ if (!env) {
 
 var path = require('path'),
 	rootDir = path.resolve(__dirname, '..'),
-	contentDir = path.resolve(rootDir, 'content')
+	contentDir = path.join(rootDir, 'content')
 		+ (env == 'test' ? '_test' : '');
 
 module.exports = {
@@ -17,7 +17,7 @@ module.exports = {
 
 	rootDir: rootDir,
 	contentDir: contentDir,
-	avatarDir: path.resolve(contentDir, 'avatars'),
+	avatarDir: path.join(contentDir, 'avatars'),
 
 	port: 8088,
 	secret: 'bad',
@@ -45,4 +45,4 @@ module.exports = {
 			password: '123'
 		}
 	]
-}
+};

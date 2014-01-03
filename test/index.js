@@ -10,7 +10,9 @@ describe('database for test', function () {
 		// might take long for db creating
 		this.timeout(20000);
 		var cmd = 'node ' + rootDir + '/setup ' + env;
-		cp.exec(cmd, function (err) {
+		cp.exec(cmd, function (err, stdout, stderr) {
+			if (stdout) process.stdout.write(stdout);
+			if (stderr) process.stderr.write(stderr);
 			done(err);
 		});
 	});

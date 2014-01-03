@@ -1,4 +1,5 @@
 var fs = require('fs'),
+	path = require('path'),
 	_ = require('underscore'),
 	chance = new (require('chance'))(),
 	Promise = require('bluebird'),
@@ -58,13 +59,15 @@ User = module.exports = syBookshelf.Model.extend({
 	register: function () {
 		var profileData = this.get('profile'),
 			profile = UserProfile.forge(profileData),
-			registerData = this.pick(['username', 'password']);
+			registerData = this.pick(['username', 'password']),
+			self = this;
 		return User.forge(registerData).save()
 			.then(function (user) {
-				return profile.set(fkUser, user.id)
-					.save().then(function (user) {
+				return profile.set(fkUser, user.id).save()
+					.then(function (user) {
 						if (!user) throw errors[21300];
-						return user;
+						self.set('id', user.id);
+						return self.load(['profile']);
 					});
 			});
 	},
@@ -75,13 +78,13 @@ User = module.exports = syBookshelf.Model.extend({
 		return User.forge(loginData).fetch()
 			.then(function (user) {
 				if (!user) throw errors[21302];
-				return user.set({ isonline: 1 }).save();
+				return user.set('isonline', 1).save();
 			});
 	},
 	logout: function () {
 		return this.fetch().then(function (user) {
 			if (!user) throw errors[21301];
-			return user.set({ isonline: 0 }).save();
+			return user.set('isonline', 0).save();
 		});
 	},
 
@@ -97,15 +100,15 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 	updateProfile: function (data) {
 		var self = this;
-		return this.profile().fetch().then(function (profile) {
-			return profile.set(data).save().then(function () {
+		return this.profile().fetch()
+			.then(function (profile) {
+				return profile.set(data).save();
+			}).then(function () {
 				return self;
 			});
-		});
 	},
-	updateAvatar: function (tmp, ext) {
-		ext = ext || 'jpg';
-		var file = avatarDir + '/' + this.id + '.' + ext,
+	updateAvatar: function (tmp) {
+		var file = User.getAvatar(this.id),
 			self = this;
 		return new Promise(function (resolve, reject) {
 			fs.rename(tmp, file, function (err) {
@@ -193,18 +196,12 @@ User = module.exports = syBookshelf.Model.extend({
 			.then(function (user) {
 				if (!user) throw errors[20003];
 				return user.load(['profile', 'friendship']);
-			}).then(function (user) {
-				// FIXME: temporary avatar picture
-				var profile = user.related('profile'),
-					gender = profile.get('gender');
-				return user.set({
-					avatar: [
-						'http://api.randomuser.me/0.2/portraits',
-						gender === 'f' ? 'women' : 'men',
-						_.random(0, 60) + '.jpg'
-					].join('/')
-				});
 			});
+	},
+
+	getAvatar: function (id) {
+		var ext = 'jpg';
+		return path.join(avatarDir, id + '.' + ext);
 	}
 });
 

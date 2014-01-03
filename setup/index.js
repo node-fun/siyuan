@@ -1,5 +1,7 @@
-var _ = require('underscore'),
+var fs = require('fs'),
+	_ = require('underscore'),
 	chance = new (require('chance'))(),
+	localface = require('localface'),
 	execsql = require('execsql'),
 	config = require('../config'),
 	env = config.env,
@@ -56,13 +58,19 @@ function attachFriends() {
 
 function createUsers() {
 	var users = Users.forge();
-	_.times(numUsers, function (i) {
+	_.times(numUsers, function () {
 		users.add(User.randomForge());
 	});
 	return users.invokeThen('register')
 		.then(function () {
 			return users
 				.mapThen(function (user) {
+					// copy avatar
+					var gender = user.related('profile').get('gender'),
+						face = localface.get(gender);
+					fs.createReadStream(face).pipe(
+						fs.createWriteStream(User.getAvatar(user.id))
+					);
 					// login or not
 					if (chance.bool()) return;
 					return user.login();

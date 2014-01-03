@@ -23,6 +23,9 @@ app.use('/api', apiSender);
 // routes
 routes(app);
 
+// static
+app.use('/avatars', express.static(config.avatarDir));
+
 // listen on port
 app.listen(port, function () {
 	console.log('server started');

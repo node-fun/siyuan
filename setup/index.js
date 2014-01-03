@@ -71,7 +71,7 @@ function createUsers() {
 				var gender = user.related('profile').get('gender'),
 					face = localface.get(gender);
 				fs.createReadStream(face).pipe(
-					fs.createWriteStream(User.getAvatar(user.id))
+					fs.createWriteStream(User.getAvatarPath(user.id))
 				);
 				// login or not
 				if (chance.bool()) return;

@@ -12,6 +12,7 @@ var fs = require('fs'),
 	avatarDir = config.avatarDir,
 	fkUser = 'userid',
 	fkFriend = 'friendid',
+	avatarExt = 'jpg',
 	User, Users;
 
 User = module.exports = syBookshelf.Model.extend({
@@ -42,6 +43,16 @@ User = module.exports = syBookshelf.Model.extend({
 		}
 		// fix lower case
 		this.fixLowerCase(['username']);
+		return ret;
+	},
+
+	toJSON: function () {
+		var ret = User.__super__
+			.toJSON.apply(this, arguments);
+		// append avatar
+		if (this.id) {
+			ret['avatar'] = User.getAvatarURI(this.id);
+		}
 		return ret;
 	},
 
@@ -115,7 +126,7 @@ User = module.exports = syBookshelf.Model.extend({
 			});
 	},
 	updateAvatar: function (tmp) {
-		var file = User.getAvatar(this.id),
+		var file = User.getAvatarPath(this.id),
 			self = this;
 		return new Promise(function (resolve, reject) {
 			fs.rename(tmp, file, function (err) {
@@ -224,9 +235,14 @@ User = module.exports = syBookshelf.Model.extend({
 			});
 	},
 
-	getAvatar: function (id) {
-		var ext = 'jpg';
-		return path.join(avatarDir, id + '.' + ext);
+	getAvatarName: function (id) {
+		return id + '.' + avatarExt;
+	},
+	getAvatarPath: function (id) {
+		return path.join(avatarDir, User.getAvatarName(id));
+	},
+	getAvatarURI: function (id) {
+		return '/avatars/' + User.getAvatarName(id);
 	}
 });
 

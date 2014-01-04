@@ -1,29 +1,23 @@
 var _ = require('underscore'),
 	chance = new (require('chance'))(),
-	errors = require('../lib/errors'),
-	encrypt = require('../lib/encrypt'),
 	syBookshelf = require('./base'),
-	ActivitySattus, ActivitySattuses;
+	Activity, Activities;
 
-ActivitySattus = module.exports = syBookshelf.Model.extend({
-	tableName: 'activity_status',
-	fields: ['id', 'name'],
-	initialize: function () {
-		return ActivitySattus.__super__.initialize.apply(this, arguments);
-	},
-
+Activity = modele.exports = syBookshelf.Model.extend({
+	tableName: 'activities',
+	fields: [
+		'ownerid', 'groupid', 'content', 'maxnum', 'createtime',
+		'starttime', 'duration', 'statusid'
+	],
+	omitInJSON: ['ownerid', 'groupid']
 	saving: function() {
-		return ret = ActivitySattus.__super__.initialize.apply(this, arguments);
+		return Activity.__super__
+			.saving.apply(this, arguments);
 	}
 }, {
 	randomForge: function() {
-		return ActivitySattus.forge({
-			id: chance.integer(),
-			name: chance.name()
+		return Activity.forge({
+			'ownerid': ''
 		});
 	}
-});
-
-ActivitySattuses = ActivitySattus.Set = syBookshelf.Collection.extend({
-	model: ActivitySattus
 });

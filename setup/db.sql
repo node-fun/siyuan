@@ -112,7 +112,7 @@ ENGINE = InnoDB;
 -- Table `activity_status`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `activity_status` (
-  `id` TINYINT NOT NULL,
+  `id` TINYINT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL COMMENT '活动状态。',
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;

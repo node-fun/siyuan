@@ -1,10 +1,7 @@
 /**
  * Created by Cam on 14-1-2.
  */
-var _ = require('underscore'),
-	chance = new (require('chance'))(),
-	errors = require('../lib/errors'),
-	syBookshelf = require('./base'),
+var syBookshelf = require('./base'),
 	Group, Groups;
 
 Group = module.exports = syBookshelf.Model.extend({
@@ -23,9 +20,22 @@ Group = module.exports = syBookshelf.Model.extend({
 	findGroups: function(){
 
 	},
+	/**
+	 * 创建圈子
+	 * 创建的时候要在group_members里面加一条记录
+	 * @param ownerid
+	 * @param name
+	 * @param description
+	 * @param avatar
+	 * @returns {Session|*}
+	 */
 	createGroup: function(ownerid, name,description, avatar){
 		return Group.forge(ownerid, name, description, avatar)
 			.save();
+	},
+	//加入圈子
+	join: function(){
+
 	}
 });
 

@@ -1,6 +1,4 @@
-var _ = require('underscore'),
-	chance = new (require('chance'))(),
-	Promise = require('bluebird'),
+var Promise = require('bluebird'),
 	syBookshelf = require('./base'),
 	UserFriendship, UserFriendshipSet;
 

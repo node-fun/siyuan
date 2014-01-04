@@ -12,7 +12,6 @@ module.exports = function (app) {
 				res.api.send({ users: users });
 			});
 	});
-
 	app.get('/api/users/search', function (req, res) {
 		var offset = req.api.offset,
 			limit = req.api.limit,
@@ -22,7 +21,6 @@ module.exports = function (app) {
 				res.api.send({ users: users });
 			});
 	});
-
 	app.get('/api/users/view', function (req, res, next) {
 		var id = req.query['id'];
 		User.view(id)
@@ -41,7 +39,6 @@ module.exports = function (app) {
 				});
 			}).catch(next);
 	});
-
 	app.post('/api/users/login', function (req, res, next) {
 		var userData = req.body;
 		User.forge(userData).login()
@@ -75,20 +72,16 @@ module.exports = function (app) {
 			}).catch(next);
 	});
 	app.post('/api/users/avatar/update', function (req, res, next) {
-		try {
-			if (!req.files['avatar']) throw errors[20007];
-			var file = req.files['avatar'],
-				_3M = 3 * 1024 * 1024;
-			if (file['type'] != 'image/jpeg') throw errors[20005];
-			if (file['size'] > _3M) throw errors[20006];
-			User.forge({ id: req.session['userid'] })
-				.updateAvatar(file['path'])
-				.then(function () {
-					res.api.send({ msg: 'avatar updated' });
-				}).catch(next);
-		} catch (err) {
-			next(err);
-		}
+		if (!req.files['avatar']) return next(errors[20007]);
+		var file = req.files['avatar'],
+			_3M = 3 * 1024 * 1024;
+		if (file['type'] != 'image/jpeg') return next(errors[20005]);
+		if (file['size'] > _3M) return next(errors[20006]);
+		User.forge({ id: req.session['userid'] })
+			.updateAvatar(file['path'])
+			.then(function () {
+				res.api.send({ msg: 'avatar updated' });
+			}).catch(next);
 	});
 
 	app.post('/api/users/friends/add', function (req, res, next) {
@@ -117,4 +110,4 @@ module.exports = function (app) {
 				res.send({ msg: 'friend remarked' });
 			}).catch(next);
 	});
-}
+};

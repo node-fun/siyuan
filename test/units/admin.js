@@ -13,8 +13,6 @@ describe('admin', function () {
 				limit: 3
 			}
 		}, function (err, res, data) {
-			console.log(err);
-			//assert.ok(data);
 			var admins = data['admins'];
 			assert.equal(admins.length, 3);
 			done();

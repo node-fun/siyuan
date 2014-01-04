@@ -52,13 +52,13 @@ syModel = syBookshelf.Model = syModel.extend({
 	},
 
 	toJSON: function () {
-		var attrs = syModel.__super__
+		var ret = syModel.__super__
 			.toJSON.apply(this, arguments);
 		// omit
-		attrs = _.omit(attrs, this.omitInJSON);
+		ret = _.omit(ret, this.omitInJSON);
 		// for timestamp
-		attrs = this.forTimestamp(attrs);
-		return attrs;
+		ret = this.forTimestamp(ret);
+		return ret;
 	}
 }, {
 

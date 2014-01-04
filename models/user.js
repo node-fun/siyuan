@@ -12,6 +12,7 @@ var fs = require('fs'),
 	avatarDir = config.avatarDir,
 	fkUser = 'userid',
 	fkFriend = 'friendid',
+	avatarExt = 'jpg',
 	User, Users;
 
 User = module.exports = syBookshelf.Model.extend({
@@ -45,6 +46,16 @@ User = module.exports = syBookshelf.Model.extend({
 		return ret;
 	},
 
+	toJSON: function () {
+		var ret = User.__super__
+			.toJSON.apply(this, arguments);
+		// append avatar
+		if (this.id) {
+			ret['avatar'] = User.getAvatarURI(this.id);
+		}
+		return ret;
+	},
+
 	profile: function () {
 		return this.hasOne(UserProfile, fkUser);
 	},
@@ -72,14 +83,21 @@ User = module.exports = syBookshelf.Model.extend({
 			});
 	},
 	login: function () {
-		var loginData = this.pick(['username', 'password']);
-		// encrypt password before matching
-		loginData.password = encrypt(loginData.password);
-		return User.forge(loginData).fetch()
-			.then(function (user) {
-				if (!user) throw errors[21302];
-				return user.set('isonline', 1).save();
-			});
+		try {
+			var loginData = this.pick(['username', 'password']);
+			// encrypt password before matching
+			if (!loginData['username'] || !loginData['password']) {
+				throw errors[21302];
+			}
+			loginData['password'] = encrypt(loginData['password']);
+			return User.forge(loginData).fetch()
+				.then(function (user) {
+					if (!user) throw errors[21302];
+					return user.set('isonline', 1).save();
+				});
+		} catch (err) {
+			return Promise.rejected(err);
+		}
 	},
 	logout: function () {
 		return this.fetch().then(function (user) {
@@ -108,7 +126,7 @@ User = module.exports = syBookshelf.Model.extend({
 			});
 	},
 	updateAvatar: function (tmp) {
-		var file = User.getAvatar(this.id),
+		var file = User.getAvatarPath(this.id),
 			self = this;
 		return new Promise(function (resolve, reject) {
 			fs.rename(tmp, file, function (err) {
@@ -118,9 +136,23 @@ User = module.exports = syBookshelf.Model.extend({
 		});
 	},
 
-	addFriend: function (userid, remark) {
+	addFriend: function (friendid, remark) {
 		var self = this;
-		return UserFriendship.addFriendship(this.id, userid, remark)
+		return UserFriendship.addFriendship(this.id, friendid, remark)
+			.then(function () {
+				return self;
+			});
+	},
+	removeFriend: function (friendid) {
+		var self = this;
+		return UserFriendship.removeFriendship(this.id, friendid)
+			.then(function () {
+				return self;
+			});
+	},
+	remarkFriend: function (friendid, remark) {
+		var self = this;
+		return UserFriendship.remark(this.id, friendid, remark)
 			.then(function () {
 				return self;
 			});
@@ -173,6 +205,10 @@ User = module.exports = syBookshelf.Model.extend({
 			.query(function (qb) {
 				qb.join(tbProfile, tbProfile + '.' + fkUser,
 					'=', tbUser + '.id');
+				if ('isonline' in match) {
+					count++;
+					qb.where('isonline', match['isonline']);
+				}
 				_.each(forUser, function (k) {
 					if (k in match) {
 						count++;
@@ -199,9 +235,14 @@ User = module.exports = syBookshelf.Model.extend({
 			});
 	},
 
-	getAvatar: function (id) {
-		var ext = 'jpg';
-		return path.join(avatarDir, id + '.' + ext);
+	getAvatarName: function (id) {
+		return id + '.' + avatarExt;
+	},
+	getAvatarPath: function (id) {
+		return path.join(avatarDir, User.getAvatarName(id));
+	},
+	getAvatarURI: function (id) {
+		return '/avatars/' + User.getAvatarName(id);
 	}
 });
 

@@ -48,26 +48,27 @@ module.exports = function (app) {
 			.then(function (user) {
 				res.api.send({
 					msg: 'login success',
-					id: req.session.userid = user.id
+					id: req.session['userid'] = user.id
 				});
 			}).catch(next);
 	});
 	app.post('/api/users/logout', function (req, res, next) {
-		User.forge({ id: req.session.userid }).logout()
+		User.forge({ id: req.session['userid'] })
+			.logout()
 			.then(function () {
 				res.api.send({ msg: 'logout success' });
 			}).catch(next);
 	});
 
 	app.post('/api/users/password/reset', function (req, res, next) {
-		User.forge({ id: req.session.userid })
+		User.forge({ id: req.session['userid'] })
 			.resetPassword(req.body)
 			.then(function () {
 				res.api.send({ msg: 'password reset' });
 			}).catch(next);
 	});
 	app.post('/api/users/profile/update', function (req, res, next) {
-		User.forge({ id: req.session.userid })
+		User.forge({ id: req.session['userid'] })
 			.updateProfile(req.body)
 			.then(function () {
 				res.api.send({ msg: 'profile updated' });
@@ -80,7 +81,7 @@ module.exports = function (app) {
 				_3M = 3 * 1024 * 1024;
 			if (file['type'] != 'image/jpeg') throw errors[20005];
 			if (file['size'] > _3M) throw errors[20006];
-			User.forge({ id: req.session.userid })
+			User.forge({ id: req.session['userid'] })
 				.updateAvatar(file['path'])
 				.then(function () {
 					res.api.send({ msg: 'avatar updated' });
@@ -88,5 +89,32 @@ module.exports = function (app) {
 		} catch (err) {
 			next(err);
 		}
+	});
+
+	app.post('/api/users/friends/add', function (req, res, next) {
+		var friendid = req.body['id'],
+			remark = req.body['remark'];
+		User.forge({ id: req.session['userid'] })
+			.addFriend(friendid, remark)
+			.then(function () {
+				res.send({ msg: 'friend added' });
+			}).catch(next);
+	});
+	app.post('/api/users/friends/remove', function (req, res, next) {
+		var friendid = req.body['id'];
+		User.forge({ id: req.session['userid'] })
+			.removeFriend(friendid)
+			.then(function () {
+				res.send({ msg: 'friend removed' });
+			}).catch(next);
+	});
+	app.post('/api/users/friends/remark', function (req, res, next) {
+		var friendid = req.body['id'],
+			remark = req.body['remark'];
+		User.forge({ id: req.session['userid'] })
+			.remarkFriend(friendid, remark)
+			.then(function () {
+				res.send({ msg: 'friend remarked' });
+			}).catch(next);
 	});
 }

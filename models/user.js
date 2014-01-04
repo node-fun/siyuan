@@ -62,46 +62,50 @@ User = module.exports = syBookshelf.Model.extend({
 	friendship: function () {
 		return this.hasMany(UserFriendship, fkUser);
 	},
-	friends: function () {
+	/*friends: function () {
 		return this.hasMany(User, fkFriend)
 			.through(UserFriendship, 'id');
-	},
+	},*/
 
 	register: function () {
+		var keys = ['username', 'password'],
+			registerData = this.pick(keys);
+		if (!_.all(keys, function (key) {
+			return registerData[key];
+		})) {
+			return Promise.rejected(errors[10008]);
+		}
 		var profileData = this.get('profile'),
 			profile = UserProfile.forge(profileData),
-			registerData = this.pick(['username', 'password']),
 			self = this;
 		return User.forge(registerData).save()
 			.then(function (user) {
 				return profile.set(fkUser, user.id).save()
 					.then(function (user) {
-						if (!user) throw errors[21300];
+						if (!user) return Promise.rejected(errors[21300]);
 						self.set('id', user.id);
 						return self.load(['profile']);
 					});
 			});
 	},
 	login: function () {
-		try {
-			var loginData = this.pick(['username', 'password']);
-			// encrypt password before matching
-			if (!loginData['username'] || !loginData['password']) {
-				throw errors[21302];
-			}
-			loginData['password'] = encrypt(loginData['password']);
-			return User.forge(loginData).fetch()
-				.then(function (user) {
-					if (!user) throw errors[21302];
-					return user.set('isonline', 1).save();
-				});
-		} catch (err) {
-			return Promise.rejected(err);
+		var keys = ['username', 'password'],
+			loginData = this.pick(keys);
+		if (!_.all(keys, function (key) {
+			return loginData[key];
+		})) {
+			return Promise.rejected(errors[10008]);
 		}
+		// encrypt password before matching
+		loginData['password'] = encrypt(loginData['password']);
+		return User.forge(loginData).fetch()
+			.then(function (user) {
+				if (!user) return Promise.rejected(errors[21302]);
+				return user.set('isonline', 1).save();
+			});
 	},
 	logout: function () {
 		return this.fetch().then(function (user) {
-			if (!user) throw errors[21301];
 			return user.set('isonline', 0).save();
 		});
 	},
@@ -111,8 +115,9 @@ User = module.exports = syBookshelf.Model.extend({
 			newPassword = data['new-password'],
 			self = this;
 		return this.fetch().then(function () {
-			if (encrypt(oldPassword) != self.get('password'))
-				throw errors[21301];
+			if (encrypt(oldPassword) != self.get('password')) {
+				return Promise.rejected(errors[21301])
+			}
 			return self.set('password', newPassword).save();
 		});
 	},
@@ -230,7 +235,7 @@ User = module.exports = syBookshelf.Model.extend({
 		return User.forge({ id: id })
 			.fetch()
 			.then(function (user) {
-				if (!user) throw errors[20003];
+				if (!user) return Promise.rejected(errors[20003]);
 				return user.load(['profile', 'friendship']);
 			});
 	},

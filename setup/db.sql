@@ -109,6 +109,34 @@ CREATE TABLE IF NOT EXISTS `groups` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `group_members`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `group_members` ;
+
+CREATE TABLE IF NOT EXISTS `group_members` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `groupid` INT NULL,
+  `userid` INT NULL,
+  `isowner` TINYINT(1) NULL,
+  `isadmin` TINYINT(1) NULL,
+  `remark` VARCHAR(45) NULL COMMENT '备注名',
+  PRIMARY KEY (`id`),
+  INDEX `groupid_idx` (`groupid` ASC),
+  INDEX `userid_idx` (`userid` ASC),
+  CONSTRAINT `groupid`
+    FOREIGN KEY (`groupid`)
+    REFERENCES `groups` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `userid`
+    FOREIGN KEY (`userid`)
+    REFERENCES `users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

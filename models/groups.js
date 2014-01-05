@@ -6,18 +6,18 @@ var syBookshelf = require('./base'),
 
 Group = module.exports = syBookshelf.Model.extend({
 	tableName: 'groups',
-	fields:[
+	fields: [
 		'id', 'ownerid', 'name', 'description', 'createtime', 'avatar'
 	],
-	omitInJSON:['id'],
+	omitInJSON: ['id'],
 
-	saving: function(){
+	saving: function () {
 		var ret = Group.__super__
 			.saving.apply(this, arguments);
 		return ret;
 	}
-},{
-	findGroups: function(){
+}, {
+	findGroups: function () {
 
 	},
 	/**
@@ -29,12 +29,12 @@ Group = module.exports = syBookshelf.Model.extend({
 	 * @param avatar
 	 * @returns {Session|*}
 	 */
-	createGroup: function(ownerid, name,description, avatar){
+	createGroup: function (ownerid, name, description, avatar) {
 		return Group.forge(ownerid, name, description, avatar)
 			.save();
 	},
 	//加入圈子
-	join: function(){
+	join: function () {
 
 	}
 });

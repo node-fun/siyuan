@@ -3,6 +3,7 @@
  */
 var _ = require('underscore'),
 	chance = new (require('chance'))(),
+	Promise = require('bluebird'),
 	errors = require('../lib/errors'),
 	encrypt = require('../lib/encrypt'),
 	syBookshelf = require('./base'),
@@ -20,6 +21,7 @@ Admin = module.exports = syBookshelf.Model.extend({
 
 	saving: function () {
 		var ret = Admin.__super__.saving.apply(this, arguments);
+		if(this.isNew())
 		//append 'regtime'
 		if (!this.get('regtime')) {
 			this.set({
@@ -40,11 +42,18 @@ Admin = module.exports = syBookshelf.Model.extend({
 	},
 
 	login: function () {
-		this.attributes = this.pick(['username', 'password']);
-		return this.fetch()
+		var keys = ['username', 'password'],
+			loginData = this.pick(keys);
+		if(!_.all(keys, function(key) {
+			return loginData[key];
+		})) {
+			return Promise.rejected(errors[10008]);
+		}
+		//not encrypted yet
+		return Admin.forge(loginData).fetch()
 			.then(function (admin) {
-				if (!admin) return null;
-				return admin;
+				if (!admin) return Promise.rejected(errors[21302]);
+				return admin.set({'lastip': chance.ip()}).save();
 			});
 	},
 	logout: function () {
@@ -63,10 +72,10 @@ Admin = module.exports = syBookshelf.Model.extend({
 	},
 
 	find: function (match, offset, limit) {
-		var accepts = ['id', 'username'];
+		var forAdmin = ['id', 'username'];
 		return Admins.forge()
 			.query(function (qb) {
-				_.each(accepts, function (k) {
+				_.each(forAdmin, function (k) {
 					if (k in match) {
 						qb.where(k, '=', match[k]);
 					}

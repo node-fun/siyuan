@@ -44,7 +44,7 @@ describe('admin', function () {
 
 	var authData = {
 			username: 'admin1',
-			password: '123456'
+			password: '123'
 		},
 		jar = request.jar(), id;
 	it('registers', function (done) {

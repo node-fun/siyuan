@@ -63,9 +63,9 @@ User = module.exports = syBookshelf.Model.extend({
 		return this.hasMany(UserFriendship, fkUser);
 	},
 	/*friends: function () {
-		return this.hasMany(User, fkFriend)
-			.through(UserFriendship, 'id');
-	},*/
+	 return this.hasMany(User, fkFriend)
+	 .through(UserFriendship, 'id');
+	 },*/
 
 	register: function () {
 		var keys = ['username', 'password'],

@@ -6,10 +6,10 @@ var syBookshelf = require('./base'),
 
 GroupMembers = module.exports = syBookshelf.Model.extend({
 	tableName: 'group_members',
-	fields:[
-		'id','groupid','isowner','isadmin','remark'
+	fields: [
+		'id', 'groupid', 'isowner', 'isadmin', 'remark'
 	],
-	omitInJSON:['id']
+	omitInJSON: ['id']
 });
 
 GroupMembersSet = GroupMembers.Collection = syBookshelf.Collection.extend({

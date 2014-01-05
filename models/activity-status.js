@@ -7,7 +7,7 @@ var _ = require('underscore'),
 
 ActivitySattus = module.exports = syBookshelf.Model.extend({
 	tableName: 'activity_status',
-	fields: ['name'],
+	fields: ['id', 'name'],
 	initialize: function () {
 		return ActivitySattus.__super__.initialize.apply(this, arguments);
 	},

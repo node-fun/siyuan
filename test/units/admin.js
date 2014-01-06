@@ -47,39 +47,6 @@ describe('admin', function () {
 			password: '123'
 		},
 		jar = request.jar(), id;
-	it('registers', function (done) {
-		request.post(apiHost + '/register', {
-			form: Admin.randomForge().set(authData).attributes
-		}, function (err, res, data) {
-			assert.ok(data['msg']);
-			assert.ok(id = data['id']);
-			done();
-		});
-	});
-	/*it('logins', function (done) {
-		Admin.forge({id: id}).fetch()
-			.then(function (admin) {
-				request.post(apiHost + '/login', {
-					form: authData,
-					jar: jar
-				})
-			}, function (err, res, data) {
-				assert.ok(data['msg']);
-				assert.ok(data['id']);
-				done();
-			});
-	});
-	it('logout', function (done) {
-		Admin.forge({id: id}).fetch()
-			.then(function (admin) {
-				request.post(apiHost + 'logout', {
-					jar: jar
-				}, function (err, res, data) {
-					assert.ok(data['msg']);
-					done();
-				})
-			});
-	});*/
 
 	it('logins and logouts', function(done) {
 		request.post(apiHost + '/login', {
@@ -103,4 +70,24 @@ describe('admin', function () {
 		});
 	});
 
+	var newPassword = 'xo5506589';
+	it('resets password', function(done) {
+		request.post(apiHost + '/password/reset', {
+			jar: jar,
+			form: {
+				'password': authData['password'],
+				'new-password': newPassword
+			}
+		}, function(err, res, data) {
+			assert.ok(data['msg']);
+			request.post(apiHost + '/login', {
+				jar: jar,
+				form: authData
+			}, function(err, res, data) {
+				assert.ok(data['error']);
+				authData['password'] = newPassword;
+				done();
+			})
+		})
+	});
 });

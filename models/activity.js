@@ -1,6 +1,10 @@
 var _ = require('underscore'),
 	chance = new (require('chance'))(),
+	Promise = require('bluebird'),
 	syBookshelf = require('./base'),
+	fkOwner = 'ownerid',
+	fkGroup = 'groupid',
+	fkStatus = 'statusid',
 	Activity, Activities;
 
 Activity = module.exports = syBookshelf.Model.extend({
@@ -13,10 +17,20 @@ Activity = module.exports = syBookshelf.Model.extend({
 	saving: function () {
 		return Activity.__super__
 			.saving.apply(this, arguments);
-	}
+	}/*,
+	 addActivity: function('content', 'maxnum', 'createtime', 'starttime', 'duration', 'statusid') {
+	 var keys = ['content', 'maxnum', 'createtime', 'starttime', 'duration', 'statusid'],
+	 registerData = this.pick(keys);
+	 if(!_.all(keys, function(key) {
+	 return registerData[key];
+	 })) {
+	 return Promise.rejected(errors[10008]);
+	 }
+	 return Activity.forge(registerData).save();
+	 }*/    //copy user-friendship.js
 }, {
 	randomForge: function () {
-		var status = _.random(0, 3),
+		var status = _.random(1, 4),
 			maxnum = _.random(20, 40);
 		duration = _.random(3, 10);
 		return Activity.forge({
@@ -24,8 +38,8 @@ Activity = module.exports = syBookshelf.Model.extend({
 			'maxnum': maxnum,
 			'createtime': new Date(),
 			'starttime': chance.date({string: true}),
-			'duration': duration/*,
-			 'statusid': status*/
+			'duration': duration,
+			'statusid': status
 		});
 	},
 
@@ -34,7 +48,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 		return Activities.forge()
 			.query(function (qb) {
 				_.each(forActivity, function (qb) {
-					if(k in match) {
+					if (k in match) {
 						qb.where(k, '=', match[k]);
 					}
 				})

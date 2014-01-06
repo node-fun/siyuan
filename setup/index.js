@@ -11,6 +11,8 @@ var fs = require('fs'),
 	Users = User.Set,
 	Admin = require('../models/admin'),
 	Admins = Admin.Set,
+	ActivityStatus = require('../models/activity-status'),
+	ActivityStatuses = ActivityStatus.Set,
 	Activity = require('../models/activity'),
 	Activities = Activity.Set,
 	numUsers = 100,
@@ -32,6 +34,7 @@ execsql.config(connConfig)
 				createUsers()
 					.then(attachFriends)
 					.then(addAdmins)
+					.then(addActivityStatuses)
 					.then(addActivities)
 					.then(done);
 			} else {
@@ -99,6 +102,21 @@ function addAdmins() {
 	return admins.invokeThen('register')
 		.then(function () {
 			console.log('%d admins added', numAdmins);
+		});
+}
+
+function addActivityStatuses() {
+	var activityStatuses = ActivityStatuses.forge(),
+		activityStatusArr = config.activitiesStatus,
+		numActivityStatuses = activityStatusArr.length;
+	_.times(numActivityStatuses, function(i) {
+		activityStatuses.add(ActivityStatus.forge({
+			name: activityStatusArr[i]
+		}));
+	});
+	return activityStatuses.invokeThen('save')
+		.then(function() {
+			console.log('activity-status initialed');
 		});
 }
 

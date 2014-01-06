@@ -21,13 +21,13 @@ Admin = module.exports = syBookshelf.Model.extend({
 
 	saving: function () {
 		var ret = Admin.__super__.saving.apply(this, arguments);
-		if(this.isNew())
+		if (this.isNew())
 		//append 'regtime'
-		if (!this.get('regtime')) {
-			this.set({
-				'regtime': new Date()
-			});
-		}
+			if (!this.get('regtime')) {
+				this.set({
+					'regtime': new Date()
+				});
+			}
 		//fix lower case
 		this.fixLowerCase(['username']);
 		return ret;
@@ -44,7 +44,7 @@ Admin = module.exports = syBookshelf.Model.extend({
 	login: function () {
 		var keys = ['username', 'password'],
 			loginData = this.pick(keys);
-		if(!_.all(keys, function(key) {
+		if (!_.all(keys, function (key) {
 			return loginData[key];
 		})) {
 			return Promise.rejected(errors[10008]);
@@ -53,11 +53,27 @@ Admin = module.exports = syBookshelf.Model.extend({
 		return Admin.forge(loginData).fetch()
 			.then(function (admin) {
 				if (!admin) return Promise.rejected(errors[21302]);
-				return admin.set({'lastip': chance.ip()}).save();
+				return admin.set({
+					'lastip': chance.ip(),
+					'lasttime': new Date()
+				}).save();
 			});
 	},
 	logout: function () {
 		return this.fetch();
+	},
+
+	resetPassword: function (data) {
+		var oldPassword = data['password'],
+			newPassword = data['new-password'],
+			self = this;
+		return this.fetch().then(function () {
+			//not encrypted yet
+			if (oldPassword != self.get('password')) {
+				return Promise.rejected(errors[21301]);
+			}
+			return self.set('password', newPassword).save();
+		});
 	}
 }, {
 	randomForge: function () {

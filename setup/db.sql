@@ -122,7 +122,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `activities` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `ownerid` INT ,
+  `ownerid` INT NULL,
   `groupid` INT NULL,
   `content` VARCHAR(45) NOT NULL,
   `maxnum` SMALLINT NOT NULL COMMENT '最大人数',

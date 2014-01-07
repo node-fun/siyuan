@@ -112,13 +112,7 @@ function addAdmins() {
 function addGroups () {
 	var groups = Groups.forge();
 	_.times(numGroups, function(i) {
-		groups.add(Group.forge({
-			/*ownerid: User.forge().fetch().get('id'),
-			name: chance.name(),
-			description: chance.paragraph(),
-			createtime: new Date(),
-			avatar: 'www.baidu.com'*/
-		}));
+		groups.add(Group.forge());
 	});
 	return groups.invokeThen('save')
 		.then(function() {
@@ -144,7 +138,16 @@ function addActivityStatuses() {
 function addActivities() {
 	var activities = Activities.forge();
 	_.times(numActivities, function () {
-		activities.add(Activity.randomForge());
+		activities.add(Activity.randomForge().set({
+			'ownerid': chance.integer({
+				min: 5,
+				max: 50
+			}),
+			'groupid': chance.integer({
+				min: 1,
+				max: 20
+			})
+		}));
 	});
 	return activities.invokeThen('save')
 		.then(function () {

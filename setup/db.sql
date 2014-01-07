@@ -93,7 +93,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `groups` ;
 
 CREATE TABLE IF NOT EXISTS `groups` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `ownerid` INT NULL,
   `name` VARCHAR(45) NULL,
   `description` VARCHAR(280) NULL,

@@ -11,11 +11,14 @@ var fs = require('fs'),
 	Users = User.Set,
 	Admin = require('../models/admin'),
 	Admins = Admin.Set,
+	Group = require('../models/groups'),
+	Groups = Group.Set,
 	ActivityStatus = require('../models/activity-status'),
 	ActivityStatuses = ActivityStatus.Set,
 	Activity = require('../models/activity'),
 	Activities = Activity.Set,
 	numUsers = 100,
+	numGroups = 20,
 	numActivities = 20,
 	sqlFile = __dirname + '/db.sql';
 
@@ -34,6 +37,7 @@ execsql.config(connConfig)
 				createUsers()
 					.then(attachFriends)
 					.then(addAdmins)
+					.then(addGroups)
 					.then(addActivityStatuses)
 					.then(addActivities)
 					.then(done);
@@ -102,6 +106,23 @@ function addAdmins() {
 	return admins.invokeThen('register')
 		.then(function () {
 			console.log('%d admins added', numAdmins);
+		});
+}
+
+function addGroups () {
+	var groups = Groups.forge();
+	_.times(numGroups, function(i) {
+		groups.add(Group.forge({
+			/*ownerid: User.forge().fetch().get('id'),
+			name: chance.name(),
+			description: chance.paragraph(),
+			createtime: new Date(),
+			avatar: 'www.baidu.com'*/
+		}));
+	});
+	return groups.invokeThen('save')
+		.then(function() {
+			console.log('%d groups added',  numGroups);
 		});
 }
 

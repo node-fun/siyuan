@@ -1,15 +1,33 @@
 /**
  * Created by Cam on 14-1-4.
  */
-var syBookshelf = require('./base'),
+var chance = new (require('chance'))(),
+	syBookshelf = require('./base'),
 	GroupMembers, GroupMembersSet;
 
 GroupMembers = module.exports = syBookshelf.Model.extend({
 	tableName: 'group_members',
 	fields: [
-		'id', 'groupid', 'isowner', 'isadmin', 'remark'
+		'id', 'groupid', 'userid', 'isowner', 'isadmin', 'remark'
 	],
 	omitInJSON: ['id']
+}, {
+	randomForge: function () {
+		return GroupMembers
+			.forge({
+				'groupid': chance.integer({
+					min: 1,
+					max: 20
+				}),
+				'userid': chance.integer({
+					min: 25,
+					max: 50
+				}),
+				'isowner': chance.bool(),
+				'isadmin': chance.bool(),
+				'remark': chance.word()
+			});
+	}
 });
 
 GroupMembersSet = GroupMembers.Collection = syBookshelf.Collection.extend({

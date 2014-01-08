@@ -52,13 +52,13 @@ Activity = module.exports = syBookshelf.Model.extend({
 			.then(function () {
 				return activities.mapThen(function (activity) {
 					var status = ActivityStatus.forge({
-									'id': activity.get('statusid')
-								})
-								.fetch()
-								.then(function(activitystatus){
-									return activitystatus;
-								})
-								.get('name');
+						'id': activity.get('statusid')
+					})
+						.fetch()
+						.then(function (activitystatus) {
+							return activitystatus;
+						})
+						.get('name');
 
 					activity.set({
 						'status': status
@@ -66,9 +66,17 @@ Activity = module.exports = syBookshelf.Model.extend({
 					return activity;
 				})
 			});
-			//wait for help T^T
+		//wait for help T^T
+
+	},
+
+	joinIn: function (userid) {
+		//if the user belongs to the group
+		var groupid = this.get('groupid');
 
 	}
+
+
 });
 
 Activities = Activity.Set = syBookshelf.Collection.extend({

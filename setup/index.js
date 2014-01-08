@@ -17,9 +17,12 @@ var fs = require('fs'),
 	ActivityStatuses = ActivityStatus.Set,
 	Activity = require('../models/activity'),
 	Activities = Activity.Set,
+	GroupMembers = require('../models/group_members'),
+	GroupMembersSet = GroupMembers.Set,
 	numUsers = 100,
 	numGroups = 20,
 	numActivities = 20,
+	numGroupMembers = 100,
 	sqlFile = __dirname + '/db.sql';
 
 // create database for test
@@ -38,6 +41,7 @@ execsql.config(connConfig)
 					.then(attachFriends)
 					.then(addAdmins)
 					.then(addGroups)
+					.then(addGroupMembers)
 					.then(addActivityStatuses)
 					.then(addActivities)
 					.then(done);
@@ -117,6 +121,17 @@ function addGroups () {
 	return groups.invokeThen('save')
 		.then(function() {
 			console.log('%d groups added',  numGroups);
+		});
+}
+
+function addGroupMembers() {
+	var groupmembers = GroupMembersSet.forge();
+	_.times(numGroupMembers, function(i) {
+		groupmembers.add(GroupMembers.randomForge());
+	});
+	return groupmembers.invokeThen('save')
+		.then(function() {
+			console.log('%d groupmembers added', numGroupMembers);
 		});
 }
 

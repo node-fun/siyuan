@@ -62,10 +62,10 @@ User = module.exports = syBookshelf.Model.extend({
 	friendship: function () {
 		return this.hasMany(UserFriendship, fkUser);
 	},
-	/*friends: function () {
-	 return this.hasMany(User, fkFriend)
-	 .through(UserFriendship, 'id');
-	 },*/
+	friends: function () {
+		return this.hasMany(User, fkFriend)
+			.through(UserFriendship, 'id');
+	},
 
 	register: function () {
 		var keys = ['username', 'password'],
@@ -197,7 +197,9 @@ User = module.exports = syBookshelf.Model.extend({
 				});
 			}).query('offset', offset)
 			.query('limit', limit)
-			.fetch();
+			.fetch().then(function (users) {
+				return users.length ? users.load(['profile']) : users;
+			});
 	},
 
 	search: function (match, offset, limit) {
@@ -228,7 +230,9 @@ User = module.exports = syBookshelf.Model.extend({
 				});
 			}).query('offset', offset)
 			.query('limit', count ? limit : 0)
-			.fetch();
+			.fetch().then(function (users) {
+				return users.length ? users.load(['profile']) : users;
+			});
 	},
 
 	view: function (id) {

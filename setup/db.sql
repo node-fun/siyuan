@@ -93,7 +93,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `groups` ;
 
 CREATE TABLE IF NOT EXISTS `groups` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `ownerid` INT NULL,
   `name` VARCHAR(45) NULL,
   `description` VARCHAR(280) NULL,
@@ -122,7 +122,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `activities` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `ownerid` INT ,
+  `ownerid` INT NULL,
   `groupid` INT NULL,
   `content` VARCHAR(45) NOT NULL,
   `maxnum` SMALLINT NOT NULL COMMENT '最大人数',

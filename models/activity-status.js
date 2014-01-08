@@ -3,26 +3,26 @@ var _ = require('underscore'),
 	errors = require('../lib/errors'),
 	encrypt = require('../lib/encrypt'),
 	syBookshelf = require('./base'),
-	ActivitySattus, ActivitySattuses;
+	ActivityStatus, ActivityStatuses;
 
-ActivitySattus = module.exports = syBookshelf.Model.extend({
+ActivityStatus = module.exports = syBookshelf.Model.extend({
 	tableName: 'activity_status',
 	fields: ['id', 'name'],
 	initialize: function () {
-		return ActivitySattus.__super__.initialize.apply(this, arguments);
+		return ActivityStatus.__super__.initialize.apply(this, arguments);
 	},
 
 	saving: function () {
-		return ret = ActivitySattus.__super__.initialize.apply(this, arguments);
+		return ret = ActivityStatus.__super__.initialize.apply(this, arguments);
 	}
 }, {
 	randomForge: function () {
-		return ActivitySattus.forge({
+		return ActivityStatus.forge({
 			name: chance.name()
 		});
 	}
 });
 
-ActivitySattuses = ActivitySattus.Set = syBookshelf.Collection.extend({
-	model: ActivitySattus
+ActivityStatuses = ActivityStatus.Set = syBookshelf.Collection.extend({
+	model: ActivityStatus
 });

@@ -11,10 +11,18 @@ var fs = require('fs'),
 	Users = User.Set,
 	Admin = require('../models/admin'),
 	Admins = Admin.Set,
+	Group = require('../models/groups'),
+	Groups = Group.Set,
+	ActivityStatus = require('../models/activity-status'),
+	ActivityStatuses = ActivityStatus.Set,
 	Activity = require('../models/activity'),
 	Activities = Activity.Set,
+	GroupMembers = require('../models/group_members'),
+	GroupMembersSet = GroupMembers.Set,
 	numUsers = 100,
+	numGroups = 20,
 	numActivities = 20,
+	numGroupMembers = 100,
 	sqlFile = __dirname + '/db.sql';
 
 // create database for test
@@ -32,6 +40,9 @@ execsql.config(connConfig)
 				createUsers()
 					.then(attachFriends)
 					.then(addAdmins)
+					.then(addGroups)
+					.then(addGroupMembers)
+					.then(addActivityStatuses)
 					.then(addActivities)
 					.then(done);
 			} else {
@@ -102,10 +113,56 @@ function addAdmins() {
 		});
 }
 
+function addGroups () {
+	var groups = Groups.forge();
+	_.times(numGroups, function(i) {
+		groups.add(Group.forge());
+	});
+	return groups.invokeThen('save')
+		.then(function() {
+			console.log('%d groups added',  numGroups);
+		});
+}
+
+function addGroupMembers() {
+	var groupmembers = GroupMembersSet.forge();
+	_.times(numGroupMembers, function(i) {
+		groupmembers.add(GroupMembers.randomForge());
+	});
+	return groupmembers.invokeThen('save')
+		.then(function() {
+			console.log('%d groupmembers added', numGroupMembers);
+		});
+}
+
+function addActivityStatuses() {
+	var activityStatuses = ActivityStatuses.forge(),
+		activityStatusArr = config.activitiesStatus,
+		numActivityStatuses = activityStatusArr.length;
+	_.times(numActivityStatuses, function(i) {
+		activityStatuses.add(ActivityStatus.forge({
+			name: activityStatusArr[i]
+		}));
+	});
+	return activityStatuses.invokeThen('save')
+		.then(function() {
+			console.log('activity-status initialed');
+		});
+}
+
 function addActivities() {
 	var activities = Activities.forge();
 	_.times(numActivities, function () {
-		activities.add(Activity.randomForge());
+		activities.add(Activity.randomForge().set({
+			'ownerid': chance.integer({
+				min: 5,
+				max: 50
+			}),
+			'groupid': chance.integer({
+				min: 1,
+				max: 20
+			})
+		}));
 	});
 	return activities.invokeThen('save')
 		.then(function () {

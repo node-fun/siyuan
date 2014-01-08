@@ -56,8 +56,10 @@ Group = module.exports = syBookshelf.Model.extend({
 			});
 	},
 	//加入圈子
-	join: function () {
-
+	join: function (userid, groupid) {
+		return Group.forge({'userid': userid,
+			'groupid': groupid
+		}).save();
 	}
 });
 

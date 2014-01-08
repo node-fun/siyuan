@@ -3,7 +3,8 @@ var errors = require('../lib/errors');
 module.exports = function (app) {
 	require('./users')(app);
 	require('./admin')(app);
-	require('./activities')(app);
+	require('./groups')(app);
+
 	app.use('/api', function (err, req, res, next) {
 		// 4 parameters required to take in error
 		if (err['code']) return res.api.sendErr(err);

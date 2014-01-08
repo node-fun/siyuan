@@ -4,14 +4,14 @@
 var syBookshelf = require('./base'),
 	GroupMembers, GroupMembersSet;
 
-GroupMembers = module.exports = syBookshelf.Model.extend({
+Group = module.exports = syBookshelf.Model.extend({
 	tableName: 'group_members',
 	fields: [
-		'id', 'groupid', 'isowner', 'isadmin', 'remark'
+		'id', 'groupid', 'userid', 'isowner', 'isadmin', 'remark'
 	],
 	omitInJSON: ['id']
 });
 
-GroupMembersSet = GroupMembers.Collection = syBookshelf.Collection.extend({
-	model: GroupMembers
+GroupMembersSet = Group.Collection = syBookshelf.Collection.extend({
+	model: Group
 });

@@ -83,7 +83,7 @@ module.exports = function (app) {
 	app.post('/api/admin/password/reset', function (req, res, next) {
 		Admin.forge({id: req.session['adminid']})
 			.resetPassword((req.body))
-			.then(function() {
+			.then(function () {
 				res.api.send({ msg: 'password reset' });
 			}).catch(next);
 	});

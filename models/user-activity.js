@@ -3,7 +3,7 @@ var _ = require('underscore'),
 	syBookshelf = require('./base'),
 	UserActivity, UserActivities;
 
-UserActivity = models.exports = syBookshelf.Model.extend({
+UserActivity = module.exports = syBookshelf.Model.extend({
 	table: 'user_activities',
 	fields: [
 		'id', 'userid', 'activityid', 'iscanceled', 'isaccepted'
@@ -16,12 +16,16 @@ UserActivity = models.exports = syBookshelf.Model.extend({
 }, {
 	randomForge: function () {
 		return UserActivity.forge({
+			'userid': chance.integer({
+				min: 25,
+				max: 50
+			}),
 			iscanceled: chance.bool(),
 			isaccepted: chance.bool()
 		});
 	}
 });
 
-UserActivities = UserActivity.Set = syBooksheld.Collection.extend({
+UserActivities = UserActivity.Set = syBookshelf.Collection.extend({
 	model: UserActivity
 });

@@ -13,4 +13,13 @@ module.exports = function (app) {
 				});
 			});
 	});
+	app.get('/api/test/activities/find', function (req, res) {
+		Activity.forge({ 'id': 1 })
+			.fetch()
+			.then(function(activity) {
+				res.api.send({
+					activity: activity.usership()
+				});
+			});
+	});
 }

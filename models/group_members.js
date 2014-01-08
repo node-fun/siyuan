@@ -5,7 +5,7 @@ var chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
 	GroupMembers, GroupMembersSet;
 
-Group = module.exports = syBookshelf.Model.extend({
+GroupMembers = module.exports = syBookshelf.Model.extend({
 	tableName: 'group_members',
 	fields: [
 		'id', 'groupid', 'userid', 'isowner', 'isadmin', 'remark'
@@ -30,6 +30,6 @@ Group = module.exports = syBookshelf.Model.extend({
 	}
 });
 
-GroupMembersSet = Group.Collection = syBookshelf.Collection.extend({
-	model: Group
+GroupMembersSet = GroupMembers.Collection = syBookshelf.Collection.extend({
+	model: GroupMembers
 });

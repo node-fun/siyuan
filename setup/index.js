@@ -17,12 +17,15 @@ var fs = require('fs'),
 	ActivityStatuses = ActivityStatus.Set,
 	Activity = require('../models/activity'),
 	Activities = Activity.Set,
+	UserActivity = require('../models/user-activity'),
+	UserActivitys = UserActivity.Set,
 	GroupMembers = require('../models/group_members'),
 	GroupMembersSet = GroupMembers.Set,
 	numUsers = 100,
 	numGroups = 20,
 	numActivities = 20,
 	numGroupMembers = 100,
+	numUserActivitys = 100,
 	sqlFile = __dirname + '/db.sql';
 
 // create database for test
@@ -168,6 +171,14 @@ function addActivities() {
 		.then(function () {
 			console.log('%d activities added', numActivities);
 		});
+}
+
+function addUserActivitys() {
+	var useractivitys = UserActivitys.forge();
+		_.times(numUserActivitys, function(i) {
+			useractivitys.add(UserActivity.randomForge());
+		});
+	return useractivitys
 }
 
 function done() {

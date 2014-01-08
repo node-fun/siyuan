@@ -2,11 +2,16 @@ var _ = require('underscore'),
 	chance = new (require('chance'))(),
 	Promise = require('bluebird'),
 	syBookshelf = require('./base'),
+	User = require('./user'),
+	Users = User.Set,
 	ActivityStatus = require('./activity-status'),
 	ActivityStatuses = ActivityStatus.Set,
-	fkOwner = 'ownerid',
-	fkGroup = 'groupid',
-	fkStatus = 'statusid',
+	UserActivity = require('./user-activity'),
+	UserActivitys = UserActivity.Set,
+	GroupMembers = require('./group_members'),
+	GroupMembersSet = GroupMembers.Set,
+	fkActivity = 'activityid',
+	fkUser = 'userid',
 	Activity, Activities;
 
 Activity = module.exports = syBookshelf.Model.extend({
@@ -19,7 +24,18 @@ Activity = module.exports = syBookshelf.Model.extend({
 	saving: function () {
 		return Activity.__super__
 			.saving.apply(this, arguments);
+
+	},
+
+	usership: function() {
+		return this.hasMany(UserActivitys, fkActivity);
+	},
+
+	users: function() {
+		return this.hasMany(User, fkUser)
+			.through(UserActivitys, 'id');
 	}
+
 }, {
 	randomForge: function () {
 		var status = _.random(1, 4),
@@ -68,13 +84,19 @@ Activity = module.exports = syBookshelf.Model.extend({
 			});
 		//wait for help T^T
 
-	},
+	}
+
+	/*,
 
 	joinIn: function (userid) {
 		//if the user belongs to the group
-		var groupid = this.get('groupid');
+		var groupid = this.get('groupid'),
+		groupmembers = GroupMembersSet
+			.forge({ 'groupid': groupid })
+			.fetch();
 
 	}
+*/
 
 
 });

@@ -43,7 +43,7 @@ Group = module.exports = syBookshelf.Model.extend({
 						'isowner': 1
 					}).save(null, {transacting: t})
 						.then(t.commit, t.rollback);
-				}).catch(function(e){
+				}).catch(function (e) {
 					console.log('rollback');
 					t.rollback()
 				});

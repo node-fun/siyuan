@@ -64,7 +64,7 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 	friends: function () {
 		return this.hasMany(User, fkFriend)
-			.through(UserFriendship, 'id');
+			.through(UserFriendship, 'id', fkUser);
 	},
 
 	register: function () {
@@ -240,7 +240,7 @@ User = module.exports = syBookshelf.Model.extend({
 			.fetch()
 			.then(function (user) {
 				if (!user) return Promise.rejected(errors[20003]);
-				return user.load(['profile', 'friendship']);
+				return user.load(['profile', 'friends', 'friendship']);
 			});
 	},
 

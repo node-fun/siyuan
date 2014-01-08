@@ -14,11 +14,14 @@ module.exports = function (app) {
 			});
 	});
 	app.get('/api/test/activities/find', function (req, res) {
-		Activity.forge({ 'id': 1 })
+		Activity.forge({ 'id': 10 })
 			.fetch()
 			.then(function(activity) {
+				return activity.load(['usership', 'status'])
+
+			}).then(function(activity){
 				res.api.send({
-					activity: activity.usership()
+					activity: activity
 				});
 			});
 	});

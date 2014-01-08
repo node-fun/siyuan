@@ -12,13 +12,14 @@ var _ = require('underscore'),
 	GroupMembersSet = GroupMembers.Set,
 	fkActivity = 'activityid',
 	fkUser = 'userid',
+	fkStatus = 'statusid',
 	Activity, Activities;
 
 Activity = module.exports = syBookshelf.Model.extend({
 	tableName: 'activities',
 	fields: [
 		'id', 'ownerid', 'groupid', 'content', 'maxnum', 'createtime',
-		'starttime', 'duration', 'statusid'
+		'starttime', 'duration', 'statusid', 'avatar'
 	],
 	//omitInJSON: ['ownerid', 'groupid'],
 	saving: function () {
@@ -26,14 +27,12 @@ Activity = module.exports = syBookshelf.Model.extend({
 			.saving.apply(this, arguments);
 
 	},
-
-	usership: function() {
+	usership: function () {
 		return this.hasMany(UserActivitys, fkActivity);
 	},
 
-	users: function() {
-		return this.hasMany(User, fkUser)
-			.through(UserActivitys, 'id');
+	status: function () {
+		return this.belongsTo(ActivityStatus, fkStatus);
 	}
 
 }, {
@@ -47,7 +46,8 @@ Activity = module.exports = syBookshelf.Model.extend({
 			'createtime': new Date(),
 			'starttime': chance.date({string: true}),
 			'duration': duration,
-			'statusid': status
+			'statusid': status,
+			'avatar': chance.word()
 		});
 	},
 
@@ -64,41 +64,8 @@ Activity = module.exports = syBookshelf.Model.extend({
 			})
 			.query('offset', offset)
 			.query('limit', limit)
-			.fetch()
-			.then(function () {
-				return activities.mapThen(function (activity) {
-					var status = ActivityStatus.forge({
-						'id': activity.get('statusid')
-					})
-						.fetch()
-						.then(function (activitystatus) {
-							return activitystatus;
-						})
-						.get('name');
-
-					activity.set({
-						'status': status
-					});
-					return activity;
-				})
-			});
-		//wait for help T^T
-
-	}
-
-	/*,
-
-	joinIn: function (userid) {
-		//if the user belongs to the group
-		var groupid = this.get('groupid'),
-		groupmembers = GroupMembersSet
-			.forge({ 'groupid': groupid })
 			.fetch();
-
 	}
-*/
-
-
 });
 
 Activities = Activity.Set = syBookshelf.Collection.extend({

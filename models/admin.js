@@ -32,15 +32,6 @@ Admin = module.exports = syBookshelf.Model.extend({
 		this.fixLowerCase(['username']);
 		return ret;
 	},
-
-	register: function () {
-		this.attributes = this.pick(['username', 'password']);
-		return this.save()
-			.then(function (admin) {
-				return admin;
-			});
-	},
-
 	login: function () {
 		var keys = ['username', 'password'],
 			loginData = this.pick(keys);

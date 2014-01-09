@@ -9,13 +9,8 @@ module.exports = function (app) {
 		var offset = req.api.offset,
 			limit = req.api.limit,
 			match = req.query;
-<<<<<<< HEAD
-		Groups.forge().query(function(qb){
-			for(var k in match){
-=======
 		Groups.forge().query(function (qb) {
 			for (var k in match) {
->>>>>>> ce0aea9d5865247ae003e6a8d83da9a2358dda10
 				qb.where(k, match[k]);
 			}
 		}).query('offset', offset)

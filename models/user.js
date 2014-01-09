@@ -27,6 +27,8 @@ User = module.exports = syBookshelf.Model.extend({
 	saving: function () {
 		var ret = User.__super__
 			.saving.apply(this, arguments);
+		// fix lower case
+		this.fixLowerCase(['username']);
 		if (this.isNew()) {
 			// append `regtime`
 			if (!this.has('regtime')) {
@@ -36,13 +38,9 @@ User = module.exports = syBookshelf.Model.extend({
 			}
 		}
 		if (this.hasChanged('password')) {
-			// encrypt password before saving
-			this.set({
-				password: encrypt(this.get('password'))
-			});
+			// encrypt password
+			this.set('password', encrypt(this.get('password')));
 		}
-		// fix lower case
-		this.fixLowerCase(['username']);
 		return ret;
 	},
 
@@ -69,26 +67,30 @@ User = module.exports = syBookshelf.Model.extend({
 
 	register: function () {
 		var keys = ['username', 'password'],
-			registerData = this.pick(keys);
+			registerData = this.pick(keys),
+			self = this;
 		if (!_.all(keys, function (key) {
 			return registerData[key];
 		})) {
 			return Promise.rejected(errors[10008]);
 		}
-		var profileData = this.get('profile'),
-			profile = UserProfile.forge(profileData),
-			self = this;
-		return User.forge(registerData).save()
+		return User.forge(_.pick(registerData, 'username')).fetch()
 			.then(function (user) {
-				return profile.set(fkUser, user.id).save()
+				if (user) return Promise.rejected(errors[30010]);
+				var profileData = self.get('profile'),
+					profile = UserProfile.forge(profileData);
+				return User.forge(registerData).save()
 					.then(function (user) {
-						if (!user) return Promise.rejected(errors[21300]);
-						self.set('id', user.id);
-						return self.load(['profile']);
+						return profile.set(fkUser, user.id).save()
+							.then(function (user) {
+								if (!user) return Promise.rejected(errors[21300]);
+								self.set('id', user.id);
+								return self.load(['profile']);
+							});
 					});
 			});
 	},
-	login: function () {
+	login: function (encrypted) {
 		var keys = ['username', 'password'],
 			loginData = this.pick(keys);
 		if (!_.all(keys, function (key) {
@@ -96,8 +98,10 @@ User = module.exports = syBookshelf.Model.extend({
 		})) {
 			return Promise.rejected(errors[10008]);
 		}
-		// encrypt password before matching
-		loginData['password'] = encrypt(loginData['password']);
+		if (!encrypted) {
+			// encrypt password
+			loginData['password'] = encrypt(loginData['password']);
+		}
 		return User.forge(loginData).fetch()
 			.then(function (user) {
 				if (!user) return Promise.rejected(errors[21302]);
@@ -166,13 +170,12 @@ User = module.exports = syBookshelf.Model.extend({
 	randomForge: function () {
 		return User
 			.forge({
-				username: chance.word(),
+				//username: 'same username',
+				username: chance.word() + '_' + _.random(0, 99),
 				password: chance.string(),
 				regtime: chance.date({ year: 2013 }),
 				isonline: chance.bool()
-			}).set({
-				profile: UserProfile.randomForge().attributes
-			});
+			}).set('profile', UserProfile.randomForge().attributes);
 	},
 
 	find: function (match, offset, limit) {
@@ -240,7 +243,7 @@ User = module.exports = syBookshelf.Model.extend({
 			.fetch()
 			.then(function (user) {
 				if (!user) return Promise.rejected(errors[20003]);
-				return user.load(['profile', 'friends', 'friendship']);
+				return user.load(['profile', 'friendship']);
 			});
 	},
 

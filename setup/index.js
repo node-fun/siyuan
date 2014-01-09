@@ -39,7 +39,7 @@ execsql.config(connConfig)
 		execsql.execFile(sqlFile, function (err) {
 			if (err) throw err;
 			console.log('database setup');
-			if (env == 'test' || env == 'development') {
+			if (env != 'production') {
 				createUsers()
 					.then(attachFriends)
 					.then(addAdmins)
@@ -55,6 +55,32 @@ execsql.config(connConfig)
 		});
 	});
 
+function createUsers() {
+	var users = Users.forge();
+	_.times(numUsers, function () {
+		users.add(User.randomForge());
+	});
+	return users
+		.mapThen(function (user) {
+			return user.register().catch(function(){
+				users.remove(user);
+			});
+		}).then(function () {
+			return users.mapThen(function (user) {
+				// copy avatar
+				var gender = user.get('profile')['gender'],
+					face = localface.get(gender);
+				fs.createReadStream(face).pipe(
+					fs.createWriteStream(User.getAvatarPath(user.id))
+				);
+				// login or not
+				if (chance.bool()) return;
+				return user.login();
+			});
+		}).then(function () {
+			console.log('%d users created', numUsers);
+		}).catch(done);
+}
 function attachFriends() {
 	return Users.forge().fetch()
 		.then(function (users) {
@@ -78,29 +104,6 @@ function attachFriends() {
 	}
 }
 
-function createUsers() {
-	var users = Users.forge();
-	_.times(numUsers, function () {
-		users.add(User.randomForge());
-	});
-	return users.invokeThen('register')
-		.then(function () {
-			return users.mapThen(function (user) {
-				// copy avatar
-				var gender = user.related('profile').get('gender'),
-					face = localface.get(gender);
-				fs.createReadStream(face).pipe(
-					fs.createWriteStream(User.getAvatarPath(user.id))
-				);
-				// login or not
-				if (chance.bool()) return;
-				return user.login();
-			});
-		}).then(function () {
-			console.log('%d users created', numUsers);
-		});
-}
-
 function addAdmins() {
 	var admins = Admins.forge(),
 		adminArr = config.admins,
@@ -117,24 +120,23 @@ function addAdmins() {
 		});
 }
 
-function addGroups () {
+function addGroups() {
 	var groups = Groups.forge();
-	_.times(numGroups, function(i) {
+	_.times(numGroups, function () {
 		groups.add(Group.forge());
 	});
 	return groups.invokeThen('save')
-		.then(function() {
-			console.log('%d groups added',  numGroups);
+		.then(function () {
+			console.log('%d groups added', numGroups);
 		});
 }
-
 function addGroupMembers() {
 	var groupmembers = GroupMembersSet.forge();
-	_.times(numGroupMembers, function(i) {
+	_.times(numGroupMembers, function () {
 		groupmembers.add(GroupMembers.randomForge());
 	});
 	return groupmembers.invokeThen('save')
-		.then(function() {
+		.then(function () {
 			console.log('%d groupmembers added', numGroupMembers);
 		});
 }
@@ -143,17 +145,16 @@ function addActivityStatuses() {
 	var activityStatuses = ActivityStatuses.forge(),
 		activityStatusArr = config.activitiesStatus,
 		numActivityStatuses = activityStatusArr.length;
-	_.times(numActivityStatuses, function(i) {
+	_.times(numActivityStatuses, function (i) {
 		activityStatuses.add(ActivityStatus.forge({
 			name: activityStatusArr[i]
 		}));
 	});
 	return activityStatuses.invokeThen('save')
-		.then(function() {
+		.then(function () {
 			console.log('activity-status initialed');
 		});
 }
-
 function addActivities() {
 	var activities = Activities.forge();
 	_.times(numActivities, function () {
@@ -176,16 +177,17 @@ function addActivities() {
 
 function addUserActivitys() {
 	var useractivitys = UserActivitys.forge();
-		_.times(numUserActivitys, function(i) {
-			useractivitys.add(UserActivity.randomForge());
-		});
+	_.times(numUserActivitys, function () {
+		useractivitys.add(UserActivity.randomForge());
+	});
 	return useractivitys.invokeThen('save')
-		.then(function() {
+		.then(function () {
 			console.log('%d useractivitys added', numUserActivitys);
 		});
 }
 
-function done() {
+function done(err) {
+	if (err) throw err;
 	execsql.end();
 	process.exit();
 }

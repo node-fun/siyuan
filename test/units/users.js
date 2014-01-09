@@ -25,7 +25,7 @@ describe('users', function () {
 	it('searches', function (done) {
 		request(apiHost + '/search', {
 			qs: {
-				username: 'e'
+				name: 'e'
 			}
 		}, function (err, res, data) {
 			var users = data['users'];

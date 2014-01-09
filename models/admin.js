@@ -21,15 +21,20 @@ Admin = module.exports = syBookshelf.Model.extend({
 
 	saving: function () {
 		var ret = Admin.__super__.saving.apply(this, arguments);
-		if (this.isNew())
-		//append 'regtime'
+		//fix lower case
+		this.fixLowerCase(['username']);
+		if (this.isNew()) {
+			//append 'regtime'
 			if (!this.get('regtime')) {
 				this.set({
 					'regtime': new Date()
 				});
 			}
-		//fix lower case
-		this.fixLowerCase(['username']);
+		}
+		if (this.hasChanged('password')) {
+			// encrypt password
+			this.set('password', encrypt(this.get('password')));
+		}
 		return ret;
 	},
 	login: function () {
@@ -40,7 +45,8 @@ Admin = module.exports = syBookshelf.Model.extend({
 		})) {
 			return Promise.rejected(errors[10008]);
 		}
-		//not encrypted yet
+		// encrypt password
+		loginData['password'] = encrypt(loginData['password']);
 		return Admin.forge(loginData).fetch()
 			.then(function (admin) {
 				if (!admin) return Promise.rejected(errors[21302]);
@@ -59,8 +65,7 @@ Admin = module.exports = syBookshelf.Model.extend({
 			newPassword = data['new-password'],
 			self = this;
 		return this.fetch().then(function () {
-			//not encrypted yet
-			if (oldPassword != self.get('password')) {
+			if (encrypt(oldPassword) != self.get('password')) {
 				return Promise.rejected(errors[21301]);
 			}
 			return self.set('password', newPassword).save();

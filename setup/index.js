@@ -55,28 +55,6 @@ execsql.config(connConfig)
 		});
 	});
 
-function attachFriends() {
-	return Users.forge().fetch()
-		.then(function (users) {
-			return users.mapThen(function (user) {
-				var numFriends = _.random(2, 5), p;
-				_.times(numFriends, function () {
-					if (!p) return p = f(user);
-					p = p.then(f);
-				});
-				return p;
-			});
-		}).then(function () {
-			console.log('friends attached');
-		});
-	function f(user) {
-		var friendid = _.random(1, numUsers);
-		return user.addFriend(friendid, chance.word())
-			.catch(function () {
-				return user;
-			});
-	}
-}
 function createUsers() {
 	var users = Users.forge();
 	_.times(numUsers, function () {
@@ -103,6 +81,29 @@ function createUsers() {
 			console.log('%d users created', numUsers);
 		}).catch(done);
 }
+function attachFriends() {
+	return Users.forge().fetch()
+		.then(function (users) {
+			return users.mapThen(function (user) {
+				var numFriends = _.random(2, 5), p;
+				_.times(numFriends, function () {
+					if (!p) return p = f(user);
+					p = p.then(f);
+				});
+				return p;
+			});
+		}).then(function () {
+			console.log('friends attached');
+		});
+	function f(user) {
+		var friendid = _.random(1, numUsers);
+		return user.addFriend(friendid, chance.word())
+			.catch(function () {
+				return user;
+			});
+	}
+}
+
 function addAdmins() {
 	var admins = Admins.forge(),
 		adminArr = config.admins,
@@ -176,7 +177,7 @@ function addActivities() {
 
 function addUserActivitys() {
 	var useractivitys = UserActivitys.forge();
-		_.times(numUserActivitys, function(i) {
+		_.times(numUserActivitys, function() {
 			useractivitys.add(UserActivity.randomForge());
 		});
 	return useractivitys.invokeThen('save')

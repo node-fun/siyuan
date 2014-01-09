@@ -55,6 +55,28 @@ execsql.config(connConfig)
 		});
 	});
 
+function attachFriends() {
+	return Users.forge().fetch()
+		.then(function (users) {
+			return users.mapThen(function (user) {
+				var numFriends = _.random(2, 5), p;
+				_.times(numFriends, function () {
+					if (!p) return p = f(user);
+					p = p.then(f);
+				});
+				return p;
+			});
+		}).then(function () {
+			console.log('friends attached');
+		});
+	function f(user) {
+		var friendid = _.random(1, numUsers);
+		return user.addFriend(friendid, chance.word())
+			.catch(function () {
+				return user;
+			});
+	}
+}
 function createUsers() {
 	var users = Users.forge();
 	_.times(numUsers, function () {
@@ -81,29 +103,6 @@ function createUsers() {
 			console.log('%d users created', numUsers);
 		}).catch(done);
 }
-function attachFriends() {
-	return Users.forge().fetch()
-		.then(function (users) {
-			return users.mapThen(function (user) {
-				var numFriends = _.random(2, 5), p;
-				_.times(numFriends, function () {
-					if (!p) return p = f(user);
-					p = p.then(f);
-				});
-				return p;
-			});
-		}).then(function () {
-			console.log('friends attached');
-		});
-	function f(user) {
-		var friendid = _.random(1, numUsers);
-		return user.addFriend(friendid, chance.word())
-			.catch(function () {
-				return user;
-			});
-	}
-}
-
 function addAdmins() {
 	var admins = Admins.forge(),
 		adminArr = config.admins,
@@ -120,14 +119,14 @@ function addAdmins() {
 		});
 }
 
-function addGroups() {
+function addGroups () {
 	var groups = Groups.forge();
-	_.times(numGroups, function () {
+	_.times(numGroups, function() {
 		groups.add(Group.forge());
 	});
 	return groups.invokeThen('save')
-		.then(function () {
-			console.log('%d groups added', numGroups);
+		.then(function() {
+			console.log('%d groups added',  numGroups);
 		});
 }
 function addGroupMembers() {
@@ -136,7 +135,7 @@ function addGroupMembers() {
 		groupmembers.add(GroupMembers.randomForge());
 	});
 	return groupmembers.invokeThen('save')
-		.then(function () {
+		.then(function() {
 			console.log('%d groupmembers added', numGroupMembers);
 		});
 }
@@ -145,13 +144,13 @@ function addActivityStatuses() {
 	var activityStatuses = ActivityStatuses.forge(),
 		activityStatusArr = config.activitiesStatus,
 		numActivityStatuses = activityStatusArr.length;
-	_.times(numActivityStatuses, function (i) {
+	_.times(numActivityStatuses, function(i) {
 		activityStatuses.add(ActivityStatus.forge({
 			name: activityStatusArr[i]
 		}));
 	});
 	return activityStatuses.invokeThen('save')
-		.then(function () {
+		.then(function() {
 			console.log('activity-status initialed');
 		});
 }
@@ -177,11 +176,11 @@ function addActivities() {
 
 function addUserActivitys() {
 	var useractivitys = UserActivitys.forge();
-	_.times(numUserActivitys, function () {
-		useractivitys.add(UserActivity.randomForge());
-	});
+		_.times(numUserActivitys, function(i) {
+			useractivitys.add(UserActivity.randomForge());
+		});
 	return useractivitys.invokeThen('save')
-		.then(function () {
+		.then(function() {
 			console.log('%d useractivitys added', numUserActivitys);
 		});
 }

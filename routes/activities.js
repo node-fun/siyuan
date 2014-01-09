@@ -8,21 +8,25 @@ module.exports = function (app) {
 			match = req.query;
 		Activity.find(match, offset, limit)
 			.then(function (activities) {
-				res.api.send({
-					activities: activities
+				activities.mapThen(function (activity) {
+					return activity.load(['usership', 'status']);
+				})
+				.then(function (activities) {
+					res.api.send({
+						activities: activities
+					});
 				});
-			});
+			})
 	});
-	app.get('/api/test/activities/find', function (req, res) {
-		Activity.forge({ 'id': 10 })
-			.fetch()
-			.then(function(activity) {
-				return activity.load(['usership', 'status'])
-
-			}).then(function(activity){
+	app.get('/api/activities/join', function (req, res, next) {
+		var userid = 1,//req.session['userid'],
+			activityData = req.body;
+		Activity.forge(activityData).joinActivity(userid)
+			.then(function (activity) {
 				res.api.send({
-					activity: activity
+					msg: 'join success',
+					id: activity.id
 				});
-			});
+			}).catch(next);
 	});
 }

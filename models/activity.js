@@ -10,8 +10,8 @@ var _ = require('underscore'),
 	UserActivitys = UserActivity.Set,
 	GroupMembers = require('./group_members'),
 	GroupMembersSet = GroupMembers.Set,
+	Group = require('./groups'),
 	fkActivity = 'activityid',
-	fkUser = 'userid',
 	fkStatus = 'statusid',
 	Activity, Activities;
 
@@ -33,13 +33,40 @@ Activity = module.exports = syBookshelf.Model.extend({
 
 	status: function () {
 		return this.belongsTo(ActivityStatus, fkStatus);
-	}
+	},
 
+	joinActivity: function (userid) {
+		//check 'user in group'
+		var groupid = this.get('groupid'),
+			group = Group.forge({
+				'id': groupid
+			})
+			.fetch()
+			.then(function(group) {
+				group.load(['members']);
+			}),
+			activity = this.load(['usership', 'status']);
+
+		if (!_.contains(group.get('members'), userid)) {
+			return Promise.rejected([40001]);
+		} else {
+			if (_.contains(activity.get('usership'), userid)) {
+				return Promise.rejected([40002]);
+			} else {
+				ActivityStatus.forge({
+					'userid': userid,
+					'activityid': this.get('id'),
+					'iscanceled': false,
+					'isaccepted': false
+				}).save();
+			}
+		}
+	}
 }, {
 	randomForge: function () {
 		var status = _.random(1, 4),
-			maxnum = _.random(20, 40);
-		duration = _.random(3, 10);
+			maxnum = _.random(20, 40),
+			duration = _.random(3, 10);
 		return Activity.forge({
 			'content': chance.paragraph(),
 			'maxnum': maxnum,

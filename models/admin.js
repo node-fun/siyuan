@@ -75,7 +75,7 @@ Admin = module.exports = syBookshelf.Model.extend({
 	randomForge: function () {
 		return Admin.forge({
 			username: chance.word(),
-			password: chance.string(),
+			password: encrypt(chance.string()),
 			email: chance.email(),
 			regtime: chance.date(),
 			lastip: chance.ip(),

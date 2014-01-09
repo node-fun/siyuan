@@ -4,7 +4,7 @@ module.exports = function (app) {
 	require('./users')(app);
 	require('./admin')(app);
 	require('./groups')(app);
-
+	require('./activities')(app);
 	app.use('/api', function (err, req, res, next) {
 		// 4 parameters required to take in error
 		if (err['code']) return res.api.sendErr(err);

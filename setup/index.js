@@ -120,7 +120,7 @@ function addAdmins() {
 function addGroups () {
 	var groups = Groups.forge();
 	_.times(numGroups, function(i) {
-		groups.add(Group.forge());
+		groups.add(Group.randomForge());
 	});
 	return groups.invokeThen('save')
 		.then(function() {

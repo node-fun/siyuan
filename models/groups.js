@@ -3,7 +3,10 @@
  */
 var syBookshelf = require('./base'),
 	GroupMember = require('./group_members'),
+	_ = require('underscore'),
+	chance = new (require('chance'))(),
 	Promise = require('bluebird'),
+	fkGroup = 'groupid',
 	Group, Groups;
 
 Group = module.exports = syBookshelf.Model.extend({
@@ -11,8 +14,22 @@ Group = module.exports = syBookshelf.Model.extend({
 	fields: [
 		'id', 'ownerid', 'name', 'description', 'createtime', 'avatar'
 	],
-	omitInJSON: ['id']
+	//omitInJSON: ['id'],
+	members: function () {
+		return this.hasMany(GroupMember, fkGroup);
+	}
 }, {
+
+	randomForge: function() {
+		return Group
+			.forge({
+				ownerid: _.random(25, 50),
+				name: chance.word(),
+				description: chance.paragraph(),
+				createtime: chance.date({ year: 2013 })
+			});
+	},
+
 	findGroups: function () {
 
 	},
@@ -43,7 +60,7 @@ Group = module.exports = syBookshelf.Model.extend({
 						'isowner': 1
 					}).save(null, {transacting: t})
 						.then(t.commit, t.rollback);
-				}).catch(function(e){
+				}).catch(function (e) {
 					console.log('rollback');
 					t.rollback()
 				});

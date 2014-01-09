@@ -130,6 +130,7 @@ CREATE TABLE IF NOT EXISTS `activities` (
   `starttime` DATETIME NOT NULL COMMENT '开始时间',
   `duration` INT NULL COMMENT '单位为分钟',
   `statusid` TINYINT NULL COMMENT '状态：接受报名、截止报名、活动结束、活动取消等',
+  `avatar` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_activities_users1_idx` (`ownerid` ASC),
   INDEX `fk_activities_groups1_idx` (`groupid` ASC),
@@ -154,10 +155,10 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `user_activities`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `user_activities` (
+CREATE TABLE IF NOT EXISTS `user_activity` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `userid` INT NOT NULL,
-  `activityid` INT NOT NULL,
+  `userid` INT NULL,
+  `activityid` INT NULL,
   `iscanceled` TINYINT(1) NULL COMMENT '取消报名',
   `isaccepted` TINYINT(1) NULL,
   PRIMARY KEY (`id`),

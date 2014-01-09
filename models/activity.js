@@ -10,15 +10,16 @@ var _ = require('underscore'),
 	UserActivitys = UserActivity.Set,
 	GroupMembers = require('./group_members'),
 	GroupMembersSet = GroupMembers.Set,
+	Group = require('./groups'),
 	fkActivity = 'activityid',
-	fkUser = 'userid',
+	fkStatus = 'statusid',
 	Activity, Activities;
 
 Activity = module.exports = syBookshelf.Model.extend({
 	tableName: 'activities',
 	fields: [
 		'id', 'ownerid', 'groupid', 'content', 'maxnum', 'createtime',
-		'starttime', 'duration', 'statusid'
+		'starttime', 'duration', 'statusid', 'avatar'
 	],
 	//omitInJSON: ['ownerid', 'groupid'],
 	saving: function () {
@@ -26,28 +27,54 @@ Activity = module.exports = syBookshelf.Model.extend({
 			.saving.apply(this, arguments);
 
 	},
-
-	usership: function() {
+	usership: function () {
 		return this.hasMany(UserActivitys, fkActivity);
 	},
 
-	users: function() {
-		return this.hasMany(User, fkUser)
-			.through(UserActivitys, 'id');
-	}
+	status: function () {
+		return this.belongsTo(ActivityStatus, fkStatus);
+	},
 
+	joinActivity: function (userid) {
+		//check 'user in group'
+		var groupid = this.get('groupid'),
+			group = Group.forge({
+				'id': groupid
+			})
+			.fetch()
+			.then(function(group) {
+				group.load(['members']);
+			}),
+			activity = this.load(['usership', 'status']);
+
+		if (!_.contains(group.get('members'), userid)) {
+			return Promise.rejected([40001]);
+		} else {
+			if (_.contains(activity.get('usership'), userid)) {
+				return Promise.rejected([40002]);
+			} else {
+				ActivityStatus.forge({
+					'userid': userid,
+					'activityid': this.get('id'),
+					'iscanceled': false,
+					'isaccepted': false
+				}).save();
+			}
+		}
+	}
 }, {
 	randomForge: function () {
 		var status = _.random(1, 4),
-			maxnum = _.random(20, 40);
-		duration = _.random(3, 10);
+			maxnum = _.random(20, 40),
+			duration = _.random(3, 10);
 		return Activity.forge({
 			'content': chance.paragraph(),
 			'maxnum': maxnum,
 			'createtime': new Date(),
 			'starttime': chance.date({string: true}),
 			'duration': duration,
-			'statusid': status
+			'statusid': status,
+			'avatar': chance.word()
 		});
 	},
 
@@ -64,41 +91,8 @@ Activity = module.exports = syBookshelf.Model.extend({
 			})
 			.query('offset', offset)
 			.query('limit', limit)
-			.fetch()
-			.then(function () {
-				return activities.mapThen(function (activity) {
-					var status = ActivityStatus.forge({
-						'id': activity.get('statusid')
-					})
-						.fetch()
-						.then(function (activitystatus) {
-							return activitystatus;
-						})
-						.get('name');
-
-					activity.set({
-						'status': status
-					});
-					return activity;
-				})
-			});
-		//wait for help T^T
-
-	}
-
-	/*,
-
-	joinIn: function (userid) {
-		//if the user belongs to the group
-		var groupid = this.get('groupid'),
-		groupmembers = GroupMembersSet
-			.forge({ 'groupid': groupid })
 			.fetch();
-
 	}
-*/
-
-
 });
 
 Activities = Activity.Set = syBookshelf.Collection.extend({

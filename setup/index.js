@@ -47,6 +47,7 @@ execsql.config(connConfig)
 					.then(addGroupMembers)
 					.then(addActivityStatuses)
 					.then(addActivities)
+					.then(addUserActivitys)
 					.then(done);
 			} else {
 				done();
@@ -110,7 +111,7 @@ function addAdmins() {
 			password: adminArr[i].password
 		}));
 	});
-	return admins.invokeThen('register')
+	return admins.invokeThen('save')
 		.then(function () {
 			console.log('%d admins added', numAdmins);
 		});
@@ -119,7 +120,7 @@ function addAdmins() {
 function addGroups () {
 	var groups = Groups.forge();
 	_.times(numGroups, function(i) {
-		groups.add(Group.forge());
+		groups.add(Group.randomForge());
 	});
 	return groups.invokeThen('save')
 		.then(function() {
@@ -178,7 +179,10 @@ function addUserActivitys() {
 		_.times(numUserActivitys, function(i) {
 			useractivitys.add(UserActivity.randomForge());
 		});
-	return useractivitys
+	return useractivitys.invokeThen('save')
+		.then(function() {
+			console.log('%d useractivitys added', numUserActivitys);
+		});
 }
 
 function done() {

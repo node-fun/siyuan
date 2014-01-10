@@ -2,11 +2,8 @@ var _ = require('underscore'),
 	Admin = require('../models/admin');
 
 module.exports = function (app) {
-	app.get('/api/admin/find', function (req, res) {
-		var offset = req.api.offset,
-			limit = req.api.limit,
-			match = req.query;
-		Admin.find(match, offset, limit)
+	app.get('/api/admin/find', function (req, res, next) {
+		Admin.find(req.query)
 			.then(function (admins) {
 				admins.each(function (admin) {
 					admin.attributes = admin.omit(['regtime']);
@@ -14,14 +11,11 @@ module.exports = function (app) {
 				res.api.send({
 					admins: admins
 				});
-			});
+			}).catch(next);
 	});
 
-	app.get('/api/admin/search', function (req, res) {
-		var offset = req.api.offset,
-			limit = req.api.limit,
-			match = req.query;
-		Admin.search(match, offset, limit)
+	app.get('/api/admin/search', function (req, res, next) {
+		Admin.search(req.query)
 			.then(function (admins) {
 				admins.each(function (admin) {
 					admin.attributes = admin.omit(['regtime']);
@@ -29,20 +23,18 @@ module.exports = function (app) {
 				res.api.send({
 					admins: admins
 				});
-			});
+			}).catch(next);
 	});
 
 	app.get('/api/admin/view', function (req, res, next) {
-		var id = req.query['id'];
-		Admin.view(id)
+		Admin.view(req.query)
 			.then(function (admin) {
 				res.api.send({ admin: admin });
 			}).catch(next);
 	});
 
 	app.post('/api/admin/register', function (req, res, next) {
-		var adminData = req.body;
-		Admin.forge(adminData).register()
+		Admin.forge(req.body).register()
 			.then(function (admin) {
 				res.api.send({
 					msg: 'register success',
@@ -52,8 +44,7 @@ module.exports = function (app) {
 	});
 
 	app.post('/api/admin/login', function (req, res, next) {
-		var adminData = req.body;
-		Admin.forge(adminData).login()
+		Admin.forge(req.body).login()
 			.then(function (admin) {
 				res.api.send({
 					msg: 'login success',
@@ -76,5 +67,4 @@ module.exports = function (app) {
 				res.api.send({ msg: 'password reset' });
 			}).catch(next);
 	});
-
-}
+};

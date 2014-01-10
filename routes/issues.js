@@ -7,29 +7,16 @@ var _ = require('underscore'),
 	errors = require('../lib/errors');
 
 module.exports = function (app) {
-	app.get('/api/issues/find', function (req, res) {
-		var offset = req.api.offset,
-			limit = req.api.limit,
-			match = req.query;
-		Issue.find(match, offset, limit)
+	app.get('/api/issues/find', function (req, res, next) {
+		Issue.find(req.query)
 			.then(function (issues) {
 				res.api.send({ issues: issues });
-			});
+			}).catch(next);
 	});
-	app.get('/api/issues/search', function (req, res) {
-		var offset = req.api.offset,
-			limit = req.api.limit,
-			match = req.query;
-		Issue.search(match, offset, limit)
+	app.get('/api/issues/search', function (req, res, next) {
+		Issue.search(req.query)
 			.then(function (issues) {
 				res.api.send({ issues: issues });
-			});
-	});
-	app.get('/api/issues/view', function (req, res, next) {
-		var id = req.query['id'];
-		Issue.view(id)
-			.then(function (issue) {
-				res.api.send({ issue: issue });
 			}).catch(next);
 	});
 
@@ -63,7 +50,7 @@ module.exports = function (app) {
 	app.post('/api/issues/delete', function (req, res, next) {
 		var user = req.user;
 		if (! user) return next(errors[21301]);
-		var id = req.body['id'];
+		var id = ['id'];
 		Issue.forge({ id: id }).fetch()
 			.then(function (issue) {
 				if (!issue) return Promise.rejected(errors[20603]);

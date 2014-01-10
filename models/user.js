@@ -18,7 +18,7 @@ User = module.exports = syBookshelf.Model.extend({
 	fields: ['id', 'username', 'password', 'regtime', 'isonline'],
 	omitInJSON: ['password'],
 
-	defaults: function(){
+	defaults: function () {
 		return {
 			isonline: 0,
 			regtime: new Date()
@@ -165,68 +165,66 @@ User = module.exports = syBookshelf.Model.extend({
 			}).set('profile', UserProfile.randomForge().attributes);
 	},
 
-	find: function (match, offset, limit) {
+	find: function (query) {
 		var forUser = ['id', 'username', 'isonline'],
 			forProfile = ['email', 'name', 'gender'],
 			tbUser = User.prototype.tableName,
 			tbProfile = UserProfile.prototype.tableName;
 		return Users.forge()
 			.query(function (qb) {
-				// FIXME: so dirty, with lots of Coupling here
 				qb.join(tbProfile, tbProfile + '.' + 'userid',
 					'=', tbUser + '.id');
 				_.each(forUser, function (k) {
-					if (k in match) {
-						qb.where(tbUser + '.' + k, match[k]);
+					if (k in query) {
+						qb.where(tbUser + '.' + k, query[k]);
 					}
 				});
 				_.each(forProfile, function (k) {
-					if (k in match) {
-						qb.where(tbProfile + '.' + k, match[k]);
+					if (k in query) {
+						qb.where(tbProfile + '.' + k, query[k]);
 					}
 				});
-			}).query('offset', offset)
-			.query('limit', limit)
+			}).query('offset', query['offset'])
+			.query('limit', query['limit'])
 			.fetch().then(function (users) {
 				return users.length ? users.load(['profile']) : users;
 			});
 	},
 
-	search: function (match, offset, limit) {
-		var forUser = ['username'],
+	search: function (query) {
+		var forUser = ['username', 'email'],
 			forProfile = ['nickname', 'name', 'university', 'major'],
 			tbUser = User.prototype.tableName,
-			tbProfile = UserProfile.prototype.tableName,
-			count = 0;
+			tbProfile = UserProfile.prototype.tableName, count = 0;
 		return Users.forge()
 			.query(function (qb) {
 				qb.join(tbProfile, tbProfile + '.' + 'userid',
-					'=', tbUser + '.id');
-				if ('isonline' in match) {
+					'=', tbUser + '.' + 'id');
+				if ('isonline' in query) {
 					count++;
-					qb.where('isonline', match['isonline']);
+					qb.where('isonline', query['isonline']);
 				}
 				_.each(forUser, function (k) {
-					if (k in match) {
+					if (k in query) {
 						count++;
-						qb.where(tbUser + '.' + k, 'like', '%' + match[k] + '%');
+						qb.where(tbUser + '.' + k, 'like', '%' + query[k] + '%');
 					}
 				});
 				_.each(forProfile, function (k) {
-					if (k in match) {
+					if (k in query) {
 						count++;
-						qb.where(tbProfile + '.' + k, 'like', '%' + match[k] + '%');
+						qb.where(tbProfile + '.' + k, 'like', '%' + query[k] + '%');
 					}
 				});
-			}).query('offset', offset)
-			.query('limit', count ? limit : 0)
+			}).query('offset', query['offset'])
+			.query('limit', count ? query['limit'] : 0)
 			.fetch().then(function (users) {
 				return users.length ? users.load(['profile']) : users;
 			});
 	},
 
-	view: function (id) {
-		return User.forge({ id: id })
+	view: function (query) {
+		return User.forge({ id: query['id'] })
 			.fetch()
 			.then(function (user) {
 				if (!user) return Promise.rejected(errors[20003]);

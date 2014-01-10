@@ -3,35 +3,27 @@ var _ = require('underscore'),
 	errors = require('../lib/errors');
 
 module.exports = function (app) {
-	app.get('/api/users/find', function (req, res) {
-		var offset = req.api.offset,
-			limit = req.api.limit,
-			match = req.query;
-		User.find(match, offset, limit)
+	app.get('/api/users/find', function (req, res, next) {
+		User.find(req.query)
 			.then(function (users) {
 				res.api.send({ users: users });
-			});
+			}).catch(next);
 	});
-	app.get('/api/users/search', function (req, res) {
-		var offset = req.api.offset,
-			limit = req.api.limit,
-			match = req.query;
-		User.search(match, offset, limit)
+	app.get('/api/users/search', function (req, res, next) {
+		User.search(req.query)
 			.then(function (users) {
 				res.api.send({ users: users });
-			});
+			}).catch(next);
 	});
 	app.get('/api/users/view', function (req, res, next) {
-		var id = req.query['id'];
-		User.view(id)
+		User.view(req.query)
 			.then(function (user) {
 				res.api.send({ user: user });
 			}).catch(next);
 	});
 
 	app.post('/api/users/register', function (req, res, next) {
-		var userData = req.body;
-		User.forge(userData).register()
+		User.forge(req.body).register()
 			.then(function (user) {
 				res.api.send({
 					msg: 'User registered',
@@ -40,8 +32,7 @@ module.exports = function (app) {
 			}).catch(next);
 	});
 	app.post('/api/users/login', function (req, res, next) {
-		var userData = req.body;
-		User.forge(userData).login()
+		User.forge(req.body).login()
 			.then(function (user) {
 				res.api.send({
 					msg: 'User logged in',

@@ -83,37 +83,37 @@ Admin = module.exports = syBookshelf.Model.extend({
 		});
 	},
 
-	find: function (match, offset, limit) {
+	find: function (query) {
 		var forAdmin = ['id', 'username'];
 		return Admins.forge()
 			.query(function (qb) {
 				_.each(forAdmin, function (k) {
-					if (k in match) {
-						qb.where(k, '=', match[k]);
+					if (k in query) {
+						qb.where(k, '=', query[k]);
 					}
 				})
 			})
-			.query('offset', offset)
-			.query('limit', limit)
+			.query('offset', query['offset'])
+			.query('limit', query['limit'])
 			.fetch();
 	},
-	search: function (match, offset, limit) {
+	search: function (query) {
 		var accepts = ['username'],
 			count = 0;
 		return Admins.forge()
 			.query(function (qb) {
 				_.each(accepts, function (k) {
-					if (k in match) {
+					if (k in query) {
 						count++;
-						qb.where(k, 'like', '%' + match[k] + '%');
+						qb.where(k, 'like', '%' + query[k] + '%');
 					}
 				});
-			}).query('offset', offset)
-			.query('limit', count ? limit : 0)
+			}).query('offset', query['offset'])
+			.query('limit', count ? query['limit'] : 0)
 			.fetch();
 	},
-	view: function (id) {
-		return Admin.forge({id: id})
+	view: function (query) {
+		return Admin.forge({ id: query['id'] })
 			.fetch()
 			.then(function (admin) {
 				return admin;

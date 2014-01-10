@@ -184,7 +184,7 @@ function addUserActivitys() {
 }
 
 function addIssues() {
-	var numIssues = 100,
+	var numIssues = numUsers * 6,
 		issues = Issues.forge();
 	_.times(numIssues, function () {
 		var issue = Issue.randomForge();

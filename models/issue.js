@@ -23,33 +23,32 @@ Issue = module.exports = syBookshelf.Model.extend({
 		});
 	},
 
-	find: function (match, offset, limit) {
-		var accepts = ['id', 'userid'];
+	find: function (query) {
+		var accepts = ['id', 'userid', 'title'];
 		return Issues.forge()
 			.query(function (qb) {
 				_.each(accepts, function (k) {
-					if (k in match) {
-						qb.where(k, match[k]);
+					if (k in query) {
+						qb.where(k, query[k]);
 					}
 				});
-			}).query('offset', offset)
-			.query('limit', limit)
+			}).query('offset', query['offset'])
+			.query('limit', query['limit'])
 			.fetch();
 	},
 
-	search: function (match, offset, limit) {
-		var accepts = ['title', 'body'],
-			count = 0;
+	search: function (query) {
+		var accepts = ['title', 'body'], count = 0;
 		return Issues.forge()
 			.query(function (qb) {
 				_.each(accepts, function (k) {
-					if (k in match) {
+					if (k in query) {
 						count++;
-						qb.where(k, 'like', '%' + match[k] + '%');
+						qb.where(k, 'like', '%' + query[k] + '%');
 					}
 				});
-			}).query('offset', offset)
-			.query('limit', count ? limit : 0)
+			}).query('offset', query['offset'])
+			.query('limit', count ? query['limit'] : 0)
 			.fetch();
 	}
 });

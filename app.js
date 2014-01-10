@@ -33,9 +33,7 @@ app.use(function (req, res, next) {
 	} else {
 		User.forge({ id: userid }).fetch()
 			.then(function (user) {
-				if (user) {
-					req.user = user;
-				}
+				req.user = user;
 				next();
 			});
 	}

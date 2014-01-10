@@ -8,7 +8,6 @@ Issue = module.exports = syBookshelf.Model.extend({
 		'id', fkUser, 'title', 'body', 'posttime'
 	]
 
-
 }, {
 
 });

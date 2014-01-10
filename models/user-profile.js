@@ -10,17 +10,12 @@ UserProfile = module.exports = syBookshelf.Model.extend({
 		'age', 'grade', 'university', 'major'
 	],
 	omitInJSON: ['id', 'userid'],
-	ranges: {
-		gender: [null, 'm', 'f']
-	},
 
 	saving: function () {
 		var ret = UserProfile.__super__
 			.saving.apply(this, arguments);
 		// fix lower case
 		this.fixLowerCase(['email', 'gender']);
-		// fix range
-		this.fixRange('gender', this.ranges.gender);
 		return ret;
 	}
 }, {

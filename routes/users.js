@@ -34,7 +34,7 @@ module.exports = function (app) {
 		User.forge(userData).register()
 			.then(function (user) {
 				res.api.send({
-					msg: 'register success',
+					msg: 'User registered',
 					id: user.id
 				});
 			}).catch(next);
@@ -44,7 +44,7 @@ module.exports = function (app) {
 		User.forge(userData).login()
 			.then(function (user) {
 				res.api.send({
-					msg: 'login success',
+					msg: 'User logged in',
 					id: req.session['userid'] = user.id
 				});
 			}).catch(next);
@@ -53,7 +53,7 @@ module.exports = function (app) {
 		User.forge({ id: req.session['userid'] })
 			.logout()
 			.then(function () {
-				res.api.send({ msg: 'logout success' });
+				res.api.send({ msg: 'User logged out' });
 			}).catch(next);
 	});
 
@@ -61,14 +61,14 @@ module.exports = function (app) {
 		User.forge({ id: req.session['userid'] })
 			.resetPassword(req.body)
 			.then(function () {
-				res.api.send({ msg: 'password reset' });
+				res.api.send({ msg: 'Password reset' });
 			}).catch(next);
 	});
 	app.post('/api/users/profile/update', function (req, res, next) {
 		User.forge({ id: req.session['userid'] })
 			.updateProfile(req.body)
 			.then(function () {
-				res.api.send({ msg: 'profile updated' });
+				res.api.send({ msg: 'Profile updated' });
 			}).catch(next);
 	});
 	app.post('/api/users/avatar/update', function (req, res, next) {
@@ -80,7 +80,7 @@ module.exports = function (app) {
 		User.forge({ id: req.session['userid'] })
 			.updateAvatar(file['path'])
 			.then(function () {
-				res.api.send({ msg: 'avatar updated' });
+				res.api.send({ msg: 'Avatar updated' });
 			}).catch(next);
 	});
 
@@ -90,7 +90,7 @@ module.exports = function (app) {
 		User.forge({ id: req.session['userid'] })
 			.addFriend(friendid, remark)
 			.then(function () {
-				res.send({ msg: 'friend added' });
+				res.send({ msg: 'Friend added' });
 			}).catch(next);
 	});
 	app.post('/api/users/friends/remove', function (req, res, next) {
@@ -98,7 +98,7 @@ module.exports = function (app) {
 		User.forge({ id: req.session['userid'] })
 			.removeFriend(friendid)
 			.then(function () {
-				res.send({ msg: 'friend removed' });
+				res.send({ msg: 'Friend removed' });
 			}).catch(next);
 	});
 	app.post('/api/users/friends/remark', function (req, res, next) {
@@ -107,7 +107,7 @@ module.exports = function (app) {
 		User.forge({ id: req.session['userid'] })
 			.remarkFriend(friendid, remark)
 			.then(function () {
-				res.send({ msg: 'friend remarked' });
+				res.send({ msg: 'Friend remarked' });
 			}).catch(next);
 	});
 };

@@ -21,6 +21,7 @@ syModel = syBookshelf.Model = syModel.extend({
 	saving: function () {
 		var ret = syModel.__super__
 			.initialize.apply(this, arguments);
+		// pick attributes
 		this.attributes = this.pick(this.fields);
 		return ret;
 	},
@@ -42,13 +43,6 @@ syModel = syBookshelf.Model = syModel.extend({
 				attrs[k] = attrs[k].toLowerCase();
 			}
 		});
-	},
-
-	fixRange: function (key, range) {
-		var attrs = this.attributes;
-		if (!_.contains(range, attrs[key])) {
-			attrs[key] = range[0];
-		}
 	},
 
 	toJSON: function () {

@@ -1,15 +1,13 @@
 var Promise = require('bluebird'),
 	syBookshelf = require('./base'),
-	fkUser = 'userid',
-	fkFriend = 'friendid',
 	UserFriendship, UserFriendshipSet;
 
 UserFriendship = module.exports = syBookshelf.Model.extend({
 	tableName: 'user_friendship',
 	fields: [
-		'id', fkUser, fkFriend, 'remark'
+		'id', 'userid', 'friendid', 'remark'
 	],
-	omitInJSON: ['id', fkUser]
+	omitInJSON: ['id', 'userid']
 }, {
 	getFriendship: function (from, to) {
 		return UserFriendship.forge({

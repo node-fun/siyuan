@@ -1,27 +1,49 @@
 process.title = 'siyuan';
 
-var express = require('express'),
-	apiParser = require('./lib/api/parser'),
-	apiSender = require('./lib/api/sender'),
-	routes = require('./routes'),
+var _ = require('underscore'),
+	express = require('express'),
+	User = require('./models/user'),
 	config = require('./config'),
+	env = config.env,
 	port = config.port,
 	secret = config.secret,
-	app = express();
+	app = express(),
+	methodKey = '_method';
 
-// all environments
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
-app.use(express.methodOverride());
+if (env != 'production') {
+	// query as body
+	app.use(function (req, res, next) {
+		_.defaults(req.body, req.query);
+		next();
+	});
+}
+app.use(express.methodOverride(methodKey));
 app.use(express.cookieParser(secret));
 app.use(express.session());
 
-// api middlewares
-app.use('/api', apiParser);
-app.use('/api', apiSender);
+// middlewares
+app.use(function (req, res, next) {
+	// user session
+	var userid = req.session['userid'];
+	if (!userid) {
+		next();
+	} else {
+		User.forge({ id: userid }).fetch()
+			.then(function (user) {
+				if (user) {
+					req.user = user;
+				}
+				next();
+			});
+	}
+});
+app.use('/api', require('./lib/api/parser'));
+app.use('/api', require('./lib/api/sender'));
 // routes
-routes(app);
+require('./routes')(app);
 
 // static
 app.use('/avatars', express.static(config.avatarDir));

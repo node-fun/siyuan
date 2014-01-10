@@ -10,9 +10,7 @@ var fs = require('fs'),
 	UserFriendship = require('./user-friendship'),
 	config = require('../config'),
 	avatarDir = config.avatarDir,
-	fkUser = 'userid',
-	fkFriend = 'friendid',
-	avatarExt = 'jpg',
+	avatarExt = config.avatarExt,
 	User, Users;
 
 User = module.exports = syBookshelf.Model.extend({
@@ -20,8 +18,11 @@ User = module.exports = syBookshelf.Model.extend({
 	fields: ['id', 'username', 'password', 'regtime', 'isonline'],
 	omitInJSON: ['password'],
 
-	defaults: {
-		isonline: 0
+	defaults: function(){
+		return {
+			isonline: 0,
+			regtime: new Date()
+		};
 	},
 
 	saving: function () {
@@ -29,14 +30,6 @@ User = module.exports = syBookshelf.Model.extend({
 			.saving.apply(this, arguments);
 		// fix lower case
 		this.fixLowerCase(['username']);
-		if (this.isNew()) {
-			// append `regtime`
-			if (!this.has('regtime')) {
-				this.set({
-					'regtime': new Date()
-				});
-			}
-		}
 		if (this.hasChanged('password')) {
 			// encrypt password
 			this.set('password', encrypt(this.get('password')));
@@ -55,23 +48,17 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 
 	profile: function () {
-		return this.hasOne(UserProfile, fkUser);
+		return this.hasOne(UserProfile, 'userid');
 	},
 	friendship: function () {
-		return this.hasMany(UserFriendship, fkUser);
-	},
-	friends: function () {
-		return this.hasMany(User, fkFriend)
-			.through(UserFriendship, 'id', fkUser);
+		return this.hasMany(UserFriendship, 'userid');
 	},
 
 	register: function () {
-		var keys = ['username', 'password'],
+		var keys = ['username', 'password', 'regtime'],
 			registerData = this.pick(keys),
 			self = this;
-		if (!_.all(keys, function (key) {
-			return registerData[key];
-		})) {
+		if (!registerData['username'] || !registerData['password']) {
 			return Promise.rejected(errors[10008]);
 		}
 		return User.forge(_.pick(registerData, 'username')).fetch()
@@ -81,7 +68,7 @@ User = module.exports = syBookshelf.Model.extend({
 					profile = UserProfile.forge(profileData);
 				return User.forge(registerData).save()
 					.then(function (user) {
-						return profile.set(fkUser, user.id).save()
+						return profile.set('userid', user.id).save()
 							.then(function (user) {
 								if (!user) return Promise.rejected(errors[21300]);
 								self.set('id', user.id);
@@ -173,8 +160,8 @@ User = module.exports = syBookshelf.Model.extend({
 				//username: 'same username',
 				username: chance.word() + '_' + _.random(0, 99),
 				password: chance.string(),
-				regtime: chance.date({ year: 2013 }),
-				isonline: chance.bool()
+				isonline: chance.bool(),
+				regtime: chance.date({ year: 2013 })
 			}).set('profile', UserProfile.randomForge().attributes);
 	},
 
@@ -186,7 +173,7 @@ User = module.exports = syBookshelf.Model.extend({
 		return Users.forge()
 			.query(function (qb) {
 				// FIXME: so dirty, with lots of Coupling here
-				qb.join(tbProfile, tbProfile + '.' + fkUser,
+				qb.join(tbProfile, tbProfile + '.' + 'userid',
 					'=', tbUser + '.id');
 				_.each(forUser, function (k) {
 					if (k in match) {
@@ -213,7 +200,7 @@ User = module.exports = syBookshelf.Model.extend({
 			count = 0;
 		return Users.forge()
 			.query(function (qb) {
-				qb.join(tbProfile, tbProfile + '.' + fkUser,
+				qb.join(tbProfile, tbProfile + '.' + 'userid',
 					'=', tbUser + '.id');
 				if ('isonline' in match) {
 					count++;
@@ -248,7 +235,7 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 
 	getAvatarName: function (id) {
-		return id + '.' + avatarExt;
+		return id + avatarExt;
 	},
 	getAvatarPath: function (id) {
 		return path.join(avatarDir, User.getAvatarName(id));

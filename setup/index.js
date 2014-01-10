@@ -21,11 +21,10 @@ var fs = require('fs'),
 	UserActivitys = UserActivity.Set,
 	GroupMembers = require('../models/group_members'),
 	GroupMembersSet = GroupMembers.Set,
+	Issue = require('../models/issue'),
+	Issues = Issue.Set,
 	numUsers = 100,
 	numGroups = 20,
-	numActivities = 20,
-	numGroupMembers = 100,
-	numUserActivitys = 100,
 	sqlFile = __dirname + '/db.sql';
 
 // create database for test
@@ -48,6 +47,7 @@ execsql.config(connConfig)
 					.then(addActivityStatuses)
 					.then(addActivities)
 					.then(addUserActivitys)
+					.then(addIssues)
 					.then(done);
 			} else {
 				done();
@@ -62,7 +62,7 @@ function createUsers() {
 	});
 	return users
 		.mapThen(function (user) {
-			return user.register().catch(function(){
+			return user.register().catch(function () {
 				users.remove(user);
 			});
 		}).then(function () {
@@ -120,23 +120,24 @@ function addAdmins() {
 		});
 }
 
-function addGroups () {
+function addGroups() {
 	var groups = Groups.forge();
-	_.times(numGroups, function() {
+	_.times(numGroups, function () {
 		groups.add(Group.forge());
 	});
 	return groups.invokeThen('save')
-		.then(function() {
-			console.log('%d groups added',  numGroups);
+		.then(function () {
+			console.log('%d groups added', numGroups);
 		});
 }
 function addGroupMembers() {
-	var groupmembers = GroupMembersSet.forge();
+	var numGroupMembers = 100,
+		groupmembers = GroupMembersSet.forge();
 	_.times(numGroupMembers, function () {
 		groupmembers.add(GroupMembers.randomForge());
 	});
 	return groupmembers.invokeThen('save')
-		.then(function() {
+		.then(function () {
 			console.log('%d groupmembers added', numGroupMembers);
 		});
 }
@@ -145,28 +146,23 @@ function addActivityStatuses() {
 	var activityStatuses = ActivityStatuses.forge(),
 		activityStatusArr = config.activitiesStatus,
 		numActivityStatuses = activityStatusArr.length;
-	_.times(numActivityStatuses, function(i) {
+	_.times(numActivityStatuses, function (i) {
 		activityStatuses.add(ActivityStatus.forge({
 			name: activityStatusArr[i]
 		}));
 	});
 	return activityStatuses.invokeThen('save')
-		.then(function() {
+		.then(function () {
 			console.log('activity-status initialed');
 		});
 }
 function addActivities() {
-	var activities = Activities.forge();
+	var numActivities = 20,
+		activities = Activities.forge();
 	_.times(numActivities, function () {
 		activities.add(Activity.randomForge().set({
-			'ownerid': chance.integer({
-				min: 5,
-				max: 50
-			}),
-			'groupid': chance.integer({
-				min: 1,
-				max: 20
-			})
+			'ownerid': _.random(1, numUsers),
+			'groupid': _.random(1, numGroups)
 		}));
 	});
 	return activities.invokeThen('save')
@@ -176,13 +172,28 @@ function addActivities() {
 }
 
 function addUserActivitys() {
-	var useractivitys = UserActivitys.forge();
-		_.times(numUserActivitys, function() {
-			useractivitys.add(UserActivity.randomForge());
-		});
+	var numUserActivitys = 100,
+		useractivitys = UserActivitys.forge();
+	_.times(numUserActivitys, function () {
+		useractivitys.add(UserActivity.randomForge());
+	});
 	return useractivitys.invokeThen('save')
-		.then(function() {
+		.then(function () {
 			console.log('%d useractivitys added', numUserActivitys);
+		});
+}
+
+function addIssues() {
+	var numIssues = 100,
+		issues = Issues.forge();
+	_.times(numIssues, function () {
+		var issue = Issue.randomForge();
+		issue.set('userid', _.random(1, numUsers));
+		issues.add(issue);
+	});
+	return issues.invokeThen('save')
+		.then(function () {
+			console.log('%d issues added', numIssues);
 		});
 }
 

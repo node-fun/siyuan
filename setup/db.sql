@@ -203,6 +203,26 @@ CREATE TABLE IF NOT EXISTS `group_members` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+-- -----------------------------------------------------
+-- Table `issues`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `issues` ;
+
+CREATE TABLE IF NOT EXISTS `issues` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `userid` INT NULL,
+  `title` VARCHAR(64) NULL,
+  `body` VARCHAR(256) NULL,
+  `posttime` DATETIME NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_issues_1_idx` (`userid` ASC),
+  CONSTRAINT `fk_issues_1`
+    FOREIGN KEY (`userid`)
+    REFERENCES `users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

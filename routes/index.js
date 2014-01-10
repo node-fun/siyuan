@@ -5,6 +5,8 @@ module.exports = function (app) {
 	require('./admin')(app);
 	require('./groups')(app);
 	require('./activities')(app);
+	require('./issues')(app);
+
 	app.use('/api', function (err, req, res, next) {
 		// 4 parameters required to take in error
 		if (err['code']) return res.api.sendErr(err);

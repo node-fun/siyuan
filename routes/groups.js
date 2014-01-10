@@ -1,20 +1,22 @@
 /**
  * Created by Cam on 14-1-8.
  */
-var Group = require('../models/groups'),
+var _ = require('underscore'),
+	Group = require('../models/groups'),
 	Groups = Group.Set;
 
 module.exports = function (app) {
-	app.get('/api/groups/find', function (req, res) {
-		var offset = req.api.offset,
-			limit = req.api.limit,
-			match = req.query;
+	app.get('/api/groups/find', function (req, res, next) {
+		var query = req.query,
+			accepts = ['id', 'ownerid', 'name'];
 		Groups.forge().query(function (qb) {
-			for (var k in match) {
-				qb.where(k, match[k]);
-			}
-		}).query('offset', offset)
-			.query('limit', limit)
+			_.each(accepts, function(k){
+				if (k in query) {
+					qb.where(k, query[k]);
+				}
+			});
+		}).query('offset', query['offset'])
+			.query('limit', query['limit'])
 			.fetch()
 			.then(function (groups) {
 				groups.mapThen(function (group) {
@@ -24,6 +26,6 @@ module.exports = function (app) {
 						groups: groups
 					});
 				});
-			});
+			}).catch(next);
 	});
-}
+};

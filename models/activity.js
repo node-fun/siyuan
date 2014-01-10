@@ -21,7 +21,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 		'id', 'ownerid', 'groupid', 'content', 'maxnum', 'createtime',
 		'starttime', 'duration', 'statusid', 'avatar'
 	],
-	//omitInJSON: ['ownerid', 'groupid'],
+
 	saving: function () {
 		return Activity.__super__
 			.saving.apply(this, arguments);
@@ -55,7 +55,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 			} else {
 				ActivityStatus.forge({
 					'userid': userid,
-					'activityid': this.get('id'),
+					'activityid': this.id,
 					'iscanceled': false,
 					'isaccepted': false
 				}).save();
@@ -71,26 +71,26 @@ Activity = module.exports = syBookshelf.Model.extend({
 			'content': chance.paragraph(),
 			'maxnum': maxnum,
 			'createtime': new Date(),
-			'starttime': chance.date({string: true}),
+			'starttime': chance.date({ string: true }),
 			'duration': duration,
 			'statusid': status,
 			'avatar': chance.word()
 		});
 	},
 
-	find: function (match, offset, limit) {
+	find: function (query) {
 		var forActivity = ['id', 'ownerid', 'groupid', 'content', 'statusid'],
 			activities = Activities.forge();
 		return activities
 			.query(function (qb) {
 				_.each(forActivity, function (k) {
-					if (k in match) {
-						qb.where(k, '=', match[k]);
+					if (k in query) {
+						qb.where(k, query[k]);
 					}
 				})
 			})
-			.query('offset', offset)
-			.query('limit', limit)
+			.query('offset', query['offset'])
+			.query('limit', query['limit'])
 			.fetch();
 	}
 });

@@ -2,11 +2,8 @@ var _ = require('underscore'),
 	Activity = require('../models/activity');
 
 module.exports = function (app) {
-	app.get('/api/activities/find', function (req, res) {
-		var offset = req.api.offset,
-			limit = req.api.limit,
-			match = req.query;
-		Activity.find(match, offset, limit)
+	app.get('/api/activities/find', function (req, res, next) {
+		Activity.find(req.query)
 			.then(function (activities) {
 				activities.mapThen(function (activity) {
 					return activity.load(['usership', 'status']);
@@ -16,12 +13,11 @@ module.exports = function (app) {
 						activities: activities
 					});
 				});
-			})
+			}).catch(next);
 	});
 	app.get('/api/activities/join', function (req, res, next) {
-		var userid = 1,//req.session['userid'],
-			activityData = req.body;
-		Activity.forge(activityData).joinActivity(userid)
+		var userid = 1;//req.session['userid'];
+		Activity.forge(req.body).joinActivity(userid)
 			.then(function (activity) {
 				res.api.send({
 					msg: 'join success',
@@ -29,4 +25,4 @@ module.exports = function (app) {
 				});
 			}).catch(next);
 	});
-}
+};

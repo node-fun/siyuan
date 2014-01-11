@@ -125,9 +125,12 @@ User = module.exports = syBookshelf.Model.extend({
 		var file = User.getAvatarPath(this.id),
 			self = this;
 		return new Promise(function (resolve, reject) {
-			fs.rename(tmp, file, function (err) {
-				if (err) return reject(errors[30001]);
-				resolve(self);
+			fs.readFile(tmp, function (err, data) {
+				if (err) return reject(errors[30000]);
+				fs.writeFile(file, data, function(err){
+					if (err) return reject(errors[30001]);
+					resolve(self);
+				});
 			});
 		});
 	},

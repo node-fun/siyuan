@@ -108,79 +108,13 @@ CREATE TABLE IF NOT EXISTS `groups` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
--- -----------------------------------------------------
--- Table `activity_status`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `activity_status` (
-  `id` TINYINT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(45) NOT NULL COMMENT '活动状态。',
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `activities`
+-- Table `group_membership`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `activities` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `ownerid` INT NULL,
-  `groupid` INT NULL,
-  `content` VARCHAR(45) NOT NULL,
-  `maxnum` SMALLINT NOT NULL COMMENT '最大人数',
-  `createtime` DATETIME NOT NULL,
-  `starttime` DATETIME NOT NULL COMMENT '开始时间',
-  `duration` INT NULL COMMENT '单位为分钟',
-  `statusid` TINYINT NULL COMMENT '状态：接受报名、截止报名、活动结束、活动取消等',
-  `avatar` VARCHAR(45) NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_activities_users1_idx` (`ownerid` ASC),
-  INDEX `fk_activities_groups1_idx` (`groupid` ASC),
-  INDEX `statusid_idx` (`statusid` ASC),
-  CONSTRAINT `fk_activities_users1`
-    FOREIGN KEY (`ownerid`)
-    REFERENCES `users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_activities_groups1`
-    FOREIGN KEY (`groupid`)
-    REFERENCES `groups` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `statusid`
-    FOREIGN KEY (`statusid`)
-    REFERENCES `activity_status` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+DROP TABLE IF EXISTS `group_membership` ;
 
--- -----------------------------------------------------
--- Table `user_activities`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `user_activity` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `userid` INT NULL,
-  `activityid` INT NULL,
-  `isaccepted` TINYINT(1) NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_activity_reg_users1_idx` (`userid` ASC),
-  INDEX `fk_activity_reg_activities1_idx` (`activityid` ASC),
-  CONSTRAINT `fk_activity_reg_users1`
-    FOREIGN KEY (`userid`)
-    REFERENCES `users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_activity_reg_activities1`
-    FOREIGN KEY (`activityid`)
-    REFERENCES `activities` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
--- -----------------------------------------------------
--- Table `group_members`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `group_members` ;
-
-CREATE TABLE IF NOT EXISTS `group_members` (
+CREATE TABLE IF NOT EXISTS `group_membership` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `groupid` INT NULL,
   `userid` INT NULL,
@@ -202,6 +136,72 @@ CREATE TABLE IF NOT EXISTS `group_members` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+
+-- -----------------------------------------------------
+-- Table `activity_status`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `activity_status` ;
+
+CREATE TABLE IF NOT EXISTS `activity_status` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NOT NULL COMMENT '活动状态',
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `activities`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `activities` ;
+
+CREATE TABLE IF NOT EXISTS `activities` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `ownerid` INT NULL,
+  `groupid` INT NULL,
+  `content` VARCHAR(45) NULL,
+  `maxnum` INT NULL COMMENT '最大人数',
+  `createtime` DATETIME NULL,
+  `starttime` DATETIME NULL COMMENT '开始时间',
+  `duration` INT NULL COMMENT '单位为分钟',
+  `statusid` INT NULL COMMENT '状态：接受报名、截止报名、活动结束、活动取消等',
+  `avatar` VARCHAR(45) NULL,
+  `money` DECIMAL NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_activities_activity_status1_idx` (`statusid` ASC),
+  CONSTRAINT `fk_activities_activity_status1`
+    FOREIGN KEY (`statusid`)
+    REFERENCES `activity_status` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `user_activity`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `user_activity` ;
+
+CREATE TABLE IF NOT EXISTS `user_activity` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `userid` INT NULL,
+  `activityid` INT NULL,
+  `isaccepted` TINYINT(1) NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_user_activity_activities1_idx` (`activityid` ASC),
+  INDEX `fk_user_activity_users1_idx` (`userid` ASC),
+  CONSTRAINT `fk_user_activity_activities1`
+    FOREIGN KEY (`activityid`)
+    REFERENCES `activities` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_user_activity_users1`
+    FOREIGN KEY (`userid`)
+    REFERENCES `users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
 -- -----------------------------------------------------
 -- Table `issues`
 -- -----------------------------------------------------
@@ -211,13 +211,33 @@ CREATE TABLE IF NOT EXISTS `issues` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `userid` INT NULL,
   `title` VARCHAR(64) NULL,
-  `body` VARCHAR(256) NULL,
+  `body` VARCHAR(512) NULL,
   `posttime` DATETIME NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_issues_1_idx` (`userid` ASC),
-  CONSTRAINT `fk_issues_1`
+  INDEX `_idx` (`userid` ASC),
+  CONSTRAINT `userid`
     FOREIGN KEY (`userid`)
     REFERENCES `users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `issue_comments`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `issue_comments` ;
+
+CREATE TABLE IF NOT EXISTS `issue_comments` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `issueid` INT NULL,
+  `body` VARCHAR(512) NULL,
+  `posttime` DATETIME NULL,
+  PRIMARY KEY (`id`),
+  INDEX `issueid_idx` (`issueid` ASC),
+  CONSTRAINT `issueid`
+    FOREIGN KEY (`issueid`)
+    REFERENCES `issues` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

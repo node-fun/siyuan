@@ -6,7 +6,7 @@ var _ = require('underscore'),
 UserActivity = module.exports = syBookshelf.Model.extend({
 	tableName: 'user_activity',
 	fields: [
-		'id', 'userid', 'activityid', 'iscanceled', 'isaccepted'
+		'id', 'userid', 'activityid', 'isaccepted'
 	],
 
 	saving: function () {
@@ -24,7 +24,6 @@ UserActivity = module.exports = syBookshelf.Model.extend({
 				min: 1,
 				max: 10
 			}),
-			iscanceled: chance.bool(),
 			isaccepted: chance.bool()
 		});
 	}

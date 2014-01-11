@@ -16,18 +16,43 @@ module.exports = function (app) {
 			}).catch(next);
 	});
 	app.get('/api/activities/join', function (req, res, next) {
-		var userid = 45;//req.session['userid'];
+		var userid = req.session['userid'];
 		Activity.forge(req.body)
 			.fetch()
 			.then(function(activity) {
 				return activity.joinActivity(userid)
-					.then(function (activity) {
+					.then(function (usership) {
 						res.api.send({
-							msg: 'join success'
-							//id: activity.get('id')
+							msg: 'join success',
+							id: usership.get('id')
 						});
 					});
 			}).catch(next);
-
+	});
+	app.get('/api/activities/cancel', function (req, res, next) {
+		var userid = req.session['userid'];
+		Activity.forge(req.body)
+			.fetch()
+			.then(function(activity) {
+				return activity.cancelActivity(userid)
+					.then(function () {
+						res.api.send({
+							msg: 'cancel success'
+						});
+					});
+			}).catch(next);
+	});
+	app.get('/api/activities/delete', function (req, res, next) {
+		var userid = 1;//req.session['userid'];
+			Activity.forge(req.body)
+			.fetch()
+			.then(function(activity) {
+				return activity.deleteActivity(userid)
+					.then(function () {
+						res.api.send({
+							msg: 'delete success'
+						});
+					});
+			}).catch(next);
 	});
 };

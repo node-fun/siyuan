@@ -20,7 +20,7 @@ Group = module.exports = syBookshelf.Model.extend({
 	}
 }, {
 
-	randomForge: function() {
+	randomForge: function () {
 		return Group
 			.forge({
 				ownerid: _.random(25, 50),

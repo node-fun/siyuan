@@ -28,7 +28,8 @@ module.exports = {
 				+ (env == 'test' ? '_test' : ''),
 			host: 'localhost',
 			user: 'root',
-			password: 'root'
+			password: 'root',
+			charset: 'utf8'
 		}
 	},
 

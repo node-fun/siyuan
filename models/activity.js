@@ -13,7 +13,8 @@ var _ = require('underscore'),
 	Group = require('./groups'),
 	fkActivity = 'activityid',
 	fkStatus = 'statusid',
-	Activity, Activities;
+	Activity, Activities,
+	errors = require('../lib/errors');
 
 Activity = module.exports = syBookshelf.Model.extend({
 	tableName: 'activities',
@@ -37,30 +38,42 @@ Activity = module.exports = syBookshelf.Model.extend({
 
 	joinActivity: function (userid) {
 		//check 'user in group'
-		var groupid = this.get('groupid'),
-			group = Group.forge({
+		var groupid = this.get('groupid');
+		return this.load(['usership', 'status']).then(function(activity) {
+			return Group.forge({
 				'id': groupid
-			})
-			.fetch()
+			}).fetch()
 			.then(function(group) {
-				group.load(['members']);
-			}),
-			activity = this.load(['usership', 'status']);
+				return group.load(['members'])
+					.then(function(group) {
+						var members = group.related('members').models;
+							var isfounded = false;
+						_.each(members, function(member) {
+							if(member.get('userid') == userid) {
+								isfounded = true;
+							}
+						});
+						if(!isfounded) return Promise.rejected(errors[40001]);
 
-		if (!_.contains(group.get('members'), userid)) {
-			return Promise.rejected([40001]);
-		} else {
-			if (_.contains(activity.get('usership'), userid)) {
-				return Promise.rejected([40002]);
-			} else {
-				ActivityStatus.forge({
-					'userid': userid,
-					'activityid': this.id,
-					'iscanceled': false,
-					'isaccepted': false
-				}).save();
-			}
-		}
+						isfounded = false;//use it again
+						var userships = activity.related('usership').models;
+						_.each(userships, function(usership) {
+							if(usership.get('userid') == userid){
+								isfounded = true;
+							}
+						});
+						if(!isfounded) return Promise.rejected(errors[40002]);
+
+
+
+						UserActivity.forge({
+							'userid': userid,
+							'activityid': this.id,
+							'isaccepted': false
+						}).save();
+				})
+			});
+		});
 	}
 }, {
 	randomForge: function () {

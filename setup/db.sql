@@ -159,7 +159,6 @@ CREATE TABLE IF NOT EXISTS `user_activity` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `userid` INT NULL,
   `activityid` INT NULL,
-  `iscanceled` TINYINT(1) NULL COMMENT '取消报名',
   `isaccepted` TINYINT(1) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_activity_reg_users1_idx` (`userid` ASC),

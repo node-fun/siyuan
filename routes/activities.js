@@ -16,13 +16,18 @@ module.exports = function (app) {
 			}).catch(next);
 	});
 	app.get('/api/activities/join', function (req, res, next) {
-		var userid = 1;//req.session['userid'];
-		Activity.forge(req.body).joinActivity(userid)
-			.then(function (activity) {
-				res.api.send({
-					msg: 'join success',
-					id: activity.id
-				});
+		var userid = 45;//req.session['userid'];
+		Activity.forge(req.body)
+			.fetch()
+			.then(function(activity) {
+				return activity.joinActivity(userid)
+					.then(function (activity) {
+						res.api.send({
+							msg: 'join success'
+							//id: activity.get('id')
+						});
+					});
 			}).catch(next);
+
 	});
 };

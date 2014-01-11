@@ -19,6 +19,12 @@ module.exports = function (app) {
 				res.api.send({ issues: issues });
 			}).catch(next);
 	});
+	app.get('/api/issues/view', function (req, res, next) {
+		Issue.view(req.query)
+			.then(function (issue) {
+				res.api.send({ issue: issue });
+			}).catch(next);
+	});
 
 	app.post('/api/issues/post', function (req, res, next) {
 		var user = req.user;

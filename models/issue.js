@@ -1,6 +1,7 @@
 var _ = require('underscore'),
 	chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
+	IssueComment = require('./issue-comment'),
 	Issue, Issues;
 
 Issue = module.exports = syBookshelf.Model.extend({
@@ -11,8 +12,14 @@ Issue = module.exports = syBookshelf.Model.extend({
 
 	defaults: function () {
 		return {
+			title: '',
+			body: '',
 			posttime: new Date()
 		};
+	},
+
+	comments: function () {
+		return this.hasMany(IssueComment, 'issueid');
 	}
 }, {
 	randomForge: function () {
@@ -50,6 +57,15 @@ Issue = module.exports = syBookshelf.Model.extend({
 			}).query('offset', query['offset'])
 			.query('limit', count ? query['limit'] : 0)
 			.fetch();
+	},
+
+	view: function (query) {
+		return Issue.forge({ id: query['id'] })
+			.fetch()
+			.then(function (issue) {
+				if (!issue) return Promise.rejected(errors[20603]);
+				return issue.load(['comments']);
+			});
 	}
 });
 

@@ -50,8 +50,7 @@ module.exports = function (app) {
 	app.post('/api/issues/delete', function (req, res, next) {
 		var user = req.user;
 		if (! user) return next(errors[21301]);
-		var id = ['id'];
-		Issue.forge({ id: id }).fetch()
+		Issue.forge(_.pick(req.body, 'id')).fetch()
 			.then(function (issue) {
 				if (!issue) return Promise.rejected(errors[20603]);
 				if (issue.get('userid') != user.id) {

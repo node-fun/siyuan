@@ -3,9 +3,9 @@
  */
 var chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
-	GroupMembers, GroupMembersSet;
+	GroupMembership, GroupMembersSet;
 
-GroupMembers = module.exports = syBookshelf.Model.extend({
+GroupMembership = module.exports = syBookshelf.Model.extend({
 	tableName: 'group_members',
 	fields: [
 		'id', 'groupid', 'userid', 'isowner', 'isadmin', 'remark'
@@ -13,7 +13,7 @@ GroupMembers = module.exports = syBookshelf.Model.extend({
 	omitInJSON: ['id']
 }, {
 	randomForge: function () {
-		return GroupMembers
+		return GroupMembership
 			.forge({
 				'groupid': chance.integer({
 					min: 1,
@@ -30,6 +30,6 @@ GroupMembers = module.exports = syBookshelf.Model.extend({
 	}
 });
 
-GroupMembersSet = GroupMembers.Collection = syBookshelf.Collection.extend({
-	model: GroupMembers
+GroupMembersSet = GroupMembership.Collection = syBookshelf.Collection.extend({
+	model: GroupMembership
 });

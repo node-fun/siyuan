@@ -2,7 +2,7 @@
  * Created by Cam on 14-1-2.
  */
 var syBookshelf = require('./base'),
-	GroupMember = require('./group_members'),
+	GroupMember = require('./group-membership'),
 	_ = require('underscore'),
 	chance = new (require('chance'))(),
 	Promise = require('bluebird'),

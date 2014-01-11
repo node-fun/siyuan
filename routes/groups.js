@@ -2,7 +2,7 @@
  * Created by Cam on 14-1-8.
  */
 var _ = require('underscore'),
-	Group = require('../models/groups'),
+	Group = require('../models/group'),
 	Groups = Group.Set;
 
 module.exports = function (app) {

@@ -7,12 +7,16 @@ module.exports = function (app) {
 	require('./activities')(app);
 	require('./issues')(app);
 
+	app.use('/api', function (data, req, res, next) {
+		if (data instanceof Error) return next(data);
+		res.send(data);
+	});
 	app.use('/api', function (err, req, res, next) {
-		// 4 parameters required to take in error
-		if (err['code']) return res.api.sendErr(err);
+		// 4 parameters required though `next` not used
+		if (err['code']) return res.sendErr(err);
 		console.error(err.stack);
 	});
 	app.use('/api', function (req, res) {
-		res.api.sendErr(errors[10020]);
+		res.sendErr(errors[10020]);
 	});
 };

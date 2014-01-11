@@ -8,7 +8,7 @@ module.exports = function (app) {
 				admins.each(function (admin) {
 					admin.attributes = admin.omit(['regtime']);
 				});
-				res.api.send({
+				next({
 					admins: admins
 				});
 			}).catch(next);
@@ -20,7 +20,7 @@ module.exports = function (app) {
 				admins.each(function (admin) {
 					admin.attributes = admin.omit(['regtime']);
 				});
-				res.api.send({
+				next({
 					admins: admins
 				});
 			}).catch(next);
@@ -29,14 +29,14 @@ module.exports = function (app) {
 	app.get('/api/admin/view', function (req, res, next) {
 		Admin.view(req.query)
 			.then(function (admin) {
-				res.api.send({ admin: admin });
+				next({ admin: admin });
 			}).catch(next);
 	});
 
 	app.post('/api/admin/register', function (req, res, next) {
 		Admin.forge(req.body).register()
 			.then(function (admin) {
-				res.api.send({
+				next({
 					msg: 'register success',
 					id: admin.id
 				});
@@ -46,7 +46,7 @@ module.exports = function (app) {
 	app.post('/api/admin/login', function (req, res, next) {
 		Admin.forge(req.body).login()
 			.then(function (admin) {
-				res.api.send({
+				next({
 					msg: 'login success',
 					id: req.session.adminid = admin.id
 				});
@@ -56,7 +56,7 @@ module.exports = function (app) {
 	app.post('/api/admin/logout', function (req, res, next) {
 		Admin.forge({ id: req.session.adminid }).logout()
 			.then(function () {
-				res.api.send({ msg: 'logout success' });
+				next({ msg: 'logout success' });
 			}).catch(next);
 	});
 
@@ -64,7 +64,7 @@ module.exports = function (app) {
 		Admin.forge({id: req.session['adminid']})
 			.resetPassword((req.body))
 			.then(function () {
-				res.api.send({ msg: 'password reset' });
+				next({ msg: 'password reset' });
 			}).catch(next);
 	});
 };

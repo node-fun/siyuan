@@ -10,19 +10,19 @@ module.exports = function (app) {
 	app.get('/api/issues/find', function (req, res, next) {
 		Issue.find(req.query)
 			.then(function (issues) {
-				res.api.send({ issues: issues });
+				next({ issues: issues });
 			}).catch(next);
 	});
 	app.get('/api/issues/search', function (req, res, next) {
 		Issue.search(req.query)
 			.then(function (issues) {
-				res.api.send({ issues: issues });
+				next({ issues: issues });
 			}).catch(next);
 	});
 	app.get('/api/issues/view', function (req, res, next) {
 		Issue.view(req.query)
 			.then(function (issue) {
-				res.api.send({ issue: issue });
+				next({ issue: issue });
 			}).catch(next);
 	});
 
@@ -32,7 +32,7 @@ module.exports = function (app) {
 		delete req.body['id'];
 		Issue.forge(_.extend(req.body, { userid: user.id })).save()
 			.then(function (issue) {
-				res.api.send({
+				next({
 					msg: 'issue posted',
 					id: issue.id
 				});
@@ -51,7 +51,7 @@ module.exports = function (app) {
 				}
 				return issue.set(req.body).save();
 			}).then(function (issue) {
-				res.api.send({ msg: 'issue updated' });
+				next({ msg: 'issue updated' });
 			}).catch(next);
 	});
 	app.post('/api/issues/delete', function (req, res, next) {
@@ -65,7 +65,7 @@ module.exports = function (app) {
 				}
 				return issue.destroy();
 			}).then(function (issue) {
-				res.api.send({ msg: 'issue deleted' });
+				next({ msg: 'issue deleted' });
 			}).catch(next);
 	});
 };

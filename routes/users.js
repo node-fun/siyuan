@@ -6,26 +6,26 @@ module.exports = function (app) {
 	app.get('/api/users/find', function (req, res, next) {
 		User.find(req.query)
 			.then(function (users) {
-				res.api.send({ users: users });
+				next({ users: users });
 			}).catch(next);
 	});
 	app.get('/api/users/search', function (req, res, next) {
 		User.search(req.query)
 			.then(function (users) {
-				res.api.send({ users: users });
+				next({ users: users });
 			}).catch(next);
 	});
 	app.get('/api/users/view', function (req, res, next) {
 		User.view(req.query)
 			.then(function (user) {
-				res.api.send({ user: user });
+				next({ user: user });
 			}).catch(next);
 	});
 
 	app.post('/api/users/register', function (req, res, next) {
 		User.forge(req.body).register()
 			.then(function (user) {
-				res.api.send({
+				next({
 					msg: 'User registered',
 					id: user.id
 				});
@@ -34,7 +34,7 @@ module.exports = function (app) {
 	app.post('/api/users/login', function (req, res, next) {
 		User.forge(req.body).login()
 			.then(function (user) {
-				res.api.send({
+				next({
 					msg: 'User logged in',
 					id: req.session['userid'] = user.id
 				});
@@ -44,7 +44,7 @@ module.exports = function (app) {
 		User.forge({ id: req.session['userid'] })
 			.logout()
 			.then(function () {
-				res.api.send({ msg: 'User logged out' });
+				next({ msg: 'User logged out' });
 			}).catch(next);
 	});
 
@@ -52,14 +52,14 @@ module.exports = function (app) {
 		User.forge({ id: req.session['userid'] })
 			.resetPassword(req.body)
 			.then(function () {
-				res.api.send({ msg: 'Password reset' });
+				next({ msg: 'Password reset' });
 			}).catch(next);
 	});
 	app.post('/api/users/profile/update', function (req, res, next) {
 		User.forge({ id: req.session['userid'] })
 			.updateProfile(req.body)
 			.then(function () {
-				res.api.send({ msg: 'Profile updated' });
+				next({ msg: 'Profile updated' });
 			}).catch(next);
 	});
 	app.post('/api/users/avatar/update', function (req, res, next) {
@@ -71,7 +71,7 @@ module.exports = function (app) {
 		User.forge({ id: req.session['userid'] })
 			.updateAvatar(file['path'])
 			.then(function () {
-				res.api.send({ msg: 'Avatar updated' });
+				next({ msg: 'Avatar updated' });
 			}).catch(next);
 	});
 

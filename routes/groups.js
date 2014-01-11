@@ -23,7 +23,7 @@ module.exports = function (app) {
 				groups.mapThen(function (group) {
 					return group.load(['members']);
 				}).then(function(groups) {
-					res.api.send({
+					next({
 						groups: groups
 					});
 				});
@@ -46,7 +46,7 @@ module.exports = function (app) {
 					ownerid: user.id
 				}, req.body)).save();
 			}).then(function(group){
-				res.api.send({
+				next({
 					message: 'group created',
 					id: group.id
 				});

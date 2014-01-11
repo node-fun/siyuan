@@ -109,8 +109,6 @@ describe('users', function () {
 		req = request.post(apiHost + '/avatar/update', {
 			jar: jar
 		}, function (err, res, data) {
-			console.log(data, err);
-
 			assert.ok(data['msg']);
 			done();
 		});

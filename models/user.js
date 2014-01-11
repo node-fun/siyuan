@@ -63,7 +63,7 @@ User = module.exports = syBookshelf.Model.extend({
 		}
 		return User.forge(_.pick(registerData, 'username')).fetch()
 			.then(function (user) {
-				if (user) return Promise.rejected(errors[30010]);
+				if (user) return Promise.rejected(errors[20506]);
 				var profileData = self.get('profile'),
 					profile = UserProfile.forge(profileData);
 				return User.forge(registerData).save()

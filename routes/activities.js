@@ -11,7 +11,7 @@ module.exports = function (app) {
 					return activity.load(['usership', 'status']);
 				})
 				.then(function (activities) {
-					res.api.send({
+					next({
 						activities: activities
 					});
 				});
@@ -24,7 +24,7 @@ module.exports = function (app) {
 			.then(function(activity) {
 				return activity.joinActivity(userid)
 					.then(function (usership) {
-						res.api.send({
+						next({
 							msg: 'join success',
 							id: usership.get('id')
 						});
@@ -38,7 +38,7 @@ module.exports = function (app) {
 			.then(function(activity) {
 				return activity.cancelActivity(userid)
 					.then(function () {
-						res.api.send({
+						next({
 							msg: 'cancel success'
 						});
 					});
@@ -54,7 +54,7 @@ module.exports = function (app) {
 				}
 				return activity.endActivity(userid)
 					.then(function () {
-						res.api.send({
+						next({
 							msg: 'end success'
 						});
 					});
@@ -71,7 +71,7 @@ module.exports = function (app) {
 			money = req.body.money;
 		Activity.forge({ 'id': id }).updateActivity(userid, content, maxnum, starttime, duration, statusid, money)
 			.then(function(activity) {
-				res.api.send({
+				next({
 					msg: 'update success',
 					id: activity.get('id')
 				});

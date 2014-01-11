@@ -1,5 +1,7 @@
 var _ = require('underscore'),
-	Activity = require('../models/activity');
+	Promise = require('bluebird'),
+	Activity = require('../models/activity'),
+	errors = require('../lib/errors');
 
 module.exports = function (app) {
 	app.get('/api/activities/find', function (req, res, next) {
@@ -29,7 +31,7 @@ module.exports = function (app) {
 					});
 			}).catch(next);
 	});
-	app.get('/api/activities/cancel', function (req, res, next) {
+	app.post('/api/activities/cancel', function (req, res, next) {
 		var userid = req.session['userid'];
 		Activity.forge(req.body)
 			.fetch()
@@ -42,17 +44,37 @@ module.exports = function (app) {
 					});
 			}).catch(next);
 	});
-	app.get('/api/activities/delete', function (req, res, next) {
-		var userid = 1;//req.session['userid'];
+	app.post('/api/activities/end', function (req, res, next) {
+		var userid = req.session['userid'];
 			Activity.forge(req.body)
 			.fetch()
 			.then(function(activity) {
-				return activity.deleteActivity(userid)
+				if(activity == null) {
+					return Promise.rejected(errors[40017]);
+				}
+				return activity.endActivity(userid)
 					.then(function () {
 						res.api.send({
-							msg: 'delete success'
+							msg: 'end success'
 						});
 					});
+			}).catch(next);
+	});
+	app.get('/api/activities/update', function(req, res, next) {
+		var userid = req.session['userid'],
+			id = req.body.id,
+			content = req.body.content,
+			maxnum = req.body.maxnum,
+			starttime = req.body.starttime,
+			duration = req.body.duration,
+			statusid = req.body.statusid,
+			money = req.body.money;
+		Activity.forge({ 'id': id }).updateActivity(userid, content, maxnum, starttime, duration, statusid, money)
+			.then(function(activity) {
+				res.api.send({
+					msg: 'update success',
+					id: activity.get('id')
+				});
 			}).catch(next);
 	});
 };

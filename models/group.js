@@ -14,6 +14,11 @@ Group = module.exports = syBookshelf.Model.extend({
 	fields: [
 		'id', 'ownerid', 'name', 'description', 'createtime', 'avatar'
 	],
+	defaults: function(){
+		return {
+			createtime: new Date()
+		};
+	},
 	//omitInJSON: ['id'],
 	members: function () {
 		return this.hasMany(GroupMember, fkGroup);

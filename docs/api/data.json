@@ -1,0 +1,201 @@
+{
+    "project": {
+        "name": "siyuan",
+        "logo": "logo.png",
+        "description": "An SNS backend framework, with Node and MySQL",
+        "version": "0.0.2",
+        "url": "https://github.com/node-fun/siyuan/"
+    },
+    "files": {
+        "lib\\encrypt.js": {
+            "name": "lib\\encrypt.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "lib\\errors.js": {
+            "name": "lib\\errors.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "models\\admin.js": {
+            "name": "models\\admin.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "models\\group-membership.js": {
+            "name": "models\\group-membership.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "models\\group.js": {
+            "name": "models\\group.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "models\\issue-comment.js": {
+            "name": "models\\issue-comment.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "routes\\groups.js": {
+            "name": "routes\\groups.js",
+            "modules": {},
+            "classes": {
+                "Group": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "routes\\issues.js": {
+            "name": "routes\\issues.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {},
+    "classes": {
+        "Group": {
+            "name": "Group",
+            "shortname": "Group",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "routes\\groups.js",
+            "line": 1,
+            "description": "Created by Cam on 14-1-8."
+        }
+    },
+    "classitems": [
+        {
+            "file": "lib\\encrypt.js",
+            "line": 1,
+            "description": "Created by fritz on 1/2/14.",
+            "class": "Group"
+        },
+        {
+            "file": "lib\\errors.js",
+            "line": 1,
+            "description": "Created by fritz on 1/1/14.",
+            "class": "Group"
+        },
+        {
+            "file": "models\\admin.js",
+            "line": 1,
+            "description": "Created by cin on 12/24/13.",
+            "class": "Group"
+        },
+        {
+            "file": "models\\group-membership.js",
+            "line": 1,
+            "description": "Created by Cam on 14-1-4.",
+            "class": "Group"
+        },
+        {
+            "file": "models\\group.js",
+            "line": 1,
+            "description": "Created by Cam on 14-1-2.",
+            "class": "Group"
+        },
+        {
+            "file": "models\\issue-comment.js",
+            "line": 1,
+            "description": "Created by fritz on 1/11/14.",
+            "class": "Group"
+        },
+        {
+            "file": "routes\\groups.js",
+            "line": 35,
+            "description": "post /api/groups/create",
+            "itemtype": "method",
+            "name": "创建圈子",
+            "params": [
+                {
+                    "name": "name",
+                    "description": "圈子名",
+                    "type": "String"
+                },
+                {
+                    "name": "description",
+                    "description": "描述",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "\n{  \n　　msg: 'group created',  \n　　id: group.id  \n}",
+                "type": "Array"
+            },
+            "class": "Group"
+        },
+        {
+            "file": "routes\\groups.js",
+            "line": 69,
+            "description": "post /api/groups/join",
+            "itemtype": "method",
+            "name": "加入圈子",
+            "params": [
+                {
+                    "name": "groupid",
+                    "description": "圈子id",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "{  \n　　msg: 'join group success'  \n}",
+                "type": "Array"
+            },
+            "class": "Group"
+        },
+        {
+            "file": "routes\\issues.js",
+            "line": 1,
+            "description": "Created by fritz on 1/10/14.",
+            "class": ""
+        }
+    ],
+    "warnings": [
+        {
+            "message": "Missing item type\nCreated by fritz on 1/2/14.",
+            "line": " lib\\encrypt.js:1"
+        },
+        {
+            "message": "Missing item type\nCreated by fritz on 1/1/14.",
+            "line": " lib\\errors.js:1"
+        },
+        {
+            "message": "Missing item type\nCreated by cin on 12/24/13.",
+            "line": " models\\admin.js:1"
+        },
+        {
+            "message": "Missing item type\nCreated by Cam on 14-1-4.",
+            "line": " models\\group-membership.js:1"
+        },
+        {
+            "message": "Missing item type\nCreated by Cam on 14-1-2.",
+            "line": " models\\group.js:1"
+        },
+        {
+            "message": "Missing item type\nCreated by fritz on 1/11/14.",
+            "line": " models\\issue-comment.js:1"
+        },
+        {
+            "message": "Missing item type\nCreated by fritz on 1/10/14.",
+            "line": " routes\\issues.js:1"
+        }
+    ]
+}

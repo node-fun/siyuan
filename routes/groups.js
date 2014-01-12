@@ -1,5 +1,6 @@
 /**
  * Created by Cam on 14-1-8.
+ * @class Group
  */
 var _ = require('underscore'),
 	Group = require('../models/group'),
@@ -33,9 +34,14 @@ module.exports = function (app) {
 
 	/**
 	 * post /api/groups/create
-	 * @param name
-	 * @param description
-	 * @returns {*}
+	 * @method 创建圈子
+	 * @param {String} name 圈子名
+	 * @param {String} description 描述
+	 * @return {Array}
+	 * {  
+	 * 　　msg: 'group created',  
+	 * 　　id: group.id  
+	 * }
 	 */
 	app.post('/api/groups/create', function(req, res, next){
 		var user = req.user;
@@ -62,8 +68,11 @@ module.exports = function (app) {
 
 	/**
 	 * post /api/groups/join
-	 * @param groupid
-	 * @returns {*}
+	 * @method 加入圈子
+	 * @param {Number} groupid 圈子id
+	 * @return {Array} {  
+	 * 　　msg: 'join group success'  
+	 * }
 	 */
 	app.post('/api/groups/join', function(req, res, next){
 		var user = req.user;

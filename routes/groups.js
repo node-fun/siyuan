@@ -54,7 +54,7 @@ module.exports = function (app) {
 				}, req.body)).save();
 			}).then(function (group) {
 				next({
-					message: 'group created',
+					msg: 'group created',
 					id: group.id
 				});
 			});
@@ -82,7 +82,7 @@ module.exports = function (app) {
 				}).save()
 					.then(function(groupMember){
 						next({
-							message: 'join group success'
+							msg: 'join group success'
 						});
 					});
 			});

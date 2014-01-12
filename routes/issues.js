@@ -28,7 +28,7 @@ module.exports = function (app) {
 
 	app.post('/api/issues/post', function (req, res, next) {
 		var user = req.user;
-		if (! user) return next(errors[21301]);
+		if (!user) return next(errors[21301]);
 		delete req.body['id'];
 		Issue.forge(_.extend(req.body, { userid: user.id })).save()
 			.then(function (issue) {
@@ -40,7 +40,7 @@ module.exports = function (app) {
 	});
 	app.post('/api/issues/update', function (req, res, next) {
 		var user = req.user;
-		if (! user) return next(errors[21301]);
+		if (!user) return next(errors[21301]);
 		var id = req.body['id'];
 		delete req.body['id'];
 		Issue.forge({ id: id }).fetch()
@@ -56,7 +56,7 @@ module.exports = function (app) {
 	});
 	app.post('/api/issues/delete', function (req, res, next) {
 		var user = req.user;
-		if (! user) return next(errors[21301]);
+		if (!user) return next(errors[21301]);
 		Issue.forge({ id: req.body['id'] }).fetch()
 			.then(function (issue) {
 				if (!issue) return Promise.rejected(errors[20603]);

@@ -18,7 +18,7 @@ module.exports = {
 	rootDir: rootDir,
 	contentDir: contentDir,
 	avatarDir: path.join(contentDir, 'avatars'),
-
+	activityAvatarDir: path.join(contentDir, 'activities'),
 	port: 8088,
 	secret: 'bad',
 	db: {

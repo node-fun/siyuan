@@ -34,19 +34,6 @@ Group = module.exports = syBookshelf.Model.extend({
 				createtime: chance.date({ year: 2013 })
 			});
 	},
-
-	findGroups: function () {
-
-	},
-	/**
-	 * 创建圈子
-	 * 创建的时候要在group_members里面加一条记录
-	 * @param ownerid
-	 * @param name
-	 * @param description
-	 * @param avatar
-	 * @returns {Session|*}
-	 */
 	//这里的transaction有问题，还不会用。先同步，回头再改。
 	createGroup: function (ownerid, name, description, avatar) {
 
@@ -76,12 +63,6 @@ Group = module.exports = syBookshelf.Model.extend({
 				console.log('Error saving the Groups:');
 				console.log(err);
 			});
-	},
-	//加入圈子
-	join: function (userid, groupid) {
-		return Group.forge({'userid': userid,
-			'groupid': groupid
-		}).save();
 	}
 });
 

@@ -3,6 +3,7 @@
  */
 var _ = require('underscore'),
 	Group = require('../models/group'),
+	GroupMember = require('../models/group-membership'),
 	errors = require('../lib/errors'),
 	Groups = Group.Set;
 
@@ -21,7 +22,7 @@ module.exports = function (app) {
 			.fetch()
 			.then(function (groups) {
 				groups.mapThen(function (group) {
-					return group.load(['members']);
+					return group.load(['members', 'members.profile', 'members.profile.profile']);
 				}).then(function(groups) {
 					next({
 						groups: groups
@@ -29,7 +30,13 @@ module.exports = function (app) {
 				});
 			}).catch(next);
 	});
-	//params: name, description
+
+	/**
+	 * post /api/groups/create
+	 * @param name
+	 * @param description
+	 * @returns {*}
+	 */
 	app.post('/api/groups/create', function(req, res, next){
 		var user = req.user;
 		if (!user) return next(errors[21301]);
@@ -50,6 +57,34 @@ module.exports = function (app) {
 					message: 'group created',
 					id: group.id
 				});
+			});
+	});
+
+	/**
+	 * post /api/groups/join
+	 * @param groupid
+	 * @returns {*}
+	 */
+	app.post('/api/groups/join', function(req, res, next){
+		var user = req.user;
+		if(!user) return next(errors[21301]);
+		return GroupMember.forge({
+			'userid': user.id,
+			'groupid': req.body['groupid']
+		}).fetch()
+			.then(function(groupMember){
+				if(groupMember){
+					return next(errors[20506]);
+				}
+				return GroupMember.forge({
+					'userid': user.id,
+					'groupid': req.body['groupid']
+				}).save()
+					.then(function(groupMember){
+						next({
+							message: 'join group success'
+						});
+					});
 			});
 	});
 };

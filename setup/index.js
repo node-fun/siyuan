@@ -23,8 +23,13 @@ var fs = require('fs'),
 	GroupMembersSet = GroupMembers.Set,
 	Issue = require('../models/issue'),
 	Issues = Issue.Set,
-	numUsers = 100,
+	numUsers = 50,
 	numGroups = 20,
+	numGroupMembers = 50,
+	numActivities = 20,
+	numUserActivitys = 50,
+	numIssues = numUsers * 3,
+
 	sqlFile = __dirname + '/db.sql';
 
 // create database for test
@@ -123,7 +128,7 @@ function addAdmins() {
 function addGroups() {
 	var groups = Groups.forge();
 	_.times(numGroups, function () {
-		groups.add(Group.forge());
+		groups.add(Group.randomForge());
 	});
 	return groups.invokeThen('save')
 		.then(function () {
@@ -131,8 +136,7 @@ function addGroups() {
 		});
 }
 function addGroupMembers() {
-	var numGroupMembers = 100,
-		groupmembers = GroupMembersSet.forge();
+	var groupmembers = GroupMembersSet.forge();
 	_.times(numGroupMembers, function () {
 		groupmembers.add(GroupMembers.randomForge());
 	});
@@ -157,8 +161,7 @@ function addActivityStatuses() {
 		});
 }
 function addActivities() {
-	var numActivities = 20,
-		activities = Activities.forge();
+	var activities = Activities.forge();
 	_.times(numActivities, function () {
 		activities.add(Activity.randomForge().set({
 			'ownerid': _.random(1, numUsers),
@@ -172,8 +175,7 @@ function addActivities() {
 }
 
 function addUserActivitys() {
-	var numUserActivitys = 100,
-		useractivitys = UserActivitys.forge();
+	var useractivitys = UserActivitys.forge();
 	_.times(numUserActivitys, function () {
 		useractivitys.add(UserActivity.randomForge());
 	});
@@ -184,8 +186,7 @@ function addUserActivitys() {
 }
 
 function addIssues() {
-	var numIssues = numUsers * 3,
-		issues = Issues.forge();
+	var issues = Issues.forge();
 	_.times(numIssues, function () {
 		var issue = Issue.randomForge();
 		issue.set('userid', _.random(1, numUsers));

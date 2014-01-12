@@ -12,7 +12,7 @@ module.exports = function (app) {
 		var query = req.query,
 			accepts = ['id', 'ownerid', 'name'];
 		Groups.forge().query(function (qb) {
-			_.each(accepts, function(k){
+			_.each(accepts, function (k) {
 				if (k in query) {
 					qb.where(k, query[k]);
 				}
@@ -24,10 +24,10 @@ module.exports = function (app) {
 				groups.mapThen(function (group) {
 					return group.load(['members', 'members.profile', 'members.profile.profile']);
 				}).then(function(groups) {
-					next({
-						groups: groups
+						next({
+							groups: groups
+						});
 					});
-				});
 			}).catch(next);
 	});
 
@@ -40,19 +40,19 @@ module.exports = function (app) {
 	app.post('/api/groups/create', function(req, res, next){
 		var user = req.user;
 		if (!user) return next(errors[21301]);
-		if( !req.body['name'] || !req.body['description']){
+		if (!req.body['name'] || !req.body['description']) {
 			return next(errors[10008]);
 		}
 		Group.forge({name: req.body['name']})
 			.fetch()
-			.then(function(group){
-				if(group){
+			.then(function (group) {
+				if (group) {
 					return next(errors[20506]);
 				}
 				return Group.forge(_.extend({
 					ownerid: user.id
 				}, req.body)).save();
-			}).then(function(group){
+			}).then(function (group) {
 				next({
 					message: 'group created',
 					id: group.id
@@ -86,5 +86,5 @@ module.exports = function (app) {
 						});
 					});
 			});
-	});
+	})
 };

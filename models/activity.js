@@ -1,6 +1,9 @@
-var _ = require('underscore'),
+var fs = require('fs'),
+	path = require('path'),
+	_ = require('underscore'),
 	chance = new (require('chance'))(),
 	Promise = require('bluebird'),
+	errors = require('../lib/errors'),
 	syBookshelf = require('./base'),
 	User = require('./user'),
 	Users = User.Set,
@@ -11,10 +14,11 @@ var _ = require('underscore'),
 	GroupMembers = require('./group-membership'),
 	GroupMembersSet = GroupMembers.Set,
 	Group = require('./group'),
+	avatarDir = config.activityAvatarDir,
+	avatarExt = config.avatarExt,
 	fkActivity = 'activityid',
 	fkStatus = 'statusid',
-	Activity, Activities,
-	errors = require('../lib/errors');
+	Activity, Activities;
 
 Activity = module.exports = syBookshelf.Model.extend({
 	tableName: 'activities',
@@ -36,9 +40,26 @@ Activity = module.exports = syBookshelf.Model.extend({
 		return this.belongsTo(ActivityStatus, fkStatus);
 	},
 
-	createActivity: function(userid) {
+	createActivity: function(userid, groupid, content, maxnum, starttime, duration, statusid, money) {
 		//check the dude belong to group
 		//save an activity
+		return GroupMembers.forge({
+			'groupid': groupid,
+			'userid': userid
+		}).fetch().then(function(groupmember) {
+				if(groupmember == null) return Promise.rejected(errors[40001]);
+				return Activity.forge({
+					'ownerid': userid,
+					'groupid': groupid,
+					'content': content,
+					'maxnum': maxnum,
+					'createtime': new Date(),
+					'starttime': starttime,
+					'duration': duration,
+					'statusid': statusid,
+					'money': money
+				}).save();
+			});
 	},
 
 	joinActivity: function (userid) {
@@ -133,6 +154,19 @@ Activity = module.exports = syBookshelf.Model.extend({
 			'duration': duration,
 			'statusid': statusid
 		}).save();
+	},
+	updateAvatar: function(tmp) {
+		var file = Activity.getAvatarPath(this.id),
+			self = this;
+		return new Promise(function(resolve, reject) {
+			fs.readFile(tmp, function(err, data) {
+				if(err) return reject(errors[30000]);
+				fs.writeFile(file, data, function(err) {
+					if(err) return reject(errors[30001]);
+					resolve(self);
+				});
+			});
+		});
 	}
 }, {
 	randomForge: function () {
@@ -168,6 +202,16 @@ Activity = module.exports = syBookshelf.Model.extend({
 			.query('offset', query['offset'])
 			.query('limit', query['limit'])
 			.fetch();
+	},
+
+	getAvatarName: function(id) {
+		return id + avatarExt;
+	},
+	getAvatarPath: function(id) {
+		return path.join(avatarDir, Activity.getAvatarName(id));
+	},
+	getAvatarURI: function(id) {
+		return 'activities' + Activity.getAvatarName(id);
 	}
 });
 

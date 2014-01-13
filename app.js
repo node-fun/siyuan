@@ -45,6 +45,7 @@ require('./routes')(app);
 
 // static
 app.use('/avatars', express.static(config.avatarDir));
+app.use('/docs', express.static(config.docsDir));
 
 // listen on port
 app.listen(port, function () {

@@ -16,6 +16,7 @@ module.exports = {
 	env: env,
 
 	rootDir: rootDir,
+	docsDir: path.join(rootDir, 'docs'),
 	contentDir: contentDir,
 	avatarDir: path.join(contentDir, 'avatars'),
 	activityAvatarDir: path.join(contentDir, 'activities'),

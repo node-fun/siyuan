@@ -7,7 +7,14 @@ UserFriendship = module.exports = syBookshelf.Model.extend({
 	fields: [
 		'id', 'userid', 'friendid', 'remark'
 	],
-	omitInJSON: ['id', 'userid']
+	omitInJSON: ['id', 'userid', 'friendid'],
+
+	user: function () {
+		return this.belongsTo(require('./user'), 'userid');
+	},
+	friend: function () {
+		return this.belongsTo(require('./user'), 'friendid');
+	}
 }, {
 	getFriendship: function (from, to) {
 		return UserFriendship.forge({

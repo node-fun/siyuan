@@ -8,6 +8,7 @@ var fs = require('fs'),
 	syBookshelf = require('./base'),
 	UserProfile = require('./user-profile'),
 	UserFriendship = require('./user-friendship'),
+	Issue = require('./issue'),
 	config = require('../config'),
 	avatarDir = config.avatarDir,
 	avatarExt = config.avatarExt,
@@ -52,6 +53,9 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 	friendship: function () {
 		return this.hasMany(UserFriendship, 'userid');
+	},
+	issue: function () {
+		return this.hasOne(Issue, 'userid');
 	},
 
 	register: function () {
@@ -127,7 +131,7 @@ User = module.exports = syBookshelf.Model.extend({
 		return new Promise(function (resolve, reject) {
 			fs.readFile(tmp, function (err, data) {
 				if (err) return reject(errors[30000]);
-				fs.writeFile(file, data, function(err){
+				fs.writeFile(file, data, function (err) {
 					if (err) return reject(errors[30001]);
 					resolve(self);
 				});
@@ -190,7 +194,9 @@ User = module.exports = syBookshelf.Model.extend({
 			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
 			.fetch().then(function (users) {
-				return users.length ? users.load(['profile']) : users;
+				return users.length ?
+					users.load(['profile', 'issue'])
+					: users;
 			});
 	},
 
@@ -222,7 +228,9 @@ User = module.exports = syBookshelf.Model.extend({
 			}).query('offset', query['offset'])
 			.query('limit', count ? query['limit'] : 0)
 			.fetch().then(function (users) {
-				return users.length ? users.load(['profile']) : users;
+				return users.length ?
+					users.load(['profile', 'issue'])
+					: users;
 			});
 	},
 
@@ -231,7 +239,7 @@ User = module.exports = syBookshelf.Model.extend({
 			.fetch()
 			.then(function (user) {
 				if (!user) return Promise.rejected(errors[20003]);
-				return user.load(['profile', 'friendship']);
+				return user.load(['profile', 'issue', 'friendship']);
 			});
 	},
 

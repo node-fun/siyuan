@@ -33,7 +33,7 @@ module.exports = function (app) {
 		Issue.forge(_.extend(req.body, { userid: user.id })).save()
 			.then(function (issue) {
 				next({
-					msg: 'issue posted',
+					msg: 'Issue posted',
 					id: issue.id
 				});
 			}).catch(next);
@@ -50,8 +50,8 @@ module.exports = function (app) {
 					return Promise.rejected(errors[20102]);
 				}
 				return issue.set(req.body).save();
-			}).then(function (issue) {
-				next({ msg: 'issue updated' });
+			}).then(function () {
+				next({ msg: 'Issue updated' });
 			}).catch(next);
 	});
 	app.post('/api/issues/delete', function (req, res, next) {
@@ -64,8 +64,8 @@ module.exports = function (app) {
 					return Promise.rejected(errors[20102]);
 				}
 				return issue.destroy();
-			}).then(function (issue) {
-				next({ msg: 'issue deleted' });
+			}).then(function () {
+				next({ msg: 'Issue deleted' });
 			}).catch(next);
 	});
 };

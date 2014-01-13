@@ -7,6 +7,7 @@ var fs = require('fs'),
 	encrypt = require('../lib/encrypt'),
 	syBookshelf = require('./base'),
 	UserProfile = require('./user-profile'),
+	UserFriendship = require('./user-friendship'),
 	Issue = require('./issue'),
 	config = require('../config'),
 	avatarDir = config.avatarDir,
@@ -51,10 +52,7 @@ User = module.exports = syBookshelf.Model.extend({
 		return this.hasOne(UserProfile, 'userid');
 	},
 	friendship: function () {
-		return this.hasMany(require('./user-friendship'), 'userid');
-	},
-	issue: function () {
-		return this.hasOne(Issue, 'userid');
+		return this.hasMany(UserFriendship, 'userid');
 	},
 
 	register: function () {
@@ -193,9 +191,7 @@ User = module.exports = syBookshelf.Model.extend({
 			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
 			.fetch().then(function (users) {
-				return users.length ?
-					users.load(['profile', 'issue'])
-					: users;
+				return users.length ? users.load(['profile']): users;
 			});
 	},
 
@@ -227,9 +223,7 @@ User = module.exports = syBookshelf.Model.extend({
 			}).query('offset', query['offset'])
 			.query('limit', count ? query['limit'] : 0)
 			.fetch().then(function (users) {
-				return users.length ?
-					users.load(['profile', 'issue'])
-					: users;
+				return users.length ? users.load(['profile']): users;
 			});
 	},
 
@@ -238,7 +232,7 @@ User = module.exports = syBookshelf.Model.extend({
 			.fetch()
 			.then(function (user) {
 				if (!user) return Promise.rejected(errors[20003]);
-				return user.load(['profile', 'issue', 'friendship', 'friendship.friend']);
+				return user.load(['profile', 'friendship.friend']);
 			});
 	},
 

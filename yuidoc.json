@@ -6,7 +6,7 @@
 	"url": "https://github.com/node-fun/siyuan/",
 	"options":{
 		"linkNatives": "false",
-		"paths": ["./routes"],
+		"paths": "./routes/",
 		"outdir": "./docs/api"
 	}
 }

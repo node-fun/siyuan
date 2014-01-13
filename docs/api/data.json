@@ -53,7 +53,7 @@
             "name": "routes\\groups.js",
             "modules": {},
             "classes": {
-                "Group": 1
+                "圈子": 1
             },
             "fors": {},
             "namespaces": {}
@@ -64,13 +64,22 @@
             "classes": {},
             "fors": {},
             "namespaces": {}
+        },
+        "routes\\users.js": {
+            "name": "routes\\users.js",
+            "modules": {},
+            "classes": {
+                "用户": 1
+            },
+            "fors": {},
+            "namespaces": {}
         }
     },
     "modules": {},
     "classes": {
-        "Group": {
-            "name": "Group",
-            "shortname": "Group",
+        "圈子": {
+            "name": "圈子",
+            "shortname": "圈子",
             "classitems": [],
             "plugins": [],
             "extensions": [],
@@ -79,6 +88,17 @@
             "file": "routes\\groups.js",
             "line": 1,
             "description": "Created by Cam on 14-1-8."
+        },
+        "用户": {
+            "name": "用户",
+            "shortname": "用户",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "routes\\users.js",
+            "line": 1
         }
     },
     "classitems": [
@@ -86,37 +106,37 @@
             "file": "lib\\encrypt.js",
             "line": 1,
             "description": "Created by fritz on 1/2/14.",
-            "class": "Group"
+            "class": "圈子"
         },
         {
             "file": "lib\\errors.js",
             "line": 1,
             "description": "Created by fritz on 1/1/14.",
-            "class": "Group"
+            "class": "圈子"
         },
         {
             "file": "models\\admin.js",
             "line": 1,
             "description": "Created by cin on 12/24/13.",
-            "class": "Group"
+            "class": "圈子"
         },
         {
             "file": "models\\group-membership.js",
             "line": 1,
             "description": "Created by Cam on 14-1-4.",
-            "class": "Group"
+            "class": "圈子"
         },
         {
             "file": "models\\group.js",
             "line": 1,
             "description": "Created by Cam on 14-1-2.",
-            "class": "Group"
+            "class": "圈子"
         },
         {
             "file": "models\\issue-comment.js",
             "line": 1,
             "description": "Created by fritz on 1/11/14.",
-            "class": "Group"
+            "class": "圈子"
         },
         {
             "file": "routes\\groups.js",
@@ -140,7 +160,7 @@
                 "description": "\n{  \n　　msg: 'group created',  \n　　id: group.id  \n}",
                 "type": "Array"
             },
-            "class": "Group"
+            "class": "圈子"
         },
         {
             "file": "routes\\groups.js",
@@ -159,13 +179,225 @@
                 "description": "{  \n　　msg: 'join group success'  \n}",
                 "type": "Array"
             },
-            "class": "Group"
+            "class": "圈子"
         },
         {
             "file": "routes\\issues.js",
             "line": 1,
             "description": "Created by fritz on 1/10/14.",
-            "class": ""
+            "class": "用户"
+        },
+        {
+            "file": "routes\\users.js",
+            "line": 9,
+            "description": "GET /api/users/find",
+            "itemtype": "method",
+            "name": "会员列表",
+            "params": [
+                {
+                    "name": "id",
+                    "description": "",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "username",
+                    "description": "",
+                    "type": "String",
+                    "optional": true
+                },
+                {
+                    "name": "name",
+                    "description": "",
+                    "type": "String",
+                    "optional": true
+                },
+                {
+                    "name": "isonline",
+                    "description": "1在线，0不在线",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "email",
+                    "description": "",
+                    "type": "String",
+                    "optional": true
+                },
+                {
+                    "name": "gender",
+                    "description": "“m”男，“f”女",
+                    "type": "String",
+                    "optional": true
+                }
+            ],
+            "return": {
+                "description": "\n// GET /api/users/find?isonline=1&gender=f&limit=2&page=3  \n{  \n\t\t　　\"users\": [  \n\t\t　　　　{  \n\t\t　　　　　　\"id\": 14,  \n\t\t　　　　　　\"username\": \"nemjoptaz\",  \n\t\t　　　　　　“avatar”:”http://10.10.65.165:8080/avatar/14”,  \n\t\t　　　　　　“description”:”我是科技界大牛”,  \n\t\t　　　　　　\"isonline\": 1  \n\t\t　　　　},  \n\t\t　　　　{  \n\t\t　　　　　　\"id\": 20,  \n\t\t　　　　　　\"username\": \"pa\",  \n\t\t　　　　　　“avatar”:”http://10.10.65.165:8080/avatar/14”,  \n\t\t　　　　　　“description”:”我是科技界大牛”,  \n\t\t　　　　　　\"isonline\": 1  \n\t\t　　　　}  \n\t\t　　]  \n\t\t}",
+                "type": "Array"
+            },
+            "class": "用户"
+        },
+        {
+            "file": "routes\\users.js",
+            "line": 46,
+            "description": "GET /api/users/search",
+            "itemtype": "method",
+            "name": "模糊搜索用户",
+            "params": [
+                {
+                    "name": "username",
+                    "description": "用户名",
+                    "type": "String",
+                    "optional": true
+                },
+                {
+                    "name": "nickname",
+                    "description": "昵称",
+                    "type": "String",
+                    "optional": true
+                },
+                {
+                    "name": "name",
+                    "description": "真名",
+                    "type": "String",
+                    "optional": true
+                },
+                {
+                    "name": "university",
+                    "description": "学校",
+                    "type": "String",
+                    "optional": true
+                },
+                {
+                    "name": "major",
+                    "description": "专业",
+                    "type": "String",
+                    "optional": true
+                }
+            ],
+            "return": {
+                "description": "\n返回格式与 /api/users/find 相同",
+                "type": "Array"
+            },
+            "class": "用户"
+        },
+        {
+            "file": "routes\\users.js",
+            "line": 64,
+            "description": "Get /api/users/view",
+            "itemtype": "method",
+            "name": "会员详细资料",
+            "params": [
+                {
+                    "name": "id",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "\n// GET /api/users/view?id=88  \n\t {  \n\t　　\"user\": {  \n\t　　　　\"id\": 88,  \n\t　　　　\"username\": \"zodisukeg\",  \n\t　　　　\"regtime\": 1357441421000,  \n\t　　　　\"isonline\": 1,  \n\t　　　　\"profile\": {  \n\t　　　　　　\"email\": \"rofno@alube.net\",  \n\t　　　　　　\"nickname\": \"Brady Robertson\",  \n\t　　　　　　\"name\": \"Stephen Brady\",  \n\t　　　　　　\"gender\": \"m\",  \n\t　　　　　　\"age\": 46,  \n\t　　　　　　\"grade\": 1986,  \n\t　　　　　　\"university\": \"Sihijsa University\",  \n\t　　　　　　\"major\": \"Viwrun\"  \n\t　　　　}  \n\t　　}  \n\t }",
+                "type": "Array"
+            },
+            "class": "用户"
+        },
+        {
+            "file": "routes\\users.js",
+            "line": 96,
+            "description": "POST /api/users/register",
+            "itemtype": "method",
+            "name": "注册",
+            "params": [
+                {
+                    "name": "username",
+                    "description": "用户名",
+                    "type": "String"
+                },
+                {
+                    "name": "password",
+                    "description": "密码",
+                    "type": "String"
+                },
+                {
+                    "name": "profile.name",
+                    "description": "真名",
+                    "type": "String"
+                },
+                {
+                    "name": "profile.nickname",
+                    "description": "昵称",
+                    "type": "String"
+                },
+                {
+                    "name": "profile.email",
+                    "description": "邮箱",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "\n// POST /api/users/reg  \n\t\t//   username, password, profile[email],  \n\t\t//   profile[nickname], profile[name] ...  \n\t\t\t{  \n\t\t\t\t\"msg\": \"register success\",  \n\t\t\t\t\"id\": 101  \n\t\t\t}",
+                "type": "Array"
+            },
+            "class": "用户"
+        },
+        {
+            "file": "routes\\users.js",
+            "line": 123,
+            "description": "POST /api/users/login",
+            "itemtype": "method",
+            "name": "登录",
+            "params": [
+                {
+                    "name": "username",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "password",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "\n// POST /api/users/login  \n\t\t//   username, password  \n\t\t {  \n\t\t  \"msg\": \"login success\",  \n\t\t  \"id\": 101  \n\t\t}",
+                "type": "Array"
+            },
+            "class": "用户"
+        },
+        {
+            "file": "routes\\users.js",
+            "line": 146,
+            "description": "POST /api/users/logout",
+            "itemtype": "method",
+            "name": "退出",
+            "return": {
+                "description": "\n// POST /api/users/logout  \n\t\t {  \n\t\t  \"msg\": \"logout success\"  \n\t\t}",
+                "type": "Array"
+            },
+            "class": "用户"
+        },
+        {
+            "file": "routes\\users.js",
+            "line": 163,
+            "description": "POST /api/users/password/reset",
+            "itemtype": "method",
+            "name": "重置密码",
+            "params": [
+                {
+                    "name": "password",
+                    "description": "旧密码",
+                    "type": "String"
+                },
+                {
+                    "name": "new-password",
+                    "description": "新密码",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "\n{ msg: 'Password reset' }",
+                "type": "Array"
+            },
+            "class": "用户"
         }
     ],
     "warnings": [

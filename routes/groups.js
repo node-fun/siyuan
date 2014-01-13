@@ -1,6 +1,6 @@
 /**
  * Created by Cam on 14-1-8.
- * @class Group
+ * @class 圈子
  */
 var _ = require('underscore'),
 	Group = require('../models/group'),

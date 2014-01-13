@@ -14,19 +14,7 @@ UserActivity = module.exports = syBookshelf.Model.extend({
 			.saving.apply(this, arguments);
 	}
 }, {
-	randomForge: function () {
-		return UserActivity.forge({
-			'userid': chance.integer({
-				min: 25,
-				max: 50
-			}),
-			'activityid': chance.integer({
-				min: 1,
-				max: 10
-			}),
-			isaccepted: chance.bool()
-		});
-	}
+
 });
 
 UserActivitys = UserActivity.Set = syBookshelf.Collection.extend({

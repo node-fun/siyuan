@@ -8,12 +8,10 @@ var assert = require('assert'),
 	apiHost = 'http://localhost:' + config.port + '/api/users';
 
 describe('users', function () {
-	// assuming there are at least
-	// 100 testing records
 	it('finds', function (done) {
 		request(apiHost + '/find', {
 			qs: {
-				page: 3,
+				page: 1,
 				limit: 7
 			}
 		}, function (err, res, data) {
@@ -25,7 +23,7 @@ describe('users', function () {
 	it('searches', function (done) {
 		request(apiHost + '/search', {
 			qs: {
-				name: 'e'
+				name: ' '
 			}
 		}, function (err, res, data) {
 			var users = data['users'];
@@ -34,7 +32,7 @@ describe('users', function () {
 		});
 	});
 	it('views', function (done) {
-		var id = 33;
+		var id = 3;
 		request(apiHost + '/view', {
 			qs: {
 				id: id
@@ -119,7 +117,7 @@ describe('users', function () {
 		request.post(apiHost + '/friends/add', {
 			jar: jar,
 			form: {
-				'id': 33,
+				'id': 2,
 				'remark': 'Boss'
 			}
 		}, function (err, res, data) {

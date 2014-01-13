@@ -23,13 +23,12 @@ var fs = require('fs'),
 	GroupMembersSet = GroupMembers.Set,
 	Issue = require('../models/issue'),
 	Issues = Issue.Set,
-	numUsers = 50,
-	numGroups = 20,
-	numGroupMembers = 50,
-	numActivities = 20,
-	numUserActivitys = 50,
+	numUsers = 35,
+	numGroups = ~~(numUsers / 5),
+	numGroupMembers = numGroups * 10,
+	numActivities = numGroups * 2,
+	numUserActivitys = numActivities * 5,
 	numIssues = numUsers * 3,
-
 	sqlFile = __dirname + '/db.sql';
 
 // create database for test
@@ -128,7 +127,12 @@ function addAdmins() {
 function addGroups() {
 	var groups = Groups.forge();
 	_.times(numGroups, function () {
-		groups.add(Group.randomForge());
+		groups.add(Group.forge({
+			ownerid: _.random(1, numUsers),
+			name: chance.word(),
+			description: chance.paragraph(),
+			createtime: chance.date({ year: 2013 })
+		}));
 	});
 	return groups.invokeThen('save')
 		.then(function () {
@@ -138,7 +142,13 @@ function addGroups() {
 function addGroupMembers() {
 	var groupmembers = GroupMembersSet.forge();
 	_.times(numGroupMembers, function () {
-		groupmembers.add(GroupMembers.randomForge());
+		groupmembers.add(GroupMembers.forge({
+			'groupid': _.random(1, numGroups),
+			'userid': _.random(1, numUsers),
+			'isowner': chance.bool(),
+			'isadmin': chance.bool(),
+			'remark': chance.word()
+		}));
 	});
 	return groupmembers.invokeThen('save')
 		.then(function () {
@@ -177,7 +187,11 @@ function addActivities() {
 function addUserActivitys() {
 	var useractivitys = UserActivitys.forge();
 	_.times(numUserActivitys, function () {
-		useractivitys.add(UserActivity.randomForge());
+		useractivitys.add(UserActivity.forge({
+			'userid': _.random(1, numUsers),
+			'activityid': _.random(1, numActivities),
+			isaccepted: chance.bool()
+		}));
 	});
 	return useractivitys.invokeThen('save')
 		.then(function () {

@@ -24,16 +24,6 @@ Group = module.exports = syBookshelf.Model.extend({
 		return this.hasMany(GroupMember, fkGroup);
 	}
 }, {
-
-	randomForge: function () {
-		return Group
-			.forge({
-				ownerid: _.random(25, 50),
-				name: chance.word(),
-				description: chance.paragraph(),
-				createtime: chance.date({ year: 2013 })
-			});
-	},
 	//这里的transaction有问题，还不会用。先同步，回头再改。
 	createGroup: function (ownerid, name, description, avatar) {
 

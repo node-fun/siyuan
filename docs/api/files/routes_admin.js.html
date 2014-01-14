@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>lib\encrypt.js - siyuan</title>
+    <title>routes\admin.js - siyuan</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -90,23 +90,83 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1 class="file-heading">File: lib\encrypt.js</h1>
+                        <h1 class="file-heading">File: routes\admin.js</h1>
 
 <div class="file">
     <pre class="code prettyprint linenums">
 /**
- * Created by fritz on 1/2/14.
+ * @class 管理员
  */
-var crypto = require(&#x27;crypto&#x27;);
+var _ = require(&#x27;underscore&#x27;),
+	Admin = require(&#x27;../models/admin&#x27;);
 
-module.exports = function (str) {
-	return md5(str);
+module.exports = function (app) {
+	app.get(&#x27;/api/admin/find&#x27;, function (req, res, next) {
+		Admin.find(req.query)
+			.then(function (admins) {
+				admins.each(function (admin) {
+					admin.attributes = admin.omit([&#x27;regtime&#x27;]);
+				});
+				next({
+					admins: admins
+				});
+			}).catch(next);
+	});
+
+	app.get(&#x27;/api/admin/search&#x27;, function (req, res, next) {
+		Admin.search(req.query)
+			.then(function (admins) {
+				admins.each(function (admin) {
+					admin.attributes = admin.omit([&#x27;regtime&#x27;]);
+				});
+				next({
+					admins: admins
+				});
+			}).catch(next);
+	});
+
+	app.get(&#x27;/api/admin/view&#x27;, function (req, res, next) {
+		Admin.view(req.query)
+			.then(function (admin) {
+				next({ admin: admin });
+			}).catch(next);
+	});
+
+	app.post(&#x27;/api/admin/register&#x27;, function (req, res, next) {
+		Admin.forge(req.body).register()
+			.then(function (admin) {
+				next({
+					msg: &#x27;register success&#x27;,
+					id: admin.id
+				});
+			}).catch(next);
+	});
+
+	app.post(&#x27;/api/admin/login&#x27;, function (req, res, next) {
+		Admin.forge(req.body).login()
+			.then(function (admin) {
+				next({
+					msg: &#x27;login success&#x27;,
+					id: req.session.adminid = admin.id
+				});
+			}).catch(next);
+	});
+
+	app.post(&#x27;/api/admin/logout&#x27;, function (req, res, next) {
+		Admin.forge({ id: req.session.adminid }).logout()
+			.then(function () {
+				next({ msg: &#x27;logout success&#x27; });
+			}).catch(next);
+	});
+
+	app.post(&#x27;/api/admin/password/reset&#x27;, function (req, res, next) {
+		Admin.forge({id: req.session[&#x27;adminid&#x27;]})
+			.resetPassword((req.body))
+			.then(function () {
+				next({ msg: &#x27;password reset&#x27; });
+			}).catch(next);
+	});
 };
-
-function md5(str) {
-	return crypto.createHash(&#x27;md5&#x27;).update(str).digest(&#x27;hex&#x27;);
-}
-
     </pre>
 </div>
 

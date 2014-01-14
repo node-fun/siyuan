@@ -43,7 +43,13 @@
             
                 <li><a href="../classes/圈子.html">圈子</a></li>
             
+                <li><a href="../classes/活动.html">活动</a></li>
+            
                 <li><a href="../classes/用户.html">用户</a></li>
+            
+                <li><a href="../classes/管理员.html">管理员</a></li>
+            
+                <li><a href="../classes/话题.html">话题</a></li>
             
             </ul>
 
@@ -112,22 +118,7 @@ GroupMembership = module.exports = syBookshelf.Model.extend({
 		return this.belongsTo(User, &#x27;userid&#x27;);
 	}
 }, {
-	randomForge: function () {
-		return GroupMembership
-			.forge({
-				&#x27;groupid&#x27;: chance.integer({
-					min: 1,
-					max: 20
-				}),
-				&#x27;userid&#x27;: chance.integer({
-					min: 25,
-					max: 50
-				}),
-				&#x27;isowner&#x27;: chance.bool(),
-				&#x27;isadmin&#x27;: chance.bool(),
-				&#x27;remark&#x27;: chance.word()
-			});
-	}
+
 });
 
 GroupMembersSet = GroupMembership.Collection = syBookshelf.Collection.extend({

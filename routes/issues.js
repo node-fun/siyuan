@@ -1,5 +1,6 @@
 /**
  * Created by fritz on 1/10/14.
+ * @class 话题
  */
 var _ = require('underscore'),
 	Promise = require('bluebird'),

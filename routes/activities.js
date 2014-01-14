@@ -1,3 +1,6 @@
+/**
+ * @class 活动
+ */
 var _ = require('underscore'),
 	Promise = require('bluebird'),
 	Activity = require('../models/activity'),

@@ -95,5 +95,33 @@ module.exports = function (app) {
 						});
 					});
 			});
-	})
+	});
+
+	/**
+	 * post /api/groups/quit
+	 * @method 退出圈子
+	 * @param {Number} groupid 圈子id
+	 * @return {Array} {  
+	 * 　　msg: 'quit group success'  
+	 * }
+	 */
+	app.post('/api/groups/quit', function(req, res, next){
+		var user = req.user;
+		if(!user) return next(errors[21301]);
+		return GroupMember.forge({
+			'userid': user.id,
+			'groupid': req.body['groupid']
+		}).fetch()
+			.then(function(groupMember){
+				if(!groupMember){
+					return next(errors[40001]);
+				}
+				return groupMember.destroy()
+					.then(function(){
+						next({
+							msg: 'quit group success'
+						});
+					});
+			});
+	});
 };

@@ -2,7 +2,10 @@ YUI.add("yuidoc-meta", function(Y) {
    Y.YUIDoc = { meta: {
     "classes": [
         "圈子",
-        "用户"
+        "活动",
+        "用户",
+        "管理员",
+        "话题"
     ],
     "modules": [],
     "allModules": []

@@ -43,7 +43,13 @@
             
                 <li><a href="../classes/圈子.html">圈子</a></li>
             
+                <li><a href="../classes/活动.html">活动</a></li>
+            
                 <li><a href="../classes/用户.html">用户</a></li>
+            
+                <li><a href="../classes/管理员.html">管理员</a></li>
+            
+                <li><a href="../classes/话题.html">话题</a></li>
             
             </ul>
 
@@ -185,7 +191,35 @@ module.exports = function (app) {
 						});
 					});
 			});
-	})
+	});
+
+	/**
+	 * post /api/groups/quit
+	 * @method 退出圈子
+	 * @param {Number} groupid 圈子id
+	 * @return {Array} {  
+	 * 　　msg: &#x27;quit group success&#x27;  
+	 * }
+	 */
+	app.post(&#x27;/api/groups/quit&#x27;, function(req, res, next){
+		var user = req.user;
+		if(!user) return next(errors[21301]);
+		return GroupMember.forge({
+			&#x27;userid&#x27;: user.id,
+			&#x27;groupid&#x27;: req.body[&#x27;groupid&#x27;]
+		}).fetch()
+			.then(function(groupMember){
+				if(!groupMember){
+					return next(errors[40001]);
+				}
+				return groupMember.destroy()
+					.then(function(){
+						next({
+							msg: &#x27;quit group success&#x27;
+						});
+					});
+			});
+	});
 };
 
     </pre>

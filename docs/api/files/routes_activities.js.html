@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>models\admin.js - siyuan</title>
+    <title>routes\activities.js - siyuan</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -90,136 +90,125 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1 class="file-heading">File: models\admin.js</h1>
+                        <h1 class="file-heading">File: routes\activities.js</h1>
 
 <div class="file">
     <pre class="code prettyprint linenums">
 /**
- * Created by cin on 12/24/13.
+ * @class 活动
  */
 var _ = require(&#x27;underscore&#x27;),
-	chance = new (require(&#x27;chance&#x27;))(),
 	Promise = require(&#x27;bluebird&#x27;),
-	errors = require(&#x27;../lib/errors&#x27;),
-	encrypt = require(&#x27;../lib/encrypt&#x27;),
-	syBookshelf = require(&#x27;./base&#x27;),
-	Admin, Admins;
+	Activity = require(&#x27;../models/activity&#x27;),
+	errors = require(&#x27;../lib/errors&#x27;);
 
-Admin = module.exports = syBookshelf.Model.extend({
-	tableName: &#x27;admin&#x27;,
-	fields: [&#x27;id&#x27;, &#x27;username&#x27;, &#x27;password&#x27;, &#x27;email&#x27;, &#x27;regtime&#x27;, &#x27;lastip&#x27;, &#x27;lasttime&#x27;],
-
-	omitInJSON: [&#x27;password&#x27;],
-
-	initialize: function () {
-		return Admin.__super__.initialize.apply(this, arguments);
-	},
-
-	saving: function () {
-		var ret = Admin.__super__.saving.apply(this, arguments);
-		//fix lower case
-		this.fixLowerCase([&#x27;username&#x27;]);
-		if (this.isNew()) {
-			//append &#x27;regtime&#x27;
-			if (!this.get(&#x27;regtime&#x27;)) {
-				this.set({
-					&#x27;regtime&#x27;: new Date()
-				});
-			}
-		}
-		if (this.hasChanged(&#x27;password&#x27;)) {
-			// encrypt password
-			this.set(&#x27;password&#x27;, encrypt(this.get(&#x27;password&#x27;)));
-		}
-		return ret;
-	},
-	login: function () {
-		var keys = [&#x27;username&#x27;, &#x27;password&#x27;],
-			loginData = this.pick(keys);
-		if (!_.all(keys, function (key) {
-			return loginData[key];
-		})) {
-			return Promise.rejected(errors[10008]);
-		}
-		// encrypt password
-		loginData[&#x27;password&#x27;] = encrypt(loginData[&#x27;password&#x27;]);
-		return Admin.forge(loginData).fetch()
-			.then(function (admin) {
-				if (!admin) return Promise.rejected(errors[21302]);
-				return admin.set({
-					&#x27;lastip&#x27;: chance.ip(),
-					&#x27;lasttime&#x27;: new Date()
-				}).save();
-			});
-	},
-	logout: function () {
-		return this.fetch();
-	},
-
-	resetPassword: function (data) {
-		var oldPassword = data[&#x27;password&#x27;],
-			newPassword = data[&#x27;new-password&#x27;],
-			self = this;
-		return this.fetch().then(function () {
-			if (encrypt(oldPassword) != self.get(&#x27;password&#x27;)) {
-				return Promise.rejected(errors[21301]);
-			}
-			return self.set(&#x27;password&#x27;, newPassword).save();
-		});
-	}
-}, {
-	randomForge: function () {
-		return Admin.forge({
-			username: chance.word(),
-			password: encrypt(chance.string()),
-			email: chance.email(),
-			regtime: chance.date(),
-			lastip: chance.ip(),
-			lasttime: chance.date()
-		});
-	},
-
-	find: function (query) {
-		var forAdmin = [&#x27;id&#x27;, &#x27;username&#x27;];
-		return Admins.forge()
-			.query(function (qb) {
-				_.each(forAdmin, function (k) {
-					if (k in query) {
-						qb.where(k, &#x27;=&#x27;, query[k]);
-					}
+module.exports = function (app) {
+	app.get(&#x27;/api/activities/find&#x27;, function (req, res, next) {
+		Activity.find(req.query)
+			.then(function (activities) {
+				activities.mapThen(function (activity) {
+					return activity.load([&#x27;usership&#x27;, &#x27;status&#x27;]);
 				})
-			})
-			.query(&#x27;offset&#x27;, query[&#x27;offset&#x27;])
-			.query(&#x27;limit&#x27;, query[&#x27;limit&#x27;])
-			.fetch();
-	},
-	search: function (query) {
-		var accepts = [&#x27;username&#x27;],
-			count = 0;
-		return Admins.forge()
-			.query(function (qb) {
-				_.each(accepts, function (k) {
-					if (k in query) {
-						count++;
-						qb.where(k, &#x27;like&#x27;, &#x27;%&#x27; + query[k] + &#x27;%&#x27;);
-					}
-				});
-			}).query(&#x27;offset&#x27;, query[&#x27;offset&#x27;])
-			.query(&#x27;limit&#x27;, count ? query[&#x27;limit&#x27;] : 0)
-			.fetch();
-	},
-	view: function (query) {
-		return Admin.forge({ id: query[&#x27;id&#x27;] })
+					.then(function (activities) {
+						next({
+							activities: activities
+						});
+					});
+			}).catch(next);
+	});
+	app.post(&#x27;/api/activities/join&#x27;, function (req, res, next) {
+		var userid = req.session[&#x27;userid&#x27;];
+		Activity.forge(req.body)
 			.fetch()
-			.then(function (admin) {
-				return admin;
-			});
-	}
-});
+			.then(function (activity) {
+				return activity.joinActivity(userid)
+					.then(function (usership) {
+						next({
+							msg: &#x27;join success&#x27;,
+							id: usership.get(&#x27;id&#x27;)
+						});
+					});
+			}).catch(next);
+	});
+	app.post(&#x27;/api/activities/cancel&#x27;, function (req, res, next) {
+		var userid = req.session[&#x27;userid&#x27;];
+		Activity.forge(req.body)
+			.fetch()
+			.then(function (activity) {
+				return activity.cancelActivity(userid)
+					.then(function () {
+						next({
+							msg: &#x27;cancel success&#x27;
+						});
+					});
+			}).catch(next);
+	});
+	app.post(&#x27;/api/activities/end&#x27;, function (req, res, next) {
+		var userid = req.session[&#x27;userid&#x27;];
+		Activity.forge(req.body)
+			.fetch()
+			.then(function (activity) {
+				if (activity == null) {
+					return Promise.rejected(errors[40017]);
+				}
+				return activity.endActivity(userid)
+					.then(function () {
+						next({
+							msg: &#x27;end success&#x27;
+						});
+					});
+			}).catch(next);
+	});
+	app.post(&#x27;/api/activities/update&#x27;, function (req, res, next) {
+		var userid = req.session[&#x27;userid&#x27;],
+			id = req.body.id,
+			content = req.body.content,
+			maxnum = req.body.maxnum,
+			starttime = req.body.starttime,
+			duration = req.body.duration,
+			statusid = req.body.statusid,
+			money = req.body.money;
+		Activity.forge({ &#x27;id&#x27;: id }).updateActivity(userid, content, maxnum, starttime, duration, statusid, money)
+			.then(function (activity) {
+				next({
+					msg: &#x27;update success&#x27;,
+					id: activity.get(&#x27;id&#x27;)
+				});
+			}).catch(next);
+	});
 
-Admins = Admin.Set = syBookshelf.Collection.extend({
-	model: Admin
-});
+	app.post(&#x27;/api/activities/create&#x27;, function (req, res, next) {
+		var userid = 26,//req.session[&#x27;userid&#x27;],
+			groupid = req.body.groupid,
+			content = req.body.content,
+			maxnum = req.body.maxnum,
+			starttime = req.body.starttime,
+			duration = req.body.duration,
+			statusid = req.body.statusid,
+			money = req.body.money;
+		Activity.forge().createActivity(userid, groupid, content, maxnum, starttime, duration, statusid, money)
+			.then(function (activity) {
+				next({
+					msg: &#x27;create success&#x27;,
+					id: activity.get(&#x27;id&#x27;)
+				});
+			});
+
+	});
+
+	app.post(&#x27;/api/activities/avatar/update&#x27;, function (req, res, next) {
+		if(!req.files[&#x27;avatar&#x27;]) return next(errors[20007]);
+		var file = req.files[&#x27;avatar&#x27;],
+			_3M = 3 * 1024 * 1024;
+		if(file[&#x27;type&#x27;] != &#x27;image/jpeg&#x27;) return next(errors[20005]);
+		if(file[&#x27;size&#x27;] &gt; _3M) return next(errors[20006]);
+		Activity.forge({ id: req.id })
+			.updateAvatar(file[&#x27;path&#x27;])
+			.then(function () {
+				next({ msg: &#x27;Avatar updated&#x27; });
+			});
+	});
+};
 
     </pre>
 </div>

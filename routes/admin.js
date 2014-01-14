@@ -1,3 +1,6 @@
+/**
+ * @class 管理员
+ */
 var _ = require('underscore'),
 	Admin = require('../models/admin');
 

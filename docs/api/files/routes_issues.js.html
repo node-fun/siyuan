@@ -43,7 +43,13 @@
             
                 <li><a href="../classes/圈子.html">圈子</a></li>
             
+                <li><a href="../classes/活动.html">活动</a></li>
+            
                 <li><a href="../classes/用户.html">用户</a></li>
+            
+                <li><a href="../classes/管理员.html">管理员</a></li>
+            
+                <li><a href="../classes/话题.html">话题</a></li>
             
             </ul>
 
@@ -90,10 +96,12 @@
     <pre class="code prettyprint linenums">
 /**
  * Created by fritz on 1/10/14.
+ * @class 话题
  */
 var _ = require(&#x27;underscore&#x27;),
 	Promise = require(&#x27;bluebird&#x27;),
 	Issue = require(&#x27;../models/issue&#x27;),
+	IssueComment = require(&#x27;../models/issue-comment&#x27;),
 	errors = require(&#x27;../lib/errors&#x27;);
 
 module.exports = function (app) {
@@ -123,7 +131,7 @@ module.exports = function (app) {
 		Issue.forge(_.extend(req.body, { userid: user.id })).save()
 			.then(function (issue) {
 				next({
-					msg: &#x27;issue posted&#x27;,
+					msg: &#x27;Issue posted&#x27;,
 					id: issue.id
 				});
 			}).catch(next);
@@ -140,8 +148,8 @@ module.exports = function (app) {
 					return Promise.rejected(errors[20102]);
 				}
 				return issue.set(req.body).save();
-			}).then(function (issue) {
-				next({ msg: &#x27;issue updated&#x27; });
+			}).then(function () {
+				next({ msg: &#x27;Issue updated&#x27; });
 			}).catch(next);
 	});
 	app.post(&#x27;/api/issues/delete&#x27;, function (req, res, next) {
@@ -154,9 +162,31 @@ module.exports = function (app) {
 					return Promise.rejected(errors[20102]);
 				}
 				return issue.destroy();
-			}).then(function (issue) {
-				next({ msg: &#x27;issue deleted&#x27; });
+			}).then(function () {
+				next({ msg: &#x27;Issue deleted&#x27; });
 			}).catch(next);
+	});
+
+	app.post(&#x27;/api/issues/comment&#x27;, function (req, res, next) {
+		var user = req.user;
+		if (!user) return next(errors[21301]);
+		var issueid = ~~req.body[&#x27;id&#x27;];
+		delete req.body[&#x27;id&#x27;];
+		Issue.forge({ id: issueid }).fetch()
+			.then(function (issue) {
+				if (!issue) throw errors[20603];
+			}).then(function () {
+				IssueComment.forge(_.extend(req.body, {
+						issueid: issueid,
+						userid: user.id
+					})).save()
+					.then(function (comment) {
+						next({
+							msg: &#x27;Issue commented&#x27;,
+							id: comment.id
+						});
+					}).catch(next);
+			});
 	});
 };
 

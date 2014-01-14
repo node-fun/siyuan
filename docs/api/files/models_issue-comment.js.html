@@ -43,7 +43,13 @@
             
                 <li><a href="../classes/圈子.html">圈子</a></li>
             
+                <li><a href="../classes/活动.html">活动</a></li>
+            
                 <li><a href="../classes/用户.html">用户</a></li>
+            
+                <li><a href="../classes/管理员.html">管理员</a></li>
+            
+                <li><a href="../classes/话题.html">话题</a></li>
             
             </ul>
 
@@ -96,7 +102,7 @@ var syBookshelf = require(&#x27;./base&#x27;),
 
 IssueComment = module.exports = syBookshelf.Model.extend({
 	tableName: &#x27;issue_comments&#x27;,
-	fields: [&#x27;id&#x27;, &#x27;issueid&#x27;, &#x27;body&#x27;, &#x27;posttime&#x27;],
+	fields: [&#x27;id&#x27;, &#x27;issueid&#x27;, &#x27;userid&#x27;, &#x27;body&#x27;, &#x27;posttime&#x27;],
 	omitInJSON: [&#x27;id&#x27;, &#x27;issueid&#x27;],
 
 	defaults: function () {

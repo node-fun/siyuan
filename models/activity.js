@@ -156,6 +156,40 @@ Activity = module.exports = syBookshelf.Model.extend({
 			'statusid': statusid
 		}).save();
 	},
+
+	getUserList: function(userid) {
+		var self = this;
+		return GroupMembers.forge({
+			'groupid': self.get('groupid'),
+			'userid': userid
+		}).fetch().then(function(groupmember) {
+				if(groupmember == null) return Promise.rejected(errors[40001]);
+				return self.load(['usership']).then(function(activity) {
+					var userships = activity.related('usership');
+					return userships.mapThen(function(usership) {
+						return User.forge({ 'id': usership.get('userid') })
+							.fetch()
+							.then(function(user) {
+								return usership.set({ 'name': user.get('username') });
+							});
+					}).then(function(userships) {
+							return userships;
+						});
+
+				});
+			});
+	},
+
+	acceptJoin: function(userid, usershipid) {
+		var self = this,
+			ownerid = self.get('ownerid');
+		if(userid != ownerid) return Promise.rejected(errors[20102]);
+		return UserActivity.forge({ 'id': usershipid }).fetch()
+			.then(function(usership) {
+				return usership.set({ 'isaccepted': true }).save();
+			});
+	},
+
 	updateAvatar: function(tmp) {
 		var file = Activity.getAvatarPath(this.id),
 			self = this;

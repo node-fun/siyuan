@@ -223,11 +223,18 @@ CREATE TABLE IF NOT EXISTS `issue_comments` (
   `issueid` INT NULL,
   `body` VARCHAR(512) NULL,
   `posttime` DATETIME NULL,
+  `userid` INT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_issue_comments_issues1_idx` (`issueid` ASC),
+  INDEX `fk_issue_comments_users1_idx` (`userid` ASC),
   CONSTRAINT `fk_issue_comments_issues1`
     FOREIGN KEY (`issueid`)
     REFERENCES `issues` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_issue_comments_users1`
+    FOREIGN KEY (`userid`)
+    REFERENCES `users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

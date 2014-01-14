@@ -6,7 +6,7 @@ var syBookshelf = require('./base'),
 
 IssueComment = module.exports = syBookshelf.Model.extend({
 	tableName: 'issue_comments',
-	fields: ['id', 'issueid', 'body', 'posttime'],
+	fields: ['id', 'issueid', 'userid', 'body', 'posttime'],
 	omitInJSON: ['id', 'issueid'],
 
 	defaults: function () {

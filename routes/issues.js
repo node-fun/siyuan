@@ -4,6 +4,7 @@
 var _ = require('underscore'),
 	Promise = require('bluebird'),
 	Issue = require('../models/issue'),
+	IssueComment = require('../models/issue-comment'),
 	errors = require('../lib/errors');
 
 module.exports = function (app) {
@@ -67,5 +68,27 @@ module.exports = function (app) {
 			}).then(function () {
 				next({ msg: 'Issue deleted' });
 			}).catch(next);
+	});
+
+	app.post('/api/issues/comment', function (req, res, next) {
+		var user = req.user;
+		if (!user) return next(errors[21301]);
+		var issueid = ~~req.body['id'];
+		delete req.body['id'];
+		Issue.forge({ id: issueid }).fetch()
+			.then(function (issue) {
+				if (!issue) throw errors[20603];
+			}).then(function () {
+				IssueComment.forge(_.extend(req.body, {
+						issueid: issueid,
+						userid: user.id
+					})).save()
+					.then(function (comment) {
+						next({
+							msg: 'Issue commented',
+							id: comment.id
+						});
+					}).catch(next);
+			});
 	});
 };

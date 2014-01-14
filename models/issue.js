@@ -20,6 +20,24 @@ Issue = module.exports = syBookshelf.Model.extend({
 
 	comments: function () {
 		return this.hasMany(IssueComment, 'issueid');
+	},
+
+	countComments: function () {
+		var self = this;
+		return this.comments().query().count('*')
+			.then(function (result) {
+				return result[0]['count(*)'];
+			}).then(function (numComments) {
+				return self.set('numComments', numComments);
+			});
+	},
+
+	fetch: function () {
+		var ret = Issue.__super__
+			.fetch.apply(this, arguments);
+		return ret.then(function (issue) {
+			return issue.countComments();
+		});
 	}
 }, {
 	randomForge: function () {
@@ -70,5 +88,13 @@ Issue = module.exports = syBookshelf.Model.extend({
 });
 
 Issues = Issue.Set = syBookshelf.Collection.extend({
-	model: Issue
+	model: Issue,
+
+	fetch: function () {
+		var ret = Issues.__super__
+			.fetch.apply(this, arguments);
+		return ret.then(function (issues) {
+			return issues.invokeThen('countComments');
+		});
+	}
 });

@@ -352,7 +352,7 @@
             ],
             "return": {
                 "description": "\n{  \n\t\t  \"users\": [  \n\t\t\t{  \n\t\t\t  \"id\": 71,  \n\t\t\t  \"userid\": 1,  \n\t\t\t  \"activityid\": 15,  \n\t\t\t  \"isaccepted\": 1,  \n\t\t\t  \"name\": \"arwuba_60\"  \n\t\t\t},  \n\t\t\t{  \n\t\t\t  \"id\": 72,  \n\t\t\t  \"userid\": 13,  \n\t\t\t  \"activityid\": 15,  \n\t\t\t  \"isaccepted\": 1,  \n\t\t\t  \"name\": \"WTF\"  \n\t\t\t}  \n\t\t  ]  \n\t\t}",
-                "type": "JSON"
+                "type": "Array"
             },
             "class": "活动"
         },
@@ -394,6 +394,86 @@
                 }
             ],
             "class": "活动"
+        },
+        {
+            "file": "routes/admin.js",
+            "line": 8,
+            "description": "POST /api/admin/find",
+            "itemtype": "method",
+            "name": "管理员列表",
+            "params": [
+                {
+                    "name": "id",
+                    "description": "",
+                    "type": "Number",
+                    "optional": true
+                }
+            ],
+            "return": {
+                "description": "\n{  \n\t\t  \"admins\": [  \n\t\t\t{  \n\t\t\t  \"id\": 1,  \n\t\t\t  \"username\": \"admin1\",  \n\t\t\t  \"email\": null,  \n\t\t\t  \"lastip\": null,  \n\t\t\t  \"lasttime\": null  \n\t\t\t},  \n\t\t\t{  \n\t\t\t  \"id\": 2,  \n\t\t\t  \"username\": \"admin2\",  \n\t\t\t  \"email\": null,  \n\t\t\t  \"lastip\": null,  \n\t\t\t  \"lasttime\": null  \n\t\t\t},  \n\t\t\t{  \n\t\t\t  \"id\": 3,  \n\t\t\t  \"username\": \"admin3\",  \n\t\t\t  \"email\": null,  \n\t\t\t  \"lastip\": null,  \n\t\t\t  \"lasttime\": null  \n\t\t\t}  \n\t\t  ]  \n\t\t}",
+                "type": "Array"
+            },
+            "class": "管理员"
+        },
+        {
+            "file": "routes/admin.js",
+            "line": 80,
+            "description": "POST /api/admin/login",
+            "itemtype": "method",
+            "name": "管理员登录",
+            "params": [
+                {
+                    "name": "username",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "password",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "\n{  \n\t\tmsg: login success,  \n\t\tid: 2  \n}",
+                "type": "JSON"
+            },
+            "class": "管理员"
+        },
+        {
+            "file": "routes/admin.js",
+            "line": 101,
+            "description": "POST /api/admin/logout",
+            "itemtype": "method",
+            "name": "管理员登出",
+            "return": {
+                "description": "\n{  \n\t\tmsg: logout success  \n}",
+                "type": "JSON"
+            },
+            "class": "管理员"
+        },
+        {
+            "file": "routes/admin.js",
+            "line": 117,
+            "description": "POST /api/admin/password/reset",
+            "itemtype": "method",
+            "name": "密码重置",
+            "params": [
+                {
+                    "name": "password",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "new-password",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "\n{  \n\t\tmsg: password reset  \n}",
+                "type": "JSON"
+            },
+            "class": "管理员"
         },
         {
             "file": "routes/groups.js",

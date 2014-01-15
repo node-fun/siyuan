@@ -101,6 +101,37 @@ var _ = require(&#x27;underscore&#x27;),
 	Admin = require(&#x27;../models/admin&#x27;);
 
 module.exports = function (app) {
+	/**
+	 * POST /api/admin/find
+	 * @method 管理员列表
+	 * @param {Number} [id]
+	 * @return {Array}
+	 * {  
+		  &quot;admins&quot;: [  
+			{  
+			  &quot;id&quot;: 1,  
+			  &quot;username&quot;: &quot;admin1&quot;,  
+			  &quot;email&quot;: null,  
+			  &quot;lastip&quot;: null,  
+			  &quot;lasttime&quot;: null  
+			},  
+			{  
+			  &quot;id&quot;: 2,  
+			  &quot;username&quot;: &quot;admin2&quot;,  
+			  &quot;email&quot;: null,  
+			  &quot;lastip&quot;: null,  
+			  &quot;lasttime&quot;: null  
+			},  
+			{  
+			  &quot;id&quot;: 3,  
+			  &quot;username&quot;: &quot;admin3&quot;,  
+			  &quot;email&quot;: null,  
+			  &quot;lastip&quot;: null,  
+			  &quot;lasttime&quot;: null  
+			}  
+		  ]  
+		}  
+	 */
 	app.get(&#x27;/api/admin/find&#x27;, function (req, res, next) {
 		Admin.find(req.query)
 			.then(function (admins) {
@@ -142,6 +173,17 @@ module.exports = function (app) {
 			}).catch(next);
 	});
 
+	/**
+	 * POST /api/admin/login
+	 * @method 管理员登录
+	 * @param {String} username
+	 * @param {String} password
+	 * @return {JSON}
+	 * {  
+	 * 		msg: login success,  
+	 * 		id: 2  
+	 * }  
+	 */
 	app.post(&#x27;/api/admin/login&#x27;, function (req, res, next) {
 		Admin.forge(req.body).login()
 			.then(function (admin) {
@@ -152,13 +194,32 @@ module.exports = function (app) {
 			}).catch(next);
 	});
 
+	/**
+	 * POST /api/admin/logout
+	 * @method 管理员登出
+	 * @return {JSON}
+	 * {  
+	 * 		msg: logout success  
+	 * }  
+	 */
 	app.post(&#x27;/api/admin/logout&#x27;, function (req, res, next) {
 		Admin.forge({ id: req.session.adminid }).logout()
 			.then(function () {
+				req.session.adminid = null,
 				next({ msg: &#x27;logout success&#x27; });
 			}).catch(next);
 	});
 
+	/**
+	 * POST /api/admin/password/reset
+	 * @method 密码重置
+	 * @param {String} password
+	 * @param {String} new-password
+	 * @return {JSON}
+	 * {  
+	 * 		msg: password reset  
+	 * }  
+	 */
 	app.post(&#x27;/api/admin/password/reset&#x27;, function (req, res, next) {
 		Admin.forge({id: req.session[&#x27;adminid&#x27;]})
 			.resetPassword((req.body))
@@ -167,6 +228,7 @@ module.exports = function (app) {
 			}).catch(next);
 	});
 };
+
     </pre>
 </div>
 

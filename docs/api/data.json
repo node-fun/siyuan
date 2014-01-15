@@ -49,6 +49,24 @@
             "fors": {},
             "namespaces": {}
         },
+        "routes\\activities.js": {
+            "name": "routes\\activities.js",
+            "modules": {},
+            "classes": {
+                "活动": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "routes\\admin.js": {
+            "name": "routes\\admin.js",
+            "modules": {},
+            "classes": {
+                "管理员": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
         "routes\\groups.js": {
             "name": "routes\\groups.js",
             "modules": {},
@@ -61,7 +79,9 @@
         "routes\\issues.js": {
             "name": "routes\\issues.js",
             "modules": {},
-            "classes": {},
+            "classes": {
+                "话题": 1
+            },
             "fors": {},
             "namespaces": {}
         },
@@ -77,6 +97,28 @@
     },
     "modules": {},
     "classes": {
+        "活动": {
+            "name": "活动",
+            "shortname": "活动",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "routes\\activities.js",
+            "line": 1
+        },
+        "管理员": {
+            "name": "管理员",
+            "shortname": "管理员",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "routes\\admin.js",
+            "line": 1
+        },
         "圈子": {
             "name": "圈子",
             "shortname": "圈子",
@@ -88,6 +130,18 @@
             "file": "routes\\groups.js",
             "line": 1,
             "description": "Created by Cam on 14-1-8."
+        },
+        "话题": {
+            "name": "话题",
+            "shortname": "话题",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "routes\\issues.js",
+            "line": 1,
+            "description": "Created by fritz on 1/10/14."
         },
         "用户": {
             "name": "用户",
@@ -106,37 +160,37 @@
             "file": "lib\\encrypt.js",
             "line": 1,
             "description": "Created by fritz on 1/2/14.",
-            "class": "圈子"
+            "class": "活动"
         },
         {
             "file": "lib\\errors.js",
             "line": 1,
             "description": "Created by fritz on 1/1/14.",
-            "class": "圈子"
+            "class": "活动"
         },
         {
             "file": "models\\admin.js",
             "line": 1,
             "description": "Created by cin on 12/24/13.",
-            "class": "圈子"
+            "class": "活动"
         },
         {
             "file": "models\\group-membership.js",
             "line": 1,
             "description": "Created by Cam on 14-1-4.",
-            "class": "圈子"
+            "class": "活动"
         },
         {
             "file": "models\\group.js",
             "line": 1,
             "description": "Created by Cam on 14-1-2.",
-            "class": "圈子"
+            "class": "活动"
         },
         {
             "file": "models\\issue-comment.js",
             "line": 1,
             "description": "Created by fritz on 1/11/14.",
-            "class": "圈子"
+            "class": "活动"
         },
         {
             "file": "routes\\groups.js",
@@ -182,10 +236,23 @@
             "class": "圈子"
         },
         {
-            "file": "routes\\issues.js",
-            "line": 1,
-            "description": "Created by fritz on 1/10/14.",
-            "class": "用户"
+            "file": "routes\\groups.js",
+            "line": 100,
+            "description": "post /api/groups/quit",
+            "itemtype": "method",
+            "name": "退出圈子",
+            "params": [
+                {
+                    "name": "groupid",
+                    "description": "圈子id",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "{  \n　　msg: 'quit group success'  \n}",
+                "type": "Array"
+            },
+            "class": "圈子"
         },
         {
             "file": "routes\\users.js",
@@ -424,10 +491,6 @@
         {
             "message": "Missing item type\nCreated by fritz on 1/11/14.",
             "line": " models\\issue-comment.js:1"
-        },
-        {
-            "message": "Missing item type\nCreated by fritz on 1/10/14.",
-            "line": " routes\\issues.js:1"
         }
     ]
 }

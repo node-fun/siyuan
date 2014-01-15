@@ -89,7 +89,7 @@ function attachFriends() {
 	return Users.forge().fetch()
 		.then(function (users) {
 			return users.mapThen(function (user) {
-				var numFriends = _.random(2, 5), p;
+				var numFriends = _.random(1, 7), p;
 				_.times(numFriends, function () {
 					if (!p) return p = f(user);
 					p = p.then(f);

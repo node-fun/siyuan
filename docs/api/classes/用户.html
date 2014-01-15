@@ -15,7 +15,7 @@
     <div id="hd" class="yui3-g header">
         <div class="yui3-u-3-4">
             
-                <h1><img src="..\logo.png" title="siyuan"></h1>
+                <h1><img src="../logo.png" title="siyuan"></h1>
             
         </div>
         <div class="yui3-u-1-4 version">
@@ -98,7 +98,7 @@
 
     
         <div class="foundat">
-            Defined in: <a href="../files/routes_users.js.html#l1"><code>routes\users.js:1</code></a>
+            Defined in: <a href="../files/routes_users.js.html#l1"><code>routes&#x2F;users.js:1</code></a>
         </div>
     
 
@@ -251,7 +251,7 @@
 
     
         <span class="returns-inline">
-            <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+            <span class="type">JSON</span>
         </span>
     
 
@@ -278,7 +278,7 @@
             
         
         
-        <a href="../files/routes_users.js.html#l9"><code>routes\users.js:9</code></a>
+        <a href="../files/routes_users.js.html#l9"><code>routes&#x2F;users.js:9</code></a>
         
         </p>
 
@@ -357,7 +357,7 @@
                     
 
                     <div class="param-description">
-                        <p>1在线，0不在线</p>
+                        <p><code>1</code>在线, <code>0</code>不在线</p>
 
                     </div>
 
@@ -390,7 +390,7 @@
                     
 
                     <div class="param-description">
-                        <p>“m”男，“f”女</p>
+                        <p><code>m</code>男, <code>f</code>女</p>
 
                     </div>
 
@@ -408,10 +408,8 @@
             <div class="returns-description">
                 
                     
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>:
+                        <span class="type">JSON</span>:
                     
-                    <p>// GET /api/users/find?isonline=1&amp;gender=f&amp;limit=2&amp;page=3<br>{<br>        　　&quot;users&quot;: [<br>        　　　　{<br>        　　　　　　&quot;id&quot;: 14,<br>        　　　　　　&quot;username&quot;: &quot;nemjoptaz&quot;,<br>        　　　　　　“avatar”:”<a href="http://10.10.65.165:8080/avatar/14”">http://10.10.65.165:8080/avatar/14”</a>,<br>        　　　　　　“description”:”我是科技界大牛”,<br>        　　　　　　&quot;isonline&quot;: 1<br>        　　　　},<br>        　　　　{<br>        　　　　　　&quot;id&quot;: 20,<br>        　　　　　　&quot;username&quot;: &quot;pa&quot;,<br>        　　　　　　“avatar”:”<a href="http://10.10.65.165:8080/avatar/14”">http://10.10.65.165:8080/avatar/14”</a>,<br>        　　　　　　“description”:”我是科技界大牛”,<br>        　　　　　　&quot;isonline&quot;: 1<br>        　　　　}<br>        　　]<br>        }</p>
-
                 
             </div>
         </div>
@@ -440,7 +438,7 @@
 
     
         <span class="returns-inline">
-            <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+            <span class="type">JSON</span>
         </span>
     
 
@@ -467,7 +465,7 @@
             
         
         
-        <a href="../files/routes_users.js.html#l64"><code>routes\users.js:64</code></a>
+        <a href="../files/routes_users.js.html#l47"><code>routes&#x2F;users.js:47</code></a>
         
         </p>
 
@@ -514,10 +512,8 @@
             <div class="returns-description">
                 
                     
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>:
+                        <span class="type">JSON</span>:
                     
-                    <p>// GET /api/users/view?id=88<br>     {<br>    　　&quot;user&quot;: {<br>    　　　　&quot;id&quot;: 88,<br>    　　　　&quot;username&quot;: &quot;zodisukeg&quot;,<br>    　　　　&quot;regtime&quot;: 1357441421000,<br>    　　　　&quot;isonline&quot;: 1,<br>    　　　　&quot;profile&quot;: {<br>    　　　　　　&quot;email&quot;: &quot;rofno@alube.net&quot;,<br>    　　　　　　&quot;nickname&quot;: &quot;Brady Robertson&quot;,<br>    　　　　　　&quot;name&quot;: &quot;Stephen Brady&quot;,<br>    　　　　　　&quot;gender&quot;: &quot;m&quot;,<br>    　　　　　　&quot;age&quot;: 46,<br>    　　　　　　&quot;grade&quot;: 1986,<br>    　　　　　　&quot;university&quot;: &quot;Sihijsa University&quot;,<br>    　　　　　　&quot;major&quot;: &quot;Viwrun&quot;<br>    　　　　}<br>    　　}<br>     }</p>
-
                 
             </div>
         </div>
@@ -564,13 +560,25 @@
                     
                 </li>
             
+                <li class="arg">
+                    
+                        <code class="optional">[gender]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[isonline]</code>
+                    
+                </li>
+            
             </ul><span class="paren">)</span>
         </div>
     
 
     
         <span class="returns-inline">
-            <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+            <span class="type">JSON</span>
         </span>
     
 
@@ -597,7 +605,7 @@
             
         
         
-        <a href="../files/routes_users.js.html#l46"><code>routes\users.js:46</code></a>
+        <a href="../files/routes_users.js.html#l27"><code>routes&#x2F;users.js:27</code></a>
         
         </p>
 
@@ -628,8 +636,7 @@
                     
 
                     <div class="param-description">
-                        <p>用户名</p>
-
+                         
                     </div>
 
                     
@@ -645,8 +652,7 @@
                     
 
                     <div class="param-description">
-                        <p>昵称</p>
-
+                         
                     </div>
 
                     
@@ -662,8 +668,7 @@
                     
 
                     <div class="param-description">
-                        <p>真名</p>
-
+                         
                     </div>
 
                     
@@ -679,8 +684,7 @@
                     
 
                     <div class="param-description">
-                        <p>学校</p>
-
+                         
                     </div>
 
                     
@@ -696,8 +700,39 @@
                     
 
                     <div class="param-description">
-                        <p>专业</p>
+                         
+                    </div>
 
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[gender]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[isonline]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
                     </div>
 
                     
@@ -714,7 +749,7 @@
             <div class="returns-description">
                 
                     
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>:
+                        <span class="type">JSON</span>:
                     
                     <p>返回格式与 /api/users/find 相同</p>
 
@@ -770,7 +805,7 @@
 
     
         <span class="returns-inline">
-            <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+            <span class="type">JSON</span>
         </span>
     
 
@@ -797,7 +832,7 @@
             
         
         
-        <a href="../files/routes_users.js.html#l96"><code>routes\users.js:96</code></a>
+        <a href="../files/routes_users.js.html#l60"><code>routes&#x2F;users.js:60</code></a>
         
         </p>
 
@@ -909,9 +944,14 @@
             <div class="returns-description">
                 
                     
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>:
+                        <span class="type">JSON</span>:
                     
-                    <p>// POST /api/users/reg<br>        //   username, password, profile[email],<br>        //   profile[nickname], profile[name] ...<br>            {<br>                &quot;msg&quot;: &quot;register success&quot;,<br>                &quot;id&quot;: 101<br>            }</p>
+                    <p>//   username, password, profile[email],
+        //   profile[nickname], profile[name] ...
+            {
+                &quot;msg&quot;: &quot;register success&quot;,
+                &quot;id&quot;: 101
+            }</p>
 
                 
             </div>
@@ -947,7 +987,7 @@
 
     
         <span class="returns-inline">
-            <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+            <span class="type">JSON</span>
         </span>
     
 
@@ -974,7 +1014,7 @@
             
         
         
-        <a href="../files/routes_users.js.html#l123"><code>routes\users.js:123</code></a>
+        <a href="../files/routes_users.js.html#l86"><code>routes&#x2F;users.js:86</code></a>
         
         </p>
 
@@ -1036,9 +1076,12 @@
             <div class="returns-description">
                 
                     
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>:
+                        <span class="type">JSON</span>:
                     
-                    <p>// POST /api/users/login<br>        //   username, password<br>         {<br>          &quot;msg&quot;: &quot;login success&quot;,<br>          &quot;id&quot;: 101<br>        }</p>
+                    <p>{
+          &quot;msg&quot;: &quot;User logged in&quot;,
+          &quot;id&quot;: 36
+        }</p>
 
                 
             </div>
@@ -1058,7 +1101,7 @@
 
     
         <span class="returns-inline">
-            <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+            <span class="type">JSON</span>
         </span>
     
 
@@ -1085,7 +1128,7 @@
             
         
         
-        <a href="../files/routes_users.js.html#l146"><code>routes\users.js:146</code></a>
+        <a href="../files/routes_users.js.html#l107"><code>routes&#x2F;users.js:107</code></a>
         
         </p>
 
@@ -1109,9 +1152,11 @@
             <div class="returns-description">
                 
                     
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>:
+                        <span class="type">JSON</span>:
                     
-                    <p>// POST /api/users/logout<br>         {<br>          &quot;msg&quot;: &quot;logout success&quot;<br>        }</p>
+                    <p>{
+          &quot;msg&quot;: &quot;User logged out&quot;
+        }</p>
 
                 
             </div>
@@ -1147,7 +1192,7 @@
 
     
         <span class="returns-inline">
-            <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+            <span class="type">JSON</span>
         </span>
     
 
@@ -1174,7 +1219,7 @@
             
         
         
-        <a href="../files/routes_users.js.html#l163"><code>routes\users.js:163</code></a>
+        <a href="../files/routes_users.js.html#l123"><code>routes&#x2F;users.js:123</code></a>
         
         </p>
 
@@ -1238,7 +1283,7 @@
             <div class="returns-description">
                 
                     
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>:
+                        <span class="type">JSON</span>:
                     
                     <p>{ msg: &#39;Password reset&#39; }</p>
 

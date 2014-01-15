@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>routes\users.js - siyuan</title>
+    <title>routes/users.js - siyuan</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -15,7 +15,7 @@
     <div id="hd" class="yui3-g header">
         <div class="yui3-u-3-4">
             
-                <h1><img src="..\logo.png" title="siyuan"></h1>
+                <h1><img src="../logo.png" title="siyuan"></h1>
             
         </div>
         <div class="yui3-u-1-4 version">
@@ -90,7 +90,7 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1 class="file-heading">File: routes\users.js</h1>
+                        <h1 class="file-heading">File: routes/users.js</h1>
 
 <div class="file">
     <pre class="code prettyprint linenums">
@@ -108,29 +108,10 @@ module.exports = function (app) {
 	 * @param {Number} [id]
 	 * @param {String} [username]
 	 * @param {String} [name]
-	 * @param {Number} [isonline] 1在线，0不在线
+	 * @param {Number} [isonline] &#x60;1&#x60;在线, &#x60;0&#x60;不在线
 	 * @param {String} [email]
-	 * @param {String} [gender] “m”男，“f”女
-	 * @return {Array}
-	 * // GET /api/users/find?isonline=1&amp;gender=f&amp;limit=2&amp;page=3  
-	 * {  
-		　　&quot;users&quot;: [  
-		　　　　{  
-		　　　　　　&quot;id&quot;: 14,  
-		　　　　　　&quot;username&quot;: &quot;nemjoptaz&quot;,  
-		　　　　　　“avatar”:”http://10.10.65.165:8080/avatar/14”,  
-		　　　　　　“description”:”我是科技界大牛”,  
-		　　　　　　&quot;isonline&quot;: 1  
-		　　　　},  
-		　　　　{  
-		　　　　　　&quot;id&quot;: 20,  
-		　　　　　　&quot;username&quot;: &quot;pa&quot;,  
-		　　　　　　“avatar”:”http://10.10.65.165:8080/avatar/14”,  
-		　　　　　　“description”:”我是科技界大牛”,  
-		　　　　　　&quot;isonline&quot;: 1  
-		　　　　}  
-		　　]  
-		}
+	 * @param {String} [gender] &#x60;m&#x60;男, &#x60;f&#x60;女
+	 * @return {JSON}
 	*/
 	app.get(&#x27;/api/users/find&#x27;, function (req, res, next) {
 		User.find(req.query)
@@ -142,12 +123,14 @@ module.exports = function (app) {
 	/**
 	 * GET /api/users/search
 	 * @method 模糊搜索用户
-	 * @param {String} [username] 用户名
-	 * @param {String} [nickname] 昵称
-	 * @param {String} [name] 真名
-	 * @param {String} [university] 学校
-	 * @param {String} [major] 专业
-	 * @return {Array}
+	 * @param {String} [username]
+	 * @param {String} [nickname]
+	 * @param {String} [name]
+	 * @param {String} [university]
+	 * @param {String} [major]
+	 * @param {String} [gender]
+	 * @param {String} [isonline]
+	 * @return {JSON}
 	 * 返回格式与 /api/users/find 相同
 	 */
 	app.get(&#x27;/api/users/search&#x27;, function (req, res, next) {
@@ -161,26 +144,7 @@ module.exports = function (app) {
 	 * Get /api/users/view
 	 * @method 会员详细资料
 	 * @param {Number} id
-	 * @return {Array}
-	 * // GET /api/users/view?id=88  
-	 {  
-	　　&quot;user&quot;: {  
-	　　　　&quot;id&quot;: 88,  
-	　　　　&quot;username&quot;: &quot;zodisukeg&quot;,  
-	　　　　&quot;regtime&quot;: 1357441421000,  
-	　　　　&quot;isonline&quot;: 1,  
-	　　　　&quot;profile&quot;: {  
-	　　　　　　&quot;email&quot;: &quot;rofno@alube.net&quot;,  
-	　　　　　　&quot;nickname&quot;: &quot;Brady Robertson&quot;,  
-	　　　　　　&quot;name&quot;: &quot;Stephen Brady&quot;,  
-	　　　　　　&quot;gender&quot;: &quot;m&quot;,  
-	　　　　　　&quot;age&quot;: 46,  
-	　　　　　　&quot;grade&quot;: 1986,  
-	　　　　　　&quot;university&quot;: &quot;Sihijsa University&quot;,  
-	　　　　　　&quot;major&quot;: &quot;Viwrun&quot;  
-	　　　　}  
-	　　}  
-	 }
+	 * @return {JSON}
 	 */
 	app.get(&#x27;/api/users/view&#x27;, function (req, res, next) {
 		User.view(req.query)
@@ -197,14 +161,13 @@ module.exports = function (app) {
 	 * @param {String} profile.name 真名
 	 * @param {String} profile.nickname 昵称
 	 * @param {String} profile.email 邮箱
-	 * @return {Array}
-	 * // POST /api/users/reg  
-		//   username, password, profile[email],  
-		//   profile[nickname], profile[name] ...  
-			{  
-				&quot;msg&quot;: &quot;register success&quot;,  
-				&quot;id&quot;: 101  
-			}  
+	 * @return {JSON}
+	 * //   username, password, profile[email],
+		//   profile[nickname], profile[name] ...
+			{
+				&quot;msg&quot;: &quot;register success&quot;,
+				&quot;id&quot;: 101
+			}
 	*/
 	app.post(&#x27;/api/users/register&#x27;, function (req, res, next) {
 		User.forge(req.body).register()
@@ -221,12 +184,10 @@ module.exports = function (app) {
 	 * @method 登录
 	 * @param {String} username
 	 * @param {String} password
-	 * @return {Array} 
-	 * // POST /api/users/login  
-		//   username, password  
-		 {  
-		  &quot;msg&quot;: &quot;login success&quot;,  
-		  &quot;id&quot;: 101  
+	 * @return {JSON}
+	 * {
+		  &quot;msg&quot;: &quot;User logged in&quot;,
+		  &quot;id&quot;: 36
 		}  
 	 */
 	app.post(&#x27;/api/users/login&#x27;, function (req, res, next) {
@@ -242,10 +203,9 @@ module.exports = function (app) {
 	/**
 	 * POST /api/users/logout
 	 * @method 退出
-	 * @return {Array}
-	 * // POST /api/users/logout  
-		 {  
-		  &quot;msg&quot;: &quot;logout success&quot;  
+	 * @return {JSON}
+	 * {
+		  &quot;msg&quot;: &quot;User logged out&quot;
 		}  
 	 */
 	app.post(&#x27;/api/users/logout&#x27;, function (req, res, next) {
@@ -261,7 +221,7 @@ module.exports = function (app) {
 	 * @method 重置密码
 	 * @param {String} password 旧密码
 	 * @param {String} new-password 新密码
-	 * @return {Array}
+	 * @return {JSON}
 	 * { msg: &#x27;Password reset&#x27; }
 	 */
 	app.post(&#x27;/api/users/password/reset&#x27;, function (req, res, next) {

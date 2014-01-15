@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>routes\activities.js - siyuan</title>
+    <title>routes/activities.js - siyuan</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -15,7 +15,7 @@
     <div id="hd" class="yui3-g header">
         <div class="yui3-u-3-4">
             
-                <h1><img src="..\logo.png" title="siyuan"></h1>
+                <h1><img src="../logo.png" title="siyuan"></h1>
             
         </div>
         <div class="yui3-u-1-4 version">
@@ -90,7 +90,7 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1 class="file-heading">File: routes\activities.js</h1>
+                        <h1 class="file-heading">File: routes/activities.js</h1>
 
 <div class="file">
     <pre class="code prettyprint linenums">
@@ -103,6 +103,46 @@ var _ = require(&#x27;underscore&#x27;),
 	errors = require(&#x27;../lib/errors&#x27;);
 
 module.exports = function (app) {
+	/**
+	 * GET /api/activities/find
+	 * @method 活动列表
+	 * @param {Number} [id] 活动id
+	 * @return {Array}
+	 * // GET /api/activities/find?id=45
+	 * {  
+  		&quot;activities&quot;: [  
+		{  
+		  &quot;id&quot;: 1,  
+		  &quot;ownerid&quot;: 11,  
+		  &quot;groupid&quot;: 1,  
+		  &quot;content&quot;: &quot;Puhobjo wonava cukce vo ivo huti havjeli le t&quot;,  
+		  &quot;maxnum&quot;: 29,  
+		  &quot;createtime&quot;: 1389706483000,  
+		  &quot;starttime&quot;: &quot;0000-00-00 00:00:00&quot;,  
+		  &quot;duration&quot;: 7,  
+		  &quot;statusid&quot;: 4,  
+		  &quot;avatar&quot;: &quot;sihomre&quot;,  
+		  &quot;money&quot;: 1037,  
+		  &quot;status&quot;: {  
+			&quot;id&quot;: 4,  
+			&quot;name&quot;: &quot;活动取消&quot;  
+		  },  
+		  &quot;usership&quot;: [  
+			{  
+			  &quot;id&quot;: 4,  
+			  &quot;userid&quot;: 10,  
+			  &quot;activityid&quot;: 1,  
+			  &quot;isaccepted&quot;: 0  
+			},  
+			{  
+			  &quot;id&quot;: 58,  
+			  &quot;userid&quot;: 5,  
+			  &quot;activityid&quot;: 1,  
+			  &quot;isaccepted&quot;: 0  
+			}  
+		  ]  
+		}]  
+	*/
 	app.get(&#x27;/api/activities/find&#x27;, function (req, res, next) {
 		Activity.find(req.query)
 			.then(function (activities) {
@@ -116,7 +156,18 @@ module.exports = function (app) {
 					});
 			}).catch(next);
 	});
-	app.post(&#x27;/api/activities/join&#x27;, function (req, res, next) {
+
+	/**
+	 * POST /api/activities/join
+	 * @method 加入活动
+	 * @param {Number} id:活动id
+	 * @return {JSON}
+	 * {  
+	 * 		msg: join succes,  
+	 * 		id: 6  
+	 * }  
+	 */
+	app.get(&#x27;/api/activities/join&#x27;, function (req, res, next) {
 		var userid = req.session[&#x27;userid&#x27;];
 		Activity.forge(req.body)
 			.fetch()
@@ -130,6 +181,16 @@ module.exports = function (app) {
 					});
 			}).catch(next);
 	});
+
+	/**
+	 * POST /api/activities/cancel
+	 * @method 成员取消参加活动
+	 * @param {Number} id:活动id
+	 * @return {JSON}
+	 * {  
+	 *		msg: cancel success  
+	 * }  
+	 */
 	app.post(&#x27;/api/activities/cancel&#x27;, function (req, res, next) {
 		var userid = req.session[&#x27;userid&#x27;];
 		Activity.forge(req.body)
@@ -143,6 +204,16 @@ module.exports = function (app) {
 					});
 			}).catch(next);
 	});
+
+	/**
+	 * POST /api/activities/end
+	 * @method 发起者终止活动
+	 * @param {Number}  id:活动id
+	 * @return {JSON}
+	 * {  
+	 * 		msg: end success  
+	 * }  
+	 */
 	app.post(&#x27;/api/activities/end&#x27;, function (req, res, next) {
 		var userid = req.session[&#x27;userid&#x27;];
 		Activity.forge(req.body)
@@ -159,6 +230,17 @@ module.exports = function (app) {
 					});
 			}).catch(next);
 	});
+
+	/**
+	 * POST /api/activities/update
+	 * @method 发起者更新活动资料
+	 * @param {Number}  id:活动id
+	 * @return {JSON}
+	 * {  
+	 * 		msg: update success,  
+	 * 		id: 6  
+	 * }  
+	 */
 	app.post(&#x27;/api/activities/update&#x27;, function (req, res, next) {
 		var userid = req.session[&#x27;userid&#x27;],
 			id = req.body.id,
@@ -177,8 +259,24 @@ module.exports = function (app) {
 			}).catch(next);
 	});
 
+	/**
+	 * POST /api/activities/create
+	 * @method 群成员发起活动
+	 * @param {Number} groupid:群id
+	 * @param {String} content:活动描述
+	 * @param {Number} maxnum:活动最大人数
+	 * @param {Datetime} starttime:活动开始时间
+	 * @param {Number} duration:活动持续时间,单位为分钟
+	 * @param {Number} statusid:活动状态  0接受报名、1截止报名、2活动结束、3活动取消
+	 * @param {Number} money:活动费用
+	 * @return {JSON}
+	 * {  
+	 * 		msg: create success,  
+	 * 		id: 6  
+	 * }  
+	 */
 	app.post(&#x27;/api/activities/create&#x27;, function (req, res, next) {
-		var userid = 26,//req.session[&#x27;userid&#x27;],
+		var userid = 1,//req.session[&#x27;userid&#x27;],
 			groupid = req.body.groupid,
 			content = req.body.content,
 			maxnum = req.body.maxnum,
@@ -193,9 +291,79 @@ module.exports = function (app) {
 					id: activity.get(&#x27;id&#x27;)
 				});
 			});
-
 	});
 
+	/**
+	 * POST /api/activities/userslist
+	 * @method 获取活动人员名单
+	 * @param {Number} id:活动id
+	 * @return {JSON}
+	 * {  
+		  &quot;users&quot;: [  
+			{  
+			  &quot;id&quot;: 71,  
+			  &quot;userid&quot;: 1,  
+			  &quot;activityid&quot;: 15,  
+			  &quot;isaccepted&quot;: 1,  
+			  &quot;name&quot;: &quot;arwuba_60&quot;  
+			},  
+			{  
+			  &quot;id&quot;: 72,  
+			  &quot;userid&quot;: 13,  
+			  &quot;activityid&quot;: 15,  
+			  &quot;isaccepted&quot;: 1,  
+			  &quot;name&quot;: &quot;WTF&quot;  
+			}  
+		  ]  
+		}  
+	 */
+	app.post(&#x27;/api/activities/userslist&#x27;, function(req, res, next) {
+		var userid = req.session[&#x27;userid&#x27;],
+			id = req.body.id;
+		Activity.forge({ &#x27;id&#x27;: id }).fetch()
+			.then(function(activity) {
+				activity
+					.getUserList(userid)
+					.then(function(users) {
+						next({ users: users });
+					});
+			});
+	});
+
+	/**
+	 * POST /api/activities/accept
+	 * @method 发起人接受申请人
+	 * @param {Number} id:userslist接口里面的那个id,不是userid
+	 * @param {Number} activityid:活动id
+	 * @return {JSON}
+	 * {  
+	 * 		msg: accept success  
+	 * }  
+	 */
+	app.post(&#x27;/api/activities/accept&#x27;, function(req, res, next) {
+		var userid = 1,//req.session[&#x27;userid&#x27;],
+			id = req.body.id,
+			activityid = req.body.activityid;
+		Activity.forge({ &#x27;id&#x27;: activityid })
+			.fetch()
+			.then(function(activity) {
+				activity.
+					acceptJoin(userid, id)
+					.then(function(activity) {
+						next({ msg: &#x27;accept success&#x27; });
+					});
+			});
+	});
+
+	/**
+	 * POST /api/activities/avatar/update
+	 * @method 更新活动图片
+	 * @param {File} avatar
+	 * return {JSON}
+	 * {  
+	 * 		msg: avatar updated  
+	 * }  
+	 */
 	app.post(&#x27;/api/activities/avatar/update&#x27;, function (req, res, next) {
 		if(!req.files[&#x27;avatar&#x27;]) return next(errors[20007]);
 		var file = req.files[&#x27;avatar&#x27;],
@@ -205,10 +373,11 @@ module.exports = function (app) {
 		Activity.forge({ id: req.id })
 			.updateAvatar(file[&#x27;path&#x27;])
 			.then(function () {
-				next({ msg: &#x27;Avatar updated&#x27; });
+				next({ msg: &#x27;avatar updated&#x27; });
 			});
 	});
 };
+
 
     </pre>
 </div>

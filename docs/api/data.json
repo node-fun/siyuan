@@ -7,50 +7,50 @@
         "url": "https://github.com/node-fun/siyuan/"
     },
     "files": {
-        "lib\\encrypt.js": {
-            "name": "lib\\encrypt.js",
+        "lib/encrypt.js": {
+            "name": "lib/encrypt.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "lib\\errors.js": {
-            "name": "lib\\errors.js",
+        "lib/errors.js": {
+            "name": "lib/errors.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "models\\admin.js": {
-            "name": "models\\admin.js",
+        "models/admin.js": {
+            "name": "models/admin.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "models\\group-membership.js": {
-            "name": "models\\group-membership.js",
+        "models/group-membership.js": {
+            "name": "models/group-membership.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "models\\group.js": {
-            "name": "models\\group.js",
+        "models/group.js": {
+            "name": "models/group.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "models\\issue-comment.js": {
-            "name": "models\\issue-comment.js",
+        "models/issue-comment.js": {
+            "name": "models/issue-comment.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "routes\\activities.js": {
-            "name": "routes\\activities.js",
+        "routes/activities.js": {
+            "name": "routes/activities.js",
             "modules": {},
             "classes": {
                 "活动": 1
@@ -58,8 +58,8 @@
             "fors": {},
             "namespaces": {}
         },
-        "routes\\admin.js": {
-            "name": "routes\\admin.js",
+        "routes/admin.js": {
+            "name": "routes/admin.js",
             "modules": {},
             "classes": {
                 "管理员": 1
@@ -67,8 +67,8 @@
             "fors": {},
             "namespaces": {}
         },
-        "routes\\groups.js": {
-            "name": "routes\\groups.js",
+        "routes/groups.js": {
+            "name": "routes/groups.js",
             "modules": {},
             "classes": {
                 "圈子": 1
@@ -76,8 +76,8 @@
             "fors": {},
             "namespaces": {}
         },
-        "routes\\issues.js": {
-            "name": "routes\\issues.js",
+        "routes/issues.js": {
+            "name": "routes/issues.js",
             "modules": {},
             "classes": {
                 "话题": 1
@@ -85,8 +85,8 @@
             "fors": {},
             "namespaces": {}
         },
-        "routes\\users.js": {
-            "name": "routes\\users.js",
+        "routes/users.js": {
+            "name": "routes/users.js",
             "modules": {},
             "classes": {
                 "用户": 1
@@ -105,7 +105,7 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "file": "routes\\activities.js",
+            "file": "routes/activities.js",
             "line": 1
         },
         "管理员": {
@@ -116,7 +116,7 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "file": "routes\\admin.js",
+            "file": "routes/admin.js",
             "line": 1
         },
         "圈子": {
@@ -127,7 +127,7 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "file": "routes\\groups.js",
+            "file": "routes/groups.js",
             "line": 1,
             "description": "Created by Cam on 14-1-8."
         },
@@ -139,7 +139,7 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "file": "routes\\issues.js",
+            "file": "routes/issues.js",
             "line": 1,
             "description": "Created by fritz on 1/10/14."
         },
@@ -151,49 +151,252 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "file": "routes\\users.js",
+            "file": "routes/users.js",
             "line": 1
         }
     },
     "classitems": [
         {
-            "file": "lib\\encrypt.js",
+            "file": "lib/encrypt.js",
             "line": 1,
             "description": "Created by fritz on 1/2/14.",
             "class": "活动"
         },
         {
-            "file": "lib\\errors.js",
+            "file": "lib/errors.js",
             "line": 1,
             "description": "Created by fritz on 1/1/14.",
             "class": "活动"
         },
         {
-            "file": "models\\admin.js",
+            "file": "models/admin.js",
             "line": 1,
             "description": "Created by cin on 12/24/13.",
             "class": "活动"
         },
         {
-            "file": "models\\group-membership.js",
+            "file": "models/group-membership.js",
             "line": 1,
             "description": "Created by Cam on 14-1-4.",
             "class": "活动"
         },
         {
-            "file": "models\\group.js",
+            "file": "models/group.js",
             "line": 1,
             "description": "Created by Cam on 14-1-2.",
             "class": "活动"
         },
         {
-            "file": "models\\issue-comment.js",
+            "file": "models/issue-comment.js",
             "line": 1,
             "description": "Created by fritz on 1/11/14.",
             "class": "活动"
         },
         {
-            "file": "routes\\groups.js",
+            "file": "routes/activities.js",
+            "line": 10,
+            "description": "GET /api/activities/find",
+            "itemtype": "method",
+            "name": "活动列表",
+            "params": [
+                {
+                    "name": "id",
+                    "description": "活动id",
+                    "type": "Number",
+                    "optional": true
+                }
+            ],
+            "return": {
+                "description": "\n// GET /api/activities/find?id=45\n{  \n \t\t\"activities\": [  \n\t\t{  \n\t\t  \"id\": 1,  \n\t\t  \"ownerid\": 11,  \n\t\t  \"groupid\": 1,  \n\t\t  \"content\": \"Puhobjo wonava cukce vo ivo huti havjeli le t\",  \n\t\t  \"maxnum\": 29,  \n\t\t  \"createtime\": 1389706483000,  \n\t\t  \"starttime\": \"0000-00-00 00:00:00\",  \n\t\t  \"duration\": 7,  \n\t\t  \"statusid\": 4,  \n\t\t  \"avatar\": \"sihomre\",  \n\t\t  \"money\": 1037,  \n\t\t  \"status\": {  \n\t\t\t\"id\": 4,  \n\t\t\t\"name\": \"活动取消\"  \n\t\t  },  \n\t\t  \"usership\": [  \n\t\t\t{  \n\t\t\t  \"id\": 4,  \n\t\t\t  \"userid\": 10,  \n\t\t\t  \"activityid\": 1,  \n\t\t\t  \"isaccepted\": 0  \n\t\t\t},  \n\t\t\t{  \n\t\t\t  \"id\": 58,  \n\t\t\t  \"userid\": 5,  \n\t\t\t  \"activityid\": 1,  \n\t\t\t  \"isaccepted\": 0  \n\t\t\t}  \n\t\t  ]  \n\t\t}]",
+                "type": "Array"
+            },
+            "class": "活动"
+        },
+        {
+            "file": "routes/activities.js",
+            "line": 64,
+            "description": "POST /api/activities/join",
+            "itemtype": "method",
+            "name": "加入活动",
+            "params": [
+                {
+                    "name": "id:活动id",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "\n{  \n\t\tmsg: join succes,  \n\t\tid: 6  \n}",
+                "type": "JSON"
+            },
+            "class": "活动"
+        },
+        {
+            "file": "routes/activities.js",
+            "line": 89,
+            "description": "POST /api/activities/cancel",
+            "itemtype": "method",
+            "name": "成员取消参加活动",
+            "params": [
+                {
+                    "name": "id:活动id",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "\n{  \n\t\tmsg: cancel success  \n}",
+                "type": "JSON"
+            },
+            "class": "活动"
+        },
+        {
+            "file": "routes/activities.js",
+            "line": 112,
+            "description": "POST /api/activities/end",
+            "itemtype": "method",
+            "name": "发起者终止活动",
+            "params": [
+                {
+                    "name": "id:活动id",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "\n{  \n\t\tmsg: end success  \n}",
+                "type": "JSON"
+            },
+            "class": "活动"
+        },
+        {
+            "file": "routes/activities.js",
+            "line": 138,
+            "description": "POST /api/activities/update",
+            "itemtype": "method",
+            "name": "发起者更新活动资料",
+            "params": [
+                {
+                    "name": "id:活动id",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "\n{  \n\t\tmsg: update success,  \n\t\tid: 6  \n}",
+                "type": "JSON"
+            },
+            "class": "活动"
+        },
+        {
+            "file": "routes/activities.js",
+            "line": 166,
+            "description": "POST /api/activities/create",
+            "itemtype": "method",
+            "name": "群成员发起活动",
+            "params": [
+                {
+                    "name": "groupid:群id",
+                    "description": "",
+                    "type": "Number"
+                },
+                {
+                    "name": "content:活动描述",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "maxnum:活动最大人数",
+                    "description": "",
+                    "type": "Number"
+                },
+                {
+                    "name": "starttime:活动开始时间",
+                    "description": "",
+                    "type": "Datetime"
+                },
+                {
+                    "name": "duration:活动持续时间,单位为分钟",
+                    "description": "",
+                    "type": "Number"
+                },
+                {
+                    "name": "statusid:活动状态",
+                    "description": "0接受报名、1截止报名、2活动结束、3活动取消",
+                    "type": "Number"
+                },
+                {
+                    "name": "money:活动费用",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "\n{  \n\t\tmsg: create success,  \n\t\tid: 6  \n}",
+                "type": "JSON"
+            },
+            "class": "活动"
+        },
+        {
+            "file": "routes/activities.js",
+            "line": 200,
+            "description": "POST /api/activities/userslist",
+            "itemtype": "method",
+            "name": "获取活动人员名单",
+            "params": [
+                {
+                    "name": "id:活动id",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "\n{  \n\t\t  \"users\": [  \n\t\t\t{  \n\t\t\t  \"id\": 71,  \n\t\t\t  \"userid\": 1,  \n\t\t\t  \"activityid\": 15,  \n\t\t\t  \"isaccepted\": 1,  \n\t\t\t  \"name\": \"arwuba_60\"  \n\t\t\t},  \n\t\t\t{  \n\t\t\t  \"id\": 72,  \n\t\t\t  \"userid\": 13,  \n\t\t\t  \"activityid\": 15,  \n\t\t\t  \"isaccepted\": 1,  \n\t\t\t  \"name\": \"WTF\"  \n\t\t\t}  \n\t\t  ]  \n\t\t}",
+                "type": "JSON"
+            },
+            "class": "活动"
+        },
+        {
+            "file": "routes/activities.js",
+            "line": 237,
+            "description": "POST /api/activities/accept",
+            "itemtype": "method",
+            "name": "发起人接受申请人",
+            "params": [
+                {
+                    "name": "id:userslist接口里面的那个id,不是userid",
+                    "description": "",
+                    "type": "Number"
+                },
+                {
+                    "name": "activityid:活动id",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "\n{  \n\t\tmsg: accept success  \n}",
+                "type": "JSON"
+            },
+            "class": "活动"
+        },
+        {
+            "file": "routes/activities.js",
+            "line": 262,
+            "description": "POST /api/activities/avatar/update",
+            "itemtype": "method",
+            "name": "更新活动图片",
+            "params": [
+                {
+                    "name": "avatar!~YUIDOC_LINE~!return",
+                    "description": "{JSON}\n{  \n\t\tmsg: avatar updated  \n}",
+                    "type": "File"
+                }
+            ],
+            "class": "活动"
+        },
+        {
+            "file": "routes/groups.js",
             "line": 35,
             "description": "post /api/groups/create",
             "itemtype": "method",
@@ -217,7 +420,7 @@
             "class": "圈子"
         },
         {
-            "file": "routes\\groups.js",
+            "file": "routes/groups.js",
             "line": 69,
             "description": "post /api/groups/join",
             "itemtype": "method",
@@ -236,7 +439,7 @@
             "class": "圈子"
         },
         {
-            "file": "routes\\groups.js",
+            "file": "routes/groups.js",
             "line": 100,
             "description": "post /api/groups/quit",
             "itemtype": "method",
@@ -255,7 +458,182 @@
             "class": "圈子"
         },
         {
-            "file": "routes\\users.js",
+            "file": "routes/issues.js",
+            "line": 12,
+            "description": "GET /api/issues/find",
+            "itemtype": "method",
+            "name": "话题列表",
+            "params": [
+                {
+                    "name": "id",
+                    "description": "话题ID",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "userid",
+                    "description": "作者ID",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "title",
+                    "description": "标题",
+                    "type": "String",
+                    "optional": true
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "JSON"
+            },
+            "class": "话题"
+        },
+        {
+            "file": "routes/issues.js",
+            "line": 27,
+            "description": "GET /api/issues/search",
+            "itemtype": "method",
+            "name": "话题搜索列表",
+            "params": [
+                {
+                    "name": "userid",
+                    "description": "作者ID",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "title",
+                    "description": "标题关键字",
+                    "type": "String",
+                    "optional": true
+                },
+                {
+                    "name": "body",
+                    "description": "内容关键字",
+                    "type": "String",
+                    "optional": true
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "JSON"
+            },
+            "class": "话题"
+        },
+        {
+            "file": "routes/issues.js",
+            "line": 42,
+            "description": "GET /api/issues/view",
+            "itemtype": "method",
+            "name": "话题详情",
+            "params": [
+                {
+                    "name": "userid",
+                    "description": "作者ID",
+                    "type": "Number",
+                    "optional": true
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "JSON"
+            },
+            "class": "话题"
+        },
+        {
+            "file": "routes/issues.js",
+            "line": 55,
+            "description": "POST /api/issues/post",
+            "itemtype": "method",
+            "name": "发布话题",
+            "params": [
+                {
+                    "name": "title",
+                    "description": "标题",
+                    "type": "String"
+                },
+                {
+                    "name": "body",
+                    "description": "内容",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "\n{\n\t\t  \"msg\": \"Issue posted\",\n\t\t  \"id\": 106\n\t\t}",
+                "type": "JSON"
+            },
+            "class": "话题"
+        },
+        {
+            "file": "routes/issues.js",
+            "line": 79,
+            "description": "GET /api/issues/update",
+            "itemtype": "method",
+            "name": "删除话题",
+            "params": [
+                {
+                    "name": "id",
+                    "description": "话题ID",
+                    "type": "Number"
+                },
+                {
+                    "name": "title",
+                    "description": "标题",
+                    "type": "String"
+                },
+                {
+                    "name": "body",
+                    "description": "内容",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "JSON"
+            },
+            "class": "话题"
+        },
+        {
+            "file": "routes/issues.js",
+            "line": 104,
+            "description": "GET /api/issues/delete",
+            "itemtype": "method",
+            "name": "删除话题",
+            "params": [
+                {
+                    "name": "id",
+                    "description": "话题ID",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "JSON"
+            },
+            "class": "话题"
+        },
+        {
+            "file": "routes/issues.js",
+            "line": 125,
+            "description": "POST /api/issues/comment",
+            "itemtype": "method",
+            "name": "发表话题评论",
+            "params": [
+                {
+                    "name": "body",
+                    "description": "内容",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "JSON"
+            },
+            "class": "话题"
+        },
+        {
+            "file": "routes/users.js",
             "line": 9,
             "description": "GET /api/users/find",
             "itemtype": "method",
@@ -281,7 +659,7 @@
                 },
                 {
                     "name": "isonline",
-                    "description": "1在线，0不在线",
+                    "description": "`1`在线, `0`不在线",
                     "type": "Number",
                     "optional": true
                 },
@@ -293,64 +671,76 @@
                 },
                 {
                     "name": "gender",
-                    "description": "“m”男，“f”女",
+                    "description": "`m`男, `f`女",
                     "type": "String",
                     "optional": true
                 }
             ],
             "return": {
-                "description": "\n// GET /api/users/find?isonline=1&gender=f&limit=2&page=3  \n{  \n\t\t　　\"users\": [  \n\t\t　　　　{  \n\t\t　　　　　　\"id\": 14,  \n\t\t　　　　　　\"username\": \"nemjoptaz\",  \n\t\t　　　　　　“avatar”:”http://10.10.65.165:8080/avatar/14”,  \n\t\t　　　　　　“description”:”我是科技界大牛”,  \n\t\t　　　　　　\"isonline\": 1  \n\t\t　　　　},  \n\t\t　　　　{  \n\t\t　　　　　　\"id\": 20,  \n\t\t　　　　　　\"username\": \"pa\",  \n\t\t　　　　　　“avatar”:”http://10.10.65.165:8080/avatar/14”,  \n\t\t　　　　　　“description”:”我是科技界大牛”,  \n\t\t　　　　　　\"isonline\": 1  \n\t\t　　　　}  \n\t\t　　]  \n\t\t}",
-                "type": "Array"
+                "description": "",
+                "type": "JSON"
             },
             "class": "用户"
         },
         {
-            "file": "routes\\users.js",
-            "line": 46,
+            "file": "routes/users.js",
+            "line": 27,
             "description": "GET /api/users/search",
             "itemtype": "method",
             "name": "模糊搜索用户",
             "params": [
                 {
                     "name": "username",
-                    "description": "用户名",
+                    "description": "",
                     "type": "String",
                     "optional": true
                 },
                 {
                     "name": "nickname",
-                    "description": "昵称",
+                    "description": "",
                     "type": "String",
                     "optional": true
                 },
                 {
                     "name": "name",
-                    "description": "真名",
+                    "description": "",
                     "type": "String",
                     "optional": true
                 },
                 {
                     "name": "university",
-                    "description": "学校",
+                    "description": "",
                     "type": "String",
                     "optional": true
                 },
                 {
                     "name": "major",
-                    "description": "专业",
+                    "description": "",
+                    "type": "String",
+                    "optional": true
+                },
+                {
+                    "name": "gender",
+                    "description": "",
+                    "type": "String",
+                    "optional": true
+                },
+                {
+                    "name": "isonline",
+                    "description": "",
                     "type": "String",
                     "optional": true
                 }
             ],
             "return": {
                 "description": "\n返回格式与 /api/users/find 相同",
-                "type": "Array"
+                "type": "JSON"
             },
             "class": "用户"
         },
         {
-            "file": "routes\\users.js",
-            "line": 64,
+            "file": "routes/users.js",
+            "line": 47,
             "description": "Get /api/users/view",
             "itemtype": "method",
             "name": "会员详细资料",
@@ -362,14 +752,14 @@
                 }
             ],
             "return": {
-                "description": "\n// GET /api/users/view?id=88  \n\t {  \n\t　　\"user\": {  \n\t　　　　\"id\": 88,  \n\t　　　　\"username\": \"zodisukeg\",  \n\t　　　　\"regtime\": 1357441421000,  \n\t　　　　\"isonline\": 1,  \n\t　　　　\"profile\": {  \n\t　　　　　　\"email\": \"rofno@alube.net\",  \n\t　　　　　　\"nickname\": \"Brady Robertson\",  \n\t　　　　　　\"name\": \"Stephen Brady\",  \n\t　　　　　　\"gender\": \"m\",  \n\t　　　　　　\"age\": 46,  \n\t　　　　　　\"grade\": 1986,  \n\t　　　　　　\"university\": \"Sihijsa University\",  \n\t　　　　　　\"major\": \"Viwrun\"  \n\t　　　　}  \n\t　　}  \n\t }",
-                "type": "Array"
+                "description": "",
+                "type": "JSON"
             },
             "class": "用户"
         },
         {
-            "file": "routes\\users.js",
-            "line": 96,
+            "file": "routes/users.js",
+            "line": 60,
             "description": "POST /api/users/register",
             "itemtype": "method",
             "name": "注册",
@@ -401,14 +791,14 @@
                 }
             ],
             "return": {
-                "description": "\n// POST /api/users/reg  \n\t\t//   username, password, profile[email],  \n\t\t//   profile[nickname], profile[name] ...  \n\t\t\t{  \n\t\t\t\t\"msg\": \"register success\",  \n\t\t\t\t\"id\": 101  \n\t\t\t}",
-                "type": "Array"
+                "description": "\n//   username, password, profile[email],\n\t\t//   profile[nickname], profile[name] ...\n\t\t\t{\n\t\t\t\t\"msg\": \"register success\",\n\t\t\t\t\"id\": 101\n\t\t\t}",
+                "type": "JSON"
             },
             "class": "用户"
         },
         {
-            "file": "routes\\users.js",
-            "line": 123,
+            "file": "routes/users.js",
+            "line": 86,
             "description": "POST /api/users/login",
             "itemtype": "method",
             "name": "登录",
@@ -425,26 +815,26 @@
                 }
             ],
             "return": {
-                "description": "\n// POST /api/users/login  \n\t\t//   username, password  \n\t\t {  \n\t\t  \"msg\": \"login success\",  \n\t\t  \"id\": 101  \n\t\t}",
-                "type": "Array"
+                "description": "\n{\n\t\t  \"msg\": \"User logged in\",\n\t\t  \"id\": 36\n\t\t}",
+                "type": "JSON"
             },
             "class": "用户"
         },
         {
-            "file": "routes\\users.js",
-            "line": 146,
+            "file": "routes/users.js",
+            "line": 107,
             "description": "POST /api/users/logout",
             "itemtype": "method",
             "name": "退出",
             "return": {
-                "description": "\n// POST /api/users/logout  \n\t\t {  \n\t\t  \"msg\": \"logout success\"  \n\t\t}",
-                "type": "Array"
+                "description": "\n{\n\t\t  \"msg\": \"User logged out\"\n\t\t}",
+                "type": "JSON"
             },
             "class": "用户"
         },
         {
-            "file": "routes\\users.js",
-            "line": 163,
+            "file": "routes/users.js",
+            "line": 123,
             "description": "POST /api/users/password/reset",
             "itemtype": "method",
             "name": "重置密码",
@@ -462,7 +852,7 @@
             ],
             "return": {
                 "description": "\n{ msg: 'Password reset' }",
-                "type": "Array"
+                "type": "JSON"
             },
             "class": "用户"
         }
@@ -470,27 +860,27 @@
     "warnings": [
         {
             "message": "Missing item type\nCreated by fritz on 1/2/14.",
-            "line": " lib\\encrypt.js:1"
+            "line": " lib/encrypt.js:1"
         },
         {
             "message": "Missing item type\nCreated by fritz on 1/1/14.",
-            "line": " lib\\errors.js:1"
+            "line": " lib/errors.js:1"
         },
         {
             "message": "Missing item type\nCreated by cin on 12/24/13.",
-            "line": " models\\admin.js:1"
+            "line": " models/admin.js:1"
         },
         {
             "message": "Missing item type\nCreated by Cam on 14-1-4.",
-            "line": " models\\group-membership.js:1"
+            "line": " models/group-membership.js:1"
         },
         {
             "message": "Missing item type\nCreated by Cam on 14-1-2.",
-            "line": " models\\group.js:1"
+            "line": " models/group.js:1"
         },
         {
             "message": "Missing item type\nCreated by fritz on 1/11/14.",
-            "line": " models\\issue-comment.js:1"
+            "line": " models/issue-comment.js:1"
         }
     ]
 }

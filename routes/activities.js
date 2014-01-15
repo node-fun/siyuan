@@ -13,39 +13,39 @@ module.exports = function (app) {
 	 * @param {Number} [id] 活动id
 	 * @return {Array}
 	 * // GET /api/activities/find?id=45
-	 * {
-  		"activities": [
-		{
-		  "id": 1,
-		  "ownerid": 11,
-		  "groupid": 1,
-		  "content": "Puhobjo wonava cukce vo ivo huti havjeli le t",
-		  "maxnum": 29,
-		  "createtime": 1389706483000,
-		  "starttime": "0000-00-00 00:00:00",
-		  "duration": 7,
-		  "statusid": 4,
-		  "avatar": "sihomre",
-		  "money": 1037,
-		  "status": {
-			"id": 4,
-			"name": "活动取消"
-		  },
-		  "usership": [
-			{
-			  "id": 4,
-			  "userid": 10,
-			  "activityid": 1,
-			  "isaccepted": 0
-			},
-			{
-			  "id": 58,
-			  "userid": 5,
-			  "activityid": 1,
-			  "isaccepted": 0
-			}
-		  ]
-		}]
+	 * {  
+  		"activities": [  
+		{  
+		  "id": 1,  
+		  "ownerid": 11,  
+		  "groupid": 1,  
+		  "content": "Puhobjo wonava cukce vo ivo huti havjeli le t",  
+		  "maxnum": 29,  
+		  "createtime": 1389706483000,  
+		  "starttime": "0000-00-00 00:00:00",  
+		  "duration": 7,  
+		  "statusid": 4,  
+		  "avatar": "sihomre",  
+		  "money": 1037,  
+		  "status": {  
+			"id": 4,  
+			"name": "活动取消"  
+		  },  
+		  "usership": [  
+			{  
+			  "id": 4,  
+			  "userid": 10,  
+			  "activityid": 1,  
+			  "isaccepted": 0  
+			},  
+			{  
+			  "id": 58,  
+			  "userid": 5,  
+			  "activityid": 1,  
+			  "isaccepted": 0  
+			}  
+		  ]  
+		}]  
 	*/
 	app.get('/api/activities/find', function (req, res, next) {
 		Activity.find(req.query)
@@ -62,13 +62,15 @@ module.exports = function (app) {
 	});
 
 	/**
-	 * GET /api/activities/join
+	 * POST /api/activities/join
 	 * @method 加入活动
-	 * @param {String} id 活动id
-	 * @return {Array}
-	 *
+	 * @param {Number} id:活动id
+	 * @return {JSON}
+	 * {  
+	 * 		msg: join succes,  
+	 * 		id: 6  
+	 * }  
 	 */
-
 	app.get('/api/activities/join', function (req, res, next) {
 		var userid = req.session['userid'];
 		Activity.forge(req.body)
@@ -83,6 +85,16 @@ module.exports = function (app) {
 					});
 			}).catch(next);
 	});
+
+	/**
+	 * POST /api/activities/cancel
+	 * @method 成员取消参加活动
+	 * @param {Number} id:活动id
+	 * @return {JSON}
+	 * {  
+	 *		msg: cancel success  
+	 * }  
+	 */
 	app.post('/api/activities/cancel', function (req, res, next) {
 		var userid = req.session['userid'];
 		Activity.forge(req.body)
@@ -96,6 +108,16 @@ module.exports = function (app) {
 					});
 			}).catch(next);
 	});
+
+	/**
+	 * POST /api/activities/end
+	 * @method 发起者终止活动
+	 * @param {Number}  id:活动id
+	 * @return {JSON}
+	 * {  
+	 * 		msg: end success  
+	 * }  
+	 */
 	app.post('/api/activities/end', function (req, res, next) {
 		var userid = req.session['userid'];
 		Activity.forge(req.body)
@@ -112,6 +134,17 @@ module.exports = function (app) {
 					});
 			}).catch(next);
 	});
+
+	/**
+	 * POST /api/activities/update
+	 * @method 发起者更新活动资料
+	 * @param {Number}  id:活动id
+	 * @return {JSON}
+	 * {  
+	 * 		msg: update success,  
+	 * 		id: 6  
+	 * }  
+	 */
 	app.post('/api/activities/update', function (req, res, next) {
 		var userid = req.session['userid'],
 			id = req.body.id,
@@ -130,6 +163,22 @@ module.exports = function (app) {
 			}).catch(next);
 	});
 
+	/**
+	 * POST /api/activities/create
+	 * @method 群成员发起活动
+	 * @param {Number} groupid:群id
+	 * @param {String} content:活动描述
+	 * @param {Number} maxnum:活动最大人数
+	 * @param {Datetime} starttime:活动开始时间
+	 * @param {Number} duration:活动持续时间,单位为分钟
+	 * @param {Number} statusid:活动状态  0接受报名、1截止报名、2活动结束、3活动取消
+	 * @param {Number} money:活动费用
+	 * @return {JSON}
+	 * {  
+	 * 		msg: create success,  
+	 * 		id: 6  
+	 * }  
+	 */
 	app.post('/api/activities/create', function (req, res, next) {
 		var userid = 1,//req.session['userid'],
 			groupid = req.body.groupid,
@@ -148,6 +197,30 @@ module.exports = function (app) {
 			});
 	});
 
+	/**
+	 * POST /api/activities/userslist
+	 * @method 获取活动人员名单
+	 * @param {Number} id:活动id
+	 * @return {JSON}
+	 * {  
+		  "users": [  
+			{  
+			  "id": 71,  
+			  "userid": 1,  
+			  "activityid": 15,  
+			  "isaccepted": 1,  
+			  "name": "arwuba_60"  
+			},  
+			{  
+			  "id": 72,  
+			  "userid": 13,  
+			  "activityid": 15,  
+			  "isaccepted": 1,  
+			  "name": "WTF"  
+			}  
+		  ]  
+		}  
+	 */
 	app.post('/api/activities/userslist', function(req, res, next) {
 		var userid = req.session['userid'],
 			id = req.body.id;
@@ -161,6 +234,16 @@ module.exports = function (app) {
 			});
 	});
 
+	/**
+	 * POST /api/activities/accept
+	 * @method 发起人接受申请人
+	 * @param {Number} id:userslist接口里面的那个id,不是userid
+	 * @param {Number} activityid:活动id
+	 * @return {JSON}
+	 * {  
+	 * 		msg: accept success  
+	 * }  
+	 */
 	app.post('/api/activities/accept', function(req, res, next) {
 		var userid = 1,//req.session['userid'],
 			id = req.body.id,
@@ -176,6 +259,15 @@ module.exports = function (app) {
 			});
 	});
 
+	/**
+	 * POST /api/activities/avatar/update
+	 * @method 更新活动图片
+	 * @param {File} avatar
+	 * return {JSON}
+	 * {  
+	 * 		msg: avatar updated  
+	 * }  
+	 */
 	app.post('/api/activities/avatar/update', function (req, res, next) {
 		if(!req.files['avatar']) return next(errors[20007]);
 		var file = req.files['avatar'],
@@ -185,7 +277,7 @@ module.exports = function (app) {
 		Activity.forge({ id: req.id })
 			.updateAvatar(file['path'])
 			.then(function () {
-				next({ msg: 'Avatar updated' });
+				next({ msg: 'avatar updated' });
 			});
 	});
 };

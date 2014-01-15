@@ -24,18 +24,17 @@ Issue = module.exports = syBookshelf.Model.extend({
 
 	countComments: function () {
 		var self = this;
-		return this.comments().query().count('*')
-			.then(function (result) {
-				return result[0]['count(*)'];
-			}).then(function (numComments) {
+		return this.comments().fetch()
+			.then(function (comments) {
+				var numComments = comments.length;
 				return self.set('numComments', numComments);
 			});
 	},
 
 	fetch: function () {
-		var ret = Issue.__super__
-			.fetch.apply(this, arguments);
+		var ret = Issue.__super__.fetch.apply(this, arguments);
 		return ret.then(function (issue) {
+			if (!issue) return issue;
 			return issue.countComments();
 		});
 	}
@@ -63,10 +62,18 @@ Issue = module.exports = syBookshelf.Model.extend({
 	},
 
 	search: function (query) {
-		var accepts = ['title', 'body'], count = 0;
+		var forSearch = ['title', 'body'],
+			forFind = ['userid'],
+			count = 0;
 		return Issues.forge()
 			.query(function (qb) {
-				_.each(accepts, function (k) {
+				_.each(forFind, function (k) {
+					if (k in query) {
+						count++;
+						qb.where(k, query[k]);
+					}
+				});
+				_.each(forSearch, function (k) {
 					if (k in query) {
 						count++;
 						qb.where(k, 'like', '%' + query[k] + '%');
@@ -78,8 +85,7 @@ Issue = module.exports = syBookshelf.Model.extend({
 	},
 
 	view: function (query) {
-		return Issue.forge({ id: query['id'] })
-			.fetch()
+		return Issue.forge({ id: query['id'] }).fetch()
 			.then(function (issue) {
 				if (!issue) return Promise.rejected(errors[20603]);
 				return issue.load(['comments']);
@@ -91,10 +97,14 @@ Issues = Issue.Set = syBookshelf.Collection.extend({
 	model: Issue,
 
 	fetch: function () {
-		var ret = Issues.__super__
-			.fetch.apply(this, arguments);
-		return ret.then(function (issues) {
-			return issues.invokeThen('countComments');
-		});
+		var ret = Issues.__super__.fetch.apply(this, arguments);
+		return ret
+			.then(function (issues) {
+				if (!issues.length) return issues;
+				return issues.invokeThen('countComments')
+					.then(function () {
+						return issues;
+					});
+			});
 	}
 });

@@ -27,8 +27,7 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 
 	saving: function () {
-		var ret = User.__super__
-			.saving.apply(this, arguments);
+		var ret = User.__super__.saving.apply(this, arguments);
 		// fix lower case
 		this.fixLowerCase(['username']);
 		if (this.hasChanged('password')) {
@@ -39,8 +38,7 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 
 	toJSON: function () {
-		var ret = User.__super__
-			.toJSON.apply(this, arguments);
+		var ret = User.__super__.toJSON.apply(this, arguments);
 		// append avatar
 		if (this.id) {
 			ret['avatar'] = User.getAvatarURI(this.id);
@@ -51,8 +49,54 @@ User = module.exports = syBookshelf.Model.extend({
 	profile: function () {
 		return this.hasOne(UserProfile, 'userid');
 	},
-	friendship: function () {
+	friendshipSet: function () {
 		return this.hasMany(UserFriendship, 'userid');
+	},
+	issues: function () {
+		return this.hasMany(Issue, 'userid');
+	},
+
+	countFriends: function () {
+		var self = this;
+		return this.friendshipSet().fetch()
+			.then(function (friendshipSet) {
+				var numFriends = friendshipSet.length;
+				return self.set('numFriends', numFriends);
+			});
+	},
+	countIssues: function () {
+		var self = this;
+		return this.issues().fetch()
+			.then(function (issues) {
+				var numIssues = issues.length;
+				return self.set('numIssues', numIssues)
+					.set('lastIssue', issues.at(numIssues - 1));
+			});
+	},
+	fetchLastIssue: function () {
+		var self = this;
+		return Issue.forge({ userid: this.id })
+			.query(function (qb) {
+				qb.orderBy('posttime', 'desc');
+			}).fetch()
+			.then(function (issue) {
+				return self.set('lastIssue', issue);
+			});
+	},
+
+	fetch: function () {
+		var ret = User.__super__.fetch.apply(this, arguments);
+		return ret
+			.then(function (user) {
+				if (!user) return user;
+				return user.load(['profile']);
+			}).then(function (user) {
+				if (!user) return user;
+				return user.countFriends();
+			}).then(function (user) {
+				if (!user) return user;
+				return user.countIssues();
+			});
 	},
 
 	register: function () {
@@ -190,24 +234,25 @@ User = module.exports = syBookshelf.Model.extend({
 				});
 			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
-			.fetch().then(function (users) {
-				return users.length ? users.load(['profile']): users;
-			});
+			.fetch();
 	},
 
 	search: function (query) {
 		var forUser = ['username', 'email'],
-			forProfile = ['nickname', 'name', 'university', 'major'],
+			forProfile = ['nickname', 'name', 'university', 'major', 'gender'],
+			forFind = ['isonline'],
 			tbUser = User.prototype.tableName,
 			tbProfile = UserProfile.prototype.tableName, count = 0;
 		return Users.forge()
 			.query(function (qb) {
 				qb.join(tbProfile, tbProfile + '.' + 'userid',
 					'=', tbUser + '.' + 'id');
-				if ('isonline' in query) {
-					count++;
-					qb.where('isonline', query['isonline']);
-				}
+				_.each(forFind, function (k) {
+					if (k in query) {
+						count++;
+						qb.where(tbUser + '.' + k, query[k]);
+					}
+				});
 				_.each(forUser, function (k) {
 					if (k in query) {
 						count++;
@@ -222,9 +267,7 @@ User = module.exports = syBookshelf.Model.extend({
 				});
 			}).query('offset', query['offset'])
 			.query('limit', count ? query['limit'] : 0)
-			.fetch().then(function (users) {
-				return users.length ? users.load(['profile']): users;
-			});
+			.fetch();
 	},
 
 	view: function (query) {
@@ -232,7 +275,7 @@ User = module.exports = syBookshelf.Model.extend({
 			.fetch()
 			.then(function (user) {
 				if (!user) return Promise.rejected(errors[20003]);
-				return user.load(['profile', 'friendship.friend']);
+				return user.load(['profile', 'friendshipSet.friend']);
 			});
 	},
 
@@ -248,5 +291,17 @@ User = module.exports = syBookshelf.Model.extend({
 });
 
 Users = User.Set = syBookshelf.Collection.extend({
-	model: User
+	model: User,
+
+	fetch: function () {
+		var ret = Users.__super__.fetch.apply(this, arguments);
+		return ret
+			.then(function (users) {
+				if (!users.length) return users;
+				return users.invokeThen('fetch')
+					.then(function () {
+						return users;
+					});
+			});
+	}
 });

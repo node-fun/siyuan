@@ -91,6 +91,7 @@ CREATE TABLE IF NOT EXISTS `groups` (
   `avatar` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
   INDEX `id_idx` (`ownerid` ASC),
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC),
   CONSTRAINT `ownerid`
     FOREIGN KEY (`ownerid`)
     REFERENCES `users` (`id`)
@@ -244,3 +245,16 @@ ENGINE = InnoDB;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+-- -----------------------------------------------------
+-- Data for table `activity_status`
+-- -----------------------------------------------------
+START TRANSACTION;
+INSERT INTO `activity_status` (`id`, `name`) VALUES (0, '接受报名');
+INSERT INTO `activity_status` (`id`, `name`) VALUES (1, '截止报名');
+INSERT INTO `activity_status` (`id`, `name`) VALUES (2, '活动结束');
+INSERT INTO `activity_status` (`id`, `name`) VALUES (3, '活动取消');
+
+COMMIT;
+
+

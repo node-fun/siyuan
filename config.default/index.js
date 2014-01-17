@@ -35,7 +35,6 @@ module.exports = {
 	},
 
 	avatarExt: '.jpg',
-	activitiesStatus: ['接受报名', '截止报名', '活动结束', '活动取消'],
 	admins: [
 		{
 			username: 'admin1',

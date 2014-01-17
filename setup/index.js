@@ -19,8 +19,8 @@ var fs = require('fs'),
 	Activities = Activity.Set,
 	UserActivity = require('../models/user-activity'),
 	UserActivitys = UserActivity.Set,
-	GroupMembers = require('../models/group-membership'),
-	GroupMembersSet = GroupMembers.Set,
+	GroupMembership = require('../models/group-membership'),
+	GroupMembershipSet = GroupMembership.Set,
 	Issue = require('../models/issue'),
 	Issues = Issue.Set,
 	numUsers = 35,
@@ -140,9 +140,9 @@ function addGroups() {
 		});
 }
 function addGroupMembers() {
-	var groupmembers = GroupMembersSet.forge();
+	var groupmembers = GroupMembershipSet.forge();
 	_.times(numGroupMembers, function () {
-		groupmembers.add(GroupMembers.forge({
+		groupmembers.add(GroupMembership.forge({
 			'groupid': _.random(1, numGroups),
 			'userid': _.random(1, numUsers),
 			'isowner': chance.bool(),

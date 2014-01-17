@@ -502,14 +502,14 @@
                 }
             ],
             "return": {
-                "description": "\n<pre>\n    {\n \"groups\": [\n   {\n     \"id\": 1,\n     \"ownerid\": 26,\n     \"name\": \"cab\",\n     \"description\": \"Cavgob ija of bilzoro ded gibruzup mar mi pabigkum gegwubez je mig kegiso ufaica votojnuj zavo iki iw. Fefufi bawum gamokzap ni si nizifca con magi evubinek wawke cutero tan hanasboz wozes upvip su owicore. Ne lupwegsav medap ipajies pek ge jucrokub otihuham bi rafma peobizon teh\",\n     \"createtime\": 1380494258000,\n     \"avatar\": null,\n     \"members\": [\n       {\n         \"userid\": 24,\n         \"isowner\": 0,\n         \"isadmin\": 0,\n         \"remark\": \"jumefojek\",\n         \"profile\": {\n           \"id\": 24,\n           \"username\": \"mifi_94\",\n           \"regtime\": 1385861668000,\n           \"isonline\": 0,\n           \"profile\": {\n             \"email\": \"hipignoz@inojuptuw.com\",\n\t\t\t\t \"nickname\": \"Angelina Swanson\",\n\t\t\t\t \"name\": \"Savannah Patterson\",\n\t\t\t\t \"gender\": \"f\",\n\t\t\t\t \"age\": 53,\n\t\t\t\t \"grade\": 1978,\n\t\t\t\t \"university\": \"Tonadde University\",\n\t\t\t\t \"major\": \"Onpuval\"\n\t\t\t\t },\n\t\t\t\t \"avatar\": \"/avatars/24.jpg\"\n\t\t\t\t }\n\t\t\t\t },\n\t\t\t\t ...\n\t\t\t\t}\n\t        ]\n\t    },\n\t    ...\n\t  ]\n\t }\n\t </pre>",
+                "description": "\n<pre>\n\t{\n\t\t\"groups\": [\n\t\t{\n\t\t\t\"id\": 1,\n\t\t\t\"ownerid\": 26,\n\t\t\t\"name\": \"cab\",\n\t\t\t\"description\": \"Cavgob ija of bilzoro ded gibruzup mar mi pabigkum gegwubez je mig kegiso ufaica votojnuj zavo iki iw. Fefufi bawum gamokzap ni si nizifca con magi evubinek wawke cutero tan hanasboz wozes upvip su owicore. Ne lupwegsav medap ipajies pek ge jucrokub otihuham bi rafma peobizon teh\",\n\t\t\t\"createtime\": 1380494258000,\n\t\t\t\"avatar\": null,\n\t\t\t\"members\": [\n\t\t\t\t{\n\t\t\t\t\t\"userid\": 24,\n\t\t\t\t\t\"isowner\": 0,\n\t\t\t\t\t\"isadmin\": 0,\n\t\t\t\t\t\"remark\": \"jumefojek\",\n\t\t\t\t\t\"profile\": {\n\t\t\t\t\t\t\"id\": 24,\n\t\t\t\t\t\t\"username\": \"mifi_94\",\n\t\t\t\t\t\t\"regtime\": 1385861668000,\n\t\t\t\t\t\t\"isonline\": 0,\n\t\t\t\t\t\t\"profile\": {\n\t\t\t\t\t\t\t\"email\": \"hipignoz@inojuptuw.com\",\n\t\t\t\t\t\t\t\"nickname\": \"Angelina Swanson\",\n\t\t\t\t\t\t\t\"name\": \"Savannah Patterson\",\n\t\t\t\t\t\t\t\"gender\": \"f\",\n\t\t\t\t\t\t\t\"age\": 53,\n\t\t\t\t\t\t\t\"grade\": 1978,\n\t\t\t\t\t\t\t\"university\": \"Tonadde University\",\n\t\t\t\t\t\t\t\"major\": \"Onpuval\"\n\t\t\t\t\t\t},\n\t\t\t\t\t\t\"avatar\": \"/avatars/24.jpg\"\n\t\t\t\t\t}\n\t\t\t\t},\n\t\t\t\t...\n\t\t\t]\n\t\t}\n\t]\n\t}\n\t</pre>",
                 "type": "JSON"
             },
             "class": "圈子"
         },
         {
             "file": "routes\\groups.js",
-            "line": 85,
+            "line": 83,
             "description": "post /api/groups/create",
             "itemtype": "method",
             "name": "创建圈子",
@@ -527,13 +527,13 @@
             ],
             "return": {
                 "description": "\n{  \n　　msg: 'group created',  \n　　id: group.id  \n}",
-                "type": "Array"
+                "type": "JSON"
             },
             "class": "圈子"
         },
         {
             "file": "routes\\groups.js",
-            "line": 119,
+            "line": 117,
             "description": "post /api/groups/join",
             "itemtype": "method",
             "name": "加入圈子",
@@ -546,13 +546,13 @@
             ],
             "return": {
                 "description": "{  \n　　msg: 'join group success'  \n}",
-                "type": "Array"
+                "type": "JSON"
             },
             "class": "圈子"
         },
         {
             "file": "routes\\groups.js",
-            "line": 150,
+            "line": 148,
             "description": "post /api/groups/quit",
             "itemtype": "method",
             "name": "退出圈子",
@@ -565,7 +565,19 @@
             ],
             "return": {
                 "description": "{  \n　　msg: 'quit group success'  \n}",
-                "type": "Array"
+                "type": "JSON"
+            },
+            "class": "圈子"
+        },
+        {
+            "file": "routes\\groups.js",
+            "line": 176,
+            "description": "GET /api/groups/my  \n含我加入的、我创建的圈子列表。",
+            "itemtype": "method",
+            "name": "我的圈子列表",
+            "return": {
+                "description": "\n\t{\n\t\t\"groups\": [\n\t\t\t{\n\t\t\t\t\"id\": 1,\n\t\t\t\t\"ownerid\": null,\n\t\t\t\t\"name\": null,\n\t\t\t\t\"description\": null,\n\t\t\t\t\"createtime\": null,\n\t\t\t\t\"avatar\": null,\n\t\t\t\t\"_pivot_userid\": 101,\n\t\t\t\t\"_pivot_groupid\": 1\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"id\": 2,\n\t\t\t\t\"ownerid\": null,\n\t\t\t\t\"name\": null,\n\t\t\t\t\"description\": null,\n\t\t\t\t\"createtime\": null,\n\t\t\t\t\"avatar\": null,\n\t\t\t\t\"_pivot_userid\": 101,\n\t\t\t\t\"_pivot_groupid\": 2\n\t\t\t}\n\t\t]\n\t}",
+                "type": "JSON"
             },
             "class": "圈子"
         },

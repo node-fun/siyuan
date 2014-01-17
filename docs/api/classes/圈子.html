@@ -160,6 +160,13 @@
                             </li>
                         
                             <li class="index-item method">
+                                <a href="#method_我的圈子列表">我的圈子列表</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
                                 <a href="#method_退出圈子">退出圈子</a>
 
                                 
@@ -207,7 +214,7 @@
 
     
         <span class="returns-inline">
-            <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+            <span class="type">JSON</span>
         </span>
     
 
@@ -234,7 +241,7 @@
             
         
         
-        <a href="../files/routes_groups.js.html#l85"><code>routes\groups.js:85</code></a>
+        <a href="../files/routes_groups.js.html#l83"><code>routes\groups.js:83</code></a>
         
         </p>
 
@@ -298,7 +305,7 @@
             <div class="returns-description">
                 
                     
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>:
+                        <span class="type">JSON</span>:
                     
                     <p>{<br>　　msg: &#39;group created&#39;,<br>　　id: group.id<br>}</p>
 
@@ -330,7 +337,7 @@
 
     
         <span class="returns-inline">
-            <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+            <span class="type">JSON</span>
         </span>
     
 
@@ -357,7 +364,7 @@
             
         
         
-        <a href="../files/routes_groups.js.html#l119"><code>routes\groups.js:119</code></a>
+        <a href="../files/routes_groups.js.html#l117"><code>routes\groups.js:117</code></a>
         
         </p>
 
@@ -405,7 +412,7 @@
             <div class="returns-description">
                 
                     
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>:
+                        <span class="type">JSON</span>:
                     
                     <p>{<br>　　msg: &#39;join group success&#39;<br>}</p>
 
@@ -562,46 +569,140 @@
                     
                     <pre>
     {
- "groups": [
-   {
-     "id": 1,
-     "ownerid": 26,
-     "name": "cab",
-     "description": "Cavgob ija of bilzoro ded gibruzup mar mi pabigkum gegwubez je mig kegiso ufaica votojnuj zavo iki iw. Fefufi bawum gamokzap ni si nizifca con magi evubinek wawke cutero tan hanasboz wozes upvip su owicore. Ne lupwegsav medap ipajies pek ge jucrokub otihuham bi rafma peobizon teh",
-     "createtime": 1380494258000,
-     "avatar": null,
-     "members": [
-       {
-         "userid": 24,
-         "isowner": 0,
-         "isadmin": 0,
-         "remark": "jumefojek",
-         "profile": {
-           "id": 24,
-           "username": "mifi_94",
-           "regtime": 1385861668000,
-           "isonline": 0,
-           "profile": {
-             "email": "hipignoz@inojuptuw.com",
-                 "nickname": "Angelina Swanson",
-                 "name": "Savannah Patterson",
-                 "gender": "f",
-                 "age": 53,
-                 "grade": 1978,
-                 "university": "Tonadde University",
-                 "major": "Onpuval"
-                 },
-                 "avatar": "/avatars/24.jpg"
-                 }
-                 },
-                 ...
-                }
+        "groups": [
+        {
+            "id": 1,
+            "ownerid": 26,
+            "name": "cab",
+            "description": "Cavgob ija of bilzoro ded gibruzup mar mi pabigkum gegwubez je mig kegiso ufaica votojnuj zavo iki iw. Fefufi bawum gamokzap ni si nizifca con magi evubinek wawke cutero tan hanasboz wozes upvip su owicore. Ne lupwegsav medap ipajies pek ge jucrokub otihuham bi rafma peobizon teh",
+            "createtime": 1380494258000,
+            "avatar": null,
+            "members": [
+                {
+                    "userid": 24,
+                    "isowner": 0,
+                    "isadmin": 0,
+                    "remark": "jumefojek",
+                    "profile": {
+                        "id": 24,
+                        "username": "mifi_94",
+                        "regtime": 1385861668000,
+                        "isonline": 0,
+                        "profile": {
+                            "email": "hipignoz@inojuptuw.com",
+                            "nickname": "Angelina Swanson",
+                            "name": "Savannah Patterson",
+                            "gender": "f",
+                            "age": 53,
+                            "grade": 1978,
+                            "university": "Tonadde University",
+                            "major": "Onpuval"
+                        },
+                        "avatar": "/avatars/24.jpg"
+                    }
+                },
+                ...
             ]
+        }
+    ]
+    }
+    </pre>
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+                
+                    <div id="method_我的圈子列表" class="method item">
+    <h3 class="name"><code>我的圈子列表</code></h3>
+
+    
+        <span class="paren">()</span>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type">JSON</span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/routes_groups.js.html#l176"><code>routes\groups.js:176</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>GET /api/groups/my<br>含我加入的、我创建的圈子列表。</p>
+
+    </div>
+
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type">JSON</span>:
+                    
+                    <pre><code>{
+    &quot;groups&quot;: [
+        {
+            &quot;id&quot;: 1,
+            &quot;ownerid&quot;: null,
+            &quot;name&quot;: null,
+            &quot;description&quot;: null,
+            &quot;createtime&quot;: null,
+            &quot;avatar&quot;: null,
+            &quot;_pivot_userid&quot;: 101,
+            &quot;_pivot_groupid&quot;: 1
         },
-        ...
-      ]
-     }
-     </pre>
+        {
+            &quot;id&quot;: 2,
+            &quot;ownerid&quot;: null,
+            &quot;name&quot;: null,
+            &quot;description&quot;: null,
+            &quot;createtime&quot;: null,
+            &quot;avatar&quot;: null,
+            &quot;_pivot_userid&quot;: 101,
+            &quot;_pivot_groupid&quot;: 2
+        }
+    ]
+}</code></pre>
+
                 
             </div>
         </div>
@@ -630,7 +731,7 @@
 
     
         <span class="returns-inline">
-            <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+            <span class="type">JSON</span>
         </span>
     
 
@@ -657,7 +758,7 @@
             
         
         
-        <a href="../files/routes_groups.js.html#l150"><code>routes\groups.js:150</code></a>
+        <a href="../files/routes_groups.js.html#l148"><code>routes\groups.js:148</code></a>
         
         </p>
 
@@ -705,7 +806,7 @@
             <div class="returns-description">
                 
                     
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>:
+                        <span class="type">JSON</span>:
                     
                     <p>{<br>　　msg: &#39;quit group success&#39;<br>}</p>
 

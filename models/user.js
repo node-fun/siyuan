@@ -12,6 +12,7 @@ var fs = require('fs'),
 	config = require('../config'),
 	avatarDir = config.avatarDir,
 	avatarExt = config.avatarExt,
+	Group = require('./group'),
 	User, Users;
 
 User = module.exports = syBookshelf.Model.extend({
@@ -200,6 +201,10 @@ User = module.exports = syBookshelf.Model.extend({
 			.then(function () {
 				return self;
 			});
+	},
+
+	groups: function(){
+		return this.belongsToMany(Group, 'group_membership', 'userid', 'groupid');
 	}
 }, {
 	randomForge: function () {

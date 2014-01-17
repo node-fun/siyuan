@@ -113,47 +113,45 @@ module.exports = function (app) {
 	 * @param {String} [name] 圈子名
 	 * @return {JSON}
 	 * &lt;pre&gt;
-	 *     {
-  &quot;groups&quot;: [
-    {
-      &quot;id&quot;: 1,
-      &quot;ownerid&quot;: 26,
-      &quot;name&quot;: &quot;cab&quot;,
-      &quot;description&quot;: &quot;Cavgob ija of bilzoro ded gibruzup mar mi pabigkum gegwubez je mig kegiso ufaica votojnuj zavo iki iw. Fefufi bawum gamokzap ni si nizifca con magi evubinek wawke cutero tan hanasboz wozes upvip su owicore. Ne lupwegsav medap ipajies pek ge jucrokub otihuham bi rafma peobizon teh&quot;,
-      &quot;createtime&quot;: 1380494258000,
-      &quot;avatar&quot;: null,
-      &quot;members&quot;: [
-        {
-          &quot;userid&quot;: 24,
-          &quot;isowner&quot;: 0,
-          &quot;isadmin&quot;: 0,
-          &quot;remark&quot;: &quot;jumefojek&quot;,
-          &quot;profile&quot;: {
-            &quot;id&quot;: 24,
-            &quot;username&quot;: &quot;mifi_94&quot;,
-            &quot;regtime&quot;: 1385861668000,
-            &quot;isonline&quot;: 0,
-            &quot;profile&quot;: {
-              &quot;email&quot;: &quot;hipignoz@inojuptuw.com&quot;,
-				 &quot;nickname&quot;: &quot;Angelina Swanson&quot;,
-				 &quot;name&quot;: &quot;Savannah Patterson&quot;,
-				 &quot;gender&quot;: &quot;f&quot;,
-				 &quot;age&quot;: 53,
-				 &quot;grade&quot;: 1978,
-				 &quot;university&quot;: &quot;Tonadde University&quot;,
-				 &quot;major&quot;: &quot;Onpuval&quot;
-				 },
-				 &quot;avatar&quot;: &quot;/avatars/24.jpg&quot;
-				 }
-				 },
-				 ...
-				}
-	        ]
-	    },
-	    ...
-	  ]
-	 }
-	 &lt;/pre&gt;
+	{
+		&quot;groups&quot;: [
+		{
+			&quot;id&quot;: 1,
+			&quot;ownerid&quot;: 26,
+			&quot;name&quot;: &quot;cab&quot;,
+			&quot;description&quot;: &quot;Cavgob ija of bilzoro ded gibruzup mar mi pabigkum gegwubez je mig kegiso ufaica votojnuj zavo iki iw. Fefufi bawum gamokzap ni si nizifca con magi evubinek wawke cutero tan hanasboz wozes upvip su owicore. Ne lupwegsav medap ipajies pek ge jucrokub otihuham bi rafma peobizon teh&quot;,
+			&quot;createtime&quot;: 1380494258000,
+			&quot;avatar&quot;: null,
+			&quot;members&quot;: [
+				{
+					&quot;userid&quot;: 24,
+					&quot;isowner&quot;: 0,
+					&quot;isadmin&quot;: 0,
+					&quot;remark&quot;: &quot;jumefojek&quot;,
+					&quot;profile&quot;: {
+						&quot;id&quot;: 24,
+						&quot;username&quot;: &quot;mifi_94&quot;,
+						&quot;regtime&quot;: 1385861668000,
+						&quot;isonline&quot;: 0,
+						&quot;profile&quot;: {
+							&quot;email&quot;: &quot;hipignoz@inojuptuw.com&quot;,
+							&quot;nickname&quot;: &quot;Angelina Swanson&quot;,
+							&quot;name&quot;: &quot;Savannah Patterson&quot;,
+							&quot;gender&quot;: &quot;f&quot;,
+							&quot;age&quot;: 53,
+							&quot;grade&quot;: 1978,
+							&quot;university&quot;: &quot;Tonadde University&quot;,
+							&quot;major&quot;: &quot;Onpuval&quot;
+						},
+						&quot;avatar&quot;: &quot;/avatars/24.jpg&quot;
+					}
+				},
+				...
+			]
+		}
+	]
+	}
+	&lt;/pre&gt;
 	 */
 	app.get(&#x27;/api/groups/find&#x27;, function (req, res, next) {
 		var query = req.query,
@@ -183,7 +181,7 @@ module.exports = function (app) {
 	 * @method 创建圈子
 	 * @param {String} name 圈子名
 	 * @param {String} description 描述
-	 * @return {Array}
+	 * @return {JSON}
 	 * {  
 	 * 　　msg: &#x27;group created&#x27;,  
 	 * 　　id: group.id  
@@ -216,7 +214,7 @@ module.exports = function (app) {
 	 * post /api/groups/join
 	 * @method 加入圈子
 	 * @param {Number} groupid 圈子id
-	 * @return {Array} {  
+	 * @return {JSON} {  
 	 * 　　msg: &#x27;join group success&#x27;  
 	 * }
 	 */
@@ -247,7 +245,7 @@ module.exports = function (app) {
 	 * post /api/groups/quit
 	 * @method 退出圈子
 	 * @param {Number} groupid 圈子id
-	 * @return {Array} {  
+	 * @return {JSON} {  
 	 * 　　msg: &#x27;quit group success&#x27;  
 	 * }
 	 */
@@ -269,6 +267,43 @@ module.exports = function (app) {
 						});
 					});
 			});
+	});
+
+	/**
+	 * GET /api/groups/my  
+	 * 含我加入的、我创建的圈子列表。
+	 * @method 我的圈子列表
+	 * @return {JSON}
+	{
+		&quot;groups&quot;: [
+			{
+				&quot;id&quot;: 1,
+				&quot;ownerid&quot;: null,
+				&quot;name&quot;: null,
+				&quot;description&quot;: null,
+				&quot;createtime&quot;: null,
+				&quot;avatar&quot;: null,
+				&quot;_pivot_userid&quot;: 101,
+				&quot;_pivot_groupid&quot;: 1
+			},
+			{
+				&quot;id&quot;: 2,
+				&quot;ownerid&quot;: null,
+				&quot;name&quot;: null,
+				&quot;description&quot;: null,
+				&quot;createtime&quot;: null,
+				&quot;avatar&quot;: null,
+				&quot;_pivot_userid&quot;: 101,
+				&quot;_pivot_groupid&quot;: 2
+			}
+		]
+	}
+	 */
+	app.get(&#x27;/api/groups/my&#x27;, function(req, res, next){
+		if(!req.user) return next(errors[21301]);
+		req.user.related(&#x27;groups&#x27;).fetch().then(function(groups){
+			next({groups: groups});
+		});
 	});
 };
 

@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   `password` VARCHAR(45) NULL,
   `regtime` DATETIME NULL,
   `isonline` TINYINT(1) NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `username_UNIQUE` (`username` ASC))
 ENGINE = InnoDB;
 
 
@@ -245,16 +246,3 @@ ENGINE = InnoDB;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
-
--- -----------------------------------------------------
--- Data for table `activity_status`
--- -----------------------------------------------------
-START TRANSACTION;
-INSERT INTO `activity_status` (`id`, `name`) VALUES (1, '接受报名');
-INSERT INTO `activity_status` (`id`, `name`) VALUES (2, '截止报名');
-INSERT INTO `activity_status` (`id`, `name`) VALUES (3, '活动结束');
-INSERT INTO `activity_status` (`id`, `name`) VALUES (4, '活动取消');
-
-COMMIT;
-
-

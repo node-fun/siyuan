@@ -10,8 +10,8 @@ module.exports = function (app) {
 	 * @method 管理员列表
 	 * @param {Number} [id]
 	 * @return {Array}
-	 * {  
-		  "admins": [  
+	 * <pre>{
+	"admins": [
 			{  
 			  "id": 1,  
 			  "username": "admin1",  
@@ -34,7 +34,7 @@ module.exports = function (app) {
 			  "lasttime": null  
 			}  
 		  ]  
-		}  
+		}</pre>
 	 */
 	app.get('/api/admin/find', function (req, res, next) {
 		Admin.find(req.query)
@@ -83,10 +83,10 @@ module.exports = function (app) {
 	 * @param {String} username
 	 * @param {String} password
 	 * @return {JSON}
-	 * {  
+	 * <pre>{
 	 * 		msg: login success,  
 	 * 		id: 2  
-	 * }  
+	 * }</pre>
 	 */
 	app.post('/api/admin/login', function (req, res, next) {
 		Admin.forge(req.body).login()
@@ -102,9 +102,9 @@ module.exports = function (app) {
 	 * POST /api/admin/logout
 	 * @method 管理员登出
 	 * @return {JSON}
-	 * {  
+	 * <pre>{
 	 * 		msg: logout success  
-	 * }  
+	 * }</pre>
 	 */
 	app.post('/api/admin/logout', function (req, res, next) {
 		Admin.forge({ id: req.session.adminid }).logout()
@@ -120,9 +120,9 @@ module.exports = function (app) {
 	 * @param {String} password
 	 * @param {String} new-password
 	 * @return {JSON}
-	 * {  
+	 * <pre>{
 	 * 		msg: password reset  
-	 * }  
+	 * }</pre>
 	 */
 	app.post('/api/admin/password/reset', function (req, res, next) {
 		Admin.forge({id: req.session['adminid']})

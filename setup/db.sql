@@ -250,10 +250,10 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- Data for table `activity_status`
 -- -----------------------------------------------------
 START TRANSACTION;
-INSERT INTO `activity_status` (`id`, `name`) VALUES (0, '接受报名');
-INSERT INTO `activity_status` (`id`, `name`) VALUES (1, '截止报名');
-INSERT INTO `activity_status` (`id`, `name`) VALUES (2, '活动结束');
-INSERT INTO `activity_status` (`id`, `name`) VALUES (3, '活动取消');
+INSERT INTO `activity_status` (`id`, `name`) VALUES (1, '接受报名');
+INSERT INTO `activity_status` (`id`, `name`) VALUES (2, '截止报名');
+INSERT INTO `activity_status` (`id`, `name`) VALUES (3, '活动结束');
+INSERT INTO `activity_status` (`id`, `name`) VALUES (4, '活动取消');
 
 COMMIT;
 

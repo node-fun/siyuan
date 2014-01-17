@@ -12,9 +12,11 @@ module.exports = function (app) {
 		res.send(data);
 	});
 	app.use('/api', function (err, req, res, next) {
-		// 4 parameters required though `next` not used
-		if (err['code']) return res.sendErr(err);
-		console.error(err.stack);
+		if (!err['code']) {
+			console.error(err.stack);
+			err = errors[10001];
+		}
+		res.sendErr(err);
 	});
 	app.use('/api', function (req, res) {
 		res.sendErr(errors[10020]);

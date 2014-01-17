@@ -48,25 +48,13 @@ describe('admin', function () {
 		},
 		jar = request.jar(), id;
 
-	it('logins and logouts', function(done) {
+	it('logins', function(done) {
 		request.post(apiHost + '/login', {
 			jar: jar,
 			form: authData
 		}, function(err, res, data) {
 			assert.ok(data['msg']);
 			assert.ok(data['id']);
-			Admin.forge({ id: id }).fetch()
-				.then(function(admin) {
-					request.post(apiHost + '/logout', {
-						jar: jar
-					}, function(err, res, data) {
-						assert.ok(data['msg']);
-						Admin.forge({ id: id }).fetch()
-							.then(function(admin) {
-								done();
-							});
-					});
-				});
 		});
 	});
 

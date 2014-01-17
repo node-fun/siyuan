@@ -71,7 +71,7 @@ module.exports = function (app) {
 			.fetch()
 			.then(function (groups) {
 				groups.mapThen(function (group) {
-					return group.load(['members', 'members.profile', 'members.profile.profile']);
+					return group.load(['members', 'members.profile']);
 				}).then(function(groups) {
 						next({
 							groups: groups

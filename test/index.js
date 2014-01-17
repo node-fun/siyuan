@@ -3,6 +3,7 @@ process.env['NODE_ENV'] = env;
 
 var cp = require('child_process'),
 	config = require('../config'),
+	request = require('request').defaults({ json: true }),
 	rootDir = config.rootDir;
 
 describe('database for test', function () {
@@ -41,5 +42,11 @@ describe('server', function () {
 	});
 });
 
-require('./units/users');
 require('./units/admin');
+global.authData = {
+		username: '_test_',
+		password: '123321'
+	};
+global.jar = request.jar();
+require('./units/users');
+require('./units/groups');

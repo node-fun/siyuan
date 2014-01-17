@@ -71,7 +71,7 @@ module.exports = function (app) {
 			.fetch()
 			.then(function (groups) {
 				groups.mapThen(function (group) {
-					return group.load(['members', 'members.profile']);
+					return group.load(['memberships', 'memberships.member']);
 				}).then(function(groups) {
 						next({
 							groups: groups
@@ -107,10 +107,17 @@ module.exports = function (app) {
 					ownerid: user.id
 				}, req.body)).save();
 			}).then(function (group) {
-				next({
-					msg: 'group created',
-					id: group.id
-				});
+				GroupMember.forge({
+					userid: user.id,
+					groupid: group.id,
+					isowner: 1
+				}).save()
+					.then(function(groupMember){
+						next({
+							msg: 'group created',
+							id: groupMember.get('groupid')
+						});
+					});
 			});
 	});
 
@@ -122,27 +129,10 @@ module.exports = function (app) {
 	 * 　　msg: 'join group success'  
 	 * }
 	 */
-	app.post('/api/groups/join', function(req, res, next){
+	app.post('/api/groups/join', function (req, res, next){
 		var user = req.user;
 		if(!user) return next(errors[21301]);
-		return GroupMember.forge({
-			'userid': user.id,
-			'groupid': req.body['groupid']
-		}).fetch()
-			.then(function(groupMember){
-				if(groupMember){
-					return next(errors[20506]);
-				}
-				return GroupMember.forge({
-					'userid': user.id,
-					'groupid': req.body['groupid']
-				}).save()
-					.then(function(groupMember){
-						next({
-							msg: 'join group success'
-						});
-					});
-			});
+		return join(user.id, req.body['groupid'], next);
 	});
 
 	/**
@@ -156,21 +146,7 @@ module.exports = function (app) {
 	app.post('/api/groups/quit', function(req, res, next){
 		var user = req.user;
 		if(!user) return next(errors[21301]);
-		return GroupMember.forge({
-			'userid': user.id,
-			'groupid': req.body['groupid']
-		}).fetch()
-			.then(function(groupMember){
-				if(!groupMember){
-					return next(errors[40001]);
-				}
-				return groupMember.destroy()
-					.then(function(){
-						next({
-							msg: 'quit group success'
-						});
-					});
-			});
+		return quit(user.id, req.body['groupid'], next);
 	});
 
 	/**
@@ -291,9 +267,18 @@ module.exports = function (app) {
 				}
 			});
 	});
-	
-	
-	app.post('/api/groups/invite', function(req, res, next){
+
+	/**
+	 * POST /api/groups/pull
+	 * @method 拉好友进圈子
+	 * @param {Number} userid
+	 * @param {Number} groupid
+	 * @return {JSON}
+	{
+		msg: 'join group success'
+	}
+	 */
+	app.post('/api/groups/pull', function(req, res, next){
 		var user = req.user;
 		if(!user){
 			next(errors[21301]);
@@ -306,8 +291,75 @@ module.exports = function (app) {
 				if(!m.get('isadmin') && !m.get('isowner')){
 					next(errors[21301]);
 				}else{
-					
+					return join(req.body['userid'], req.body['groupid'], next);
+				}
+			});
+	});
+	
+	/**
+	 * POST /api/groups/remove
+	 * @method 踢人出圈子
+	 * @param {Number} userid
+	 * @param {Number} groupid
+	 * @return {JSON}
+	{
+		msg: 'quit group success'
+	}
+	 */
+	app.post('/api/groups/remove', function(req, res, next){
+		var user = req.user;
+		if(!user){
+			next(errors[21301]);
+		}
+		GroupMember.forge({
+			userid: user.id,
+			groupid: req.body['groupid']
+		}).fetch()
+			.then(function(m){
+				if(!m.get('isadmin') && !m.get('isowner')){
+					next(errors[21301]);
+				}else{
+					return quit(req.body['userid'], req.body['groupid'], next);
 				}
 			});
 	});
 };
+
+function join(userid, groupid, next){
+	return GroupMember.forge({
+		'userid': userid,
+		'groupid': groupid
+	}).fetch()
+		.then(function(groupMember){
+			if(groupMember){
+				return next(errors[20506]);
+			}
+			return GroupMember.forge({
+				'userid': userid,
+				'groupid': groupid
+			}).save()
+				.then(function(){
+					next({
+						msg: 'join group success'
+					});
+				});
+		});
+}
+
+function quit(userid, groupid, next){
+	return GroupMember.forge({
+		'userid': userid,
+		'groupid': groupid
+	}).fetch()
+		.then(function(groupMember){
+			if(!groupMember){
+				return next(errors[40001]);
+			}
+			return groupMember.destroy()
+				.then(function(){
+					next({
+						msg: 'quit group success'
+					});
+				});
+		});
+}

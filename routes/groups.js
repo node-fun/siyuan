@@ -209,4 +209,105 @@ module.exports = function (app) {
 			next({groups: groups});
 		});
 	});
+
+	/**
+	 * POST /api/groups/setadmin
+	 * @method 设置管理员
+	 * @param {Number} userid 成员的id
+	 * @param {Number} groupid 圈子id
+	 * @return {JSON}
+		{
+			msg: "set admin success"
+		}
+	 */
+	app.post('/api/groups/setadmin', function(req, res, next){
+		var user = req.user;
+		if(!user){
+			next(errors[21301]);
+		}
+		GroupMember.forge({
+			userid: user.id,
+			groupid: req.body['groupid']
+		}).fetch()
+			.then(function(m){
+				if(!m.get('isadmin')){
+					next(errors[21301]);
+				}else{
+					GroupMember.forge({
+						userid: req.body['userid'],
+						groupid: req.body['groupid']
+					})
+						.fetch()
+						.then(function(m){
+							m.set('isadmin',1);
+							m.save()
+								.then(function(){
+									next({
+										msg: "set admin success"
+									});
+								});
+						});
+				}
+			});
+	});
+
+	/**
+	 * POST /api/groups/canceladmin
+	 * @method 撤销管理员
+	 * @param {Number} userid 成员的id
+	 * @param {Number} groupid 圈子id
+	 * @return {JSON}
+	 {
+		msg: "cancel admin success"
+	}
+	 */
+	app.post('/api/groups/canceladmin', function(req, res, next){
+		var user = req.user;
+		if(!user){
+			next(errors[21301]);
+		}
+		GroupMember.forge({
+			userid: user.id,
+			groupid: req.body['groupid']
+		}).fetch()
+			.then(function(m){
+				if(!m.get('isadmin')){
+					next(errors[21301]);
+				}else{
+					GroupMember.forge({
+						userid: req.body['userid'],
+						groupid: req.body['groupid']
+					})
+						.fetch()
+						.then(function(m){
+							m.set('isadmin',0);
+							m.save()
+								.then(function(){
+									next({
+										msg: "cancel admin success"
+									});
+								});
+						});
+				}
+			});
+	});
+	
+	
+	app.post('/api/groups/invite', function(req, res, next){
+		var user = req.user;
+		if(!user){
+			next(errors[21301]);
+		}
+		GroupMember.forge({
+			userid: user.id,
+			groupid: req.body['groupid']
+		}).fetch()
+			.then(function(m){
+				if(!m.get('isadmin') && !m.get('isowner')){
+					next(errors[21301]);
+				}else{
+					
+				}
+			});
+	});
 };

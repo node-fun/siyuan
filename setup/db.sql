@@ -109,6 +109,7 @@ CREATE TABLE IF NOT EXISTS `group_membership` (
   `isowner` TINYINT(1) NULL,
   `isadmin` TINYINT(1) NULL,
   `remark` VARCHAR(45) NULL COMMENT '备注名',
+  `restrict` ENUM('public','private') NULL DEFAULT 'public' COMMENT 'public: 所有人都可以加入；\nprivate: 只有圈主可以拉人。',
   PRIMARY KEY (`id`),
   INDEX `groupid_idx` (`groupid` ASC),
   INDEX `userid_idx` (`userid` ASC),

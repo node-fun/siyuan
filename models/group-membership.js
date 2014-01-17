@@ -9,7 +9,7 @@ var chance = new (require('chance'))(),
 GroupMembership = module.exports = syBookshelf.Model.extend({
 	tableName: 'group_membership',
 	fields: [
-		'id', 'groupid', 'userid', 'isowner', 'isadmin', 'remark'
+		'id', 'groupid', 'userid', 'isowner', 'isadmin', 'remark', 'restrict'
 	],
 	defaults: function(){
 		return {

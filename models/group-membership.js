@@ -3,7 +3,6 @@
  */
 var chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
-	User = require('./user'),
 	GroupMembership, GroupMembershipSet;
 
 GroupMembership = module.exports = syBookshelf.Model.extend({
@@ -19,7 +18,7 @@ GroupMembership = module.exports = syBookshelf.Model.extend({
 	},
 	omitInJSON: ['id','groupid'],
 	profile: function(){
-		return this.belongsTo(User, 'userid');
+		return this.belongsTo(require('./user'), 'userid');
 	}
 }, {
 

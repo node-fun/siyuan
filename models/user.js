@@ -67,21 +67,11 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 	countIssues: function () {
 		var self = this;
-		return this.issues().fetch()
+		return this.issues().query('orderBy', 'posttime', 'desc').fetch()
 			.then(function (issues) {
 				var numIssues = issues.length;
 				return self.set('numIssues', numIssues)
-					.set('lastIssue', issues.at(numIssues - 1));
-			});
-	},
-	fetchLastIssue: function () {
-		var self = this;
-		return Issue.forge({ userid: this.id })
-			.query(function (qb) {
-				qb.orderBy('posttime', 'desc');
-			}).fetch()
-			.then(function (issue) {
-				return self.set('lastIssue', issue);
+					.set('lastIssue', issues.first());
 			});
 	},
 

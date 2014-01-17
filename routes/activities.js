@@ -47,7 +47,7 @@ module.exports = function (app) {
 		  ]  
 		}]</pre>
 	*/
-	app.post('/api/activities/find', function (req, res, next) {
+	app.get('/api/activities/find', function (req, res, next) {
 		Activity.find(req.query)
 			.then(function (activities) {
 				activities.mapThen(function (activity) {

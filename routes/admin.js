@@ -131,4 +131,10 @@ module.exports = function (app) {
 				next({ msg: 'password reset' });
 			}).catch(next);
 	});
+
+	app.get('/admin/login', function (req, res, next) {
+		res.render('login', {
+
+		});
+	});
 };

@@ -48,7 +48,6 @@ execsql.config(connConfig)
 					.then(addAdmins)
 					.then(addGroups)
 					.then(addGroupMembers)
-					.then(addActivityStatuses)
 					.then(addActivities)
 					.then(addUserActivitys)
 					.then(addIssues)
@@ -156,20 +155,6 @@ function addGroupMembers() {
 		});
 }
 
-function addActivityStatuses() {
-	var activityStatuses = ActivityStatuses.forge(),
-		activityStatusArr = config.activitiesStatus,
-		numActivityStatuses = activityStatusArr.length;
-	_.times(numActivityStatuses, function (i) {
-		activityStatuses.add(ActivityStatus.forge({
-			name: activityStatusArr[i]
-		}));
-	});
-	return activityStatuses.invokeThen('save')
-		.then(function () {
-			console.log('activity-status initialed');
-		});
-}
 function addActivities() {
 	var activities = Activities.forge();
 	_.times(numActivities, function () {

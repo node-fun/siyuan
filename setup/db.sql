@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   `password` VARCHAR(45) NULL,
   `regtime` DATETIME NULL,
   `isonline` TINYINT(1) NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `username_UNIQUE` (`username` ASC))
 ENGINE = InnoDB;
 
 
@@ -239,6 +240,15 @@ CREATE TABLE IF NOT EXISTS `issue_comments` (
     REFERENCES `users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `photos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `photos` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 

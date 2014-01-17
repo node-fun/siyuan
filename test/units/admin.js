@@ -1,6 +1,5 @@
 var assert = require('assert'),
 	request = require('request').defaults({ json: true }),
-	Admin = require('../../models/admin'),
 	config = require('../../config'),
 	apiHost = 'http://localhost:' + config.port + '/api/admin';
 
@@ -55,6 +54,7 @@ describe('admin', function () {
 		}, function(err, res, data) {
 			assert.ok(data['msg']);
 			assert.ok(data['id']);
+			done();
 		});
 	});
 
@@ -75,7 +75,7 @@ describe('admin', function () {
 				assert.ok(data['error']);
 				authData['password'] = newPassword;
 				done();
-			})
-		})
+			});
+		});
 	});
 });

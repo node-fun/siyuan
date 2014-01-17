@@ -243,6 +243,15 @@ CREATE TABLE IF NOT EXISTS `issue_comments` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `photos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `photos` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

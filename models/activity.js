@@ -44,6 +44,9 @@ Activity = module.exports = syBookshelf.Model.extend({
 	createActivity: function(userid, groupid, content, maxnum, starttime, duration, statusid, money) {
 		//check the dude belong to group
 		//save an activity
+		if(userid == null) {
+			return Promise.rejected(errors[21301]);
+		}
 		return GroupMembers.forge({
 			'groupid': groupid,
 			'userid': userid
@@ -111,6 +114,9 @@ Activity = module.exports = syBookshelf.Model.extend({
 	},
 	cancelActivity: function (userid) {
 		var self = this;
+		if(userid == null) {
+			return Promise.rejected(errors[21301]);
+		}
 		return self.load(['usership']).then(function (activity) {
 			var userships = activity.related("usership").models;
 			isfounded = false;
@@ -132,6 +138,9 @@ Activity = module.exports = syBookshelf.Model.extend({
 
 	},
 	endActivity: function (userid) {
+		if(userid == null) {
+			return Promise.rejected(errors[21301]);
+		}
 		var self = this,
 			groupid = self.get('groupid');
 		return self.load(['usership']).then(function (activity) {
@@ -147,6 +156,9 @@ Activity = module.exports = syBookshelf.Model.extend({
 		var ownerid = this.get('ownerid');
 		if(userid != ownerid) {
 			return Promise.rejected(errors[20102]);
+		}
+		if(userid == null) {
+			return Promise.rejected(errors[21301]);
 		}
 		return this.set({
 			'content': content,

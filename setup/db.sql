@@ -220,10 +220,10 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `issue_comments` (
   `id` INT NOT NULL AUTO_INCREMENT,
+  `userid` INT NULL,
   `issueid` INT NULL,
   `body` VARCHAR(512) NULL,
   `posttime` DATETIME NULL,
-  `userid` INT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_issue_comments_issues1_idx` (`issueid` ASC),
   INDEX `fk_issue_comments_users1_idx` (`userid` ASC),

@@ -13,8 +13,8 @@ module.exports = function (app) {
 	 * @param {Number} [id] 活动id
 	 * @return {Array}
 	 * // GET /api/activities/find?id=45
-	 * {  
-  		"activities": [  
+	 * <pre>{
+  	"activities": [
 		{  
 		  "id": 1,  
 		  "ownerid": 11,  
@@ -45,9 +45,9 @@ module.exports = function (app) {
 			  "isaccepted": 0  
 			}  
 		  ]  
-		}]  
+		}]</pre>
 	*/
-	app.get('/api/activities/find', function (req, res, next) {
+	app.post('/api/activities/find', function (req, res, next) {
 		Activity.find(req.query)
 			.then(function (activities) {
 				activities.mapThen(function (activity) {
@@ -66,12 +66,12 @@ module.exports = function (app) {
 	 * @method 加入活动
 	 * @param {Number} id:活动id
 	 * @return {JSON}
-	 * {  
+	 * <pre>{
 	 * 		msg: join succes,  
 	 * 		id: 6  
-	 * }  
+	 * }</pre>
 	 */
-	app.get('/api/activities/join', function (req, res, next) {
+	app.post('/api/activities/join', function (req, res, next) {
 		var userid = req.session['userid'];
 		Activity.forge(req.body)
 			.fetch()
@@ -91,9 +91,9 @@ module.exports = function (app) {
 	 * @method 成员取消参加活动
 	 * @param {Number} id:活动id
 	 * @return {JSON}
-	 * {  
+	 * <pre>{
 	 *		msg: cancel success  
-	 * }  
+	 * }</pre>
 	 */
 	app.post('/api/activities/cancel', function (req, res, next) {
 		var userid = req.session['userid'];
@@ -105,8 +105,8 @@ module.exports = function (app) {
 						next({
 							msg: 'cancel success'
 						});
-					});
-			}).catch(next);
+					}).catch(next);
+			});
 	});
 
 	/**
@@ -114,9 +114,9 @@ module.exports = function (app) {
 	 * @method 发起者终止活动
 	 * @param {Number}  id:活动id
 	 * @return {JSON}
-	 * {  
+	 * <pre>{
 	 * 		msg: end success  
-	 * }  
+	 * }</pre>
 	 */
 	app.post('/api/activities/end', function (req, res, next) {
 		var userid = req.session['userid'];
@@ -140,10 +140,10 @@ module.exports = function (app) {
 	 * @method 发起者更新活动资料
 	 * @param {Number}  id:活动id
 	 * @return {JSON}
-	 * {  
+	 * <pre>{
 	 * 		msg: update success,  
 	 * 		id: 6  
-	 * }  
+	 * }</pre>
 	 */
 	app.post('/api/activities/update', function (req, res, next) {
 		var userid = req.session['userid'],
@@ -174,13 +174,13 @@ module.exports = function (app) {
 	 * @param {Number} statusid:活动状态  0接受报名、1截止报名、2活动结束、3活动取消
 	 * @param {Number} money:活动费用
 	 * @return {JSON}
-	 * {  
+	 * <pre>{
 	 * 		msg: create success,  
 	 * 		id: 6  
-	 * }  
+	 * }</pre>
 	 */
 	app.post('/api/activities/create', function (req, res, next) {
-		var userid = 1,//req.session['userid'],
+		var userid = req.session['userid'],
 			groupid = req.body.groupid,
 			content = req.body.content,
 			maxnum = req.body.maxnum,
@@ -194,7 +194,7 @@ module.exports = function (app) {
 					msg: 'create success',
 					id: activity.get('id')
 				});
-			});
+			}).catch(next);
 	});
 
 	/**
@@ -202,8 +202,8 @@ module.exports = function (app) {
 	 * @method 获取活动人员名单
 	 * @param {Number} id:活动id
 	 * @return {Array}
-	 * {  
-		  "users": [  
+	 * <pre>{
+	"users": [
 			{  
 			  "id": 71,  
 			  "userid": 1,  
@@ -219,7 +219,7 @@ module.exports = function (app) {
 			  "name": "WTF"  
 			}  
 		  ]  
-		}  
+		}</pre>
 	 */
 	app.post('/api/activities/userslist', function(req, res, next) {
 		var userid = req.session['userid'],
@@ -230,7 +230,7 @@ module.exports = function (app) {
 					.getUserList(userid)
 					.then(function(users) {
 						next({ users: users });
-					});
+					}).catch(next);
 			});
 	});
 
@@ -240,12 +240,12 @@ module.exports = function (app) {
 	 * @param {Number} id:userslist接口里面的那个id,不是userid
 	 * @param {Number} activityid:活动id
 	 * @return {JSON}
-	 * {  
+	 * <pre>{
 	 * 		msg: accept success  
-	 * }  
+	 * }</pre>
 	 */
 	app.post('/api/activities/accept', function(req, res, next) {
-		var userid = 1,//req.session['userid'],
+		var userid = req.session['userid'],
 			id = req.body.id,
 			activityid = req.body.activityid;
 		Activity.forge({ 'id': activityid })
@@ -255,7 +255,7 @@ module.exports = function (app) {
 					acceptJoin(userid, id)
 					.then(function(activity) {
 						next({ msg: 'accept success' });
-					});
+					}).catch(next);
 			});
 	});
 
@@ -264,9 +264,9 @@ module.exports = function (app) {
 	 * @method 更新活动图片
 	 * @param {File} avatar
 	 * return {JSON}
-	 * {  
+	 * <pre>{
 	 * 		msg: avatar updated  
-	 * }  
+	 * }</pre>
 	 */
 	app.post('/api/activities/avatar/update', function (req, res, next) {
 		if(!req.files['avatar']) return next(errors[20007]);
@@ -278,7 +278,7 @@ module.exports = function (app) {
 			.updateAvatar(file['path'])
 			.then(function () {
 				next({ msg: 'avatar updated' });
-			});
+			}).catch(next);
 	});
 };
 

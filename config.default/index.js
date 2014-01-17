@@ -1,6 +1,6 @@
 // app environment
 // usually -- production | development | test
-var defaultEnv = 'production',
+var defaultEnv = 'development',
 	env = process.env['NODE_ENV'];
 if (!env) {
 	env = process.argv && process.argv[2] || defaultEnv;

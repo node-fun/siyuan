@@ -7,50 +7,50 @@
         "url": "https://github.com/node-fun/siyuan/"
     },
     "files": {
-        "lib\\encrypt.js": {
-            "name": "lib\\encrypt.js",
+        "lib/encrypt.js": {
+            "name": "lib/encrypt.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "lib\\errors.js": {
-            "name": "lib\\errors.js",
+        "lib/errors.js": {
+            "name": "lib/errors.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "models\\admin.js": {
-            "name": "models\\admin.js",
+        "models/admin.js": {
+            "name": "models/admin.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "models\\group-membership.js": {
-            "name": "models\\group-membership.js",
+        "models/group-membership.js": {
+            "name": "models/group-membership.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "models\\group.js": {
-            "name": "models\\group.js",
+        "models/group.js": {
+            "name": "models/group.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "models\\issue-comment.js": {
-            "name": "models\\issue-comment.js",
+        "models/issue-comment.js": {
+            "name": "models/issue-comment.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "routes\\activities.js": {
-            "name": "routes\\activities.js",
+        "routes/activities.js": {
+            "name": "routes/activities.js",
             "modules": {},
             "classes": {
                 "活动": 1
@@ -58,8 +58,8 @@
             "fors": {},
             "namespaces": {}
         },
-        "routes\\admin.js": {
-            "name": "routes\\admin.js",
+        "routes/admin.js": {
+            "name": "routes/admin.js",
             "modules": {},
             "classes": {
                 "管理员": 1
@@ -67,8 +67,8 @@
             "fors": {},
             "namespaces": {}
         },
-        "routes\\groups.js": {
-            "name": "routes\\groups.js",
+        "routes/groups.js": {
+            "name": "routes/groups.js",
             "modules": {},
             "classes": {
                 "圈子": 1
@@ -76,8 +76,8 @@
             "fors": {},
             "namespaces": {}
         },
-        "routes\\issues.js": {
-            "name": "routes\\issues.js",
+        "routes/issues.js": {
+            "name": "routes/issues.js",
             "modules": {},
             "classes": {
                 "话题": 1
@@ -85,8 +85,8 @@
             "fors": {},
             "namespaces": {}
         },
-        "routes\\users.js": {
-            "name": "routes\\users.js",
+        "routes/users.js": {
+            "name": "routes/users.js",
             "modules": {},
             "classes": {
                 "用户": 1
@@ -105,7 +105,7 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "file": "routes\\activities.js",
+            "file": "routes/activities.js",
             "line": 1
         },
         "管理员": {
@@ -116,7 +116,7 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "file": "routes\\admin.js",
+            "file": "routes/admin.js",
             "line": 1
         },
         "圈子": {
@@ -127,7 +127,7 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "file": "routes\\groups.js",
+            "file": "routes/groups.js",
             "line": 1,
             "description": "Created by Cam on 14-1-8."
         },
@@ -139,7 +139,7 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "file": "routes\\issues.js",
+            "file": "routes/issues.js",
             "line": 1,
             "description": "Created by fritz on 1/10/14."
         },
@@ -151,49 +151,49 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "file": "routes\\users.js",
+            "file": "routes/users.js",
             "line": 1
         }
     },
     "classitems": [
         {
-            "file": "lib\\encrypt.js",
+            "file": "lib/encrypt.js",
             "line": 1,
             "description": "Created by fritz on 1/2/14.",
             "class": "活动"
         },
         {
-            "file": "lib\\errors.js",
+            "file": "lib/errors.js",
             "line": 1,
             "description": "Created by fritz on 1/1/14.",
             "class": "活动"
         },
         {
-            "file": "models\\admin.js",
+            "file": "models/admin.js",
             "line": 1,
             "description": "Created by cin on 12/24/13.",
             "class": "活动"
         },
         {
-            "file": "models\\group-membership.js",
+            "file": "models/group-membership.js",
             "line": 1,
             "description": "Created by Cam on 14-1-4.",
             "class": "活动"
         },
         {
-            "file": "models\\group.js",
+            "file": "models/group.js",
             "line": 1,
             "description": "Created by Cam on 14-1-2.",
             "class": "活动"
         },
         {
-            "file": "models\\issue-comment.js",
+            "file": "models/issue-comment.js",
             "line": 1,
             "description": "Created by fritz on 1/11/14.",
             "class": "活动"
         },
         {
-            "file": "routes\\activities.js",
+            "file": "routes/activities.js",
             "line": 10,
             "description": "GET /api/activities/find",
             "itemtype": "method",
@@ -207,13 +207,13 @@
                 }
             ],
             "return": {
-                "description": "\n// GET /api/activities/find?id=45\n{  \n \t\t\"activities\": [  \n\t\t{  \n\t\t  \"id\": 1,  \n\t\t  \"ownerid\": 11,  \n\t\t  \"groupid\": 1,  \n\t\t  \"content\": \"Puhobjo wonava cukce vo ivo huti havjeli le t\",  \n\t\t  \"maxnum\": 29,  \n\t\t  \"createtime\": 1389706483000,  \n\t\t  \"starttime\": \"0000-00-00 00:00:00\",  \n\t\t  \"duration\": 7,  \n\t\t  \"statusid\": 4,  \n\t\t  \"avatar\": \"sihomre\",  \n\t\t  \"money\": 1037,  \n\t\t  \"status\": {  \n\t\t\t\"id\": 4,  \n\t\t\t\"name\": \"活动取消\"  \n\t\t  },  \n\t\t  \"usership\": [  \n\t\t\t{  \n\t\t\t  \"id\": 4,  \n\t\t\t  \"userid\": 10,  \n\t\t\t  \"activityid\": 1,  \n\t\t\t  \"isaccepted\": 0  \n\t\t\t},  \n\t\t\t{  \n\t\t\t  \"id\": 58,  \n\t\t\t  \"userid\": 5,  \n\t\t\t  \"activityid\": 1,  \n\t\t\t  \"isaccepted\": 0  \n\t\t\t}  \n\t\t  ]  \n\t\t}]",
+                "description": "\n// GET /api/activities/find?id=45\n<pre>{\n \t\"activities\": [\n\t\t{  \n\t\t  \"id\": 1,  \n\t\t  \"ownerid\": 11,  \n\t\t  \"groupid\": 1,  \n\t\t  \"content\": \"Puhobjo wonava cukce vo ivo huti havjeli le t\",  \n\t\t  \"maxnum\": 29,  \n\t\t  \"createtime\": 1389706483000,  \n\t\t  \"starttime\": \"0000-00-00 00:00:00\",  \n\t\t  \"duration\": 7,  \n\t\t  \"statusid\": 4,  \n\t\t  \"avatar\": \"sihomre\",  \n\t\t  \"money\": 1037,  \n\t\t  \"status\": {  \n\t\t\t\"id\": 4,  \n\t\t\t\"name\": \"活动取消\"  \n\t\t  },  \n\t\t  \"usership\": [  \n\t\t\t{  \n\t\t\t  \"id\": 4,  \n\t\t\t  \"userid\": 10,  \n\t\t\t  \"activityid\": 1,  \n\t\t\t  \"isaccepted\": 0  \n\t\t\t},  \n\t\t\t{  \n\t\t\t  \"id\": 58,  \n\t\t\t  \"userid\": 5,  \n\t\t\t  \"activityid\": 1,  \n\t\t\t  \"isaccepted\": 0  \n\t\t\t}  \n\t\t  ]  \n\t\t}]</pre>",
                 "type": "Array"
             },
             "class": "活动"
         },
         {
-            "file": "routes\\activities.js",
+            "file": "routes/activities.js",
             "line": 64,
             "description": "POST /api/activities/join",
             "itemtype": "method",
@@ -226,13 +226,13 @@
                 }
             ],
             "return": {
-                "description": "\n{  \n\t\tmsg: join succes,  \n\t\tid: 6  \n}",
+                "description": "\n<pre>{\n\t\tmsg: join succes,  \n\t\tid: 6  \n}</pre>",
                 "type": "JSON"
             },
             "class": "活动"
         },
         {
-            "file": "routes\\activities.js",
+            "file": "routes/activities.js",
             "line": 89,
             "description": "POST /api/activities/cancel",
             "itemtype": "method",
@@ -245,13 +245,13 @@
                 }
             ],
             "return": {
-                "description": "\n{  \n\t\tmsg: cancel success  \n}",
+                "description": "\n<pre>{\n\t\tmsg: cancel success  \n}</pre>",
                 "type": "JSON"
             },
             "class": "活动"
         },
         {
-            "file": "routes\\activities.js",
+            "file": "routes/activities.js",
             "line": 112,
             "description": "POST /api/activities/end",
             "itemtype": "method",
@@ -264,13 +264,13 @@
                 }
             ],
             "return": {
-                "description": "\n{  \n\t\tmsg: end success  \n}",
+                "description": "\n<pre>{\n\t\tmsg: end success  \n}</pre>",
                 "type": "JSON"
             },
             "class": "活动"
         },
         {
-            "file": "routes\\activities.js",
+            "file": "routes/activities.js",
             "line": 138,
             "description": "POST /api/activities/update",
             "itemtype": "method",
@@ -283,13 +283,13 @@
                 }
             ],
             "return": {
-                "description": "\n{  \n\t\tmsg: update success,  \n\t\tid: 6  \n}",
+                "description": "\n<pre>{\n\t\tmsg: update success,  \n\t\tid: 6  \n}</pre>",
                 "type": "JSON"
             },
             "class": "活动"
         },
         {
-            "file": "routes\\activities.js",
+            "file": "routes/activities.js",
             "line": 166,
             "description": "POST /api/activities/create",
             "itemtype": "method",
@@ -332,13 +332,13 @@
                 }
             ],
             "return": {
-                "description": "\n{  \n\t\tmsg: create success,  \n\t\tid: 6  \n}",
+                "description": "\n<pre>{\n\t\tmsg: create success,  \n\t\tid: 6  \n}</pre>",
                 "type": "JSON"
             },
             "class": "活动"
         },
         {
-            "file": "routes\\activities.js",
+            "file": "routes/activities.js",
             "line": 200,
             "description": "POST /api/activities/userslist",
             "itemtype": "method",
@@ -351,13 +351,13 @@
                 }
             ],
             "return": {
-                "description": "\n{  \n\t\t  \"users\": [  \n\t\t\t{  \n\t\t\t  \"id\": 71,  \n\t\t\t  \"userid\": 1,  \n\t\t\t  \"activityid\": 15,  \n\t\t\t  \"isaccepted\": 1,  \n\t\t\t  \"name\": \"arwuba_60\"  \n\t\t\t},  \n\t\t\t{  \n\t\t\t  \"id\": 72,  \n\t\t\t  \"userid\": 13,  \n\t\t\t  \"activityid\": 15,  \n\t\t\t  \"isaccepted\": 1,  \n\t\t\t  \"name\": \"WTF\"  \n\t\t\t}  \n\t\t  ]  \n\t\t}",
+                "description": "\n<pre>{\n\t\"users\": [\n\t\t\t{  \n\t\t\t  \"id\": 71,  \n\t\t\t  \"userid\": 1,  \n\t\t\t  \"activityid\": 15,  \n\t\t\t  \"isaccepted\": 1,  \n\t\t\t  \"name\": \"arwuba_60\"  \n\t\t\t},  \n\t\t\t{  \n\t\t\t  \"id\": 72,  \n\t\t\t  \"userid\": 13,  \n\t\t\t  \"activityid\": 15,  \n\t\t\t  \"isaccepted\": 1,  \n\t\t\t  \"name\": \"WTF\"  \n\t\t\t}  \n\t\t  ]  \n\t\t}</pre>",
                 "type": "Array"
             },
             "class": "活动"
         },
         {
-            "file": "routes\\activities.js",
+            "file": "routes/activities.js",
             "line": 237,
             "description": "POST /api/activities/accept",
             "itemtype": "method",
@@ -375,13 +375,13 @@
                 }
             ],
             "return": {
-                "description": "\n{  \n\t\tmsg: accept success  \n}",
+                "description": "\n<pre>{\n\t\tmsg: accept success  \n}</pre>",
                 "type": "JSON"
             },
             "class": "活动"
         },
         {
-            "file": "routes\\activities.js",
+            "file": "routes/activities.js",
             "line": 262,
             "description": "POST /api/activities/avatar/update",
             "itemtype": "method",
@@ -389,14 +389,14 @@
             "params": [
                 {
                     "name": "avatar!~YUIDOC_LINE~!return",
-                    "description": "{JSON}\n{  \n\t\tmsg: avatar updated  \n}",
+                    "description": "{JSON}\n<pre>{\n\t\tmsg: avatar updated  \n}</pre>",
                     "type": "File"
                 }
             ],
             "class": "活动"
         },
         {
-            "file": "routes\\admin.js",
+            "file": "routes/admin.js",
             "line": 8,
             "description": "POST /api/admin/find",
             "itemtype": "method",
@@ -410,13 +410,13 @@
                 }
             ],
             "return": {
-                "description": "\n{  \n\t\t  \"admins\": [  \n\t\t\t{  \n\t\t\t  \"id\": 1,  \n\t\t\t  \"username\": \"admin1\",  \n\t\t\t  \"email\": null,  \n\t\t\t  \"lastip\": null,  \n\t\t\t  \"lasttime\": null  \n\t\t\t},  \n\t\t\t{  \n\t\t\t  \"id\": 2,  \n\t\t\t  \"username\": \"admin2\",  \n\t\t\t  \"email\": null,  \n\t\t\t  \"lastip\": null,  \n\t\t\t  \"lasttime\": null  \n\t\t\t},  \n\t\t\t{  \n\t\t\t  \"id\": 3,  \n\t\t\t  \"username\": \"admin3\",  \n\t\t\t  \"email\": null,  \n\t\t\t  \"lastip\": null,  \n\t\t\t  \"lasttime\": null  \n\t\t\t}  \n\t\t  ]  \n\t\t}",
+                "description": "\n<pre>{\n\t\"admins\": [\n\t\t\t{  \n\t\t\t  \"id\": 1,  \n\t\t\t  \"username\": \"admin1\",  \n\t\t\t  \"email\": null,  \n\t\t\t  \"lastip\": null,  \n\t\t\t  \"lasttime\": null  \n\t\t\t},  \n\t\t\t{  \n\t\t\t  \"id\": 2,  \n\t\t\t  \"username\": \"admin2\",  \n\t\t\t  \"email\": null,  \n\t\t\t  \"lastip\": null,  \n\t\t\t  \"lasttime\": null  \n\t\t\t},  \n\t\t\t{  \n\t\t\t  \"id\": 3,  \n\t\t\t  \"username\": \"admin3\",  \n\t\t\t  \"email\": null,  \n\t\t\t  \"lastip\": null,  \n\t\t\t  \"lasttime\": null  \n\t\t\t}  \n\t\t  ]  \n\t\t}</pre>",
                 "type": "Array"
             },
             "class": "管理员"
         },
         {
-            "file": "routes\\admin.js",
+            "file": "routes/admin.js",
             "line": 80,
             "description": "POST /api/admin/login",
             "itemtype": "method",
@@ -434,25 +434,25 @@
                 }
             ],
             "return": {
-                "description": "\n{  \n\t\tmsg: login success,  \n\t\tid: 2  \n}",
+                "description": "\n<pre>{\n\t\tmsg: login success,  \n\t\tid: 2  \n}</pre>",
                 "type": "JSON"
             },
             "class": "管理员"
         },
         {
-            "file": "routes\\admin.js",
+            "file": "routes/admin.js",
             "line": 101,
             "description": "POST /api/admin/logout",
             "itemtype": "method",
             "name": "管理员登出",
             "return": {
-                "description": "\n{  \n\t\tmsg: logout success  \n}",
+                "description": "\n<pre>{\n\t\tmsg: logout success  \n}</pre>",
                 "type": "JSON"
             },
             "class": "管理员"
         },
         {
-            "file": "routes\\admin.js",
+            "file": "routes/admin.js",
             "line": 117,
             "description": "POST /api/admin/password/reset",
             "itemtype": "method",
@@ -470,13 +470,13 @@
                 }
             ],
             "return": {
-                "description": "\n{  \n\t\tmsg: password reset  \n}",
+                "description": "\n<pre>{\n\t\tmsg: password reset  \n}</pre>",
                 "type": "JSON"
             },
             "class": "管理员"
         },
         {
-            "file": "routes\\groups.js",
+            "file": "routes/groups.js",
             "line": 12,
             "description": "post /api/groups/find",
             "itemtype": "method",
@@ -508,8 +508,13 @@
             "class": "圈子"
         },
         {
+<<<<<<< HEAD
             "file": "routes\\groups.js",
             "line": 83,
+=======
+            "file": "routes/groups.js",
+            "line": 85,
+>>>>>>> e1c238bb4a10edb5a0908f2673d51bcb2677772c
             "description": "post /api/groups/create",
             "itemtype": "method",
             "name": "创建圈子",
@@ -532,8 +537,13 @@
             "class": "圈子"
         },
         {
+<<<<<<< HEAD
             "file": "routes\\groups.js",
             "line": 117,
+=======
+            "file": "routes/groups.js",
+            "line": 119,
+>>>>>>> e1c238bb4a10edb5a0908f2673d51bcb2677772c
             "description": "post /api/groups/join",
             "itemtype": "method",
             "name": "加入圈子",
@@ -551,8 +561,13 @@
             "class": "圈子"
         },
         {
+<<<<<<< HEAD
             "file": "routes\\groups.js",
             "line": 148,
+=======
+            "file": "routes/groups.js",
+            "line": 150,
+>>>>>>> e1c238bb4a10edb5a0908f2673d51bcb2677772c
             "description": "post /api/groups/quit",
             "itemtype": "method",
             "name": "退出圈子",
@@ -582,7 +597,7 @@
             "class": "圈子"
         },
         {
-            "file": "routes\\issues.js",
+            "file": "routes/issues.js",
             "line": 12,
             "description": "GET /api/issues/find",
             "itemtype": "method",
@@ -614,7 +629,7 @@
             "class": "话题"
         },
         {
-            "file": "routes\\issues.js",
+            "file": "routes/issues.js",
             "line": 27,
             "description": "GET /api/issues/search",
             "itemtype": "method",
@@ -646,7 +661,7 @@
             "class": "话题"
         },
         {
-            "file": "routes\\issues.js",
+            "file": "routes/issues.js",
             "line": 42,
             "description": "GET /api/issues/view",
             "itemtype": "method",
@@ -666,7 +681,7 @@
             "class": "话题"
         },
         {
-            "file": "routes\\issues.js",
+            "file": "routes/issues.js",
             "line": 55,
             "description": "POST /api/issues/post",
             "itemtype": "method",
@@ -690,7 +705,7 @@
             "class": "话题"
         },
         {
-            "file": "routes\\issues.js",
+            "file": "routes/issues.js",
             "line": 79,
             "description": "GET /api/issues/update",
             "itemtype": "method",
@@ -719,7 +734,7 @@
             "class": "话题"
         },
         {
-            "file": "routes\\issues.js",
+            "file": "routes/issues.js",
             "line": 104,
             "description": "GET /api/issues/delete",
             "itemtype": "method",
@@ -738,7 +753,7 @@
             "class": "话题"
         },
         {
-            "file": "routes\\issues.js",
+            "file": "routes/issues.js",
             "line": 125,
             "description": "POST /api/issues/comment",
             "itemtype": "method",
@@ -757,7 +772,7 @@
             "class": "话题"
         },
         {
-            "file": "routes\\users.js",
+            "file": "routes/users.js",
             "line": 9,
             "description": "GET /api/users/find",
             "itemtype": "method",
@@ -807,7 +822,7 @@
             "class": "用户"
         },
         {
-            "file": "routes\\users.js",
+            "file": "routes/users.js",
             "line": 27,
             "description": "GET /api/users/search",
             "itemtype": "method",
@@ -863,7 +878,7 @@
             "class": "用户"
         },
         {
-            "file": "routes\\users.js",
+            "file": "routes/users.js",
             "line": 47,
             "description": "Get /api/users/view",
             "itemtype": "method",
@@ -882,7 +897,7 @@
             "class": "用户"
         },
         {
-            "file": "routes\\users.js",
+            "file": "routes/users.js",
             "line": 60,
             "description": "POST /api/users/register",
             "itemtype": "method",
@@ -921,7 +936,7 @@
             "class": "用户"
         },
         {
-            "file": "routes\\users.js",
+            "file": "routes/users.js",
             "line": 86,
             "description": "POST /api/users/login",
             "itemtype": "method",
@@ -945,7 +960,7 @@
             "class": "用户"
         },
         {
-            "file": "routes\\users.js",
+            "file": "routes/users.js",
             "line": 107,
             "description": "POST /api/users/logout",
             "itemtype": "method",
@@ -957,7 +972,7 @@
             "class": "用户"
         },
         {
-            "file": "routes\\users.js",
+            "file": "routes/users.js",
             "line": 123,
             "description": "POST /api/users/password/reset",
             "itemtype": "method",
@@ -984,27 +999,27 @@
     "warnings": [
         {
             "message": "Missing item type\nCreated by fritz on 1/2/14.",
-            "line": " lib\\encrypt.js:1"
+            "line": " lib/encrypt.js:1"
         },
         {
             "message": "Missing item type\nCreated by fritz on 1/1/14.",
-            "line": " lib\\errors.js:1"
+            "line": " lib/errors.js:1"
         },
         {
             "message": "Missing item type\nCreated by cin on 12/24/13.",
-            "line": " models\\admin.js:1"
+            "line": " models/admin.js:1"
         },
         {
             "message": "Missing item type\nCreated by Cam on 14-1-4.",
-            "line": " models\\group-membership.js:1"
+            "line": " models/group-membership.js:1"
         },
         {
             "message": "Missing item type\nCreated by Cam on 14-1-2.",
-            "line": " models\\group.js:1"
+            "line": " models/group.js:1"
         },
         {
             "message": "Missing item type\nCreated by fritz on 1/11/14.",
-            "line": " models\\issue-comment.js:1"
+            "line": " models/issue-comment.js:1"
         }
     ]
 }

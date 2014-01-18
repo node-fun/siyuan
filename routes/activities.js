@@ -11,6 +11,7 @@ module.exports = function (app) {
 	 * GET /api/activities/find
 	 * @method 活动列表
 	 * @param {Number} [id] 活动id
+	 * @param {String} [name] 活动名称
 	 * @return {Array}
 	 * // GET /api/activities/find?id=45
 	 * <pre>{
@@ -139,11 +140,12 @@ module.exports = function (app) {
 	 * POST /api/activities/update
 	 * @method 发起者更新活动资料
 	 * @param {Number}  id:活动id
-	 * @param {String}  [content:活动内容]
-	 * @param {Number}  [maxnum:最大人数]
-	 * @param {Number}  [duration:持续时间,单位为分钟]
-	 * @param {Number}  [statusid:活动状态  0接受报名、1截止报名、2活动结束、3活动取消]
-	 * @param {Number}  [money:活动费用]
+	 * @param {String}  [content] 活动内容
+	 * @param {Number}  [maxnum] 最大人数
+	 * @param {Number}  [duration] 持续时间,单位为分钟
+	 * @param {Number}  [statusid] 活动状态  0接受报名、1截止报名、2活动结束、3活动取消
+	 * @param {Number}  [money] 活动费用
+	 * @param {String}  [name] 活动名称
 	 * @return {JSON}
 	 * <pre>{
 	 * 		msg: update success,  
@@ -172,13 +174,14 @@ module.exports = function (app) {
 	/**
 	 * POST /api/activities/create
 	 * @method 群成员发起活动
-	 * @param {Number} groupid:群id
-	 * @param {String} content:活动描述
-	 * @param {Number} maxnum:活动最大人数
-	 * @param {Datetime} starttime:活动开始时间
-	 * @param {Number} duration:活动持续时间,单位为分钟
-	 * @param {Number} statusid:活动状态  0接受报名、1截止报名、2活动结束、3活动取消
-	 * @param {Number} money:活动费用
+	 * @param {Number} groupid 群id
+	 * @param {String} content 活动描述
+	 * @param {Number} maxnum 活动最大人数
+	 * @param {Datetime} starttime 活动开始时间
+	 * @param {Number} duration 活动持续时间,单位为分钟
+	 * @param {Number} statusid 活动状态  0接受报名、1截止报名、2活动结束、3活动取消
+	 * @param {Number} money 活动费用
+	 * @param {String} name 活动名称
 	 * @return {JSON}
 	 * <pre>{
 	 * 		msg: create success,  

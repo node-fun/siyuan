@@ -17,7 +17,7 @@ GroupMembership = module.exports = syBookshelf.Model.extend({
 		};
 	},
 	omitInJSON: ['id','groupid'],
-	profile: function(){
+	member: function(){
 		return this.belongsTo(require('./user'), 'userid');
 	}
 }, {

@@ -44,12 +44,7 @@ describe('users', function () {
 		});
 	});
 
-	var authData = {
-			username: '_test_',
-			password: '123321'
-		},
-		user = User.randomForge().set(authData),
-		jar = request.jar(), id;
+	var user = User.randomForge().set(authData), id;
 	it('registers', function (done) {
 		request.post(apiHost + '/register', {
 			form: user.attributes

@@ -82,12 +82,12 @@ function addUsers() {
 		.then(function () {
 			return users.mapThen(function (user) {
 				// copy avatar
-				var gender = user.get('profile')['gender'],
+				var gender = user.data('profile')['gender'],
 					face = localface.get(gender);
 				return user.updateAvatar(face)
 					.then(function () {
 						// login or not
-						return chance.bool() ? user : user.login();
+						return chance.bool() ? user : user.login(true);
 					});
 			});
 		}).then(function () {

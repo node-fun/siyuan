@@ -34,6 +34,17 @@ User = module.exports = syBookshelf.Model.extend({
 		return ret;
 	},
 
+	created: function () {
+		var self = this;
+		return User.__super__.created.call(self)
+			.then(function () {
+				var profileData = self.data('profile'),
+					profile = UserProfile.forge(profileData);
+				return profile.set('userid', self.id).save();
+			}).then(function () {
+				return self;
+			});
+	},
 	saving: function () {
 		var self = this;
 		return User.__super__.saving.call(self)
@@ -101,21 +112,16 @@ User = module.exports = syBookshelf.Model.extend({
 
 	register: function () {
 		var keys = ['username', 'password', 'regtime'],
-			registerData = this.pick(keys),
 			self = this;
-		if (!registerData['username'] || !registerData['password']) {
+		this.attributes = this.pick(keys);
+		if (!this.get('username') || !this.get('password')) {
 			return Promise.rejected(errors[10008]);
 		}
-		var profileData = self.get('profile'),
-			profile = UserProfile.forge(profileData);
-		return User.forge(registerData).save()
-			.catch(function () {
+		return self.save()
+			.catch(function(){
 				return Promise.rejected(errors[20506]);
-			}).then(function (user) {
-				return profile.set('userid', user.id).save()
-					.then(function () {
-						return self.set('id', user.id);
-					});
+			}).then(function () {
+				return self.fetch();
 			});
 	},
 	login: function (encrypted) {
@@ -183,7 +189,7 @@ User = module.exports = syBookshelf.Model.extend({
 				password: chance.string(),
 				isonline: chance.bool(),
 				regtime: chance.date({ year: 2013 })
-			}).set('profile', UserProfile.randomForge().attributes);
+			}).data('profile', UserProfile.randomForge().attributes);
 	},
 
 	find: function (query) {

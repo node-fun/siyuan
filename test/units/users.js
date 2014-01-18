@@ -53,6 +53,14 @@ describe('users', function () {
 			done();
 		});
 	});
+	it('not registers same', function (done) {
+		request.post(apiHost + '/register', {
+			form: user.attributes
+		}, function (err, res, data) {
+			assert.ok(data['error']);
+			done();
+		});
+	});
 	it('logins', function (done) {
 		request.post(apiHost + '/login', {
 			jar: jar,
@@ -93,7 +101,7 @@ describe('users', function () {
 		});
 	});
 	it('updates avatar', function (done) {
-		var gender = user.get('profile')['gender'],
+		var gender = user.data('profile')['gender'],
 			file = localface.get(gender),
 			req, form;
 		req = request.post(apiHost + '/avatar/update', {

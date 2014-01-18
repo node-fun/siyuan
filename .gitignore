@@ -28,6 +28,5 @@ node_modules
 README.htm*
 
 /config
-/content
 /content_test
 /docs/api

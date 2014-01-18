@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>管理员 - siyuan</title>
+    <title>相片 - siyuan</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -92,7 +92,7 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1>管理员 Class</h1>
+                        <h1>相片 Class</h1>
 <div class="box meta">
     
 
@@ -100,7 +100,7 @@
 
     
         <div class="foundat">
-            Defined in: <a href="../files/routes_admin.js.html#l1"><code>routes\admin.js:1</code></a>
+            Defined in: <a href="../files/routes_photos.js.html#l1"><code>routes\photos.js:1</code></a>
         </div>
     
 
@@ -112,7 +112,8 @@
 
 
 <div class="box intro">
-    
+    <p>Created by fritz on 1/17/14.</p>
+
 </div>
 
 
@@ -140,28 +141,28 @@
                     <ul class="index-list methods">
                         
                             <li class="index-item method">
-                                <a href="#method_密码重置">密码重置</a>
+                                <a href="#method_删除相片">删除相片</a>
 
                                 
                                 
                             </li>
                         
                             <li class="index-item method">
-                                <a href="#method_管理员列表">管理员列表</a>
+                                <a href="#method_删除相片">删除相片</a>
 
                                 
                                 
                             </li>
                         
                             <li class="index-item method">
-                                <a href="#method_管理员登出">管理员登出</a>
+                                <a href="#method_发布相片">发布相片</a>
 
                                 
                                 
                             </li>
                         
                             <li class="index-item method">
-                                <a href="#method_管理员登录">管理员登录</a>
+                                <a href="#method_相片列表">相片列表</a>
 
                                 
                                 
@@ -183,8 +184,8 @@
                 <h2 class="off-left">Methods</h2>
 
                 
-                    <div id="method_密码重置" class="method item">
-    <h3 class="name"><code>密码重置</code></h3>
+                    <div id="method_删除相片" class="method item">
+    <h3 class="name"><code>删除相片</code></h3>
 
     
         <div class="args">
@@ -192,13 +193,19 @@
             
                 <li class="arg">
                     
-                        <code>password</code>
+                        <code>id</code>
                     
                 </li>
             
                 <li class="arg">
                     
-                        <code>new-password</code>
+                        <code>title</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>body</code>
                     
                 </li>
             
@@ -235,7 +242,7 @@
             
         
         
-        <a href="../files/routes_admin.js.html#l117"><code>routes\admin.js:117</code></a>
+        <a href="../files/routes_photos.js.html#l50"><code>routes\photos.js:50</code></a>
         
         </p>
 
@@ -246,7 +253,7 @@
     </div>
 
     <div class="description">
-        <p>POST /api/admin/password/reset</p>
+        <p>GET /api/photos/update</p>
 
     </div>
 
@@ -258,14 +265,15 @@
             
                 <li class="param">
                     
-                        <code class="param-name">password</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+                        <code class="param-name">id</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
                     
 
                     
 
                     <div class="param-description">
-                         
+                        <p>相片ID</p>
+
                     </div>
 
                     
@@ -273,14 +281,31 @@
             
                 <li class="param">
                     
-                        <code class="param-name">new-password</code>
+                        <code class="param-name">title</code>
                         <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
                     
 
                     
 
                     <div class="param-description">
-                         
+                        <p>标题</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">body</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>内容</p>
+
                     </div>
 
                     
@@ -299,9 +324,6 @@
                     
                         <span class="type">JSON</span>:
                     
-                    <pre>{
-        msg: password reset  
-}</pre>
                 
             </div>
         </div>
@@ -311,8 +333,8 @@
 </div>
 
                 
-                    <div id="method_管理员列表" class="method item">
-    <h3 class="name"><code>管理员列表</code></h3>
+                    <div id="method_删除相片" class="method item">
+    <h3 class="name"><code>删除相片</code></h3>
 
     
         <div class="args">
@@ -320,7 +342,7 @@
             
                 <li class="arg">
                     
-                        <code class="optional">[id]</code>
+                        <code>id</code>
                     
                 </li>
             
@@ -330,7 +352,7 @@
 
     
         <span class="returns-inline">
-            <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+            <span class="type">JSON</span>
         </span>
     
 
@@ -357,7 +379,7 @@
             
         
         
-        <a href="../files/routes_admin.js.html#l8"><code>routes\admin.js:8</code></a>
+        <a href="../files/routes_photos.js.html#l75"><code>routes\photos.js:75</code></a>
         
         </p>
 
@@ -368,7 +390,256 @@
     </div>
 
     <div class="description">
-        <p>POST /api/admin/find</p>
+        <p>GET /api/photos/delete</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">id</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>相片ID</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type">JSON</span>:
+                    
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+                
+                    <div id="method_发布相片" class="method item">
+    <h3 class="name"><code>发布相片</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>title</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>body</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type">JSON</span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/routes_photos.js.html#l26"><code>routes\photos.js:26</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>POST /api/photos/post</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">title</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>标题</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">body</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>内容</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type">JSON</span>:
+                    
+                    <p>{
+          &quot;msg&quot;: &quot;photo posted&quot;,
+          &quot;id&quot;: 106
+        }</p>
+
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+                
+                    <div id="method_相片列表" class="method item">
+    <h3 class="name"><code>相片列表</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code class="optional">[id]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[userid]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[title]</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type">JSON</span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/routes_photos.js.html#l11"><code>routes\photos.js:11</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>GET /api/photos/find</p>
 
     </div>
 
@@ -388,216 +659,8 @@
                     
 
                     <div class="param-description">
-                         
-                    </div>
+                        <p>相片ID</p>
 
-                    
-                </li>
-            
-            </ul>
-        </div>
-    
-
-    
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                
-                    
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>:
-                    
-                    <pre>{
-    "admins": [
-            {  
-              "id": 1,  
-              "username": "admin1",  
-              "email": null,  
-              "lastip": null,  
-              "lasttime": null  
-            },  
-            {  
-              "id": 2,  
-              "username": "admin2",  
-              "email": null,  
-              "lastip": null,  
-              "lasttime": null  
-            },  
-            {  
-              "id": 3,  
-              "username": "admin3",  
-              "email": null,  
-              "lastip": null,  
-              "lasttime": null  
-            }  
-          ]  
-        }</pre>
-                
-            </div>
-        </div>
-    
-
-    
-</div>
-
-                
-                    <div id="method_管理员登出" class="method item">
-    <h3 class="name"><code>管理员登出</code></h3>
-
-    
-        <span class="paren">()</span>
-    
-
-    
-        <span class="returns-inline">
-            <span class="type">JSON</span>
-        </span>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-                Defined in
-                
-            
-        
-        
-        <a href="../files/routes_admin.js.html#l101"><code>routes\admin.js:101</code></a>
-        
-        </p>
-
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>POST /api/admin/logout</p>
-
-    </div>
-
-    
-
-    
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                
-                    
-                        <span class="type">JSON</span>:
-                    
-                    <pre>{
-        msg: logout success  
-}</pre>
-                
-            </div>
-        </div>
-    
-
-    
-</div>
-
-                
-                    <div id="method_管理员登录" class="method item">
-    <h3 class="name"><code>管理员登录</code></h3>
-
-    
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-            
-                <li class="arg">
-                    
-                        <code>username</code>
-                    
-                </li>
-            
-                <li class="arg">
-                    
-                        <code>password</code>
-                    
-                </li>
-            
-            </ul><span class="paren">)</span>
-        </div>
-    
-
-    
-        <span class="returns-inline">
-            <span class="type">JSON</span>
-        </span>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-                Defined in
-                
-            
-        
-        
-        <a href="../files/routes_admin.js.html#l80"><code>routes\admin.js:80</code></a>
-        
-        </p>
-
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>POST /api/admin/login</p>
-
-    </div>
-
-    
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-            
-                <li class="param">
-                    
-                        <code class="param-name">username</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
-                    
-
-                    
-
-                    <div class="param-description">
-                         
                     </div>
 
                     
@@ -605,14 +668,33 @@
             
                 <li class="param">
                     
-                        <code class="param-name">password</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+                        <code class="param-name optional">[userid]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
                     
 
                     
 
                     <div class="param-description">
-                         
+                        <p>作者ID</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[title]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>标题</p>
+
                     </div>
 
                     
@@ -631,10 +713,6 @@
                     
                         <span class="type">JSON</span>:
                     
-                    <pre>{
-        msg: login success,  
-        id: 2  
-}</pre>
                 
             </div>
         </div>

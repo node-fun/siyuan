@@ -4,6 +4,7 @@ YUI.add("yuidoc-meta", function(Y) {
         "圈子",
         "活动",
         "用户",
+        "相片",
         "管理员",
         "话题"
     ],

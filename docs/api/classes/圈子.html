@@ -47,6 +47,8 @@
             
                 <li><a href="../classes/用户.html">用户</a></li>
             
+                <li><a href="../classes/相片.html">相片</a></li>
+            
                 <li><a href="../classes/管理员.html">管理员</a></li>
             
                 <li><a href="../classes/话题.html">话题</a></li>
@@ -161,6 +163,34 @@
                         
                             <li class="index-item method">
                                 <a href="#method_我的圈子列表">我的圈子列表</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
+                                <a href="#method_拉好友进圈子">拉好友进圈子</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
+                                <a href="#method_撤销管理员">撤销管理员</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
+                                <a href="#method_设置管理员">设置管理员</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
+                                <a href="#method_踢人出圈子">踢人出圈子</a>
 
                                 
                                 
@@ -364,7 +394,7 @@
             
         
         
-        <a href="../files/routes_groups.js.html#l117"><code>routes\groups.js:117</code></a>
+        <a href="../files/routes_groups.js.html#l124"><code>routes\groups.js:124</code></a>
         
         </p>
 
@@ -577,13 +607,13 @@
             "description": "Cavgob ija of bilzoro ded gibruzup mar mi pabigkum gegwubez je mig kegiso ufaica votojnuj zavo iki iw. Fefufi bawum gamokzap ni si nizifca con magi evubinek wawke cutero tan hanasboz wozes upvip su owicore. Ne lupwegsav medap ipajies pek ge jucrokub otihuham bi rafma peobizon teh",
             "createtime": 1380494258000,
             "avatar": null,
-            "members": [
+            "memberships": [
                 {
                     "userid": 24,
                     "isowner": 0,
                     "isadmin": 0,
                     "remark": "jumefojek",
-                    "profile": {
+                    "member": {
                         "id": 24,
                         "username": "mifi_94",
                         "regtime": 1385861668000,
@@ -652,7 +682,7 @@
             
         
         
-        <a href="../files/routes_groups.js.html#l176"><code>routes\groups.js:176</code></a>
+        <a href="../files/routes_groups.js.html#l152"><code>routes\groups.js:152</code></a>
         
         </p>
 
@@ -712,6 +742,526 @@
 </div>
 
                 
+                    <div id="method_拉好友进圈子" class="method item">
+    <h3 class="name"><code>拉好友进圈子</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>userid</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>groupid</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type">JSON</span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/routes_groups.js.html#l271"><code>routes\groups.js:271</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>POST /api/groups/pull</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">userid</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">groupid</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type">JSON</span>:
+                    
+                    <pre><code>{
+    msg: &#39;join group success&#39;
+}</code></pre>
+
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+                
+                    <div id="method_撤销管理员" class="method item">
+    <h3 class="name"><code>撤销管理员</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>userid</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>groupid</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type">JSON</span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/routes_groups.js.html#l230"><code>routes\groups.js:230</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>POST /api/groups/canceladmin</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">userid</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>成员的id</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">groupid</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>圈子id</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type">JSON</span>:
+                    
+                    <pre><code> {
+    msg: &quot;cancel admin success&quot;
+}</code></pre>
+
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+                
+                    <div id="method_设置管理员" class="method item">
+    <h3 class="name"><code>设置管理员</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>userid</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>groupid</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type">JSON</span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/routes_groups.js.html#l189"><code>routes\groups.js:189</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>POST /api/groups/setadmin</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">userid</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>成员的id</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">groupid</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>圈子id</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type">JSON</span>:
+                    
+                    <pre><code>    {
+        msg: &quot;set admin success&quot;
+    }</code></pre>
+
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+                
+                    <div id="method_踢人出圈子" class="method item">
+    <h3 class="name"><code>踢人出圈子</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>userid</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>groupid</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type">JSON</span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/routes_groups.js.html#l299"><code>routes\groups.js:299</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>POST /api/groups/remove</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">userid</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">groupid</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type">JSON</span>:
+                    
+                    <pre><code>{
+    msg: &#39;quit group success&#39;
+}</code></pre>
+
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+                
                     <div id="method_退出圈子" class="method item">
     <h3 class="name"><code>退出圈子</code></h3>
 
@@ -758,7 +1308,7 @@
             
         
         
-        <a href="../files/routes_groups.js.html#l148"><code>routes\groups.js:148</code></a>
+        <a href="../files/routes_groups.js.html#l138"><code>routes\groups.js:138</code></a>
         
         </p>
 

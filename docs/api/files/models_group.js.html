@@ -47,6 +47,8 @@
             
                 <li><a href="../classes/用户.html">用户</a></li>
             
+                <li><a href="../classes/相片.html">相片</a></li>
+            
                 <li><a href="../classes/管理员.html">管理员</a></li>
             
                 <li><a href="../classes/话题.html">话题</a></li>
@@ -116,39 +118,8 @@ Group = module.exports = syBookshelf.Model.extend({
 		};
 	},
 	//omitInJSON: [&#x27;id&#x27;],
-	members: function () {
+	memberships: function () {
 		return this.hasMany(GroupMember, fkGroup);
-	}
-}, {
-	//这里的transaction有问题，还不会用。先同步，回头再改。
-	createGroup: function (ownerid, name, description, avatar) {
-
-		return syBookshelf.transaction(function (t) {
-
-			new Group({
-				&#x27;ownerid&#x27;: ownerid,
-				&#x27;name&#x27;: name,
-				&#x27;description&#x27;: description,
-				&#x27;avatar&#x27;: avatar
-			}).save(null, {transacting: t})
-				.then(function (group) {
-					return new GroupMember({
-						&#x27;userid&#x27;: ownerid,
-						&#x27;groupid&#x27;: group.id,
-						&#x27;isowner&#x27;: 1
-					}).save(null, {transacting: t})
-						.then(t.commit, t.rollback);
-				}).catch(function (e) {
-					console.log(&#x27;rollback&#x27;);
-					t.rollback()
-				});
-
-		}).then(function (resp) {
-				console.log(resp);
-			}, function (err) {
-				console.log(&#x27;Error saving the Groups:&#x27;);
-				console.log(err);
-			});
 	}
 });
 

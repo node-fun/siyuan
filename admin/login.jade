@@ -1,0 +1,23 @@
+//
+   Created by cin on 1/17/14.
+
+extends layout
+block content
+    style(scoped).
+            .main { padding: 10px 20px 0; }
+    .main
+        .pure-g-r
+            .pure-u-1-6
+            .pure-u-2-3
+                h1= title
+                form.pure-form.pure-form-aligned(method='post', action='/api/auth/login')
+                    .fieldset
+                        legend Login
+                        .pure-control-group
+                            label Username
+                            input(type='text', name='username')
+                        .pure-control-group
+                            label Password
+                            input(type='password', name='password')
+                        input.pure-button.pure-button-primary(type='submit')
+            .pure-u-1-6

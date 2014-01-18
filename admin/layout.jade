@@ -1,0 +1,26 @@
+//
+   Created by cin on 1/17/14.
+
+doctype html
+html
+    head
+        meta(charset='utf-8')
+        meta(name='viewport', content='width=device-width, initial-scale=1.0')
+        title= title
+        link(rel='stylesheet', href='/static/pure.css')
+        link(rel='stylesheet', href='/plugins/alertify/alertify.core.css')
+        link(rel='stylesheet', href='/plugins/alertify/alertify.default.css')
+        link(rel='stylesheet', href='/css/style.css')
+        script(src='/plugins/jquery-2.0.3.min.js')
+        script(src='/plugins/jquery.cookie-1.4.0.js')
+        script(src='/plugins/moment-with-langs-2.5.0.min.js')
+        script(src='/plugins/alertify/alertify.min.js')
+        script(src='/js/layout.js')
+    body
+        #page-wrap
+            block navbar
+            block content
+        #page-footer
+            div
+                p Copyright(c) 2014 3dobe
+                p Powered by Freeblog

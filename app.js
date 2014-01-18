@@ -10,6 +10,8 @@ var _ = require('underscore'),
 	app = express(),
 	methodKey = '_method';
 
+app.set('views', config.adminDir);
+app.set('view engine', 'jade');
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
@@ -46,6 +48,7 @@ require('./routes')(app);
 // static
 app.use('/avatars', express.static(config.avatarDir));
 app.use('/docs', express.static(config.docsDir));
+app.use('/static', express.static(config.staticDir));
 
 // listen on port
 app.listen(port, function () {

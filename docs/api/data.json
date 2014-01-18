@@ -7,50 +7,50 @@
         "url": "https://github.com/node-fun/siyuan/"
     },
     "files": {
-        "lib\\encrypt.js": {
-            "name": "lib\\encrypt.js",
+        "lib/encrypt.js": {
+            "name": "lib/encrypt.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "lib\\errors.js": {
-            "name": "lib\\errors.js",
+        "lib/errors.js": {
+            "name": "lib/errors.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "models\\admin.js": {
-            "name": "models\\admin.js",
+        "models/admin.js": {
+            "name": "models/admin.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "models\\group-membership.js": {
-            "name": "models\\group-membership.js",
+        "models/group-membership.js": {
+            "name": "models/group-membership.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "models\\group.js": {
-            "name": "models\\group.js",
+        "models/group.js": {
+            "name": "models/group.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "models\\issue-comment.js": {
-            "name": "models\\issue-comment.js",
+        "models/issue-comment.js": {
+            "name": "models/issue-comment.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "routes\\activities.js": {
-            "name": "routes\\activities.js",
+        "routes/activities.js": {
+            "name": "routes/activities.js",
             "modules": {},
             "classes": {
                 "活动": 1
@@ -58,8 +58,8 @@
             "fors": {},
             "namespaces": {}
         },
-        "routes\\admin.js": {
-            "name": "routes\\admin.js",
+        "routes/admin.js": {
+            "name": "routes/admin.js",
             "modules": {},
             "classes": {
                 "管理员": 1
@@ -67,8 +67,8 @@
             "fors": {},
             "namespaces": {}
         },
-        "routes\\groups.js": {
-            "name": "routes\\groups.js",
+        "routes/groups.js": {
+            "name": "routes/groups.js",
             "modules": {},
             "classes": {
                 "圈子": 1
@@ -76,8 +76,8 @@
             "fors": {},
             "namespaces": {}
         },
-        "routes\\issues.js": {
-            "name": "routes\\issues.js",
+        "routes/issues.js": {
+            "name": "routes/issues.js",
             "modules": {},
             "classes": {
                 "话题": 1
@@ -85,8 +85,13 @@
             "fors": {},
             "namespaces": {}
         },
+<<<<<<< HEAD
+        "routes/photos.js": {
+            "name": "routes/photos.js",
+=======
         "routes\\photos.js": {
             "name": "routes\\photos.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "modules": {},
             "classes": {
                 "相片": 1
@@ -94,8 +99,13 @@
             "fors": {},
             "namespaces": {}
         },
+<<<<<<< HEAD
+        "routes/users.js": {
+            "name": "routes/users.js",
+=======
         "routes\\users.js": {
             "name": "routes\\users.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "modules": {},
             "classes": {
                 "用户": 1
@@ -114,7 +124,7 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "file": "routes\\activities.js",
+            "file": "routes/activities.js",
             "line": 1
         },
         "管理员": {
@@ -125,7 +135,7 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "file": "routes\\admin.js",
+            "file": "routes/admin.js",
             "line": 1
         },
         "圈子": {
@@ -136,7 +146,7 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "file": "routes\\groups.js",
+            "file": "routes/groups.js",
             "line": 1,
             "description": "Created by Cam on 14-1-8."
         },
@@ -148,7 +158,7 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "file": "routes\\issues.js",
+            "file": "routes/issues.js",
             "line": 1,
             "description": "Created by fritz on 1/10/14."
         },
@@ -160,7 +170,11 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
+<<<<<<< HEAD
+            "file": "routes/photos.js",
+=======
             "file": "routes\\photos.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 1,
             "description": "Created by fritz on 1/17/14."
         },
@@ -172,49 +186,49 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "file": "routes\\users.js",
+            "file": "routes/users.js",
             "line": 1
         }
     },
     "classitems": [
         {
-            "file": "lib\\encrypt.js",
+            "file": "lib/encrypt.js",
             "line": 1,
             "description": "Created by fritz on 1/2/14.",
             "class": "活动"
         },
         {
-            "file": "lib\\errors.js",
+            "file": "lib/errors.js",
             "line": 1,
             "description": "Created by fritz on 1/1/14.",
             "class": "活动"
         },
         {
-            "file": "models\\admin.js",
+            "file": "models/admin.js",
             "line": 1,
             "description": "Created by cin on 12/24/13.",
             "class": "活动"
         },
         {
-            "file": "models\\group-membership.js",
+            "file": "models/group-membership.js",
             "line": 1,
             "description": "Created by Cam on 14-1-4.",
             "class": "活动"
         },
         {
-            "file": "models\\group.js",
+            "file": "models/group.js",
             "line": 1,
             "description": "Created by Cam on 14-1-2.",
             "class": "活动"
         },
         {
-            "file": "models\\issue-comment.js",
+            "file": "models/issue-comment.js",
             "line": 1,
             "description": "Created by fritz on 1/11/14.",
             "class": "活动"
         },
         {
-            "file": "routes\\activities.js",
+            "file": "routes/activities.js",
             "line": 10,
             "description": "GET /api/activities/find",
             "itemtype": "method",
@@ -234,7 +248,7 @@
             "class": "活动"
         },
         {
-            "file": "routes\\activities.js",
+            "file": "routes/activities.js",
             "line": 64,
             "description": "POST /api/activities/join",
             "itemtype": "method",
@@ -253,7 +267,7 @@
             "class": "活动"
         },
         {
-            "file": "routes\\activities.js",
+            "file": "routes/activities.js",
             "line": 89,
             "description": "POST /api/activities/cancel",
             "itemtype": "method",
@@ -272,7 +286,7 @@
             "class": "活动"
         },
         {
-            "file": "routes\\activities.js",
+            "file": "routes/activities.js",
             "line": 112,
             "description": "POST /api/activities/end",
             "itemtype": "method",
@@ -291,7 +305,7 @@
             "class": "活动"
         },
         {
-            "file": "routes\\activities.js",
+            "file": "routes/activities.js",
             "line": 138,
             "description": "POST /api/activities/update",
             "itemtype": "method",
@@ -301,6 +315,35 @@
                     "name": "id:活动id",
                     "description": "",
                     "type": "Number"
+                },
+                {
+                    "name": "content:活动内容",
+                    "description": "",
+                    "type": "String",
+                    "optional": true
+                },
+                {
+                    "name": "maxnum:最大人数",
+                    "description": "",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "duration:持续时间,单位为分钟",
+                    "description": "",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "[statusid:活动状态",
+                    "description": "0接受报名、1截止报名、2活动结束、3活动取消]",
+                    "type": "Number"
+                },
+                {
+                    "name": "money:活动费用",
+                    "description": "",
+                    "type": "Number",
+                    "optional": true
                 }
             ],
             "return": {
@@ -310,8 +353,8 @@
             "class": "活动"
         },
         {
-            "file": "routes\\activities.js",
-            "line": 166,
+            "file": "routes/activities.js",
+            "line": 171,
             "description": "POST /api/activities/create",
             "itemtype": "method",
             "name": "群成员发起活动",
@@ -359,8 +402,8 @@
             "class": "活动"
         },
         {
-            "file": "routes\\activities.js",
-            "line": 200,
+            "file": "routes/activities.js",
+            "line": 205,
             "description": "POST /api/activities/userslist",
             "itemtype": "method",
             "name": "获取活动人员名单",
@@ -378,8 +421,8 @@
             "class": "活动"
         },
         {
-            "file": "routes\\activities.js",
-            "line": 237,
+            "file": "routes/activities.js",
+            "line": 242,
             "description": "POST /api/activities/accept",
             "itemtype": "method",
             "name": "发起人接受申请人",
@@ -402,8 +445,8 @@
             "class": "活动"
         },
         {
-            "file": "routes\\activities.js",
-            "line": 262,
+            "file": "routes/activities.js",
+            "line": 267,
             "description": "POST /api/activities/avatar/update",
             "itemtype": "method",
             "name": "更新活动图片",
@@ -421,7 +464,7 @@
             "class": "活动"
         },
         {
-            "file": "routes\\admin.js",
+            "file": "routes/admin.js",
             "line": 8,
             "description": "POST /api/admin/find",
             "itemtype": "method",
@@ -441,7 +484,7 @@
             "class": "管理员"
         },
         {
-            "file": "routes\\admin.js",
+            "file": "routes/admin.js",
             "line": 80,
             "description": "POST /api/admin/login",
             "itemtype": "method",
@@ -465,7 +508,7 @@
             "class": "管理员"
         },
         {
-            "file": "routes\\admin.js",
+            "file": "routes/admin.js",
             "line": 101,
             "description": "POST /api/admin/logout",
             "itemtype": "method",
@@ -477,7 +520,7 @@
             "class": "管理员"
         },
         {
-            "file": "routes\\admin.js",
+            "file": "routes/admin.js",
             "line": 117,
             "description": "POST /api/admin/password/reset",
             "itemtype": "method",
@@ -501,7 +544,7 @@
             "class": "管理员"
         },
         {
-            "file": "routes\\groups.js",
+            "file": "routes/groups.js",
             "line": 12,
             "description": "post /api/groups/find",
             "itemtype": "method",
@@ -533,7 +576,7 @@
             "class": "圈子"
         },
         {
-            "file": "routes\\groups.js",
+            "file": "routes/groups.js",
             "line": 83,
             "description": "post /api/groups/create",
             "itemtype": "method",
@@ -557,7 +600,11 @@
             "class": "圈子"
         },
         {
+<<<<<<< HEAD
+            "file": "routes/groups.js",
+=======
             "file": "routes\\groups.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 124,
             "description": "post /api/groups/join",
             "itemtype": "method",
@@ -576,7 +623,11 @@
             "class": "圈子"
         },
         {
+<<<<<<< HEAD
+            "file": "routes/groups.js",
+=======
             "file": "routes\\groups.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 138,
             "description": "post /api/groups/quit",
             "itemtype": "method",
@@ -595,7 +646,11 @@
             "class": "圈子"
         },
         {
+<<<<<<< HEAD
+            "file": "routes/groups.js",
+=======
             "file": "routes\\groups.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 152,
             "description": "GET /api/groups/my  \n含我加入的、我创建的圈子列表。",
             "itemtype": "method",
@@ -607,7 +662,11 @@
             "class": "圈子"
         },
         {
+<<<<<<< HEAD
+            "file": "routes/groups.js",
+=======
             "file": "routes\\groups.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 189,
             "description": "POST /api/groups/setadmin",
             "itemtype": "method",
@@ -631,7 +690,11 @@
             "class": "圈子"
         },
         {
+<<<<<<< HEAD
+            "file": "routes/groups.js",
+=======
             "file": "routes\\groups.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 230,
             "description": "POST /api/groups/canceladmin",
             "itemtype": "method",
@@ -655,7 +718,11 @@
             "class": "圈子"
         },
         {
+<<<<<<< HEAD
+            "file": "routes/groups.js",
+=======
             "file": "routes\\groups.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 271,
             "description": "POST /api/groups/pull",
             "itemtype": "method",
@@ -679,7 +746,11 @@
             "class": "圈子"
         },
         {
+<<<<<<< HEAD
+            "file": "routes/groups.js",
+=======
             "file": "routes\\groups.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 299,
             "description": "POST /api/groups/remove",
             "itemtype": "method",
@@ -703,7 +774,11 @@
             "class": "圈子"
         },
         {
+<<<<<<< HEAD
+            "file": "routes/issues.js",
+=======
             "file": "routes\\issues.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 12,
             "description": "GET /api/issues/find",
             "itemtype": "method",
@@ -735,7 +810,7 @@
             "class": "话题"
         },
         {
-            "file": "routes\\issues.js",
+            "file": "routes/issues.js",
             "line": 27,
             "description": "GET /api/issues/search",
             "itemtype": "method",
@@ -767,7 +842,7 @@
             "class": "话题"
         },
         {
-            "file": "routes\\issues.js",
+            "file": "routes/issues.js",
             "line": 42,
             "description": "GET /api/issues/view",
             "itemtype": "method",
@@ -787,7 +862,7 @@
             "class": "话题"
         },
         {
-            "file": "routes\\issues.js",
+            "file": "routes/issues.js",
             "line": 55,
             "description": "POST /api/issues/post",
             "itemtype": "method",
@@ -811,7 +886,7 @@
             "class": "话题"
         },
         {
-            "file": "routes\\issues.js",
+            "file": "routes/issues.js",
             "line": 79,
             "description": "GET /api/issues/update",
             "itemtype": "method",
@@ -840,7 +915,7 @@
             "class": "话题"
         },
         {
-            "file": "routes\\issues.js",
+            "file": "routes/issues.js",
             "line": 104,
             "description": "GET /api/issues/delete",
             "itemtype": "method",
@@ -859,7 +934,7 @@
             "class": "话题"
         },
         {
-            "file": "routes\\issues.js",
+            "file": "routes/issues.js",
             "line": 125,
             "description": "POST /api/issues/comment",
             "itemtype": "method",
@@ -878,7 +953,11 @@
             "class": "话题"
         },
         {
+<<<<<<< HEAD
+            "file": "routes/photos.js",
+=======
             "file": "routes\\photos.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 11,
             "description": "GET /api/photos/find",
             "itemtype": "method",
@@ -910,7 +989,11 @@
             "class": "相片"
         },
         {
+<<<<<<< HEAD
+            "file": "routes/photos.js",
+=======
             "file": "routes\\photos.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 26,
             "description": "POST /api/photos/post",
             "itemtype": "method",
@@ -934,7 +1017,11 @@
             "class": "相片"
         },
         {
+<<<<<<< HEAD
+            "file": "routes/photos.js",
+=======
             "file": "routes\\photos.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 50,
             "description": "GET /api/photos/update",
             "itemtype": "method",
@@ -963,8 +1050,16 @@
             "class": "相片"
         },
         {
+<<<<<<< HEAD
+            "file": "routes/photos.js",
+=======
             "file": "routes\\photos.js",
+<<<<<<< HEAD
             "line": 76,
+=======
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
+            "line": 75,
+>>>>>>> 6cd9cde92a5e192f1cc1dfed2b4fe7edc2937e3e
             "description": "GET /api/photos/delete",
             "itemtype": "method",
             "name": "删除相片",
@@ -982,7 +1077,11 @@
             "class": "相片"
         },
         {
+<<<<<<< HEAD
+            "file": "routes/users.js",
+=======
             "file": "routes\\users.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 9,
             "description": "GET /api/users/find",
             "itemtype": "method",
@@ -1032,7 +1131,7 @@
             "class": "用户"
         },
         {
-            "file": "routes\\users.js",
+            "file": "routes/users.js",
             "line": 27,
             "description": "GET /api/users/search",
             "itemtype": "method",
@@ -1088,7 +1187,7 @@
             "class": "用户"
         },
         {
-            "file": "routes\\users.js",
+            "file": "routes/users.js",
             "line": 47,
             "description": "Get /api/users/view",
             "itemtype": "method",
@@ -1107,7 +1206,7 @@
             "class": "用户"
         },
         {
-            "file": "routes\\users.js",
+            "file": "routes/users.js",
             "line": 60,
             "description": "POST /api/users/register",
             "itemtype": "method",
@@ -1146,7 +1245,7 @@
             "class": "用户"
         },
         {
-            "file": "routes\\users.js",
+            "file": "routes/users.js",
             "line": 86,
             "description": "POST /api/users/login",
             "itemtype": "method",
@@ -1170,7 +1269,7 @@
             "class": "用户"
         },
         {
-            "file": "routes\\users.js",
+            "file": "routes/users.js",
             "line": 107,
             "description": "POST /api/users/logout",
             "itemtype": "method",
@@ -1182,7 +1281,7 @@
             "class": "用户"
         },
         {
-            "file": "routes\\users.js",
+            "file": "routes/users.js",
             "line": 123,
             "description": "POST /api/users/password/reset",
             "itemtype": "method",
@@ -1307,27 +1406,27 @@
     "warnings": [
         {
             "message": "Missing item type\nCreated by fritz on 1/2/14.",
-            "line": " lib\\encrypt.js:1"
+            "line": " lib/encrypt.js:1"
         },
         {
             "message": "Missing item type\nCreated by fritz on 1/1/14.",
-            "line": " lib\\errors.js:1"
+            "line": " lib/errors.js:1"
         },
         {
             "message": "Missing item type\nCreated by cin on 12/24/13.",
-            "line": " models\\admin.js:1"
+            "line": " models/admin.js:1"
         },
         {
             "message": "Missing item type\nCreated by Cam on 14-1-4.",
-            "line": " models\\group-membership.js:1"
+            "line": " models/group-membership.js:1"
         },
         {
             "message": "Missing item type\nCreated by Cam on 14-1-2.",
-            "line": " models\\group.js:1"
+            "line": " models/group.js:1"
         },
         {
             "message": "Missing item type\nCreated by fritz on 1/11/14.",
-            "line": " models\\issue-comment.js:1"
+            "line": " models/issue-comment.js:1"
         }
     ]
 }

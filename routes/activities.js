@@ -47,7 +47,7 @@ module.exports = function (app) {
 		  ]  
 		}]</pre>
 	*/
-	app.post('/api/activities/find', function (req, res, next) {
+	app.get('/api/activities/find', function (req, res, next) {
 		Activity.find(req.query)
 			.then(function (activities) {
 				activities.mapThen(function (activity) {
@@ -139,6 +139,11 @@ module.exports = function (app) {
 	 * POST /api/activities/update
 	 * @method 发起者更新活动资料
 	 * @param {Number}  id:活动id
+	 * @param {String}  [content:活动内容]
+	 * @param {Number}  [maxnum:最大人数]
+	 * @param {Number}  [duration:持续时间,单位为分钟]
+	 * @param {Number}  [statusid:活动状态  0接受报名、1截止报名、2活动结束、3活动取消]
+	 * @param {Number}  [money:活动费用]
 	 * @return {JSON}
 	 * <pre>{
 	 * 		msg: update success,  

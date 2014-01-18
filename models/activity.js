@@ -25,7 +25,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 	tableName: 'activities',
 	fields: [
 		'id', 'ownerid', 'groupid', 'content', 'maxnum', 'createtime',
-		'starttime', 'duration', 'statusid', 'avatar', 'money'
+		'starttime', 'duration', 'statusid', 'avatar', 'money', 'name'
 	],
 
 	saving: function () {
@@ -41,7 +41,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 		return this.belongsTo(ActivityStatus, fkStatus);
 	},
 
-	createActivity: function(userid, groupid, content, maxnum, starttime, duration, statusid, money) {
+	createActivity: function(userid, groupid, content, maxnum, starttime, duration, statusid, money, name) {
 		//check the dude belong to group
 		//save an activity
 		if(userid == null) {
@@ -61,7 +61,8 @@ Activity = module.exports = syBookshelf.Model.extend({
 					'starttime': starttime,
 					'duration': duration,
 					'statusid': statusid,
-					'money': money
+					'money': money,
+					'name': name
 				}).save();
 			});
 	},
@@ -152,7 +153,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 			}).save();
 		});
 	},
-	updateActivity: function(userid, content, maxnum, starttime, duration, statusid, money) {
+	updateActivity: function(userid, content, maxnum, starttime, duration, statusid, money, name) {
 		var ownerid = this.get('ownerid');
 		if(userid != ownerid) {
 			return Promise.rejected(errors[20102]);
@@ -165,7 +166,9 @@ Activity = module.exports = syBookshelf.Model.extend({
 			'maxnum': maxnum,
 			"starttime": starttime,
 			'duration': duration,
-			'statusid': statusid
+			'statusid': statusid,
+			'money': money,
+			'name': name
 		}).save();
 	},
 
@@ -231,12 +234,13 @@ Activity = module.exports = syBookshelf.Model.extend({
 			'money': chance.integer({
 				min: 600,
 				max: 1200
-			})
+			}),
+			'name': chance.word()
 		});
 	},
 
 	find: function (query) {
-		var forActivity = ['id', 'ownerid', 'groupid', 'content', 'statusid'],
+		var forActivity = ['id', 'ownerid', 'groupid', 'content', 'statusid', 'name'],
 			activities = Activities.forge();
 		return activities
 			.query(function (qb) {

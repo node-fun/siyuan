@@ -12,8 +12,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `password` VARCHAR(45) NULL,
   `regtime` DATETIME NULL,
   `isonline` TINYINT(1) NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `username_UNIQUE` (`username` ASC))
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
@@ -153,6 +152,7 @@ CREATE TABLE IF NOT EXISTS `activities` (
   `statusid` INT NULL COMMENT '状态：接受报名、截止报名、活动结束、活动取消等',
   `avatar` VARCHAR(45) NULL,
   `money` DECIMAL NULL,
+  `name` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_activities_activity_status1_idx` (`statusid` ASC),
   INDEX `fk_activities_users1_idx` (`ownerid` ASC),
@@ -244,10 +244,66 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `photos`
+-- Table `co_comment`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `photos` (
+CREATE TABLE IF NOT EXISTS `co_comment` (
   `id` INT NOT NULL AUTO_INCREMENT,
+  `cooperationid` INT NULL,
+  `co_commentcol` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `cooperation`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `cooperation` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NULL,
+  `company` VARCHAR(45) NULL,
+  `deadline` VARCHAR(45) NULL,
+  `avatar` VARCHAR(45) NULL,
+  `statusid` INT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_cooperation_co_comment1_idx` (`statusid` ASC),
+  CONSTRAINT `fk_cooperation_co_comment1`
+    FOREIGN KEY (`statusid`)
+    REFERENCES `co_comment` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `user_cooperation`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `user_cooperation` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `userid` INT NULL,
+  `cooperationid` INT NULL,
+  `isaccepted` TINYINT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_user_cooperation_users1_idx` (`userid` ASC),
+  INDEX `fk_user_cooperation_cooperation1_idx` (`cooperationid` ASC),
+  CONSTRAINT `fk_user_cooperation_users1`
+    FOREIGN KEY (`userid`)
+    REFERENCES `users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_user_cooperation_cooperation1`
+    FOREIGN KEY (`cooperationid`)
+    REFERENCES `cooperation` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `co_status`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `co_status` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -266,4 +322,15 @@ INSERT INTO `activity_status` (`id`, `name`) VALUES (3, '活动结束');
 INSERT INTO `activity_status` (`id`, `name`) VALUES (4, '活动取消');
 
 COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `co_status`
+-- -----------------------------------------------------
+START TRANSACTION;
+INSERT INTO `co_status` (`id`, `name`) VALUES (1, '发布');
+INSERT INTO `co_status` (`id`, `name`) VALUES (2, '结束');
+
+COMMIT;
+
 

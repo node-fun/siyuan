@@ -139,8 +139,14 @@ module.exports = function (app) {
 	/**
 	 * POST /api/users/profile/update
 	 * @method 更新资料
-	 * 'email', 'nickname', 'name', 'gender',
-	 'age', 'grade', 'university', 'major'
+	 * @param {String} [email]
+	 * @param {String} [nickname]
+	 * @param {String} [name]
+	 * @param {String} [gender]
+	 * @param {Number} [age]
+	 * @param {String} [grade]
+	 * @param {String} [university]
+	 * @param {String} [major]
 	 * @return {JSON} 
 	 * { msg: 'Profile updated' }
 	 */

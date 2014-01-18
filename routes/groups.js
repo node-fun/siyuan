@@ -26,13 +26,13 @@ module.exports = function (app) {
 			"description": "Cavgob ija of bilzoro ded gibruzup mar mi pabigkum gegwubez je mig kegiso ufaica votojnuj zavo iki iw. Fefufi bawum gamokzap ni si nizifca con magi evubinek wawke cutero tan hanasboz wozes upvip su owicore. Ne lupwegsav medap ipajies pek ge jucrokub otihuham bi rafma peobizon teh",
 			"createtime": 1380494258000,
 			"avatar": null,
-			"members": [
+			"memberships": [
 				{
 					"userid": 24,
 					"isowner": 0,
 					"isadmin": 0,
 					"remark": "jumefojek",
-					"profile": {
+					"member": {
 						"id": 24,
 						"username": "mifi_94",
 						"regtime": 1385861668000,

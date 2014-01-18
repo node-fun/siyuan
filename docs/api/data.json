@@ -85,8 +85,13 @@
             "fors": {},
             "namespaces": {}
         },
+<<<<<<< HEAD
         "routes/photos.js": {
             "name": "routes/photos.js",
+=======
+        "routes\\photos.js": {
+            "name": "routes\\photos.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "modules": {},
             "classes": {
                 "相片": 1
@@ -94,8 +99,13 @@
             "fors": {},
             "namespaces": {}
         },
+<<<<<<< HEAD
         "routes/users.js": {
             "name": "routes/users.js",
+=======
+        "routes\\users.js": {
+            "name": "routes\\users.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "modules": {},
             "classes": {
                 "用户": 1
@@ -160,7 +170,11 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
+<<<<<<< HEAD
             "file": "routes/photos.js",
+=======
+            "file": "routes\\photos.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 1,
             "description": "Created by fritz on 1/17/14."
         },
@@ -556,7 +570,7 @@
                 }
             ],
             "return": {
-                "description": "\n<pre>\n\t{\n\t\t\"groups\": [\n\t\t{\n\t\t\t\"id\": 1,\n\t\t\t\"ownerid\": 26,\n\t\t\t\"name\": \"cab\",\n\t\t\t\"description\": \"Cavgob ija of bilzoro ded gibruzup mar mi pabigkum gegwubez je mig kegiso ufaica votojnuj zavo iki iw. Fefufi bawum gamokzap ni si nizifca con magi evubinek wawke cutero tan hanasboz wozes upvip su owicore. Ne lupwegsav medap ipajies pek ge jucrokub otihuham bi rafma peobizon teh\",\n\t\t\t\"createtime\": 1380494258000,\n\t\t\t\"avatar\": null,\n\t\t\t\"members\": [\n\t\t\t\t{\n\t\t\t\t\t\"userid\": 24,\n\t\t\t\t\t\"isowner\": 0,\n\t\t\t\t\t\"isadmin\": 0,\n\t\t\t\t\t\"remark\": \"jumefojek\",\n\t\t\t\t\t\"profile\": {\n\t\t\t\t\t\t\"id\": 24,\n\t\t\t\t\t\t\"username\": \"mifi_94\",\n\t\t\t\t\t\t\"regtime\": 1385861668000,\n\t\t\t\t\t\t\"isonline\": 0,\n\t\t\t\t\t\t\"profile\": {\n\t\t\t\t\t\t\t\"email\": \"hipignoz@inojuptuw.com\",\n\t\t\t\t\t\t\t\"nickname\": \"Angelina Swanson\",\n\t\t\t\t\t\t\t\"name\": \"Savannah Patterson\",\n\t\t\t\t\t\t\t\"gender\": \"f\",\n\t\t\t\t\t\t\t\"age\": 53,\n\t\t\t\t\t\t\t\"grade\": 1978,\n\t\t\t\t\t\t\t\"university\": \"Tonadde University\",\n\t\t\t\t\t\t\t\"major\": \"Onpuval\"\n\t\t\t\t\t\t},\n\t\t\t\t\t\t\"avatar\": \"/avatars/24.jpg\"\n\t\t\t\t\t}\n\t\t\t\t},\n\t\t\t\t...\n\t\t\t]\n\t\t}\n\t]\n\t}\n\t</pre>",
+                "description": "\n<pre>\n\t{\n\t\t\"groups\": [\n\t\t{\n\t\t\t\"id\": 1,\n\t\t\t\"ownerid\": 26,\n\t\t\t\"name\": \"cab\",\n\t\t\t\"description\": \"Cavgob ija of bilzoro ded gibruzup mar mi pabigkum gegwubez je mig kegiso ufaica votojnuj zavo iki iw. Fefufi bawum gamokzap ni si nizifca con magi evubinek wawke cutero tan hanasboz wozes upvip su owicore. Ne lupwegsav medap ipajies pek ge jucrokub otihuham bi rafma peobizon teh\",\n\t\t\t\"createtime\": 1380494258000,\n\t\t\t\"avatar\": null,\n\t\t\t\"memberships\": [\n\t\t\t\t{\n\t\t\t\t\t\"userid\": 24,\n\t\t\t\t\t\"isowner\": 0,\n\t\t\t\t\t\"isadmin\": 0,\n\t\t\t\t\t\"remark\": \"jumefojek\",\n\t\t\t\t\t\"member\": {\n\t\t\t\t\t\t\"id\": 24,\n\t\t\t\t\t\t\"username\": \"mifi_94\",\n\t\t\t\t\t\t\"regtime\": 1385861668000,\n\t\t\t\t\t\t\"isonline\": 0,\n\t\t\t\t\t\t\"profile\": {\n\t\t\t\t\t\t\t\"email\": \"hipignoz@inojuptuw.com\",\n\t\t\t\t\t\t\t\"nickname\": \"Angelina Swanson\",\n\t\t\t\t\t\t\t\"name\": \"Savannah Patterson\",\n\t\t\t\t\t\t\t\"gender\": \"f\",\n\t\t\t\t\t\t\t\"age\": 53,\n\t\t\t\t\t\t\t\"grade\": 1978,\n\t\t\t\t\t\t\t\"university\": \"Tonadde University\",\n\t\t\t\t\t\t\t\"major\": \"Onpuval\"\n\t\t\t\t\t\t},\n\t\t\t\t\t\t\"avatar\": \"/avatars/24.jpg\"\n\t\t\t\t\t}\n\t\t\t\t},\n\t\t\t\t...\n\t\t\t]\n\t\t}\n\t]\n\t}\n\t</pre>",
                 "type": "JSON"
             },
             "class": "圈子"
@@ -586,7 +600,11 @@
             "class": "圈子"
         },
         {
+<<<<<<< HEAD
             "file": "routes/groups.js",
+=======
+            "file": "routes\\groups.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 124,
             "description": "post /api/groups/join",
             "itemtype": "method",
@@ -605,7 +623,11 @@
             "class": "圈子"
         },
         {
+<<<<<<< HEAD
             "file": "routes/groups.js",
+=======
+            "file": "routes\\groups.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 138,
             "description": "post /api/groups/quit",
             "itemtype": "method",
@@ -624,7 +646,11 @@
             "class": "圈子"
         },
         {
+<<<<<<< HEAD
             "file": "routes/groups.js",
+=======
+            "file": "routes\\groups.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 152,
             "description": "GET /api/groups/my  \n含我加入的、我创建的圈子列表。",
             "itemtype": "method",
@@ -636,7 +662,11 @@
             "class": "圈子"
         },
         {
+<<<<<<< HEAD
             "file": "routes/groups.js",
+=======
+            "file": "routes\\groups.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 189,
             "description": "POST /api/groups/setadmin",
             "itemtype": "method",
@@ -660,7 +690,11 @@
             "class": "圈子"
         },
         {
+<<<<<<< HEAD
             "file": "routes/groups.js",
+=======
+            "file": "routes\\groups.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 230,
             "description": "POST /api/groups/canceladmin",
             "itemtype": "method",
@@ -684,7 +718,11 @@
             "class": "圈子"
         },
         {
+<<<<<<< HEAD
             "file": "routes/groups.js",
+=======
+            "file": "routes\\groups.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 271,
             "description": "POST /api/groups/pull",
             "itemtype": "method",
@@ -708,7 +746,11 @@
             "class": "圈子"
         },
         {
+<<<<<<< HEAD
             "file": "routes/groups.js",
+=======
+            "file": "routes\\groups.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 299,
             "description": "POST /api/groups/remove",
             "itemtype": "method",
@@ -732,7 +774,11 @@
             "class": "圈子"
         },
         {
+<<<<<<< HEAD
             "file": "routes/issues.js",
+=======
+            "file": "routes\\issues.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 12,
             "description": "GET /api/issues/find",
             "itemtype": "method",
@@ -907,7 +953,11 @@
             "class": "话题"
         },
         {
+<<<<<<< HEAD
             "file": "routes/photos.js",
+=======
+            "file": "routes\\photos.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 11,
             "description": "GET /api/photos/find",
             "itemtype": "method",
@@ -939,7 +989,11 @@
             "class": "相片"
         },
         {
+<<<<<<< HEAD
             "file": "routes/photos.js",
+=======
+            "file": "routes\\photos.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 26,
             "description": "POST /api/photos/post",
             "itemtype": "method",
@@ -963,7 +1017,11 @@
             "class": "相片"
         },
         {
+<<<<<<< HEAD
             "file": "routes/photos.js",
+=======
+            "file": "routes\\photos.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 50,
             "description": "GET /api/photos/update",
             "itemtype": "method",
@@ -992,7 +1050,11 @@
             "class": "相片"
         },
         {
+<<<<<<< HEAD
             "file": "routes/photos.js",
+=======
+            "file": "routes\\photos.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 75,
             "description": "GET /api/photos/delete",
             "itemtype": "method",
@@ -1011,7 +1073,11 @@
             "class": "相片"
         },
         {
+<<<<<<< HEAD
             "file": "routes/users.js",
+=======
+            "file": "routes\\users.js",
+>>>>>>> 74bab74e23438df8d63aff65bc1f452d81401cd2
             "line": 9,
             "description": "GET /api/users/find",
             "itemtype": "method",

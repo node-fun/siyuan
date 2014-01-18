@@ -42,7 +42,7 @@ module.exports = function (app) {
 	/**
 	 * GET /api/issues/view
 	 * @method 话题详情
-	 * @param {Number} [userid] 作者ID
+	 * @param {Number} [id] 话题id
 	 * @return {JSON}
 	 */
 	app.get('/api/issues/view', function (req, res, next) {
@@ -77,8 +77,8 @@ module.exports = function (app) {
 	});
 
 	/**
-	 * GET /api/issues/update
-	 * @method 删除话题
+	 * POST /api/issues/update
+	 * @method 更新话题
 	 * @param {Number} id 话题ID
 	 * @param {String} title 标题
 	 * @param {String} body 内容
@@ -102,7 +102,7 @@ module.exports = function (app) {
 	});
 
 	/**
-	 * GET /api/issues/delete
+	 * POST /api/issues/delete
 	 * @method 删除话题
 	 * @param {Number} id 话题ID
 	 * @return {JSON}
@@ -125,6 +125,7 @@ module.exports = function (app) {
 	/**
 	 * POST /api/issues/comment
 	 * @method 发表话题评论
+	 * @param {Number} id 话题id
 	 * @param {String} body 内容
 	 * @return {JSON}
 	 */

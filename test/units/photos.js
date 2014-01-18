@@ -40,6 +40,14 @@ describe('photos', function () {
 		});
 	});
 
+	it('finds', function (done) {
+		var url = apiHost + '/find';
+		request(url, function (err, res, data) {
+			assert.ok(data['photos'].length);
+			done();
+		});
+	});
+
 	it('deletes', function (done) {
 		var url = apiHost + '/delete';
 		request.post(url, {

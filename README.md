@@ -18,7 +18,8 @@ An SNS backend framework, with Node and MySQL
 	npm install -d
 	```
 
-4. Copy the `config` directory, and modify it if you need
+4. Copy the `config` directory, and modify it if you need,<br>
+
 
 	```shell
 	cp -r config.default config
@@ -42,6 +43,5 @@ node . [environment]
 ## Test
 
 ```shell
-cp -r content content_test
 npm test
 ```

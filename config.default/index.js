@@ -9,6 +9,7 @@ if (!env) {
 
 var path = require('path'),
 	rootDir = path.resolve(__dirname, '..'),
+	defaultContentDir = path.join(rootDir, 'content.default'),
 	contentDir = path.join(rootDir, 'content')
 		+ (env == 'test' ? '_test' : '');
 
@@ -20,10 +21,10 @@ module.exports = {
 	docsDir: path.join(rootDir, 'docs'),
 	adminDir: path.join(rootDir, 'admin'),
 
+	defaultContentDir: defaultContentDir,
 	contentDir: contentDir,
 	avatarDir: path.join(contentDir, 'avatars'),
 	activityAvatarDir: path.join(contentDir, 'activities'),
-	avatarDir: path.join(contentDir, 'avatars'),
 	photoDir: path.join(contentDir, 'photos'),
 
 	port: 8088,

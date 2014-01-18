@@ -1,7 +1,6 @@
-var fs = require('fs'),
+var fs = require('fs-extra'),
 	path = require('path'),
 	_ = require('underscore'),
-	mkdirp = require('mkdirp'),
 	Promise = require('bluebird'),
 	chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
@@ -53,7 +52,7 @@ Photo = module.exports = syBookshelf.Model.extend({
 		return new Promise(function (resolve, reject) {
 			fs.readFile(tmp, function (err, data) {
 				if (err) return reject(errors[30000]);
-				mkdirp(path.dirname(target), function (err) {
+				fs.mkdirp(path.dirname(target), function (err) {
 					if (err) return reject(errors[30001]);
 					fs.writeFile(target, data, function (err) {
 						if (err) return reject(errors[30001]);
@@ -77,7 +76,7 @@ Photo = module.exports = syBookshelf.Model.extend({
 		return this.get('userid') + '/' + this.id + avatarExt;
 	},
 	getURI: function () {
-		return '/photos/' + this.getURI();
+		return '/photos/' + this.getName();
 	},
 	getPath: function () {
 		return path.join(photoDir, this.getName());

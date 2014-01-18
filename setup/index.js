@@ -1,4 +1,4 @@
-var fs = require('fs'),
+var fs = require('fs-extra'),
 	_ = require('underscore'),
 	chance = new (require('chance'))(),
 	localface = require('localface'),
@@ -13,8 +13,6 @@ var fs = require('fs'),
 	Admins = Admin.Set,
 	Group = require('../models/group'),
 	Groups = Group.Set,
-	ActivityStatus = require('../models/activity-status'),
-	ActivityStatuses = ActivityStatus.Set,
 	Activity = require('../models/activity'),
 	Activities = Activity.Set,
 	UserActivity = require('../models/user-activity'),
@@ -23,13 +21,25 @@ var fs = require('fs'),
 	GroupMembershipSet = GroupMembership.Set,
 	Issue = require('../models/issue'),
 	Issues = Issue.Set,
+	Photo = require('../models/photo'),
+	Photos = Photo.Set,
 	numUsers = 35,
 	numGroups = ~~(numUsers / 5),
 	numGroupMembers = numGroups * 10,
 	numActivities = numGroups * 2,
 	numUserActivitys = numActivities * 5,
 	numIssues = numUsers * 3,
+	numPhotos = numUsers * 3,
 	sqlFile = __dirname + '/db.sql';
+
+// copy directories
+try {
+	fs.removeSync(config.contentDir);
+	fs.copySync(config.defaultContentDir, config.contentDir);
+	console.log('content directory reset');
+} catch(err) {
+	done(err);
+}
 
 // create database for test
 execsql.config(connConfig)
@@ -51,7 +61,9 @@ execsql.config(connConfig)
 					.then(addActivities)
 					.then(addUserActivitys)
 					.then(addIssues)
-					.then(done);
+					.then(addPhotos)
+					.then(done)
+					.catch(done);
 			} else {
 				done();
 			}
@@ -130,7 +142,7 @@ function addGroups() {
 	_.times(numGroups, function () {
 		groups.add(Group.forge({
 			ownerid: _.random(1, numUsers),
-			name: chance.word(),
+			name:  chance.word() + '_' + (''+Date.now()).slice(-2, -1),
 			description: chance.paragraph(),
 			createtime: chance.date({ year: 2013 })
 		}));
@@ -199,8 +211,25 @@ function addIssues() {
 		});
 }
 
+function addPhotos() {
+	var photos = Photos.forge();
+	_.times(numPhotos, function () {
+		var photo = Photo.randomForge(),
+			face = localface.get(_.sample(['f', 'm']));
+		photo.set({
+			userid: _.random(1, numUsers),
+			image: face
+		});
+		photos.add(photo);
+	});
+	return photos.invokeThen('save')
+		.then(function () {
+			console.log('%d photos added', numPhotos);
+		});
+}
+
 function done(err) {
-	if (err) throw err;
+	if (err) console.error(err.stack);
 	execsql.end();
 	process.exit();
 }

@@ -14,14 +14,18 @@ var path = require('path'),
 
 module.exports = {
 	env: env,
-
 	rootDir: rootDir,
+
 	staticDir: path.join(rootDir, 'static'),
 	docsDir: path.join(rootDir, 'docs'),
 	adminDir: path.join(rootDir, 'admin'),
+
 	contentDir: contentDir,
 	avatarDir: path.join(contentDir, 'avatars'),
 	activityAvatarDir: path.join(contentDir, 'activities'),
+	avatarDir: path.join(contentDir, 'avatars'),
+	photoDir: path.join(contentDir, 'photos'),
+
 	port: 8088,
 	secret: 'bad',
 	db: {

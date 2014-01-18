@@ -244,20 +244,19 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `co_comment`
+-- Table `co_status`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `co_comment` (
+CREATE TABLE IF NOT EXISTS `co_status` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `cooperationid` INT NULL,
-  `co_commentcol` VARCHAR(45) NULL,
+  `name` VARCHAR(45) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `cooperation`
+-- Table `cooperations`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `cooperation` (
+CREATE TABLE IF NOT EXISTS `cooperations` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL,
   `company` VARCHAR(45) NULL,
@@ -265,10 +264,26 @@ CREATE TABLE IF NOT EXISTS `cooperation` (
   `avatar` VARCHAR(45) NULL,
   `statusid` INT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_cooperation_co_comment1_idx` (`statusid` ASC),
-  CONSTRAINT `fk_cooperation_co_comment1`
+  INDEX `fk_cooperations_co_status1_idx` (`statusid` ASC),
+  CONSTRAINT `fk_cooperations_co_status1`
     FOREIGN KEY (`statusid`)
-    REFERENCES `co_comment` (`id`)
+    REFERENCES `co_status` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `co_comments`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `co_comments` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `cooperationid` INT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_co_comment_cooperations1_idx` (`cooperationid` ASC),
+  CONSTRAINT `fk_co_comment_cooperations1`
+    FOREIGN KEY (`cooperationid`)
+    REFERENCES `cooperations` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -292,19 +307,9 @@ CREATE TABLE IF NOT EXISTS `user_cooperation` (
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_user_cooperation_cooperation1`
     FOREIGN KEY (`cooperationid`)
-    REFERENCES `cooperation` (`id`)
+    REFERENCES `cooperations` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `co_status`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `co_status` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(45) NULL,
-  PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 

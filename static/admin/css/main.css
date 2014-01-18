@@ -1,0 +1,16 @@
+
+/*****start****/
+.header{
+	height:50px;
+	background: #EEE;
+	padding: 10px;
+}
+body>div{
+	padding:10px;
+}
+#content{
+	padding-left:10px;
+}
+#pager{
+	margin-top:10px;
+}

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.3.0/base-min.css">
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.3.0/pure-min.css">
+    <link rel="stylesheet" href="css/pure-skin-cam.css" />
+    <link rel="stylesheet" href="css/main.css" />
+</head>
+<body class="pure-skin-cam">
+
+<div class="pure-g header">
+    <div class="grids-unit-bar pure-u-1">
+        <h1>思源群后台管理系统</h1>
+    </div>
+</div>
+<div class="pure-g">
+    <div class="pure-u-1-6">
+        <div class="pure-menu pure-menu-open">
+            <a class="pure-menu-heading">发布公告</a>
+
+            <ul>
+                <li><a href="#">Flickr</a></li>
+                <li><a href="#">Messenger</a></li>
+                <li><a href="#">Sports</a></li>
+                <li><a href="#">Finance</a></li>
+                <li class="pure-menu-heading">用户管理</li>
+                <li><a href="javascript:loadUserTable()">用户列表</a></li>
+                <li><a href="#">News</a></li>
+                <li><a href="#">OMG!</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="pure-u-5-6">
+        <div id="content">
+            <table id="usertable" class="pure-table">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>用户名</th>
+                    <th>昵称</th>
+                    <th>姓名</th>
+                    <th>性别</th>
+                    <th>年龄</th>
+                    <th>年级</th>
+                    <th>学校</th>
+                    <th>专业</th>
+                    <th>注册时间</th>
+                    <th>是否在线</th>
+                    <th>好友数</th>
+                    <th>话题数</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Honda</td>
+                    <td>Accord</td>
+                    <td>2009</td>
+                    <td>Honda</td>
+                    <td>Accord</td>
+                    <td>2009</td>
+                    <td>Honda</td>
+                    <td>Accord</td>
+                    <td>2009</td>
+                    <td>Honda</td>
+                    <td>Accord</td>
+                    <td>2009</td>
+                </tr>
+
+                <tr>
+                    <td>2</td>
+                    <td>Toyota</td>
+                    <td>Camry</td>
+                    <td>2012</td>
+                    <td>Toyota</td>
+                    <td>Camry</td>
+                    <td>2012</td>
+                    <td>Toyota</td>
+                    <td>Camry</td>
+                    <td>2012</td>
+                    <td>Toyota</td>
+                    <td>Camry</td>
+                    <td>2012</td>
+                </tr>
+
+                <tr>
+                    <td>3</td>
+                    <td>Hyundai</td>
+                    <td>Elantra</td>
+                    <td>2010</td>
+                    <td>Hyundai</td>
+                    <td>Elantra</td>
+                    <td>2010</td>
+                    <td>Hyundai</td>
+                    <td>Elantra</td>
+                    <td>2010</td>
+                    <td>Hyundai</td>
+                    <td>Elantra</td>
+                    <td>2010</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div id="pager">
+                <ul class="pure-paginator">
+                    <li><a class="pure-button prev" href="#">&#171;</a></li>
+                    <li><a class="pure-button pure-button-active" href="javascript:void(0)">1</a></li>
+                    <li><a class="pure-button" href="javascript:void(0)">2</a></li>
+                    <li><a class="pure-button" href="javascript:void(0)">3</a></li>
+                    <li><a class="pure-button" href="javascript:void(0)">4</a></li>
+                    <li><a class="pure-button" href="javascript:void(0)">5</a></li>
+                    <li><a class="pure-button next" href="#">&#187;</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="http://code.jquery.com/jquery.js"></script>
+<script src="js/main.js"></script>
+</body>
+
+</html>

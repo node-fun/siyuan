@@ -158,8 +158,9 @@ module.exports = function (app) {
 			starttime = req.body.starttime,
 			duration = req.body.duration,
 			statusid = req.body.statusid,
-			money = req.body.money;
-		Activity.forge({ 'id': id }).updateActivity(userid, content, maxnum, starttime, duration, statusid, money)
+			money = req.body.money,
+			name = req.body.name;
+		Activity.forge({ 'id': id }).updateActivity(userid, content, maxnum, starttime, duration, statusid, money, name)
 			.then(function (activity) {
 				next({
 					msg: 'update success',
@@ -192,8 +193,9 @@ module.exports = function (app) {
 			starttime = req.body.starttime,
 			duration = req.body.duration,
 			statusid = req.body.statusid,
-			money = req.body.money;
-		Activity.forge().createActivity(userid, groupid, content, maxnum, starttime, duration, statusid, money)
+			money = req.body.money,
+			name = req.body.name;
+		Activity.forge().createActivity(userid, groupid, content, maxnum, starttime, duration, statusid, money, name)
 			.then(function (activity) {
 				next({
 					msg: 'create success',

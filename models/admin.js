@@ -12,32 +12,24 @@ var _ = require('underscore'),
 Admin = module.exports = syBookshelf.Model.extend({
 	tableName: 'admin',
 	fields: ['id', 'username', 'password', 'email', 'regtime', 'lastip', 'lasttime'],
-
 	omitInJSON: ['password'],
 
-	initialize: function () {
-		return Admin.__super__.initialize.apply(this, arguments);
+	defaults: function () {
+		return {
+			regtime: new Date()
+		};
 	},
 
 	saving: function () {
-		var ret = Admin.__super__.saving.apply(this, arguments);
+		Admin.__super__.saving.apply(this, arguments);
 		//fix lower case
 		this.fixLowerCase(['username']);
-		if (this.isNew()) {
-			//append 'regtime'
-			if (!this.get('regtime')) {
-				this.set({
-					'regtime': new Date()
-				});
-			}
-		}
 		if (this.hasChanged('password')) {
 			// encrypt password
 			this.set('password', encrypt(this.get('password')));
 		}
-		return ret;
 	},
-	login: function () {
+	login: function (encrypted) {
 		var keys = ['username', 'password'],
 			loginData = this.pick(keys);
 		if (!_.all(keys, function (key) {
@@ -45,8 +37,10 @@ Admin = module.exports = syBookshelf.Model.extend({
 		})) {
 			return Promise.rejected(errors[10008]);
 		}
-		// encrypt password
-		loginData['password'] = encrypt(loginData['password']);
+		if (!encrypted) {
+			// encrypt password
+			loginData['password'] = encrypt(loginData['password']);
+		}
 		return Admin.forge(loginData).fetch()
 			.then(function (admin) {
 				if (!admin) return Promise.rejected(errors[21302]);
@@ -75,7 +69,7 @@ Admin = module.exports = syBookshelf.Model.extend({
 	randomForge: function () {
 		return Admin.forge({
 			username: chance.word(),
-			password: encrypt(chance.string()),
+			password: chance.string(),
 			email: chance.email(),
 			regtime: chance.date(),
 			lastip: chance.ip(),

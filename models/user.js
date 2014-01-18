@@ -28,14 +28,13 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 
 	saving: function () {
-		var ret = User.__super__.saving.apply(this, arguments);
+		User.__super__.saving.apply(this, arguments);
 		// fix lower case
 		this.fixLowerCase(['username']);
 		if (this.hasChanged('password')) {
 			// encrypt password
 			this.set('password', encrypt(this.get('password')));
 		}
-		return ret;
 	},
 
 	toJSON: function () {

@@ -26,7 +26,9 @@ node_modules
 
 # Custom #
 README.htm*
+
 /config
+/content
 /content_test
-/content/avatars/*.jpg
+!README.md
 /docs/api

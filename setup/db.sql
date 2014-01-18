@@ -117,13 +117,13 @@ CREATE TABLE IF NOT EXISTS `group_membership` (
   CONSTRAINT `groupid`
     FOREIGN KEY (`groupid`)
     REFERENCES `groups` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `userid`
     FOREIGN KEY (`userid`)
     REFERENCES `users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -213,8 +213,8 @@ CREATE TABLE IF NOT EXISTS `issues` (
   CONSTRAINT `fk_issues_1`
     FOREIGN KEY (`userid`)
     REFERENCES `users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -233,13 +233,13 @@ CREATE TABLE IF NOT EXISTS `issue_comments` (
   CONSTRAINT `fk_issue_comments_issues1`
     FOREIGN KEY (`issueid`)
     REFERENCES `issues` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_issue_comments_users1`
     FOREIGN KEY (`userid`)
     REFERENCES `users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 

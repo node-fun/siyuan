@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>routes\groups.js - siyuan</title>
+    <title>routes/groups.js - siyuan</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -15,7 +15,7 @@
     <div id="hd" class="yui3-g header">
         <div class="yui3-u-3-4">
             
-                <h1><img src="..\logo.png" title="siyuan"></h1>
+                <h1><img src="../logo.png" title="siyuan"></h1>
             
         </div>
         <div class="yui3-u-1-4 version">
@@ -46,6 +46,8 @@
                 <li><a href="../classes/活动.html">活动</a></li>
             
                 <li><a href="../classes/用户.html">用户</a></li>
+            
+                <li><a href="../classes/相片.html">相片</a></li>
             
                 <li><a href="../classes/管理员.html">管理员</a></li>
             
@@ -90,7 +92,7 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1 class="file-heading">File: routes\groups.js</h1>
+                        <h1 class="file-heading">File: routes/groups.js</h1>
 
 <div class="file">
     <pre class="code prettyprint linenums">
@@ -167,7 +169,7 @@ module.exports = function (app) {
 			.fetch()
 			.then(function (groups) {
 				groups.mapThen(function (group) {
-					return group.load([&#x27;members&#x27;, &#x27;members.profile&#x27;, &#x27;members.profile.profile&#x27;]);
+					return group.load([&#x27;memberships&#x27;, &#x27;memberships.member&#x27;]);
 				}).then(function(groups) {
 						next({
 							groups: groups
@@ -203,10 +205,17 @@ module.exports = function (app) {
 					ownerid: user.id
 				}, req.body)).save();
 			}).then(function (group) {
-				next({
-					msg: &#x27;group created&#x27;,
-					id: group.id
-				});
+				GroupMember.forge({
+					userid: user.id,
+					groupid: group.id,
+					isowner: 1
+				}).save()
+					.then(function(groupMember){
+						next({
+							msg: &#x27;group created&#x27;,
+							id: groupMember.get(&#x27;groupid&#x27;)
+						});
+					});
 			});
 	});
 
@@ -218,27 +227,10 @@ module.exports = function (app) {
 	 * 　　msg: &#x27;join group success&#x27;  
 	 * }
 	 */
-	app.post(&#x27;/api/groups/join&#x27;, function(req, res, next){
+	app.post(&#x27;/api/groups/join&#x27;, function (req, res, next){
 		var user = req.user;
 		if(!user) return next(errors[21301]);
-		return GroupMember.forge({
-			&#x27;userid&#x27;: user.id,
-			&#x27;groupid&#x27;: req.body[&#x27;groupid&#x27;]
-		}).fetch()
-			.then(function(groupMember){
-				if(groupMember){
-					return next(errors[20506]);
-				}
-				return GroupMember.forge({
-					&#x27;userid&#x27;: user.id,
-					&#x27;groupid&#x27;: req.body[&#x27;groupid&#x27;]
-				}).save()
-					.then(function(groupMember){
-						next({
-							msg: &#x27;join group success&#x27;
-						});
-					});
-			});
+		return join(user.id, req.body[&#x27;groupid&#x27;], next);
 	});
 
 	/**
@@ -252,21 +244,7 @@ module.exports = function (app) {
 	app.post(&#x27;/api/groups/quit&#x27;, function(req, res, next){
 		var user = req.user;
 		if(!user) return next(errors[21301]);
-		return GroupMember.forge({
-			&#x27;userid&#x27;: user.id,
-			&#x27;groupid&#x27;: req.body[&#x27;groupid&#x27;]
-		}).fetch()
-			.then(function(groupMember){
-				if(!groupMember){
-					return next(errors[40001]);
-				}
-				return groupMember.destroy()
-					.then(function(){
-						next({
-							msg: &#x27;quit group success&#x27;
-						});
-					});
-			});
+		return quit(user.id, req.body[&#x27;groupid&#x27;], next);
 	});
 
 	/**
@@ -305,7 +283,184 @@ module.exports = function (app) {
 			next({groups: groups});
 		});
 	});
+
+	/**
+	 * POST /api/groups/setadmin
+	 * @method 设置管理员
+	 * @param {Number} userid 成员的id
+	 * @param {Number} groupid 圈子id
+	 * @return {JSON}
+		{
+			msg: &quot;set admin success&quot;
+		}
+	 */
+	app.post(&#x27;/api/groups/setadmin&#x27;, function(req, res, next){
+		var user = req.user;
+		if(!user){
+			next(errors[21301]);
+		}
+		GroupMember.forge({
+			userid: user.id,
+			groupid: req.body[&#x27;groupid&#x27;]
+		}).fetch()
+			.then(function(m){
+				if(!m.get(&#x27;isadmin&#x27;)){
+					next(errors[21301]);
+				}else{
+					GroupMember.forge({
+						userid: req.body[&#x27;userid&#x27;],
+						groupid: req.body[&#x27;groupid&#x27;]
+					})
+						.fetch()
+						.then(function(m){
+							m.set(&#x27;isadmin&#x27;,1);
+							m.save()
+								.then(function(){
+									next({
+										msg: &quot;set admin success&quot;
+									});
+								});
+						});
+				}
+			});
+	});
+
+	/**
+	 * POST /api/groups/canceladmin
+	 * @method 撤销管理员
+	 * @param {Number} userid 成员的id
+	 * @param {Number} groupid 圈子id
+	 * @return {JSON}
+	 {
+		msg: &quot;cancel admin success&quot;
+	}
+	 */
+	app.post(&#x27;/api/groups/canceladmin&#x27;, function(req, res, next){
+		var user = req.user;
+		if(!user){
+			next(errors[21301]);
+		}
+		GroupMember.forge({
+			userid: user.id,
+			groupid: req.body[&#x27;groupid&#x27;]
+		}).fetch()
+			.then(function(m){
+				if(!m.get(&#x27;isadmin&#x27;)){
+					next(errors[21301]);
+				}else{
+					GroupMember.forge({
+						userid: req.body[&#x27;userid&#x27;],
+						groupid: req.body[&#x27;groupid&#x27;]
+					})
+						.fetch()
+						.then(function(m){
+							m.set(&#x27;isadmin&#x27;,0);
+							m.save()
+								.then(function(){
+									next({
+										msg: &quot;cancel admin success&quot;
+									});
+								});
+						});
+				}
+			});
+	});
+
+	/**
+	 * POST /api/groups/pull
+	 * @method 拉好友进圈子
+	 * @param {Number} userid
+	 * @param {Number} groupid
+	 * @return {JSON}
+	{
+		msg: &#x27;join group success&#x27;
+	}
+	 */
+	app.post(&#x27;/api/groups/pull&#x27;, function(req, res, next){
+		var user = req.user;
+		if(!user){
+			next(errors[21301]);
+		}
+		GroupMember.forge({
+			userid: user.id,
+			groupid: req.body[&#x27;groupid&#x27;]
+		}).fetch()
+			.then(function(m){
+				if(!m.get(&#x27;isadmin&#x27;) &amp;&amp; !m.get(&#x27;isowner&#x27;)){
+					next(errors[21301]);
+				}else{
+					return join(req.body[&#x27;userid&#x27;], req.body[&#x27;groupid&#x27;], next);
+				}
+			});
+	});
+	
+	/**
+	 * POST /api/groups/remove
+	 * @method 踢人出圈子
+	 * @param {Number} userid
+	 * @param {Number} groupid
+	 * @return {JSON}
+	{
+		msg: &#x27;quit group success&#x27;
+	}
+	 */
+	app.post(&#x27;/api/groups/remove&#x27;, function(req, res, next){
+		var user = req.user;
+		if(!user){
+			next(errors[21301]);
+		}
+		GroupMember.forge({
+			userid: user.id,
+			groupid: req.body[&#x27;groupid&#x27;]
+		}).fetch()
+			.then(function(m){
+				if(!m.get(&#x27;isadmin&#x27;) &amp;&amp; !m.get(&#x27;isowner&#x27;)){
+					next(errors[21301]);
+				}else{
+					return quit(req.body[&#x27;userid&#x27;], req.body[&#x27;groupid&#x27;], next);
+				}
+			});
+	});
 };
+
+function join(userid, groupid, next){
+	return GroupMember.forge({
+		&#x27;userid&#x27;: userid,
+		&#x27;groupid&#x27;: groupid
+	}).fetch()
+		.then(function(groupMember){
+			if(groupMember){
+				return next(errors[20506]);
+			}
+			return GroupMember.forge({
+				&#x27;userid&#x27;: userid,
+				&#x27;groupid&#x27;: groupid
+			}).save()
+				.then(function(){
+					next({
+						msg: &#x27;join group success&#x27;
+					});
+				});
+		});
+}
+
+function quit(userid, groupid, next){
+	return GroupMember.forge({
+		&#x27;userid&#x27;: userid,
+		&#x27;groupid&#x27;: groupid
+	}).fetch()
+		.then(function(groupMember){
+			if(!groupMember){
+				return next(errors[40001]);
+			}
+			return groupMember.destroy()
+				.then(function(){
+					next({
+						msg: &#x27;quit group success&#x27;
+					});
+				});
+		});
+}
 
     </pre>
 </div>

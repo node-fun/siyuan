@@ -25,6 +25,14 @@ User = module.exports = syBookshelf.Model.extend({
 			regtime: new Date()
 		};
 	},
+	toJSON: function () {
+		var ret = User.__super__.toJSON.apply(this, arguments);
+		// append avatar
+		if (this.id) {
+			ret['avatar'] = User.getAvatarURI(this.id);
+		}
+		return ret;
+	},
 
 	saving: function () {
 		var self = this;
@@ -40,13 +48,17 @@ User = module.exports = syBookshelf.Model.extend({
 			});
 	},
 
-	toJSON: function () {
-		var ret = User.__super__.toJSON.apply(this, arguments);
-		// append avatar
-		if (this.id) {
-			ret['avatar'] = User.getAvatarURI(this.id);
-		}
-		return ret;
+	fetch: function () {
+		return User.__super__.fetch.apply(this, arguments)
+			.then(function (user) {
+				if (!user) return user;
+				return user.load(['profile'])
+					.then(function () {
+						return user.countFollowship();
+					}).then(function () {
+						return user.countIssues();
+					});
+			});
 	},
 
 	profile: function () {
@@ -87,21 +99,6 @@ User = module.exports = syBookshelf.Model.extend({
 			});
 	},
 
-	fetch: function () {
-		var ret = User.__super__.fetch.apply(this, arguments);
-		return ret
-			.then(function (user) {
-				if (!user) return user;
-				return user.load(['profile']);
-			}).then(function (user) {
-				if (!user) return user;
-				return user.countFollowship();
-			}).then(function (user) {
-				if (!user) return user;
-				return user.countIssues();
-			});
-	},
-
 	register: function () {
 		var keys = ['username', 'password', 'regtime'],
 			registerData = this.pick(keys),
@@ -109,19 +106,15 @@ User = module.exports = syBookshelf.Model.extend({
 		if (!registerData['username'] || !registerData['password']) {
 			return Promise.rejected(errors[10008]);
 		}
-		return User.forge(_.pick(registerData, 'username')).fetch()
-			.then(function (user) {
-				if (user) return Promise.rejected(errors[20506]);
-				var profileData = self.get('profile'),
-					profile = UserProfile.forge(profileData);
-				return User.forge(registerData).save()
-					.then(function (user) {
-						return profile.set('userid', user.id).save()
-							.then(function (user) {
-								if (!user) return Promise.rejected(errors[21300]);
-								self.set('id', user.id);
-								return self.load(['profile']);
-							});
+		var profileData = self.get('profile'),
+			profile = UserProfile.forge(profileData);
+		return User.forge(registerData).save()
+			.catch(function () {
+				return Promise.rejected(errors[20506]);
+			}).then(function (user) {
+				return profile.set('userid', user.id).save()
+					.then(function () {
+						return self.set('id', user.id);
 					});
 			});
 	},
@@ -186,8 +179,7 @@ User = module.exports = syBookshelf.Model.extend({
 	randomForge: function () {
 		return User
 			.forge({
-				//username: 'same username',
-				username: chance.word() + '_' + _.random(0, 99),
+				username: chance.word() + '_' + _.random(0, 999),
 				password: chance.string(),
 				isonline: chance.bool(),
 				regtime: chance.date({ year: 2013 })
@@ -255,7 +247,7 @@ User = module.exports = syBookshelf.Model.extend({
 		return User.forge({ id: query['id'] }).fetch()
 			.then(function (user) {
 				if (!user) return Promise.rejected(errors[20003]);
-				return user.load(['profile', 'following.followee', 'followers.user']);
+				return user.load(['following.followee', 'followers.user']);
 			});
 	},
 
@@ -274,14 +266,9 @@ Users = User.Set = syBookshelf.Collection.extend({
 	model: User,
 
 	fetch: function () {
-		var ret = Users.__super__.fetch.apply(this, arguments);
-		return ret
-			.then(function (users) {
-				if (!users.length) return users;
-				return users.invokeThen('fetch')
-					.then(function () {
-						return users;
-					});
+		return Users.__super__.fetch.apply(this, arguments)
+			.then(function (collection) {
+				return collection.invokeThen('fetch');
 			});
 	}
 });

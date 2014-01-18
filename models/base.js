@@ -105,5 +105,5 @@ syModel = syBookshelf.Model = syModel.extend({
 });
 
 syCollection = syModel.Set = syCollection.extend({
-	mode: syModel
+	model: syModel
 });

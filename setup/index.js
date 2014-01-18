@@ -78,15 +78,17 @@ function addUsers() {
 	_.times(numUsers, function () {
 		users.add(User.randomForge());
 	});
-	return users.invokeThen('register').then(function () {
+	return users.invokeThen('register')
+		.then(function () {
 			return users.mapThen(function (user) {
 				// copy avatar
 				var gender = user.get('profile')['gender'],
 					face = localface.get(gender);
-				fs.copySync(face, User.getAvatarPath(user.id));
-				// login or not
-				if (chance.bool()) return;
-				return user.login();
+				return user.updateAvatar(face)
+					.then(function () {
+						// login or not
+						return chance.bool() ? user : user.login();
+					});
 			});
 		}).then(function () {
 			console.log('%d users added', users.length);
@@ -104,7 +106,7 @@ function addFollowship() {
 	});
 	return followshipSet
 		.mapThen(function (followship) {
-			return followship.save().catch(function(){
+			return followship.save().catch(function () {
 				followshipSet.remove(followship);
 			});
 		}).then(function () {
@@ -133,7 +135,7 @@ function addGroups() {
 	_.times(numGroups, function () {
 		groups.add(Group.forge({
 			ownerid: _.random(1, numUsers),
-			name: chance.word() + '_' + ('' + Date.now()).slice(-2, -1),
+			name: chance.word() + '_' + _.random(0, 999),
 			description: chance.paragraph(),
 			createtime: chance.date({ year: 2013 })
 		}));

@@ -99,9 +99,11 @@ function attachFriends() {
 			console.log('friends attached');
 		});
 	function f(user) {
-		var friendid = _.random(1, numUsers);
-		return user.addFriend(friendid, chance.word())
-			.catch(function () {
+		return user
+			.addFriend({
+				friendid: _.random(1, numUsers),
+				remark: chance.word()
+			}).catch(function () {
 				return user;
 			});
 	}

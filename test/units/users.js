@@ -110,7 +110,7 @@ describe('users', function () {
 		request.post(apiHost + '/friends/add', {
 			jar: jar,
 			form: {
-				'id': 2,
+				'friendid': 2,
 				'remark': 'Boss'
 			}
 		}, function (err, res, data) {

@@ -171,23 +171,26 @@ User = module.exports = syBookshelf.Model.extend({
 		});
 	},
 
-	addFriend: function (friendid, remark) {
+	addFriend: function (query) {
 		var self = this;
-		return UserFriendship.addFriendship(this.id, friendid, remark)
+		query = _.extend(query, { userid: self.id });
+		return UserFriendship.addFriendship(query)
 			.then(function () {
 				return self;
 			});
 	},
-	removeFriend: function (friendid) {
+	removeFriend: function (query) {
 		var self = this;
-		return UserFriendship.removeFriendship(this.id, friendid)
+		query = _.extend(query, { userid: self.id });
+		return UserFriendship.removeFriendship(query)
 			.then(function () {
 				return self;
 			});
 	},
-	remarkFriend: function (friendid, remark) {
+	remarkFriend: function (query) {
 		var self = this;
-		return UserFriendship.remark(this.id, friendid, remark)
+		query = _.extend(query, { userid: self.id });
+		return UserFriendship.remark(query)
 			.then(function () {
 				return self;
 			});

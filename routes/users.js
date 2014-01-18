@@ -187,10 +187,8 @@ module.exports = function (app) {
 	 * { msg: 'Avatar updated' }
 	 */
 	app.post('/api/users/friends/add', function (req, res, next) {
-		var friendid = req.body['id'],
-			remark = req.body['remark'];
 		User.forge({ id: req.session['userid'] })
-			.addFriend(friendid, remark)
+			.addFriend(req.body)
 			.then(function () {
 				res.send({ msg: 'Friend added' });
 			}).catch(next);
@@ -204,9 +202,8 @@ module.exports = function (app) {
 	 * { msg: 'Friend removed' }
 	 */
 	app.post('/api/users/friends/remove', function (req, res, next) {
-		var friendid = req.body['id'];
 		User.forge({ id: req.session['userid'] })
-			.removeFriend(friendid)
+			.removeFriend(req.body)
 			.then(function () {
 				res.send({ msg: 'Friend removed' });
 			}).catch(next);
@@ -221,10 +218,8 @@ module.exports = function (app) {
 	 * { msg: 'Friend remarked' }
 	 */
 	app.post('/api/users/friends/remark', function (req, res, next) {
-		var friendid = req.body['id'],
-			remark = req.body['remark'];
 		User.forge({ id: req.session['userid'] })
-			.remarkFriend(friendid, remark)
+			.remarkFriend(req.body)
 			.then(function () {
 				res.send({ msg: 'Friend remarked' });
 			}).catch(next);

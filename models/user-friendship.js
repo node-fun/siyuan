@@ -1,5 +1,6 @@
 var Promise = require('bluebird'),
 	syBookshelf = require('./base'),
+	errors = require('../lib/errors'),
 	UserFriendship, UserFriendshipSet;
 
 UserFriendship = module.exports = syBookshelf.Model.extend({
@@ -16,28 +17,21 @@ UserFriendship = module.exports = syBookshelf.Model.extend({
 		return this.belongsTo(require('./user'), 'friendid');
 	}
 }, {
-	getFriendship: function (from, to) {
-		return UserFriendship.forge({
-			userid: from,
-			friendid: to
-		}).fetch();
+	getFriendship: function (query) {
+		return UserFriendship.forge(query).fetch();
 	},
 
-	addFriendship: function (from, to, remark) {
-		return this.getFriendship(from, to)
+	addFriendship: function (query) {
+		return this.getFriendship(query)
 			.then(function (friendship) {
 				if (friendship) {
 					return Promise.rejected(errors[20506]);
 				}
-				return UserFriendship.forge({
-					userid: from,
-					friendid: to,
-					remark: remark
-				}).save();
+				return UserFriendship.forge(query).save();
 			});
 	},
-	removeFriendship: function (from, to) {
-		return this.getFriendship(from, to)
+	removeFriendship: function (query) {
+		return this.getFriendship(query)
 			.then(function (friendship) {
 				if (!friendship) {
 					return Promise.rejected(errors[20522]);
@@ -46,13 +40,13 @@ UserFriendship = module.exports = syBookshelf.Model.extend({
 			});
 	},
 
-	remark: function (from, to, remark) {
-		return this.getFriendship(from, to)
+	remark: function (query) {
+		return this.getFriendship(query)
 			.then(function (friendship) {
 				if (!friendship) {
 					return Promise.rejected(errors[20522]);
 				}
-				return friendship.set('remark', remark).save();
+				return friendship.set(query).save();
 			});
 	}
 });

@@ -313,6 +313,24 @@ CREATE TABLE IF NOT EXISTS `user_cooperation` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `photos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `photos` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `userid` INT NOT NULL,
+  `description` VARCHAR(280) NULL,
+  `posttime` DATETIME NULL,
+  PRIMARY KEY (`id`, `userid`),
+  INDEX `fk_photos_users1_idx` (`userid` ASC),
+  CONSTRAINT `fk_photos_users1`
+    FOREIGN KEY (`userid`)
+    REFERENCES `users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
@@ -337,5 +355,4 @@ INSERT INTO `co_status` (`id`, `name`) VALUES (1, '发布');
 INSERT INTO `co_status` (`id`, `name`) VALUES (2, '结束');
 
 COMMIT;
-
 

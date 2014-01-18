@@ -4,8 +4,7 @@ var assert = require('assert'),
 	request = require('request').defaults({ json: true }),
 	localface = require('localface'),
 	User = require('../../models/user'),
-	config = require('../../config'),
-	apiHost = 'http://localhost:' + config.port + '/api/users';
+	apiHost = host + '/api/users';
 
 describe('users', function () {
 	it('finds', function (done) {

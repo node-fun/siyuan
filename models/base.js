@@ -12,17 +12,57 @@ syModel = syBookshelf.Model = syModel.extend({
 	omitInJSON: [],
 
 	initialize: function () {
-		var ret = syModel.__super__
-			.initialize.apply(this, arguments);
+		syModel.__super__.initialize.apply(this, arguments);
+		this.on('creating', this.creating, this);
+		this.on('created', this.created, this);
+		this.on('updating', this.updating, this);
+		this.on('updated', this.updated, this);
 		this.on('saving', this.saving, this);
-		return ret;
+		this.on('saved', this.saved, this);
+		this.on('fetching', this.fetching, this);
+		this.on('fetched', this.fetched, this);
+		this.on('destroying', this.destroying, this);
+		this.on('destroyed', this.destroyed, this);
 	},
 
+	creating: function () {
+		//
+	},
+	created: function () {
+		//
+	},
+	updating: function () {
+		//
+	},
+	updated: function () {
+		//
+	},
 	saving: function () {
-		var ret = syModel.__super__
-			.initialize.apply(this, arguments);
 		// pick attributes
 		this.attributes = this.pick(this.fields);
+	},
+	saved: function () {
+		//
+	},
+	fetching: function () {
+		//
+	},
+	fetched: function () {
+		//
+	},
+	destroying: function () {
+		//
+	},
+	destroyed: function () {
+		//
+	},
+
+	toJSON: function () {
+		var ret = syModel.__super__.toJSON.apply(this, arguments);
+		// omit
+		ret = _.omit(ret, this.omitInJSON);
+		// for timestamp
+		ret = this.forTimestamp(ret);
 		return ret;
 	},
 
@@ -43,16 +83,6 @@ syModel = syBookshelf.Model = syModel.extend({
 				attrs[k] = attrs[k].toLowerCase();
 			}
 		});
-	},
-
-	toJSON: function () {
-		var ret = syModel.__super__
-			.toJSON.apply(this, arguments);
-		// omit
-		ret = _.omit(ret, this.omitInJSON);
-		// for timestamp
-		ret = this.forTimestamp(ret);
-		return ret;
 	}
 }, {
 

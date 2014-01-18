@@ -1,6 +1,8 @@
 var fs = require('fs'),
 	path = require('path'),
 	_ = require('underscore'),
+	mkdirp = require('mkdirp'),
+	Promise = require('bluebird'),
 	chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
 	errors = require('../lib/errors'),
@@ -31,14 +33,32 @@ Photo = module.exports = syBookshelf.Model.extend({
 		return ret;
 	},
 
+	creating: function () {
+		Photo.__super__.creating.apply(this, arguments);
+		this._image_ = this.get('image');
+	},
+	created: function () {
+		Photo.__super__.created.apply(this, arguments);
+		var image = this._image_;
+		delete this._image_;
+		return this.updateImage(image);
+	},
+	destroying: function () {
+		Photo.__super__.destroying.apply(this, arguments);
+		return this.deleteImage();
+	},
+
 	updateImage: function (tmp) {
 		var target = this.getPath(), self = this;
 		return new Promise(function (resolve, reject) {
 			fs.readFile(tmp, function (err, data) {
 				if (err) return reject(errors[30000]);
-				fs.writeFile(target, data, function (err) {
+				mkdirp(path.dirname(target), function (err) {
 					if (err) return reject(errors[30001]);
-					resolve(self);
+					fs.writeFile(target, data, function (err) {
+						if (err) return reject(errors[30001]);
+						resolve(self);
+					});
 				});
 			});
 		});
@@ -72,7 +92,7 @@ Photo = module.exports = syBookshelf.Model.extend({
 
 	find: function (query) {
 		var accepts = ['id', 'userid'];
-		return Photo.forge()
+		return Photos.forge()
 			.query(function (qb) {
 				_.each(accepts, function (k) {
 					if (k in query) {

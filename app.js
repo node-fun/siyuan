@@ -53,6 +53,10 @@ app.use('/static', express.static(config.staticDir));
 
 // listen on port
 app.listen(port, function () {
-	console.log('server started');
-	console.log('port: %d, pid: %d', port, process.pid);
+	console.log([
+		'',
+		'server started',
+		'port: %d, pid: %d',
+		''
+	].join('\n'), port, process.pid);
 });

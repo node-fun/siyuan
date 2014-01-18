@@ -39,7 +39,6 @@ describe('groups', function () {
 				groupid: groupid
 			}
 		}, function(err, res, data){
-			console.log(data, err);
 			assert.ok(data['msg']);
 			done();
 		});
@@ -52,7 +51,6 @@ describe('groups', function () {
 				groupid: groupid
 			}
 		}, function(err, res, data){
-			console.log(data, err);
 			assert.ok(data['msg']);
 			done();
 		});
@@ -63,7 +61,6 @@ describe('groups', function () {
 		request(apiHost + '/my', {
 			jar: jar
 		}, function(err, res, data){
-			console.log(data, err);
 			assert.ok(data['groups']);
 			done();
 		});

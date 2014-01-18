@@ -36,25 +36,21 @@ module.exports = function (app) {
 	app.post('/api/photos/post', function (req, res, next) {
 		var user = req.user;
 		if (!user) return next(errors[21301]);
+		if (!req.files['image']) return next(errors[20007]);
+		var file = req.files['image'],
+			_4M = 4 * 1024 * 1024;
+		if (file['type'] != 'image/jpeg') return next(errors[20005]);
+		if (file['size'] > _4M) return next(errors[20006]);
 		delete req.body['id'];
 		req.body['userid'] = user.id;
 		var photo = Photo.forge(req.body);
-		photo.save()
+		photo.set('image', file['path']).save()
 			.then(function () {
-				var file = req.files['image'],
-					_4M = 4 * 1024 * 1024;
-				if (file['type'] != 'image/jpeg') return next(errors[20005]);
-				if (file['size'] > _4M) return next(errors[20006]);
-				return photo.updateImage(file['path']);
-			}).then(function () {
 				next({
 					msg: 'Photo posted',
 					id: photo.id
 				});
-			}).catch(function (err) {
-				next(err);
-				photo.destroy();
-			});
+			}).catch(next);
 	});
 
 	/**
@@ -100,10 +96,8 @@ module.exports = function (app) {
 					return Promise.rejected(errors[20102]);
 				}
 			}).then(function () {
-				return photo.deleteImage();
-			}).then(function () {
 				return photo.destroy();
-			}).then(function(){
+			}).then(function () {
 				next({ msg: 'Photo deleted' });
 			}).catch(next);
 	});

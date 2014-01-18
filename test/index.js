@@ -42,11 +42,15 @@ describe('server', function () {
 	});
 });
 
+global.config = config;
+global.host = 'http://localhost:' + config.port;
 require('./units/admin');
+
 global.authData = {
-		username: '_test_',
-		password: '123321'
-	};
+	username: '_test_',
+	password: '123321'
+};
 global.jar = request.jar();
 require('./units/users');
+require('./units/photos');
 require('./units/groups');

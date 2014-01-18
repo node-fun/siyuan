@@ -14,7 +14,7 @@ module.exports = function (app) {
 	});
 	app.use('/api', function (err, req, res, next) {
 		if (!err['code']) {
-			console.error(err.stack);
+			console.error(err.stack ? err.stack : err);
 			err = errors[10001];
 		}
 		res.sendErr(err);

@@ -7,7 +7,6 @@ var fs = require('fs'),
 	encrypt = require('../lib/encrypt'),
 	syBookshelf = require('./base'),
 	UserProfile = require('./user-profile'),
-	UserFriendship = require('./user-friendship'),
 	Issue = require('./issue'),
 	config = require('../config'),
 	avatarDir = config.avatarDir,
@@ -28,13 +27,17 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 
 	saving: function () {
-		User.__super__.saving.apply(this, arguments);
-		// fix lower case
-		this.fixLowerCase(['username']);
-		if (this.hasChanged('password')) {
-			// encrypt password
-			this.set('password', encrypt(this.get('password')));
-		}
+		var self = this;
+		return User.__super__.saving.call(self)
+			.then(function () {
+				// fix lower case
+				self.fixLowerCase(['username']);
+				if (self.hasChanged('password')) {
+					// encrypt password
+					self.set('password', encrypt(self.get('password')));
+				}
+				return self;
+			});
 	},
 
 	toJSON: function () {
@@ -49,19 +52,29 @@ User = module.exports = syBookshelf.Model.extend({
 	profile: function () {
 		return this.hasOne(UserProfile, 'userid');
 	},
-	friendshipSet: function () {
-		return this.hasMany(UserFriendship, 'userid');
+	following: function () {
+		return this.hasMany(require('./followship'), 'userid');
+	},
+	followers: function () {
+		return this.hasMany(require('./followship'), 'followid');
+	},
+	groups: function () {
+		return this.belongsToMany(Group, 'group_membership', 'userid', 'groupid');
 	},
 	issues: function () {
 		return this.hasMany(Issue, 'userid');
 	},
 
-	countFriends: function () {
+	countFollowship: function () {
 		var self = this;
-		return this.friendshipSet().fetch()
-			.then(function (friendshipSet) {
-				var numFriends = friendshipSet.length;
-				return self.set('numFriends', numFriends);
+		return self.following().fetch()
+			.then(function (followees) {
+				var numFollowing = followees.length;
+				return self.set('numFollowing', numFollowing)
+					.followers().fetch();
+			}).then(function (followers) {
+				var numFollowers = followers.length;
+				return self.set('numFollowers', numFollowers);
 			});
 	},
 	countIssues: function () {
@@ -82,7 +95,7 @@ User = module.exports = syBookshelf.Model.extend({
 				return user.load(['profile']);
 			}).then(function (user) {
 				if (!user) return user;
-				return user.countFriends();
+				return user.countFollowship();
 			}).then(function (user) {
 				if (!user) return user;
 				return user.countIssues();
@@ -168,35 +181,6 @@ User = module.exports = syBookshelf.Model.extend({
 				});
 			});
 		});
-	},
-
-	addFriend: function (query) {
-		var self = this;
-		query = _.extend(query, { userid: self.id });
-		return UserFriendship.addFriendship(query)
-			.then(function () {
-				return self;
-			});
-	},
-	removeFriend: function (query) {
-		var self = this;
-		query = _.extend(query, { userid: self.id });
-		return UserFriendship.removeFriendship(query)
-			.then(function () {
-				return self;
-			});
-	},
-	remarkFriend: function (query) {
-		var self = this;
-		query = _.extend(query, { userid: self.id });
-		return UserFriendship.remark(query)
-			.then(function () {
-				return self;
-			});
-	},
-
-	groups: function(){
-		return this.belongsToMany(Group, 'group_membership', 'userid', 'groupid');
 	}
 }, {
 	randomForge: function () {
@@ -268,11 +252,10 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 
 	view: function (query) {
-		return User.forge({ id: query['id'] })
-			.fetch()
+		return User.forge({ id: query['id'] }).fetch()
 			.then(function (user) {
 				if (!user) return Promise.rejected(errors[20003]);
-				return user.load(['profile', 'friendshipSet.friend']);
+				return user.load(['profile', 'following.followee', 'followers.user']);
 			});
 	},
 

@@ -17,9 +17,9 @@ module.exports = {
 	env: env,
 	rootDir: rootDir,
 
-	staticDir: path.join(rootDir, 'static'),
 	docsDir: path.join(rootDir, 'docs'),
-	adminDir: path.join(rootDir, 'static/admin'),
+	staticDir: path.join(rootDir, 'static'),
+	adminDir: path.join(staticDir, 'admin'),
 
 	defaultContentDir: defaultContentDir,
 	contentDir: contentDir,

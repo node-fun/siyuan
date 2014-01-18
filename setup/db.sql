@@ -56,23 +56,24 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `user_friendship`
+-- Table `user_followship`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `user_friendship` (
+CREATE TABLE IF NOT EXISTS `user_followship` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `userid` INT NULL,
-  `friendid` INT NULL,
+  `followid` INT NULL,
   `remark` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_user_friendship_1_idx` (`userid` ASC),
-  INDEX `fk_user_friendship_2_idx` (`friendid` ASC),
-  CONSTRAINT `fk_user_friendship_1`
+  INDEX `fk_user_followship_1_idx` (`userid` ASC),
+  INDEX `fk_user_followship_2_idx` (`followid` ASC),
+  UNIQUE INDEX `uq_user_followship_1_idx` (`userid` ASC, `followid` ASC),
+  CONSTRAINT `fk_user_followship_1`
     FOREIGN KEY (`userid`)
     REFERENCES `users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_user_friendship_2`
-    FOREIGN KEY (`friendid`)
+  CONSTRAINT `fk_user_followship_2`
+    FOREIGN KEY (`followid`)
     REFERENCES `users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)

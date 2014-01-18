@@ -22,7 +22,6 @@ Photo = module.exports = syBookshelf.Model.extend({
 			posttime: new Date()
 		};
 	},
-
 	toJSON: function () {
 		var ret = Photo.__super__.toJSON.apply(this, arguments);
 		// append avatar
@@ -32,19 +31,19 @@ Photo = module.exports = syBookshelf.Model.extend({
 		return ret;
 	},
 
-	creating: function () {
-		Photo.__super__.creating.apply(this, arguments);
-		this._image_ = this.get('image');
-	},
 	created: function () {
-		Photo.__super__.created.apply(this, arguments);
-		var image = this._image_;
-		delete this._image_;
-		return this.updateImage(image);
+		var self = this;
+		return Photo.__super__.created.call(self)
+			.then(function () {
+				return self.updateImage(self.data('image'));
+			});
 	},
 	destroying: function () {
-		Photo.__super__.destroying.apply(this, arguments);
-		return this.deleteImage();
+		var self = this;
+		return Photo.__super__.destroying.call(self)
+			.then(function(){
+				return self.deleteImage();
+			});
 	},
 
 	updateImage: function (tmp) {

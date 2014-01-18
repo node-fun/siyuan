@@ -105,16 +105,4 @@ describe('users', function () {
 		form = req.form();
 		form.append('avatar', fs.createReadStream(file));
 	});
-	it('adds friend', function (done) {
-		request.post(apiHost + '/friends/add', {
-			jar: jar,
-			form: {
-				'friendid': 2,
-				'remark': 'Boss'
-			}
-		}, function (err, res, data) {
-			assert.ok(data['msg']);
-			done();
-		});
-	});
 });

@@ -9,6 +9,8 @@ var fs = require('fs-extra'),
 	dbName = connConfig.database,
 	User = require('../models/user'),
 	Users = User.Set,
+	Followship = require('../models/followship'),
+	FollowshipSet = Followship.Set,
 	Admin = require('../models/admin'),
 	Admins = Admin.Set,
 	Group = require('../models/group'),
@@ -24,6 +26,7 @@ var fs = require('fs-extra'),
 	Photo = require('../models/photo'),
 	Photos = Photo.Set,
 	numUsers = 35,
+	numFollowship = numUsers * 3,
 	numGroups = ~~(numUsers / 5),
 	numGroupMembers = numGroups * 10,
 	numActivities = numGroups * 2,
@@ -37,7 +40,7 @@ try {
 	fs.removeSync(config.contentDir);
 	fs.copySync(config.defaultContentDir, config.contentDir);
 	console.log('content directory reset');
-} catch(err) {
+} catch (err) {
 	done(err);
 }
 
@@ -53,8 +56,8 @@ execsql.config(connConfig)
 			if (err) throw err;
 			console.log('database setup');
 			if (env != 'production') {
-				createUsers()
-					.then(attachFriends)
+				addUsers()
+					.then(addFollowship)
 					.then(addAdmins)
 					.then(addGroups)
 					.then(addGroupMembers)
@@ -70,55 +73,43 @@ execsql.config(connConfig)
 		});
 	});
 
-function createUsers() {
+function addUsers() {
 	var users = Users.forge();
 	_.times(numUsers, function () {
 		users.add(User.randomForge());
 	});
-	return users
-		.mapThen(function (user) {
-			return user.register().catch(function () {
-				users.remove(user);
-			});
-		}).then(function () {
+	return users.invokeThen('register').then(function () {
 			return users.mapThen(function (user) {
 				// copy avatar
 				var gender = user.get('profile')['gender'],
 					face = localface.get(gender);
-				fs.createReadStream(face).pipe(
-					fs.createWriteStream(User.getAvatarPath(user.id))
-				);
+				fs.copySync(face, User.getAvatarPath(user.id));
 				// login or not
 				if (chance.bool()) return;
 				return user.login();
 			});
 		}).then(function () {
-			console.log('%d users created', numUsers);
+			console.log('%d users added', users.length);
 		}).catch(done);
 }
-function attachFriends() {
-	return Users.forge().fetch()
-		.then(function (users) {
-			return users.mapThen(function (user) {
-				var numFriends = _.random(1, 7), p;
-				_.times(numFriends, function () {
-					if (!p) return p = f(user);
-					p = p.then(f);
-				});
-				return p;
+function addFollowship() {
+	var followshipSet = FollowshipSet.forge();
+	_.times(numFollowship, function () {
+		var followship = Followship.forge({
+			userid: _.random(1, numUsers),
+			followid: _.random(1, numUsers),
+			remark: chance.word()
+		});
+		followshipSet.add(followship);
+	});
+	return followshipSet
+		.mapThen(function (followship) {
+			return followship.save().catch(function(){
+				followshipSet.remove(followship);
 			});
 		}).then(function () {
-			console.log('friends attached');
+			console.log('%d followship added', followshipSet.length);
 		});
-	function f(user) {
-		return user
-			.addFriend({
-				friendid: _.random(1, numUsers),
-				remark: chance.word()
-			}).catch(function () {
-				return user;
-			});
-	}
 }
 
 function addAdmins() {
@@ -142,7 +133,7 @@ function addGroups() {
 	_.times(numGroups, function () {
 		groups.add(Group.forge({
 			ownerid: _.random(1, numUsers),
-			name:  chance.word() + '_' + (''+Date.now()).slice(-2, -1),
+			name: chance.word() + '_' + ('' + Date.now()).slice(-2, -1),
 			description: chance.paragraph(),
 			createtime: chance.date({ year: 2013 })
 		}));
@@ -216,10 +207,7 @@ function addPhotos() {
 	_.times(numPhotos, function () {
 		var photo = Photo.randomForge(),
 			face = localface.get(_.sample(['f', 'm']));
-		photo.set({
-			userid: _.random(1, numUsers),
-			image: face
-		});
+		photo.set('userid', _.random(1, numUsers)).data('image', face);
 		photos.add(photo);
 	});
 	return photos.invokeThen('save')

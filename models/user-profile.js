@@ -12,11 +12,13 @@ UserProfile = module.exports = syBookshelf.Model.extend({
 	omitInJSON: ['id', 'userid'],
 
 	saving: function () {
-		var ret = UserProfile.__super__
-			.saving.apply(this, arguments);
-		// fix lower case
-		this.fixLowerCase(['email', 'gender']);
-		return ret;
+		var self = this;
+		return UserProfile.__super__.saving.call(self)
+			.then(function () {
+				// fix lower case
+				self.fixLowerCase(['email', 'gender']);
+				return self;
+			});
 	}
 }, {
 	randomForge: function () {

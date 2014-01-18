@@ -7,12 +7,7 @@ UserActivity = module.exports = syBookshelf.Model.extend({
 	tableName: 'user_activity',
 	fields: [
 		'id', 'userid', 'activityid', 'isaccepted'
-	],
-
-	saving: function () {
-		return UserActivity.__super__
-			.saving.apply(this, arguments);
-	}
+	]
 }, {
 
 });

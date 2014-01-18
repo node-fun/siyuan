@@ -2,6 +2,7 @@ var errors = require('../lib/errors');
 
 module.exports = function (app) {
 	require('./users')(app);
+	require('./followship')(app);
 	require('./admin')(app);
 	require('./groups')(app);
 	require('./activities')(app);

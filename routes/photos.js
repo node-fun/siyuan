@@ -44,7 +44,7 @@ module.exports = function (app) {
 		delete req.body['id'];
 		req.body['userid'] = user.id;
 		var photo = Photo.forge(req.body);
-		photo.set('image', file['path']).save()
+		photo.data('image', file['path']).save()
 			.then(function () {
 				next({
 					msg: 'Photo posted',

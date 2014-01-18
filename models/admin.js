@@ -21,7 +21,7 @@ Admin = module.exports = syBookshelf.Model.extend({
 	},
 
 	saving: function () {
-		Admin.__super__.saving.apply(this, arguments);
+		Admin.__super__.saving.call(this);
 		//fix lower case
 		this.fixLowerCase(['username']);
 		if (this.hasChanged('password')) {

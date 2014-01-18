@@ -233,6 +233,15 @@ module.exports = function (app) {
 				next({ msg: &#x27;Password reset&#x27; });
 			}).catch(next);
 	});
+	
+	/**
+	 * POST /api/users/profile/update
+	 * @method 更新资料
+	 * &#x27;email&#x27;, &#x27;nickname&#x27;, &#x27;name&#x27;, &#x27;gender&#x27;,
+	 &#x27;age&#x27;, &#x27;grade&#x27;, &#x27;university&#x27;, &#x27;major&#x27;
+	 * @return {JSON} 
+	 * { msg: &#x27;Profile updated&#x27; }
+	 */
 	app.post(&#x27;/api/users/profile/update&#x27;, function (req, res, next) {
 		User.forge({ id: req.session[&#x27;userid&#x27;] })
 			.updateProfile(req.body)
@@ -240,6 +249,14 @@ module.exports = function (app) {
 				next({ msg: &#x27;Profile updated&#x27; });
 			}).catch(next);
 	});
+	
+	/**
+	 * POST /api/users/avatar/update
+	 * @method 更新头像
+	 * @param {File} avatar
+	 * @return {JSON} 
+	 * { msg: &#x27;Avatar updated&#x27; }
+	 */
 	app.post(&#x27;/api/users/avatar/update&#x27;, function (req, res, next) {
 		if (!req.files[&#x27;avatar&#x27;]) return next(errors[20007]);
 		var file = req.files[&#x27;avatar&#x27;],
@@ -253,6 +270,14 @@ module.exports = function (app) {
 			}).catch(next);
 	});
 
+	/**
+	 * POST /api/users/friends/add
+	 * @method 加好友
+	 * @param {Number} id 要加的好友id
+	 * @param {String} remark 备注名
+	 * @return {JSON}
+	 * { msg: &#x27;Avatar updated&#x27; }
+	 */
 	app.post(&#x27;/api/users/friends/add&#x27;, function (req, res, next) {
 		var friendid = req.body[&#x27;id&#x27;],
 			remark = req.body[&#x27;remark&#x27;];
@@ -262,6 +287,14 @@ module.exports = function (app) {
 				res.send({ msg: &#x27;Friend added&#x27; });
 			}).catch(next);
 	});
+
+	/**
+	 * POST /api/users/friends/remove
+	 * @method 删除好友
+	 * @param {Number} id 要删除的好友id
+	 * @return {JSON}
+	 * { msg: &#x27;Friend removed&#x27; }
+	 */
 	app.post(&#x27;/api/users/friends/remove&#x27;, function (req, res, next) {
 		var friendid = req.body[&#x27;id&#x27;];
 		User.forge({ id: req.session[&#x27;userid&#x27;] })
@@ -270,6 +303,15 @@ module.exports = function (app) {
 				res.send({ msg: &#x27;Friend removed&#x27; });
 			}).catch(next);
 	});
+
+	/**
+	 * POST /api/users/friends/remark
+	 * @method 备注好友
+	 * @param {Number} id 要备注的好友id
+	 * @param {String} remark 备注名
+	 * @return {JSON}
+	 * { msg: &#x27;Friend remarked&#x27; }
+	 */
 	app.post(&#x27;/api/users/friends/remark&#x27;, function (req, res, next) {
 		var friendid = req.body[&#x27;id&#x27;],
 			remark = req.body[&#x27;remark&#x27;];

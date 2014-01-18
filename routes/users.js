@@ -135,6 +135,15 @@ module.exports = function (app) {
 				next({ msg: 'Password reset' });
 			}).catch(next);
 	});
+	
+	/**
+	 * POST /api/users/profile/update
+	 * @method 更新资料
+	 * 'email', 'nickname', 'name', 'gender',
+	 'age', 'grade', 'university', 'major'
+	 * @return {JSON} 
+	 * { msg: 'Profile updated' }
+	 */
 	app.post('/api/users/profile/update', function (req, res, next) {
 		User.forge({ id: req.session['userid'] })
 			.updateProfile(req.body)
@@ -142,6 +151,14 @@ module.exports = function (app) {
 				next({ msg: 'Profile updated' });
 			}).catch(next);
 	});
+	
+	/**
+	 * POST /api/users/avatar/update
+	 * @method 更新头像
+	 * @param {File} avatar
+	 * @return {JSON} 
+	 * { msg: 'Avatar updated' }
+	 */
 	app.post('/api/users/avatar/update', function (req, res, next) {
 		if (!req.files['avatar']) return next(errors[20007]);
 		var file = req.files['avatar'],
@@ -155,6 +172,14 @@ module.exports = function (app) {
 			}).catch(next);
 	});
 
+	/**
+	 * POST /api/users/friends/add
+	 * @method 加好友
+	 * @param {Number} id 要加的好友id
+	 * @param {String} remark 备注名
+	 * @return {JSON}
+	 * { msg: 'Avatar updated' }
+	 */
 	app.post('/api/users/friends/add', function (req, res, next) {
 		var friendid = req.body['id'],
 			remark = req.body['remark'];
@@ -164,6 +189,14 @@ module.exports = function (app) {
 				res.send({ msg: 'Friend added' });
 			}).catch(next);
 	});
+
+	/**
+	 * POST /api/users/friends/remove
+	 * @method 删除好友
+	 * @param {Number} id 要删除的好友id
+	 * @return {JSON}
+	 * { msg: 'Friend removed' }
+	 */
 	app.post('/api/users/friends/remove', function (req, res, next) {
 		var friendid = req.body['id'];
 		User.forge({ id: req.session['userid'] })
@@ -172,6 +205,15 @@ module.exports = function (app) {
 				res.send({ msg: 'Friend removed' });
 			}).catch(next);
 	});
+
+	/**
+	 * POST /api/users/friends/remark
+	 * @method 备注好友
+	 * @param {Number} id 要备注的好友id
+	 * @param {String} remark 备注名
+	 * @return {JSON}
+	 * { msg: 'Friend remarked' }
+	 */
 	app.post('/api/users/friends/remark', function (req, res, next) {
 		var friendid = req.body['id'],
 			remark = req.body['remark'];

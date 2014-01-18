@@ -957,14 +957,14 @@
                 }
             ],
             "return": {
-                "description": "",
+                "description": "\n{ msg: 'Photo updated' }",
                 "type": "JSON"
             },
             "class": "相片"
         },
         {
             "file": "routes\\photos.js",
-            "line": 75,
+            "line": 76,
             "description": "GET /api/photos/delete",
             "itemtype": "method",
             "name": "删除相片",
@@ -976,7 +976,7 @@
                 }
             ],
             "return": {
-                "description": "",
+                "description": "\n{ msg: 'Photo deleted' }",
                 "type": "JSON"
             },
             "class": "相片"
@@ -1201,6 +1201,104 @@
             ],
             "return": {
                 "description": "\n{ msg: 'Password reset' }",
+                "type": "JSON"
+            },
+            "class": "用户"
+        },
+        {
+            "file": "routes\\users.js",
+            "line": 139,
+            "description": "POST /api/users/profile/update",
+            "itemtype": "method",
+            "name": "更新资料\n'email', 'nickname', 'name', 'gender',\n\t 'age', 'grade', 'university', 'major'",
+            "return": {
+                "description": "\n{ msg: 'Profile updated' }",
+                "type": "JSON"
+            },
+            "class": "用户"
+        },
+        {
+            "file": "routes\\users.js",
+            "line": 155,
+            "description": "POST /api/users/avatar/update",
+            "itemtype": "method",
+            "name": "更新头像",
+            "params": [
+                {
+                    "name": "avatar",
+                    "description": "",
+                    "type": "File"
+                }
+            ],
+            "return": {
+                "description": "\n{ msg: 'Avatar updated' }",
+                "type": "JSON"
+            },
+            "class": "用户"
+        },
+        {
+            "file": "routes\\users.js",
+            "line": 175,
+            "description": "POST /api/users/friends/add",
+            "itemtype": "method",
+            "name": "加好友",
+            "params": [
+                {
+                    "name": "id",
+                    "description": "要加的好友id",
+                    "type": "Number"
+                },
+                {
+                    "name": "remark",
+                    "description": "备注名",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "\n{ msg: 'Avatar updated' }",
+                "type": "JSON"
+            },
+            "class": "用户"
+        },
+        {
+            "file": "routes\\users.js",
+            "line": 193,
+            "description": "POST /api/users/friends/remove",
+            "itemtype": "method",
+            "name": "删除好友",
+            "params": [
+                {
+                    "name": "id",
+                    "description": "要删除的好友id",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "\n{ msg: 'Friend removed' }",
+                "type": "JSON"
+            },
+            "class": "用户"
+        },
+        {
+            "file": "routes\\users.js",
+            "line": 209,
+            "description": "POST /api/users/friends/remark",
+            "itemtype": "method",
+            "name": "备注好友",
+            "params": [
+                {
+                    "name": "id",
+                    "description": "要备注的好友id",
+                    "type": "Number"
+                },
+                {
+                    "name": "remark",
+                    "description": "备注名",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "\n{ msg: 'Friend remarked' }",
                 "type": "JSON"
             },
             "class": "用户"

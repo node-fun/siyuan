@@ -152,6 +152,7 @@ module.exports = function (app) {
 	 * @param {String} title 标题
 	 * @param {String} body 内容
 	 * @return {JSON}
+	 * { msg: &#x27;Photo updated&#x27; }
 	 */
 	app.post(&#x27;/api/photos/update&#x27;, function (req, res, next) {
 		var user = req.user;
@@ -175,6 +176,7 @@ module.exports = function (app) {
 	 * @method 删除相片
 	 * @param {Number} id 相片ID
 	 * @return {JSON}
+	 * { msg: &#x27;Photo deleted&#x27; }
 	 */
 	app.post(&#x27;/api/photos/delete&#x27;, function (req, res, next) {
 		var user = req.user;

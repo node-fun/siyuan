@@ -54,6 +54,7 @@ module.exports = function (app) {
 	 * @param {String} title 标题
 	 * @param {String} body 内容
 	 * @return {JSON}
+	 * { msg: 'Photo updated' }
 	 */
 	app.post('/api/photos/update', function (req, res, next) {
 		var user = req.user;
@@ -77,6 +78,7 @@ module.exports = function (app) {
 	 * @method 删除相片
 	 * @param {Number} id 相片ID
 	 * @return {JSON}
+	 * { msg: 'Photo deleted' }
 	 */
 	app.post('/api/photos/delete', function (req, res, next) {
 		var user = req.user;

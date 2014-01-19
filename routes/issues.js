@@ -26,7 +26,7 @@ module.exports = function (app) {
 
 	/**
 	 * GET /api/issues/search
-	 * @method 话题搜索列表
+	 * @method 话题搜索
 	 * @param {Number} [userid] 作者ID
 	 * @param {String} [title] 标题关键字
 	 * @param {String} [body] 内容关键字
@@ -42,7 +42,7 @@ module.exports = function (app) {
 	/**
 	 * GET /api/issues/view
 	 * @method 话题详情
-	 * @param {Number} [id] 话题id
+	 * @param {Number} id 话题ID
 	 * @return {JSON}
 	 */
 	app.get('/api/issues/view', function (req, res, next) {
@@ -58,10 +58,6 @@ module.exports = function (app) {
 	 * @param {String} title 标题
 	 * @param {String} body 内容
 	 * @return {JSON}
-	 * {
-		  "msg": "Issue posted",
-		  "id": 106
-		}
 	 */
 	app.post('/api/issues/post', function (req, res, next) {
 		var user = req.user;
@@ -80,8 +76,8 @@ module.exports = function (app) {
 	 * POST /api/issues/update
 	 * @method 更新话题
 	 * @param {Number} id 话题ID
-	 * @param {String} title 标题
-	 * @param {String} body 内容
+	 * @param {String} [title] 标题
+	 * @param {String} [body] 内容
 	 * @return {JSON}
 	 */
 	app.post('/api/issues/update', function (req, res, next) {
@@ -123,31 +119,70 @@ module.exports = function (app) {
 	});
 
 	/**
-	 * POST /api/issues/comment
-	 * @method 发表话题评论
-	 * @param {Number} id 话题id
+	 * POST /api/issues/comments/post
+	 * @method 评论话题
+	 * @param {Number} issueid 话题ID
 	 * @param {String} body 内容
 	 * @return {JSON}
 	 */
-	app.post('/api/issues/comment', function (req, res, next) {
+	app.post('/api/issues/comments/post', function (req, res, next) {
 		var user = req.user;
 		if (!user) return next(errors[21301]);
-		var issueid = ~~req.body['id'];
-		delete req.body['id'];
-		Issue.forge({ id: issueid }).fetch()
+		Issue.forge({ id: req.body['issueid'] }).fetch()
 			.then(function (issue) {
-				if (!issue) throw errors[20603];
+				if (!issue) return Promise.rejected(errors[20603]);
+				req.body['userid'] = user.id;
+				return IssueComment.forge(req.body).save();
+			}).then(function (comment) {
+				next({
+					msg: 'Comment posted',
+					id: comment.id
+				});
+			}).catch(next);
+	});
+
+	/**
+	 * POST /api/issues/comments/update
+	 * @method 更新评论
+	 * @param {Number} id 评论ID
+	 * @param {String} [body] 内容
+	 * @return {JSON}
+	 */
+	app.post('/api/issues/comments/update', function (req, res, next) {
+		var user = req.user;
+		if (!user) return next(errors[21301]);
+		var id = req.body['id'];
+		delete req.body['id'];
+		IssueComment.forge({ id: id }).fetch()
+			.then(function (comment) {
+				if (!comment) return Promise.rejected(errors[20603]);
+				if (comment.get('userid') != user.id) {
+					return Promise.rejected(errors[20102]);
+				}
+				return comment.set(req.body).save();
 			}).then(function () {
-				IssueComment.forge(_.extend(req.body, {
-						issueid: issueid,
-						userid: user.id
-					})).save()
-					.then(function (comment) {
-						next({
-							msg: 'Issue commented',
-							id: comment.id
-						});
-					}).catch(next);
-			});
+				next({ msg: 'Comment updated' });
+			}).catch(next);
+	});
+
+	/**
+	 * POST /api/issues/comments/delete
+	 * @method 删除评论
+	 * @param {Number} id 评论ID
+	 * @return {JSON}
+	 */
+	app.post('/api/issues/comments/delete', function (req, res, next) {
+		var user = req.user;
+		if (!user) return next(errors[21301]);
+		IssueComment.forge({ id: req.body['id'] }).fetch()
+			.then(function (comment) {
+				if (!comment) return Promise.rejected(errors[20603]);
+				if (comment.get('userid') != user.id) {
+					return Promise.rejected(errors[20102]);
+				}
+				return comment.destroy();
+			}).then(function () {
+				next({ msg: 'Comment deleted' });
+			}).catch(next);
 	});
 };

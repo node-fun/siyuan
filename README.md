@@ -30,7 +30,7 @@ An SNS backend framework, with Node and MySQL
 	$ node setup [environment]
 	```
 
-	Usually, environment could be either `development` or `production`(default).<br>
+	Usually, environment could be either `development`(default) or `production`.
 	Testing records will be inserted with a development mode.
 
 ## Run

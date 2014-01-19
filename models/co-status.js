@@ -8,7 +8,11 @@ var _ = require('underscore'),
 
 CoStatus = module.exports = syBookshelf.Model.extend({
 	tableName: 'co_status',
-	fields: ['id', 'name']
+	fields: ['id', 'name'],
+
+	saving: function () {
+		return CoStatus.__super__.saving.apply(this, arguments);
+	}
 });
 
 CoStatuses = CoStatus.Set = syBookshelf.Collection.extend({

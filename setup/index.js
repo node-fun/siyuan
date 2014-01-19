@@ -25,6 +25,8 @@ var fs = require('fs-extra'),
 	Issues = Issue.Set,
 	Photo = require('../models/photo'),
 	Photos = Photo.Set,
+	Cooperation = require('../models/cooperation'),
+	Cooperations = Cooperation.Set,
 	numUsers = 35,
 	numFollowship = numUsers * 3,
 	numGroups = ~~(numUsers / 5),
@@ -33,6 +35,7 @@ var fs = require('fs-extra'),
 	numUserActivitys = numActivities * 5,
 	numIssues = numUsers * 3,
 	numPhotos = numUsers * 3,
+	numCooperations = 20,
 	sqlFile = __dirname + '/db.sql';
 
 // copy directories
@@ -65,6 +68,7 @@ execsql.config(connConfig)
 					.then(addUserActivitys)
 					.then(addIssues)
 					.then(addPhotos)
+					.then(addCooperations)
 					.then(done)
 					.catch(done);
 			} else {
@@ -215,6 +219,17 @@ function addPhotos() {
 	return photos.invokeThen('save')
 		.then(function () {
 			console.log('%d photos added', numPhotos);
+		});
+}
+
+function addCooperations() {
+	var cooperations = Cooperations.forge();
+	_.times(numCooperations, function () {
+		cooperations.add(Cooperation.randomForge());
+	});
+	return cooperations.invokeThen('save')
+		.then(function () {
+			console.log('%d cooperations added', numCooperations);
 		});
 }
 

@@ -14,7 +14,7 @@ Group = module.exports = syBookshelf.Model.extend({
 	fields: [
 		'id', 'ownerid', 'name', 'description', 'createtime', 'avatar'
 	],
-	defaults: function(){
+	defaults: function () {
 		return {
 			createtime: new Date()
 		};

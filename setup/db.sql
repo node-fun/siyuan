@@ -262,6 +262,7 @@ CREATE TABLE IF NOT EXISTS `cooperations` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL,
   `ownerid` INT NULL,
+  `description` VARCHAR(45) NULL,
   `company` VARCHAR(45) NULL,
   `deadline` VARCHAR(45) NULL,
   `avatar` VARCHAR(45) NULL,

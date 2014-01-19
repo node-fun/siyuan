@@ -8,7 +8,7 @@ module.exports = function (app) {
 	require('./activities')(app);
 	require('./issues')(app);
 	require('./photos')(app);
-
+	require('./cooperations')(app);
 	app.use('/api', function (data, req, res, next) {
 		if (data instanceof Error) return next(data);
 		res.send(data);

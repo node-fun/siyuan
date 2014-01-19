@@ -10,14 +10,14 @@ GroupMembership = module.exports = syBookshelf.Model.extend({
 	fields: [
 		'id', 'groupid', 'userid', 'isowner', 'isadmin', 'remark', 'restrict'
 	],
-	defaults: function(){
+	defaults: function () {
 		return {
 			isowner: 0,
 			isadmin: 0
 		};
 	},
-	omitInJSON: ['id','groupid'],
-	member: function(){
+	omitInJSON: ['id', 'groupid'],
+	member: function () {
 		return this.belongsTo(require('./user'), 'userid');
 	}
 }, {

@@ -21,20 +21,34 @@ var fs = require('fs'),
 Cooperation = module.exports = syBookshelf.Model.extend({
 	tableName: 'cooperations',
 	fields: [
-		'id', 'name', 'company', 'deadline', 'avatar', 'statusid'
+		'id', 'name', 'company', 'deadline', 'avatar', 'statusid', 'ownerid'
 	],
 	saving: function () {
 		return Cooperation.__super__
 			.saving.apply(this, arguments);
 	},
-	status: function() {
-		return this.belongsTo(CoStatuses, fkStatus);
+	status: function () {
+		return this.belongsTo(CoStatus, fkStatus);
+	},
+
+	createCooperation: function (ownerid, name, description, company, deadline, avatar, statusid) {
+		if (ownerid == null) return Promise.rejected(errors[40001]);
+		return Cooperation.forge({
+			'name': name,
+			'ownerid': ownerid,
+			'description': description
+		});
 	}
+
 }, {
 	randomForge: function () {
 		var status = _.random(1, 2);
 		return Cooperation.forge({
 			'name': chance.word(),
+			'ownerid': chance.integer({
+				min: 1,
+				max: 20
+			}),
 			'company': chance.word(),
 			'deadline': chance.date({ string: true }),
 			'avatar': chance.word(),

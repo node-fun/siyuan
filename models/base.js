@@ -81,6 +81,10 @@ syModel = syBookshelf.Model = syModel.extend({
 		delete this._data[key];
 		return this;
 	},
+	removeAttr: function (key) {
+		delete this.attributes[key];
+		return this;
+	},
 
 	// Jayin needs Timestamp as Datetime
 	forTimestamp: function (attrs) {

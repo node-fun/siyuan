@@ -58,6 +58,31 @@ Followship = module.exports = syBookshelf.Model.extend({
 					_.pick(query, 'remark')
 				).save();
 			});
+	},
+
+	findFollowing: function (query) {
+		return FollowshipSet.forge()
+			.query(function (qb) {
+				['userid'].forEach(function (k) {
+					qb.where(k, query[k]);
+				});
+			}).query('offset', query['offset'])
+			.query('limit', query['limit'])
+			.fetch({
+				withRelated: ['followee.profile']
+			});
+	},
+	findFollowers: function (query) {
+		return FollowshipSet.forge()
+			.query(function (qb) {
+				['followid'].forEach(function (k) {
+					qb.where(k, query[k]);
+				});
+			}).query('offset', query['offset'])
+			.query('limit', query['limit'])
+			.fetch({
+				withRelated: ['user.profile']
+			});
 	}
 });
 

@@ -8,8 +8,8 @@ var _ = require('underscore'),
 module.exports = function (app) {
 	/**
 	 * POST /api/followship/follow
-	 * @method 加好友
-	 * @param {Number} followid 用户ID
+	 * @method 关注用户
+	 * @param {Number} followid 被关注者ID
 	 * @param {String} remark 备注名
 	 * @return {JSON}
 	 */
@@ -25,8 +25,8 @@ module.exports = function (app) {
 
 	/**
 	 * POST /api/followship/unfollow
-	 * @method 删除好友
-	 * @param {Number} followid 用户ID
+	 * @method 取消关注用户
+	 * @param {Number} followid 被关注者ID
 	 * @return {JSON}
 	 */
 	app.post('/api/followship/unfollow', function (req, res, next) {
@@ -41,8 +41,8 @@ module.exports = function (app) {
 
 	/**
 	 * POST /api/followship/remark
-	 * @method 备注好友
-	 * @param {Number} followid 用户ID
+	 * @method 修改用户备注
+	 * @param {Number} followid 粉丝ID
 	 * @param {String} remark 备注名
 	 * @return {JSON}
 	 */
@@ -53,6 +53,32 @@ module.exports = function (app) {
 		Followship.remark(req.body)
 			.then(function () {
 				res.send({ msg: 'Followee remarked' });
+			}).catch(next);
+	});
+
+	/**
+	 * POST /api/followship/following
+	 * @method 用户的关注列表
+	 * @param {Number} userid 关注者ID
+	 * @return {JSON}
+	 */
+	app.get('/api/followship/following', function (req, res, next) {
+		Followship.findFollowing(req.query)
+			.then(function (followees) {
+				res.send({ following: followees });
+			}).catch(next);
+	});
+
+	/**
+	 * POST /api/followship/followers
+	 * @method 用户的粉丝列表
+	 * @param {Number} followid 被关注者ID
+	 * @return {JSON}
+	 */
+	app.get('/api/followship/followers', function (req, res, next) {
+		Followship.findFollowers(req.query)
+			.then(function (followers) {
+				res.send({ followers: followers });
 			}).catch(next);
 	});
 };

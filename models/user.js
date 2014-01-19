@@ -260,7 +260,7 @@ User = module.exports = syBookshelf.Model.extend({
 	view: function (query) {
 		return User.forge({ id: query['id'] })
 			.fetch({
-				withRelated: ['followers.user.profile', 'following.followee.profile']
+				withRelated: ['profile']
 			}).then(function (user) {
 				if (!user) return Promise.rejected(errors[20003]);
 				return user;

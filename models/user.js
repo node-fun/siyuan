@@ -12,10 +12,12 @@ var fs = require('fs'),
 	avatarDir = config.avatarDir,
 	avatarExt = config.avatarExt,
 	Group = require('./group'),
+	tbUser = 'users',
+	tbProfile = UserProfile.prototype.tableName,
 	User, Users;
 
 User = module.exports = syBookshelf.Model.extend({
-	tableName: 'users',
+	tableName: tbUser,
 	fields: ['id', 'username', 'password', 'regtime', 'isonline'],
 	omitInJSON: ['password'],
 
@@ -63,10 +65,8 @@ User = module.exports = syBookshelf.Model.extend({
 		return User.__super__.fetch.apply(this, arguments)
 			.then(function (user) {
 				if (!user) return user;
-				return user.load(['profile'])
+				return user.countFollowship()
 					.then(function () {
-						return user.countFollowship();
-					}).then(function () {
 						return user.countIssues();
 					});
 			});
@@ -193,67 +193,77 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 
 	find: function (query) {
-		var forUser = ['id', 'username', 'isonline'],
-			forProfile = ['email', 'name', 'gender'],
-			tbUser = User.prototype.tableName,
-			tbProfile = UserProfile.prototype.tableName;
+		query['profile'] = query['profile'] || {};
 		return Users.forge()
 			.query(function (qb) {
-				qb.join(tbProfile, tbProfile + '.' + 'userid',
-					'=', tbUser + '.id');
-				_.each(forUser, function (k) {
+				qb.join(tbProfile, tbProfile + '.userid', '=', tbUser + '.id');
+				// find for user
+				_.each(['id', 'username', 'isonline'], function (k) {
 					if (k in query) {
-						qb.where(tbUser + '.' + k, query[k]);
+						qb.where(tbUser + '.' + k, '=', query[k]);
 					}
 				});
-				_.each(forProfile, function (k) {
-					if (k in query) {
-						qb.where(tbProfile + '.' + k, query[k]);
+				// find for profile
+				_.each(['nickname', 'name', 'gender'], function (k) {
+					if (k in query['profile']) {
+						qb.where(tbProfile + '.' + k, '=', query['profile'][k]);
 					}
 				});
 			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
-			.fetch();
+			.fetch({
+				withRelated: ['profile']
+			});
 	},
 
 	search: function (query) {
-		var forUser = ['username', 'email'],
-			forProfile = ['nickname', 'name', 'university', 'major', 'gender'],
-			forFind = ['isonline'],
-			tbUser = User.prototype.tableName,
-			tbProfile = UserProfile.prototype.tableName, count = 0;
+		query['profile'] = query['profile'] || {};
+		var count = 0;
 		return Users.forge()
 			.query(function (qb) {
-				qb.join(tbProfile, tbProfile + '.' + 'userid',
-					'=', tbUser + '.' + 'id');
-				_.each(forFind, function (k) {
+				qb.join(tbProfile, tbProfile + '.userid', '=', tbUser + '.id');
+				// find for user
+				_.each(['isonline'], function (k) {
 					if (k in query) {
 						count++;
-						qb.where(tbUser + '.' + k, query[k]);
+						qb.where(tbUser + '.' + k, '=', query[k]);
 					}
 				});
-				_.each(forUser, function (k) {
+				// find for profile
+				_.each(['gender'], function (k) {
+					if (k in query['profile']) {
+						count++;
+						qb.where(tbProfile + '.' + k, '=', query['profile'][k]);
+					}
+				});
+				// search for user
+				_.each(['username'], function (k) {
 					if (k in query) {
 						count++;
 						qb.where(tbUser + '.' + k, 'like', '%' + query[k] + '%');
 					}
 				});
-				_.each(forProfile, function (k) {
-					if (k in query) {
+				// search for profile
+				_.each(['nickname', 'name', 'university', 'major'], function (k) {
+					if (k in query['profile']) {
 						count++;
-						qb.where(tbProfile + '.' + k, 'like', '%' + query[k] + '%');
+						qb.where(tbProfile + '.' + k, 'like', '%' + query['profile'][k] + '%');
 					}
 				});
 			}).query('offset', query['offset'])
 			.query('limit', count ? query['limit'] : 0)
-			.fetch();
+			.fetch({
+				withRelated: ['profile']
+			});
 	},
 
 	view: function (query) {
-		return User.forge({ id: query['id'] }).fetch()
-			.then(function (user) {
+		return User.forge({ id: query['id'] })
+			.fetch({
+				withRelated: ['followers.user.profile', 'following.followee.profile']
+			}).then(function (user) {
 				if (!user) return Promise.rejected(errors[20003]);
-				return user.load(['following.followee', 'followers.user']);
+				return user;
 			});
 	},
 

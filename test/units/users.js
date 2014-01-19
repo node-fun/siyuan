@@ -22,7 +22,10 @@ describe('users', function () {
 	it('searches', function (done) {
 		request(apiHost + '/search', {
 			qs: {
-				name: ' '
+				profile: {
+					name: ' '
+				},
+				isonline: 1
 			}
 		}, function (err, res, data) {
 			var users = data['users'];

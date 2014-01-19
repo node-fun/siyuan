@@ -7,13 +7,17 @@ var syBookshelf = require('./base'),
 IssueComment = module.exports = syBookshelf.Model.extend({
 	tableName: 'issue_comments',
 	fields: ['id', 'issueid', 'userid', 'body', 'posttime'],
-	omitInJSON: ['id', 'issueid'],
+	omitInJSON: ['id', 'userid', 'issueid'],
 
 	defaults: function () {
 		return {
 			body: '',
 			posttime: new Date()
 		};
+	},
+
+	user: function () {
+		return this.belongsTo(require('./user'), 'userid');
 	}
 });
 

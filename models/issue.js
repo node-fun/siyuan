@@ -1,5 +1,7 @@
 var _ = require('underscore'),
+	Promise = require('bluebird'),
 	chance = new (require('chance'))(),
+	errors = require('../lib/errors'),
 	syBookshelf = require('./base'),
 	IssueComment = require('./issue-comment'),
 	Issue, Issues;
@@ -9,6 +11,7 @@ Issue = module.exports = syBookshelf.Model.extend({
 	fields: [
 		'id', 'userid', 'title', 'body', 'posttime'
 	],
+	omitInJSON: ['userid'],
 
 	defaults: function () {
 		return {
@@ -18,6 +21,17 @@ Issue = module.exports = syBookshelf.Model.extend({
 		};
 	},
 
+	fetch: function () {
+		return Issue.__super__.fetch.apply(this, arguments)
+			.then(function (issue) {
+				if (!issue) return issue;
+				return issue.countComments();
+			});
+	},
+
+	user: function () {
+		return this.belongsTo(require('./user'), 'userid');
+	},
 	comments: function () {
 		return this.hasMany(IssueComment, 'issueid');
 	},
@@ -29,14 +43,6 @@ Issue = module.exports = syBookshelf.Model.extend({
 				var numComments = comments.length;
 				return self.set('numComments', numComments);
 			});
-	},
-
-	fetch: function () {
-		var ret = Issue.__super__.fetch.apply(this, arguments);
-		return ret.then(function (issue) {
-			if (!issue) return issue;
-			return issue.countComments();
-		});
 	}
 }, {
 	randomForge: function () {
@@ -58,7 +64,9 @@ Issue = module.exports = syBookshelf.Model.extend({
 				});
 			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
-			.fetch();
+			.fetch({
+				withRelated: ['user.profile']
+			});
 	},
 
 	search: function (query) {
@@ -81,14 +89,18 @@ Issue = module.exports = syBookshelf.Model.extend({
 				});
 			}).query('offset', query['offset'])
 			.query('limit', count ? query['limit'] : 0)
-			.fetch();
+			.fetch({
+				withRelated: ['user.profile']
+			});
 	},
 
 	view: function (query) {
-		return Issue.forge({ id: query['id'] }).fetch()
-			.then(function (issue) {
+		return Issue.forge({ id: query['id'] })
+			.fetch({
+				withRelated: ['user.profile', 'comments.user.profile']
+			}).then(function (issue) {
 				if (!issue) return Promise.rejected(errors[20603]);
-				return issue.load(['comments']);
+				return issue;
 			});
 	}
 });
@@ -97,14 +109,9 @@ Issues = Issue.Set = syBookshelf.Collection.extend({
 	model: Issue,
 
 	fetch: function () {
-		var ret = Issues.__super__.fetch.apply(this, arguments);
-		return ret
-			.then(function (issues) {
-				if (!issues.length) return issues;
-				return issues.invokeThen('countComments')
-					.then(function () {
-						return issues;
-					});
+		return Issues.__super__.fetch.apply(this, arguments)
+			.then(function (collection) {
+				return collection.invokeThen('fetch');
 			});
 	}
 });

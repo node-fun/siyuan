@@ -43,6 +43,7 @@ module.exports = {
 	},
 
 	avatarExt: '.jpg',
+	imageLimit: 4 * 1024 * 1024,
 	admins: [
 		{
 			username: 'admin1',

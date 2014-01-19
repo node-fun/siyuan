@@ -41,7 +41,7 @@ Photo = module.exports = syBookshelf.Model.extend({
 	destroying: function () {
 		var self = this;
 		return Photo.__super__.destroying.call(self)
-			.then(function(){
+			.then(function () {
 				return self.deleteImage();
 			});
 	},

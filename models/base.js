@@ -70,14 +70,14 @@ syModel = syBookshelf.Model = syModel.extend({
 	},
 
 	// like jQuery's .data API
-	data: function(key, value) {
+	data: function (key, value) {
 		if (arguments.length === 1) {
 			return this._data[key];
 		}
 		this._data[key] = value;
 		return this;
 	},
-	removeData: function(key) {
+	removeData: function (key) {
 		delete this._data[key];
 		return this;
 	},

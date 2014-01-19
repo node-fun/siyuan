@@ -41,17 +41,17 @@ Activity = module.exports = syBookshelf.Model.extend({
 		return this.belongsTo(ActivityStatus, fkStatus);
 	},
 
-	createActivity: function(userid, groupid, content, maxnum, starttime, duration, statusid, money, name) {
+	createActivity: function (userid, groupid, content, maxnum, starttime, duration, statusid, money, name) {
 		//check the dude belong to group
 		//save an activity
-		if(userid == null) {
+		if (userid == null) {
 			return Promise.rejected(errors[21301]);
 		}
 		return GroupMembers.forge({
 			'groupid': groupid,
 			'userid': userid
-		}).fetch().then(function(groupmember) {
-				if(groupmember == null) return Promise.rejected(errors[40001]);
+		}).fetch().then(function (groupmember) {
+				if (groupmember == null) return Promise.rejected(errors[40001]);
 				return Activity.forge({
 					'ownerid': userid,
 					'groupid': groupid,
@@ -115,7 +115,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 	},
 	cancelActivity: function (userid) {
 		var self = this;
-		if(userid == null) {
+		if (userid == null) {
 			return Promise.rejected(errors[21301]);
 		}
 		return self.load(['usership']).then(function (activity) {
@@ -139,13 +139,13 @@ Activity = module.exports = syBookshelf.Model.extend({
 
 	},
 	endActivity: function (userid) {
-		if(userid == null) {
+		if (userid == null) {
 			return Promise.rejected(errors[21301]);
 		}
 		var self = this,
 			groupid = self.get('groupid');
 		return self.load(['usership']).then(function (activity) {
-			if(!(self.get('ownerid') == userid)) {
+			if (!(self.get('ownerid') == userid)) {
 				return Promise.rejected(errors[20102]);
 			}
 			return self.set({
@@ -153,12 +153,12 @@ Activity = module.exports = syBookshelf.Model.extend({
 			}).save();
 		});
 	},
-	updateActivity: function(userid, content, maxnum, starttime, duration, statusid, money, name) {
+	updateActivity: function (userid, content, maxnum, starttime, duration, statusid, money, name) {
 		var ownerid = this.get('ownerid');
-		if(userid != ownerid) {
+		if (userid != ownerid) {
 			return Promise.rejected(errors[20102]);
 		}
-		if(userid == null) {
+		if (userid == null) {
 			return Promise.rejected(errors[21301]);
 		}
 		return this.set({
@@ -172,22 +172,22 @@ Activity = module.exports = syBookshelf.Model.extend({
 		}).save();
 	},
 
-	getUserList: function(userid) {
+	getUserList: function (userid) {
 		var self = this;
 		return GroupMembers.forge({
 			'groupid': self.get('groupid'),
 			'userid': userid
-		}).fetch().then(function(groupmember) {
-				if(groupmember == null) return Promise.rejected(errors[40001]);
-				return self.load(['usership']).then(function(activity) {
+		}).fetch().then(function (groupmember) {
+				if (groupmember == null) return Promise.rejected(errors[40001]);
+				return self.load(['usership']).then(function (activity) {
 					var userships = activity.related('usership');
-					return userships.mapThen(function(usership) {
+					return userships.mapThen(function (usership) {
 						return User.forge({ 'id': usership.get('userid') })
 							.fetch()
-							.then(function(user) {
+							.then(function (user) {
 								return usership.set({ 'name': user.get('username') });
 							});
-					}).then(function(userships) {
+					}).then(function (userships) {
 							return userships;
 						});
 
@@ -195,24 +195,24 @@ Activity = module.exports = syBookshelf.Model.extend({
 			});
 	},
 
-	acceptJoin: function(userid, usershipid) {
+	acceptJoin: function (userid, usershipid) {
 		var self = this,
 			ownerid = self.get('ownerid');
-		if(userid != ownerid) return Promise.rejected(errors[20102]);
+		if (userid != ownerid) return Promise.rejected(errors[20102]);
 		return UserActivity.forge({ 'id': usershipid }).fetch()
-			.then(function(usership) {
+			.then(function (usership) {
 				return usership.set({ 'isaccepted': true }).save();
 			});
 	},
 
-	updateAvatar: function(tmp) {
+	updateAvatar: function (tmp) {
 		var file = Activity.getAvatarPath(this.id),
 			self = this;
-		return new Promise(function(resolve, reject) {
-			fs.readFile(tmp, function(err, data) {
-				if(err) return reject(errors[30000]);
-				fs.writeFile(file, data, function(err) {
-					if(err) return reject(errors[30001]);
+		return new Promise(function (resolve, reject) {
+			fs.readFile(tmp, function (err, data) {
+				if (err) return reject(errors[30000]);
+				fs.writeFile(file, data, function (err) {
+					if (err) return reject(errors[30001]);
 					resolve(self);
 				});
 			});
@@ -255,13 +255,13 @@ Activity = module.exports = syBookshelf.Model.extend({
 			.fetch();
 	},
 
-	getAvatarName: function(id) {
+	getAvatarName: function (id) {
 		return id + avatarExt;
 	},
-	getAvatarPath: function(id) {
+	getAvatarPath: function (id) {
 		return path.join(avatarDir, Activity.getAvatarName(id));
 	},
-	getAvatarURI: function(id) {
+	getAvatarURI: function (id) {
 		return 'activities' + Activity.getAvatarName(id);
 	}
 });

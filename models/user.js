@@ -118,7 +118,7 @@ User = module.exports = syBookshelf.Model.extend({
 			return Promise.rejected(errors[10008]);
 		}
 		return self.save()
-			.catch(function(){
+			.catch(function () {
 				return Promise.rejected(errors[20506]);
 			}).then(function () {
 				return self.fetch();

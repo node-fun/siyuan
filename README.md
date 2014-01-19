@@ -4,21 +4,22 @@ An SNS backend framework, with Node and MySQL
 
 ## Install
 
-1. Make sure you have Node and MySQL installed already
+1. Install Node and MySQL
 
-2. Download the package, and enter it
+2. Download or clone the repository
 
 	```sh
+	$ git clone git@github.com:node-fun/siyuan.git
 	$ cd siyuan
 	```
 
-3. Install the dependencies
+3. Install dependencies
 
 	```sh
 	$ npm install -d
 	```
 
-4. Copy the `config` directory, and modify it if you need
+4. Copy the `config`, and modify as you need
 
 	```sh
 	$ cp -r config.default config
@@ -30,8 +31,8 @@ An SNS backend framework, with Node and MySQL
 	$ node setup [environment]
 	```
 
-	Usually, environment could be either `development`(default) or `production`.
-	Testing records will be inserted with a development mode.
+	Usually, environment could be either `development`(default) or `production`.<br>
+	Testing records come with a development mode.
 
 ## Run
 

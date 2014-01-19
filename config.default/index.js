@@ -9,6 +9,7 @@ if (!env) {
 
 var path = require('path'),
 	rootDir = path.resolve(__dirname, '..'),
+	staticDir = path.join(rootDir, 'static'),
 	defaultContentDir = path.join(rootDir, 'content.default'),
 	contentDir = path.join(rootDir, 'content')
 		+ (env == 'test' ? '_test' : '');
@@ -18,7 +19,7 @@ module.exports = {
 	rootDir: rootDir,
 
 	docsDir: path.join(rootDir, 'docs'),
-	staticDir: path.join(rootDir, 'static'),
+	staticDir: staticDir,
 	adminDir: path.join(staticDir, 'admin'),
 
 	defaultContentDir: defaultContentDir,

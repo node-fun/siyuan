@@ -261,15 +261,22 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `cooperations` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL,
+  `ownerid` INT NULL,
   `company` VARCHAR(45) NULL,
   `deadline` VARCHAR(45) NULL,
   `avatar` VARCHAR(45) NULL,
   `statusid` INT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_cooperations_co_status1_idx` (`statusid` ASC),
+  INDEX `fk_cooperations_users1_idx` (`ownerid` ASC),
   CONSTRAINT `fk_cooperations_co_status1`
     FOREIGN KEY (`statusid`)
     REFERENCES `co_status` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_cooperations_users1`
+    FOREIGN KEY (`ownerid`)
+    REFERENCES `users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -357,4 +364,5 @@ INSERT INTO `co_status` (`id`, `name`) VALUES (1, '发布');
 INSERT INTO `co_status` (`id`, `name`) VALUES (2, '结束');
 
 COMMIT;
+
 

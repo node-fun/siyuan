@@ -13,7 +13,10 @@ var fs = require('fs'),
 	syBookshelf = require('./base'),
 	User = require('./user'),
 	Users = User.Set,
-	Cooperation, Cooperations;
+	CoStatus = require('./co-status'),
+	CoStatuses = CoStatus.Set,
+	Cooperation, Cooperations,
+	fkStatus = 'statusid';
 
 Cooperation = module.exports = syBookshelf.Model.extend({
 	tableName: 'cooperations',
@@ -23,6 +26,9 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 	saving: function () {
 		return Cooperation.__super__
 			.saving.apply(this, arguments);
+	},
+	status: function() {
+		return this.belongsTo(CoStatuses, fkStatus);
 	}
 }, {
 	randomForge: function () {

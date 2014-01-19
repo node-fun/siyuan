@@ -54,11 +54,11 @@ module.exports = function (app) {
 				activities.mapThen(function (activity) {
 					return activity.load(['usership', 'status']);
 				})
-					.then(function (activities) {
-						next({
-							activities: activities
-						});
+				.then(function (activities) {
+					next({
+						activities: activities
 					});
+				});
 			}).catch(next);
 	});
 

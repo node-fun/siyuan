@@ -267,6 +267,7 @@ CREATE TABLE IF NOT EXISTS `cooperations` (
   `deadline` VARCHAR(45) NULL,
   `avatar` VARCHAR(45) NULL,
   `statusid` INT NULL,
+  `isprivate` TINYINT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_cooperations_co_status1_idx` (`statusid` ASC),
   INDEX `fk_cooperations_users1_idx` (`ownerid` ASC),

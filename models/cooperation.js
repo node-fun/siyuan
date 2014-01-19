@@ -21,7 +21,7 @@ var fs = require('fs'),
 Cooperation = module.exports = syBookshelf.Model.extend({
 	tableName: 'cooperations',
 	fields: [
-		'id', 'name', 'company', 'deadline', 'avatar', 'statusid', 'ownerid'
+		'id', 'name', 'description', 'company', 'deadline', 'avatar', 'statusid', 'ownerid', 'isprivate'
 	],
 	saving: function () {
 		return Cooperation.__super__
@@ -31,13 +31,16 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 		return this.belongsTo(CoStatus, fkStatus);
 	},
 
-	createCooperation: function (ownerid, name, description, company, deadline, avatar, statusid) {
+	createCooperation: function (ownerid, name, description, company, deadline, statusid, isprivate) {
 		if (ownerid == null) return Promise.rejected(errors[40001]);
 		return Cooperation.forge({
 			'name': name,
 			'ownerid': ownerid,
-			'description': description
-		});
+			'description': description,
+			'company': company,
+			'deadline': deadline,
+			'statusid': statusid
+		}).save();
 	}
 
 }, {
@@ -45,6 +48,7 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 		var status = _.random(1, 2);
 		return Cooperation.forge({
 			'name': chance.word(),
+			'description': chance.paragraph(),
 			'ownerid': chance.integer({
 				min: 1,
 				max: 20
@@ -52,7 +56,8 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 			'company': chance.word(),
 			'deadline': chance.date({ string: true }),
 			'avatar': chance.word(),
-			'statusid': status
+			'statusid': status,
+			'isprivate': chance.bool()
 		});
 	},
 

@@ -11,10 +11,10 @@ module.exports = function (app) {
 	 * @method 会员列表
 	 * @param {Number} [id]
 	 * @param {String} [username]
-	 * @param {String} [name]
 	 * @param {Number} [isonline] `1`在线, `0`不在线
-	 * @param {String} [email]
-	 * @param {String} [gender] `m`男, `f`女
+	 * @param {String} [profile.email]
+	 * @param {String} [profile.name]
+	 * @param {String} [profile.gender] `m`男, `f`女
 	 * @return {JSON}
 	*/
 	app.get('/api/users/find', function (req, res, next) {
@@ -28,12 +28,12 @@ module.exports = function (app) {
 	 * GET /api/users/search
 	 * @method 模糊搜索用户
 	 * @param {String} [username]
-	 * @param {String} [nickname]
-	 * @param {String} [name]
-	 * @param {String} [university]
-	 * @param {String} [major]
-	 * @param {String} [gender]
 	 * @param {String} [isonline]
+	 * @param {String} [profile.nickname]
+	 * @param {String} [profile.name]
+	 * @param {String} [profile.gender]
+	 * @param {String} [profile.university]
+	 * @param {String} [profile.major]
 	 * @return {JSON}
 	 * 返回格式与 /api/users/find 相同
 	 */

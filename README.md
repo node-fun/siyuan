@@ -8,27 +8,26 @@ An SNS backend framework, with Node and MySQL
 
 2. Download the package, and enter it
 
-	```shell
-	cd siyuan
+	```sh
+	$ cd siyuan
 	```
 
 3. Install the dependencies
 
-	```shell
-	npm install -d
+	```sh
+	$ npm install -d
 	```
 
-4. Copy the `config` directory, and modify it if you need,<br>
+4. Copy the `config` directory, and modify it if you need
 
-
-	```shell
-	cp -r config.default config
+	```sh
+	$ cp -r config.default config
 	```
 
 5. Setup the database
 
-	```shell
-	node setup [environment]
+	```sh
+	$ node setup [environment]
 	```
 
 	Usually, environment could be either `development` or `production`(default).<br>
@@ -36,12 +35,12 @@ An SNS backend framework, with Node and MySQL
 
 ## Run
 
-```shell
-node . [environment]
+```sh
+$ node . [environment]
 ```
 
 ## Test
 
-```shell
-npm test
+```sh
+$ npm test
 ```

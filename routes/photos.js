@@ -5,7 +5,9 @@
 var _ = require('underscore'),
 	Promise = require('bluebird'),
 	Photo = require('../models/photo'),
-	errors = require('../lib/errors');
+	errors = require('../lib/errors'),
+	config = require('../config'),
+	imageLitmit = config.imageLitmit;
 
 module.exports = function (app) {
 	/**
@@ -37,10 +39,9 @@ module.exports = function (app) {
 		var user = req.user;
 		if (!user) return next(errors[21301]);
 		if (!req.files['image']) return next(errors[20007]);
-		var file = req.files['image'],
-			_4M = 4 * 1024 * 1024;
+		var file = req.files['image'];
 		if (file['type'] != 'image/jpeg') return next(errors[20005]);
-		if (file['size'] > _4M) return next(errors[20006]);
+		if (file['size'] > imageLitmit) return next(errors[20006]);
 		delete req.body['id'];
 		req.body['userid'] = user.id;
 		var photo = Photo.forge(req.body);

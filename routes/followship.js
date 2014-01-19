@@ -25,7 +25,7 @@ module.exports = function (app) {
 
 	/**
 	 * POST /api/followship/unfollow
-	 * @method 取消关注用户
+	 * @method 取消关注
 	 * @param {Number} followid 被关注者ID
 	 * @return {JSON}
 	 */
@@ -41,7 +41,7 @@ module.exports = function (app) {
 
 	/**
 	 * POST /api/followship/remark
-	 * @method 修改用户备注
+	 * @method 修改备注
 	 * @param {Number} followid 粉丝ID
 	 * @param {String} remark 备注名
 	 * @return {JSON}

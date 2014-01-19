@@ -41,7 +41,7 @@ Issue = module.exports = syBookshelf.Model.extend({
 		return this.comments().fetch()
 			.then(function (comments) {
 				var numComments = comments.length;
-				return self.set('numComments', numComments);
+				return self.data('numComments', numComments);
 			});
 	}
 }, {

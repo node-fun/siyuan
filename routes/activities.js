@@ -153,7 +153,7 @@ module.exports = function (app) {
 	 * }</pre>
 	 */
 	app.post('/api/activities/update', function (req, res, next) {
-		var userid = req.session['userid'],
+		var userid = 1,//req.session['userid'],
 			id = req.body.id,
 			content = req.body.content,
 			maxnum = req.body.maxnum,
@@ -162,13 +162,16 @@ module.exports = function (app) {
 			statusid = req.body.statusid,
 			money = req.body.money,
 			name = req.body.name;
-		Activity.forge({ 'id': id }).updateActivity(userid, content, maxnum, starttime, duration, statusid, money, name)
-			.then(function (activity) {
-				next({
-					msg: 'update success',
-					id: activity.get('id')
-				});
-			}).catch(next);
+		Activity.forge({ 'id': id }).fetch()
+			.then(function(activity) {
+				activity.updateActivity(userid, content, maxnum, starttime, duration, statusid, money, name)
+				.then(function (activity) {
+					next({
+						msg: 'update success',
+						id: activity.get('id')
+					});
+				}).catch(next)
+			});
 	});
 
 	/**

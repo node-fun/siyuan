@@ -39,7 +39,27 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 			'description': description,
 			'company': company,
 			'deadline': deadline,
-			'statusid': statusid
+			'statusid': statusid,
+			'isprivate': isprivate
+		}).save();
+	},
+
+	updateCooperation: function (userid, name, description, company, deadline, statusid, isprivate) {
+
+		var ownerid = this.get('ownerid');
+		if (userid != ownerid) {
+			return Promise.rejected(errors[20102]);
+		}
+		if (userid == null) {
+			return Promise.rejected(errors[21301]);
+		}
+		return this.set({
+			'name': name,
+			'description': description,
+			'company': company,
+			'deadline': deadline,
+			'statusid': statusid,
+			'isprivate': isprivate
 		}).save();
 	}
 

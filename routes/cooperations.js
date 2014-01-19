@@ -1,16 +1,15 @@
-/**
- * Created by cin on 1/18/14.
- */
-var fs = require('fs'),
-	path = require('path'),
-	_ = require('underscore'),
-	chance = new (require('chance'))(),
+var _ = require('underscore'),
 	Promise = require('bluebird'),
-	errors = require('./base'),
-	syBookshelf = require('./base'),
-	User = require('./user'),
-	Users = User.Set;
+	Cooperation = require('../models/cooperation'),
+	errors = require('../lib/errors');
 
-Cooperation = module.exports = syBookshelf.Model.extend({
-	tableName: ''
-});
+module.exports = function (app) {
+	app.get('/api/cooperations/find', function (req, res, next) {
+		Cooperation.find(req.query)
+			.then(function (cooperations) {
+				next({
+					cooperations: cooperations
+				});
+			}).catch(next);
+	});
+}

@@ -33,6 +33,38 @@ function loadUserTable(page){
 	);
 }
 
+function loadPager(containerId, minPage, maxPage, activePage){
+	minPage?minPage:minPage=1;
+	maxPage?maxPage:maxPage=10;
+	activePage?activePage:activePage=1;
+	activePage = parseInt(activePage);
+	loadUserTable(activePage);
+	var pager = $('<ul>').addClass('pure-paginator');
+	var pagerPrev = $('<li>').addClass('pure-button prev').text('<'),
+		pagerNext = $('<li>').addClass('pure-button next').text('>');
+	if(activePage>minPage){
+		pagerPrev.on('click', function(){
+			loadPager(containerId, minPage, maxPage, activePage-1);
+		});
+	}
+	if(activePage<maxPage){
+		pagerNext.on('click', function(){
+			loadPager(containerId, minPage, maxPage, activePage+1);
+		});
+	}
+	pager.append(pagerPrev).append(pagerNext);
+	for(var i=1; i<=maxPage; i++){
+		var p = $('<li>').addClass('pure-button').text(i).on('click', function(){
+			loadPager(containerId, minPage, maxPage, $(this).text());
+		});
+		if(activePage == i){
+			p.addClass('pure-button-active');
+		}
+		pagerNext.before(p);
+	}
+	$(containerId).html(pager);
+}
+
 // 对Date的扩展，将 Date 转化为指定格式的String   
 // 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符，   
 // 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字)   
@@ -58,12 +90,6 @@ Date.prototype.format = function(fmt)
 	return fmt;
 }
 
-$('#pager li a').on('click', function(){
-	$('#pager li a').removeClass('pure-button-active');
-	$(this).addClass('pure-button-active');
-	loadUserTable(this.innerText);
-});
-
 $(function(){
-	loadUserTable(1);
+	loadPager('#pager');
 });

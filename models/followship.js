@@ -1,7 +1,5 @@
 var _ = require('underscore'),
-	Promise = require('bluebird'),
 	syBookshelf = require('./base'),
-	errors = require('../lib/errors'),
 	Followship, FollowshipSet;
 
 Followship = module.exports = syBookshelf.Model.extend({

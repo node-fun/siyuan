@@ -19,7 +19,9 @@ module.exports = function (app) {
 		var user = req.user;
 		if (!user) return next(errors[21301]);
 		req.body['userid'] = user.id;
-		User.forge({ id: req.body['followid'] }).fetch()
+		User.forge({
+			id: req.body['followid']
+		}).fetch()
 			.then(function (user) {
 				if (!user) return Promise.rejected(errors[20003]);
 			}).then(function () {
@@ -73,7 +75,9 @@ module.exports = function (app) {
 			).fetch()
 			.then(function (followship) {
 				if (!followship) return Promise.rejected(errors[20603]);
-				return followship.set(req.body).save();
+				return followship.set(
+					_.pick(req.body, 'remark')
+				).save();
 			}).then(function () {
 				res.send({ msg: 'Followee remarked' });
 			}).catch(next);
@@ -87,8 +91,8 @@ module.exports = function (app) {
 	 */
 	app.get('/api/followship/following', function (req, res, next) {
 		Followship.findFollowing(req.query)
-			.then(function (followees) {
-				res.send({ following: followees });
+			.then(function (followshipSet) {
+				res.send({ following: followshipSet });
 			}).catch(next);
 	});
 
@@ -100,8 +104,8 @@ module.exports = function (app) {
 	 */
 	app.get('/api/followship/followers', function (req, res, next) {
 		Followship.findFollowers(req.query)
-			.then(function (followers) {
-				res.send({ followers: followers });
+			.then(function (followshipSet) {
+				res.send({ followers: followshipSet });
 			}).catch(next);
 	});
 };

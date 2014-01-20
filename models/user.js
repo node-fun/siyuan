@@ -9,6 +9,7 @@ var fs = require('fs'),
 	UserProfile = require('./user-profile'),
 	Issue = require('./issue'),
 	Photo = require('./photo'),
+	Starship = require('./starship'),
 	config = require('../config'),
 	avatarDir = config.avatarDir,
 	avatarExt = config.avatarExt,
@@ -54,6 +55,9 @@ User = module.exports = syBookshelf.Model.extend({
 	photos: function () {
 		return this.hasMany(Photo, 'userid');
 	},
+	staring: function () {
+		return this.hasMany(Starship, 'userid');
+	},
 
 	created: function () {
 		var self = this;
@@ -89,6 +93,8 @@ User = module.exports = syBookshelf.Model.extend({
 						return user.countIssues();
 					}).then(function () {
 						return user.countPhotos();
+					}).then(function () {
+						return user.countStarship();
 					});
 			});
 	},
@@ -96,12 +102,12 @@ User = module.exports = syBookshelf.Model.extend({
 	countFollowship: function () {
 		var self = this;
 		return self.following().fetch()
-			.then(function (followees) {
-				var numFollowing = followees.length;
+			.then(function (followshipSet) {
+				var numFollowing = followshipSet.length;
 				return self.data('numFollowing', numFollowing)
 					.followers().fetch();
-			}).then(function (followers) {
-				var numFollowers = followers.length;
+			}).then(function (followshipSet) {
+				var numFollowers = followshipSet.length;
 				return self.data('numFollowers', numFollowers);
 			});
 	},
@@ -120,6 +126,14 @@ User = module.exports = syBookshelf.Model.extend({
 			.then(function (photos) {
 				var numPhotos = photos.length;
 				return self.data('numPhotos', numPhotos);
+			});
+	},
+	countStarship: function () {
+		var self = this;
+		return this.staring().fetch()
+			.then(function (starshipSet) {
+				var numStarring = starshipSet.length;
+				return self.data('numStarring', numStarring);
 			});
 	},
 

@@ -9,6 +9,8 @@ module.exports = function (app) {
 	require('./issues')(app);
 	require('./photos')(app);
 	require('./cooperations')(app);
+	require('./starship')(app);
+
 	app.use('/api', function (data, req, res, next) {
 		if (data instanceof Error) return next(data);
 		res.send(data);

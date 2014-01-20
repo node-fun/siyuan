@@ -101,6 +101,26 @@ Date.prototype.format = function(fmt)
 	return fmt;
 }
 
+function loadUserList(){
+	$.ajax({
+		url: URL.root+'admin/userlist.html',
+		success: function(data){
+			$('#content').html(data);
+			loadPager('#pager',1,10,1);
+		}
+	});
+}
+
+function load(file){
+	$.ajax({
+		url: URL.root+'admin/'+file,
+		success: function(data){
+			$('#content').html(data);
+		}
+	});
+}
+
+//test
 $(function(){
-	loadPager('#pager',1,10,1);
+	load('login.html');
 });

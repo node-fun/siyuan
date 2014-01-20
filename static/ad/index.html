@@ -1,10 +1,20 @@
+<!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=no" />
     <style>
-        #imgarea, #imgarea>img{
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        body{
+            background: transparent;
+            overflow: hidden;
+        }
+        #imgarea, #imgarea img{
             width:100%;
         }
-        #imgarea>img{
+        #imgarea a{
             position: absolute;
             display: none;
         }
@@ -12,11 +22,11 @@
 </head>
 <body>
     <div id="imgarea">
-        <img src="/ad/img/1.png"/>
-        <img src="/ad/img/2.png"/>
-        <img src="/ad/img/3.png"/>
+        <a href="http://baidu.com"><img src="/ad/img/1.png"/></a>
+        <a href="http://baidu.com"><img src="/ad/img/2.png"/></a>
+        <a href="http://baidu.com"><img src="/ad/img/3.png"/></a>
     </div>
-    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="http://code.jquery.com/jquery.min.js"></script>
     <script>
         var imgs = $('#imgarea').children(),
                 len = imgs.length,

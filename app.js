@@ -11,7 +11,6 @@ var _ = require('underscore'),
 	methodKey = '_method';
 
 app.set('views', config.adminDir);
-app.set('view engine', 'jade');
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());

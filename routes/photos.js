@@ -30,10 +30,6 @@ module.exports = function (app) {
 	 * @param {String} description 描述
 	 * @param {File} image 图片文件
 	 * @return {JSON}
-	 * {
-		  "msg": "photo posted",
-		  "id": 106
-		}
 	 */
 	app.post('/api/photos/post', function (req, res, next) {
 		var user = req.user;
@@ -44,9 +40,8 @@ module.exports = function (app) {
 		if (file['size'] > imageLitmit) return next(errors[20006]);
 		delete req.body['id'];
 		req.body['userid'] = user.id;
-		var photo = Photo.forge(req.body);
-		photo.data('image', file['path']).save()
-			.then(function () {
+		Photo.forge(req.body).data('image', file['path']).save()
+			.then(function (photo) {
 				next({
 					msg: 'Photo posted',
 					id: photo.id
@@ -60,7 +55,6 @@ module.exports = function (app) {
 	 * @param {Number} id 相片ID
 	 * @param {String} description 描述
 	 * @return {JSON}
-	 * { msg: 'Photo updated' }
 	 */
 	app.post('/api/photos/update', function (req, res, next) {
 		var user = req.user;
@@ -84,19 +78,16 @@ module.exports = function (app) {
 	 * @method 删除相片
 	 * @param {Number} id 相片ID
 	 * @return {JSON}
-	 * { msg: 'Photo deleted' }
 	 */
 	app.post('/api/photos/delete', function (req, res, next) {
 		var user = req.user;
 		if (!user) return next(errors[21301]);
-		var photo = Photo.forge({ id: req.body['id'] });
-		photo.fetch()
-			.then(function () {
+		Photo.forge({ id: req.body['id'] }).fetch()
+			.then(function (photo) {
 				if (!photo) return Promise.rejected(errors[20603]);
 				if (photo.get('userid') != user.id) {
 					return Promise.rejected(errors[20102]);
 				}
-			}).then(function () {
 				return photo.destroy();
 			}).then(function () {
 				next({ msg: 'Photo deleted' });

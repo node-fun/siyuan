@@ -20,6 +20,12 @@ Issue = module.exports = syBookshelf.Model.extend({
 			posttime: new Date()
 		};
 	},
+	user: function () {
+		return this.belongsTo(require('./user'), 'userid');
+	},
+	comments: function () {
+		return this.hasMany(IssueComment, 'issueid');
+	},
 
 	fetch: function () {
 		return Issue.__super__.fetch.apply(this, arguments)
@@ -27,13 +33,6 @@ Issue = module.exports = syBookshelf.Model.extend({
 				if (!issue) return issue;
 				return issue.countComments();
 			});
-	},
-
-	user: function () {
-		return this.belongsTo(require('./user'), 'userid');
-	},
-	comments: function () {
-		return this.hasMany(IssueComment, 'issueid');
 	},
 
 	countComments: function () {

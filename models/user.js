@@ -36,6 +36,24 @@ User = module.exports = syBookshelf.Model.extend({
 		}
 		return ret;
 	},
+	profile: function () {
+		return this.hasOne(UserProfile, 'userid');
+	},
+	following: function () {
+		return this.hasMany(require('./followship'), 'userid');
+	},
+	followers: function () {
+		return this.hasMany(require('./followship'), 'followid');
+	},
+	groups: function () {
+		return this.belongsToMany(Group, 'group_membership', 'userid', 'groupid');
+	},
+	issues: function () {
+		return this.hasMany(Issue, 'userid');
+	},
+	photos: function () {
+		return this.hasMany(Photo, 'userid');
+	},
 
 	created: function () {
 		var self = this;
@@ -73,25 +91,6 @@ User = module.exports = syBookshelf.Model.extend({
 						return user.countPhotos();
 					});
 			});
-	},
-
-	profile: function () {
-		return this.hasOne(UserProfile, 'userid');
-	},
-	following: function () {
-		return this.hasMany(require('./followship'), 'userid');
-	},
-	followers: function () {
-		return this.hasMany(require('./followship'), 'followid');
-	},
-	groups: function () {
-		return this.belongsToMany(Group, 'group_membership', 'userid', 'groupid');
-	},
-	issues: function () {
-		return this.hasMany(Issue, 'userid');
-	},
-	photos: function () {
-		return this.hasMany(Photo, 'userid');
 	},
 
 	countFollowship: function () {

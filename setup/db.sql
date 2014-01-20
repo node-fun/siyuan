@@ -306,8 +306,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `user_cooperation` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `userid` INT NULL,
-  `cooperationid` INT NULL,
+  `userid` INT NOT NULL,
+  `cooperationid` INT NOT NULL,
   `isaccepted` TINYINT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_user_cooperation_users1_idx` (`userid` ASC),
@@ -315,13 +315,13 @@ CREATE TABLE IF NOT EXISTS `user_cooperation` (
   CONSTRAINT `fk_user_cooperation_users1`
     FOREIGN KEY (`userid`)
     REFERENCES `users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_user_cooperation_cooperation1`
     FOREIGN KEY (`cooperationid`)
     REFERENCES `cooperations` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -344,9 +344,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `source_types`
+-- Table `resource_types`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `source_types` (
+CREATE TABLE IF NOT EXISTS `resource_types` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL,
   PRIMARY KEY (`id`))
@@ -359,20 +359,52 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `starship` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `userid` INT NOT NULL,
-  `typeid` INT NOT NULL,
-  `srcid` INT NULL,
+  `itemtype` INT NOT NULL,
+  `itemid` INT NOT NULL,
   `remark` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_starship_users1_idx` (`userid` ASC),
-  INDEX `fk_starship_source_types1_idx` (`typeid` ASC),
+  INDEX `fk_starship_source_types1_idx` (`itemtype` ASC),
   CONSTRAINT `fk_starship_users1`
     FOREIGN KEY (`userid`)
     REFERENCES `users` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_starship_source_types1`
-    FOREIGN KEY (`typeid`)
-    REFERENCES `source_types` (`id`)
+  CONSTRAINT `fk_starship_resource_types1`
+    FOREIGN KEY (`itemtype`)
+    REFERENCES `resource_types` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `events`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `events` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `userid` INT NOT NULL,
+  `groupid` INT NULL,
+  `itemtype` INT NULL,
+  `itemid` INT NULL,
+  `message` VARCHAR(280) NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_events_users1_idx` (`userid` ASC),
+  INDEX `fk_events_source_types1_idx` (`itemtype` ASC),
+  INDEX `fk_events_groups1_idx` (`groupid` ASC),
+  CONSTRAINT `fk_events_users1`
+    FOREIGN KEY (`userid`)
+    REFERENCES `users` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_events_resource_types1`
+    FOREIGN KEY (`itemtype`)
+    REFERENCES `resource_types` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_events_groups1`
+    FOREIGN KEY (`groupid`)
+    REFERENCES `groups` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
@@ -405,12 +437,13 @@ COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `source_types`
+-- Data for table `resource_types`
 -- -----------------------------------------------------
 START TRANSACTION;
-INSERT INTO `source_types` (`id`, `name`) VALUES (1, 'issue');
-INSERT INTO `source_types` (`id`, `name`) VALUES (2, 'activity');
-INSERT INTO `source_types` (`id`, `name`) VALUES (3, 'cooperation');
+INSERT INTO `resource_types` (`id`, `name`) VALUES (1, 'user');
+INSERT INTO `resource_types` (`id`, `name`) VALUES (2, 'issue');
+INSERT INTO `resource_types` (`id`, `name`) VALUES (3, 'activity');
+INSERT INTO `resource_types` (`id`, `name`) VALUES (4, 'cooperation');
 
 COMMIT;
 

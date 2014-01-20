@@ -6,15 +6,15 @@ var _ = require('underscore'),
 	Promise = require('bluebird'),
 	Starship = require('../models/starship'),
 	errors = require('../lib/errors'),
-	Source = require('../lib/source');
+	Resource = require('../lib/resource');
 
 module.exports = function (app) {
 	/**
 	 * GET /api/starship/find
 	 * @method 收藏列表
 	 * @param {Number} [userid] 用户ID
-	 * @param {Number} [typeid] 类别ID
-	 * @param {Number} [srcid] 资源ID
+	 * @param {Number} [itemtype] 类别ID - `1`话题, `2`活动, `3`商务合作
+	 * @param {Number} [itemid] 资源ID
 	 * @return {JSON}
 	 */
 	app.get('/api/starship/find', function (req, res, next) {
@@ -27,8 +27,8 @@ module.exports = function (app) {
 	/**
 	 * POST /api/starship/star
 	 * @method 收藏资源
-	 * @param {Number} typeid 类别ID
-	 * @param {Number} srcid 资源ID
+	 * @param {Number} itemtype 类别ID
+	 * @param {Number} itemid 资源ID
 	 * @param {Number} [remark] 备注
 	 * @return {JSON}
 	 */
@@ -36,13 +36,13 @@ module.exports = function (app) {
 		var user = req.user;
 		if (!user) return next(errors[21301]);
 		req.body['userid'] = user.id;
-		Source.forge(
-				_.pick(req.body, ['typeid', 'srcid'])
+		Resource.forge(
+				_.pick(req.body, ['itemtype', 'itemid'])
 			).fetch()
 			.then(function (resource) {
 				if (!resource) return Promise.rejected(errors[20605]);
 				return Starship.forge(
-					_.pick(req.body, ['userid', 'typeid', 'srcid', 'remark'])
+					_.pick(req.body, ['userid', 'itemtype', 'itemid', 'remark'])
 				).save();
 			}).then(function () {
 				res.send({ msg: 'Resource starred' });

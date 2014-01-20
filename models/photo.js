@@ -30,6 +30,9 @@ Photo = module.exports = syBookshelf.Model.extend({
 		}
 		return ret;
 	},
+	user: function () {
+		return this.belongsTo(require('./user'), 'userid');
+	},
 
 	created: function () {
 		var self = this;
@@ -99,7 +102,9 @@ Photo = module.exports = syBookshelf.Model.extend({
 				});
 			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
-			.fetch();
+			.fetch({
+				withRelated: ['user.profile']
+			});
 	}
 });
 

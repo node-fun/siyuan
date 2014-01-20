@@ -8,6 +8,7 @@ var fs = require('fs'),
 	syBookshelf = require('./base'),
 	UserProfile = require('./user-profile'),
 	Issue = require('./issue'),
+	Photo = require('./photo'),
 	config = require('../config'),
 	avatarDir = config.avatarDir,
 	avatarExt = config.avatarExt,
@@ -34,6 +35,24 @@ User = module.exports = syBookshelf.Model.extend({
 			ret['avatar'] = User.getAvatarURI(this.id);
 		}
 		return ret;
+	},
+	profile: function () {
+		return this.hasOne(UserProfile, 'userid');
+	},
+	following: function () {
+		return this.hasMany(require('./followship'), 'userid');
+	},
+	followers: function () {
+		return this.hasMany(require('./followship'), 'followid');
+	},
+	groups: function () {
+		return this.belongsToMany(Group, 'group_membership', 'userid', 'groupid');
+	},
+	issues: function () {
+		return this.hasMany(Issue, 'userid');
+	},
+	photos: function () {
+		return this.hasMany(Photo, 'userid');
 	},
 
 	created: function () {
@@ -68,24 +87,10 @@ User = module.exports = syBookshelf.Model.extend({
 				return user.countFollowship()
 					.then(function () {
 						return user.countIssues();
+					}).then(function () {
+						return user.countPhotos();
 					});
 			});
-	},
-
-	profile: function () {
-		return this.hasOne(UserProfile, 'userid');
-	},
-	following: function () {
-		return this.hasMany(require('./followship'), 'userid');
-	},
-	followers: function () {
-		return this.hasMany(require('./followship'), 'followid');
-	},
-	groups: function () {
-		return this.belongsToMany(Group, 'group_membership', 'userid', 'groupid');
-	},
-	issues: function () {
-		return this.hasMany(Issue, 'userid');
 	},
 
 	countFollowship: function () {
@@ -93,11 +98,11 @@ User = module.exports = syBookshelf.Model.extend({
 		return self.following().fetch()
 			.then(function (followees) {
 				var numFollowing = followees.length;
-				return self.set('numFollowing', numFollowing)
+				return self.data('numFollowing', numFollowing)
 					.followers().fetch();
 			}).then(function (followers) {
 				var numFollowers = followers.length;
-				return self.set('numFollowers', numFollowers);
+				return self.data('numFollowers', numFollowers);
 			});
 	},
 	countIssues: function () {
@@ -105,8 +110,16 @@ User = module.exports = syBookshelf.Model.extend({
 		return this.issues().query('orderBy', 'posttime', 'desc').fetch()
 			.then(function (issues) {
 				var numIssues = issues.length;
-				return self.set('numIssues', numIssues)
-					.set('lastIssue', issues.first());
+				return self.data('numIssues', numIssues)
+					.data('lastIssue', issues.first());
+			});
+	},
+	countPhotos: function () {
+		var self = this;
+		return this.photos().fetch()
+			.then(function (photos) {
+				var numPhotos = photos.length;
+				return self.data('numPhotos', numPhotos);
 			});
 	},
 

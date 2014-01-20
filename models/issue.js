@@ -20,6 +20,12 @@ Issue = module.exports = syBookshelf.Model.extend({
 			posttime: new Date()
 		};
 	},
+	user: function () {
+		return this.belongsTo(require('./user'), 'userid');
+	},
+	comments: function () {
+		return this.hasMany(IssueComment, 'issueid');
+	},
 
 	fetch: function () {
 		return Issue.__super__.fetch.apply(this, arguments)
@@ -29,19 +35,12 @@ Issue = module.exports = syBookshelf.Model.extend({
 			});
 	},
 
-	user: function () {
-		return this.belongsTo(require('./user'), 'userid');
-	},
-	comments: function () {
-		return this.hasMany(IssueComment, 'issueid');
-	},
-
 	countComments: function () {
 		var self = this;
 		return this.comments().fetch()
 			.then(function (comments) {
 				var numComments = comments.length;
-				return self.set('numComments', numComments);
+				return self.data('numComments', numComments);
 			});
 	}
 }, {

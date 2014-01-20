@@ -25,7 +25,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 	tableName: 'activities',
 	fields: [
 		'id', 'ownerid', 'groupid', 'content', 'maxnum', 'createtime',
-		'starttime', 'duration', 'statusid', 'avatar', 'money', 'name'
+		'starttime', 'duration', 'statusid', 'avatar', 'money', 'name', 'site'
 	],
 
 	saving: function () {
@@ -41,7 +41,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 		return this.belongsTo(ActivityStatus, fkStatus);
 	},
 
-	createActivity: function (userid, groupid, content, maxnum, starttime, duration, statusid, money, name) {
+	createActivity: function (userid, groupid, content, maxnum, starttime, duration, statusid, money, name, site) {
 		//check the dude belong to group
 		//save an activity
 		if (userid == null) {
@@ -62,7 +62,8 @@ Activity = module.exports = syBookshelf.Model.extend({
 					'duration': duration,
 					'statusid': statusid,
 					'money': money,
-					'name': name
+					'name': name,
+					'site': site
 				}).save();
 			});
 	},
@@ -153,7 +154,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 			}).save();
 		});
 	},
-	updateActivity: function (userid, content, maxnum, starttime, duration, statusid, money, name) {
+	updateActivity: function (userid, content, maxnum, starttime, duration, statusid, money, name, site) {
 		var ownerid = this.get('ownerid');
 		if (userid != ownerid) {
 			return Promise.rejected(errors[20102]);
@@ -168,7 +169,8 @@ Activity = module.exports = syBookshelf.Model.extend({
 			'duration': duration,
 			'statusid': statusid,
 			'money': money,
-			'name': name
+			'name': name,
+			'site': site
 		}).save();
 	},
 
@@ -235,7 +237,8 @@ Activity = module.exports = syBookshelf.Model.extend({
 				min: 600,
 				max: 1200
 			}),
-			'name': chance.word()
+			'name': chance.word(),
+			'site': chance.word()
 		});
 	},
 

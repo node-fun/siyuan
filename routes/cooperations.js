@@ -57,4 +57,13 @@ module.exports = function (app) {
 		});
 
 	});
+
+	app.get('/api/cooperations/join', function(req, res, next) {
+		var userid = req.session['userid'];
+		Cooperation.forge(req.body)
+			.fetch().
+			then(function (cooperaction) {
+				//return cooperation.
+			});
+	});
 }

@@ -62,10 +62,14 @@ syModel = syBookshelf.Model = syModel.extend({
 
 	toJSON: function () {
 		var ret = syModel.__super__.toJSON.apply(this, arguments);
+		// add data
+		ret = _.defaults(ret, this._data);
 		// omit
 		ret = _.omit(ret, this.omitInJSON);
 		// for timestamp
 		ret = this.forTimestamp(ret);
+		// for boolean
+		ret = this.forBoolean(ret);
 		return ret;
 	},
 
@@ -91,6 +95,14 @@ syModel = syBookshelf.Model = syModel.extend({
 		_.each(attrs, function (val, key, list) {
 			if (_.isDate(val)) {
 				list[key] = val.getTime();
+			}
+		});
+		return attrs;
+	},
+	forBoolean: function (attrs) {
+		_.each(attrs, function (val, key, list) {
+			if (_.isBoolean(val)) {
+				list[key] = val ? 1 : 0;
 			}
 		});
 		return attrs;

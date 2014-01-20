@@ -5,7 +5,7 @@ var _ = require('underscore'),
 	Followship, FollowshipSet;
 
 Followship = module.exports = syBookshelf.Model.extend({
-	tableName: 'user_followship',
+	tableName: 'followship',
 	fields: [
 		'id', 'userid', 'followid', 'remark'
 	],

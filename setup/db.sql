@@ -22,7 +22,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `user_profiles` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `userid` INT NULL,
+  `userid` INT NOT NULL,
   `email` VARCHAR(45) NULL,
   `nickname` VARCHAR(45) NULL,
   `name` VARCHAR(45) NULL,
@@ -36,8 +36,8 @@ CREATE TABLE IF NOT EXISTS `user_profiles` (
   CONSTRAINT `fk_user_profiles_1`
     FOREIGN KEY (`userid`)
     REFERENCES `users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -57,12 +57,12 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `user_followship`
+-- Table `followship`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `user_followship` (
+CREATE TABLE IF NOT EXISTS `followship` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `userid` INT NULL,
-  `followid` INT NULL,
+  `userid` INT NOT NULL,
+  `followid` INT NOT NULL,
   `remark` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_user_followship_1_idx` (`userid` ASC),
@@ -71,13 +71,13 @@ CREATE TABLE IF NOT EXISTS `user_followship` (
   CONSTRAINT `fk_user_followship_1`
     FOREIGN KEY (`userid`)
     REFERENCES `users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_user_followship_2`
     FOREIGN KEY (`followid`)
     REFERENCES `users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -86,7 +86,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `groups` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `ownerid` INT NULL,
+  `ownerid` INT NOT NULL,
   `name` VARCHAR(45) NULL,
   `description` VARCHAR(280) NULL,
   `createtime` DATETIME NULL,
@@ -97,8 +97,8 @@ CREATE TABLE IF NOT EXISTS `groups` (
   CONSTRAINT `ownerid`
     FOREIGN KEY (`ownerid`)
     REFERENCES `users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -107,8 +107,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `group_membership` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `groupid` INT NULL,
-  `userid` INT NULL,
+  `groupid` INT NOT NULL,
+  `userid` INT NOT NULL,
   `isowner` TINYINT(1) NULL,
   `isadmin` TINYINT(1) NULL,
   `remark` VARCHAR(45) NULL COMMENT '备注名',
@@ -144,14 +144,14 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `activities` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `ownerid` INT NULL,
-  `groupid` INT NULL,
+  `ownerid` INT NOT NULL,
+  `groupid` INT NOT NULL,
   `content` VARCHAR(45) NULL,
   `maxnum` INT NULL COMMENT '最大人数',
   `createtime` DATETIME NULL,
   `starttime` DATETIME NULL COMMENT '开始时间',
   `duration` INT NULL COMMENT '单位为分钟',
-  `statusid` INT NULL COMMENT '状态：接受报名、截止报名、活动结束、活动取消等',
+  `statusid` INT NOT NULL COMMENT '状态：接受报名、截止报名、活动结束、活动取消等',
   `avatar` VARCHAR(45) NULL,
   `money` DECIMAL NULL,
   `name` VARCHAR(45) NULL,
@@ -163,18 +163,18 @@ CREATE TABLE IF NOT EXISTS `activities` (
   CONSTRAINT `fk_activities_activity_status1`
     FOREIGN KEY (`statusid`)
     REFERENCES `activity_status` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_activities_users1`
     FOREIGN KEY (`ownerid`)
     REFERENCES `users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_activities_groups1`
     FOREIGN KEY (`groupid`)
     REFERENCES `groups` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -183,8 +183,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `user_activity` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `userid` INT NULL,
-  `activityid` INT NULL,
+  `userid` INT NOT NULL,
+  `activityid` INT NOT NULL,
   `isaccepted` TINYINT(1) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_user_activity_activities1_idx` (`activityid` ASC),
@@ -192,13 +192,13 @@ CREATE TABLE IF NOT EXISTS `user_activity` (
   CONSTRAINT `fk_user_activity_activities1`
     FOREIGN KEY (`activityid`)
     REFERENCES `activities` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_user_activity_users1`
     FOREIGN KEY (`userid`)
     REFERENCES `users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -207,7 +207,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `issues` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `userid` INT NULL,
+  `userid` INT NOT NULL,
   `title` VARCHAR(64) NULL,
   `body` VARCHAR(512) NULL,
   `posttime` DATETIME NULL,
@@ -226,8 +226,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `issue_comments` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `userid` INT NULL,
-  `issueid` INT NULL,
+  `userid` INT NOT NULL,
+  `issueid` INT NOT NULL,
   `body` VARCHAR(512) NULL,
   `posttime` DATETIME NULL,
   PRIMARY KEY (`id`),
@@ -262,12 +262,12 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `cooperations` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL,
-  `ownerid` INT NULL,
+  `ownerid` INT NOT NULL,
   `description` VARCHAR(45) NULL,
   `company` VARCHAR(45) NULL,
   `deadline` VARCHAR(45) NULL,
   `avatar` VARCHAR(45) NULL,
-  `statusid` INT NULL,
+  `statusid` INT NOT NULL,
   `isprivate` TINYINT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_cooperations_co_status1_idx` (`statusid` ASC),
@@ -275,13 +275,13 @@ CREATE TABLE IF NOT EXISTS `cooperations` (
   CONSTRAINT `fk_cooperations_co_status1`
     FOREIGN KEY (`statusid`)
     REFERENCES `co_status` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_cooperations_users1`
     FOREIGN KEY (`ownerid`)
     REFERENCES `users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -290,14 +290,14 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `co_comments` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `cooperationid` INT NULL,
+  `cooperationid` INT NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_co_comment_cooperations1_idx` (`cooperationid` ASC),
   CONSTRAINT `fk_co_comment_cooperations1`
     FOREIGN KEY (`cooperationid`)
     REFERENCES `cooperations` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -338,8 +338,43 @@ CREATE TABLE IF NOT EXISTS `photos` (
   CONSTRAINT `fk_photos_users1`
     FOREIGN KEY (`userid`)
     REFERENCES `users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `source_types`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `source_types` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `starship`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `starship` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `userid` INT NOT NULL,
+  `typeid` INT NOT NULL,
+  `srcid` INT NULL,
+  `remark` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_starship_users1_idx` (`userid` ASC),
+  INDEX `fk_starship_source_types1_idx` (`typeid` ASC),
+  CONSTRAINT `fk_starship_users1`
+    FOREIGN KEY (`userid`)
+    REFERENCES `users` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_starship_source_types1`
+    FOREIGN KEY (`typeid`)
+    REFERENCES `source_types` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -365,6 +400,17 @@ COMMIT;
 START TRANSACTION;
 INSERT INTO `co_status` (`id`, `name`) VALUES (1, '发布');
 INSERT INTO `co_status` (`id`, `name`) VALUES (2, '结束');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `source_types`
+-- -----------------------------------------------------
+START TRANSACTION;
+INSERT INTO `source_types` (`id`, `name`) VALUES (1, 'issue');
+INSERT INTO `source_types` (`id`, `name`) VALUES (2, 'activity');
+INSERT INTO `source_types` (`id`, `name`) VALUES (3, 'cooperation');
 
 COMMIT;
 

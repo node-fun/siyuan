@@ -49,6 +49,7 @@ require('./routes')(app);
 app.use('/avatars', express.static(config.avatarDir));
 app.use('/photos', express.static(config.photoDir));
 app.use('/admin', express.static(config.adminDir));
+app.use('/ad', express.static(config.adDir));
 
 // listen on port
 app.listen(port, function () {

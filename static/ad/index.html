@@ -1,0 +1,32 @@
+<html>
+<head>
+    <style>
+        #imgarea, #imgarea>img{
+            width:100%;
+        }
+        #imgarea>img{
+            position: absolute;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="imgarea">
+        <img src="/ad/img/1.png"/>
+        <img src="/ad/img/2.png"/>
+        <img src="/ad/img/3.png"/>
+    </div>
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script>
+        var imgs = $('#imgarea').children(),
+                len = imgs.length,
+                cur = 0;
+        $(imgs[cur]).fadeIn('slow');
+        setInterval(function(){
+            $(imgs[cur]).fadeOut('slow');
+            cur = (cur+1)%len;
+            $(imgs[cur]).fadeIn('slow');
+        },3000);
+    </script>
+</body>
+</html>

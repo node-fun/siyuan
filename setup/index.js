@@ -27,6 +27,8 @@ var fs = require('fs-extra'),
 	Photos = Photo.Set,
 	Cooperation = require('../models/cooperation'),
 	Cooperations = Cooperation.Set,
+	UserCooperation = require('../models/user-cooperation'),
+	UserCooperations = UserCooperation.Set,
 	numUsers = 35,
 	numFollowship = numUsers * 3,
 	numGroups = ~~(numUsers / 5),
@@ -36,6 +38,7 @@ var fs = require('fs-extra'),
 	numIssues = numUsers * 3,
 	numPhotos = numUsers * 3,
 	numCooperations = 20,
+	numUserCooperations = 100,
 	sqlFile = __dirname + '/db.sql';
 
 // copy directories
@@ -69,6 +72,7 @@ execsql.config(connConfig)
 					.then(addIssues)
 					.then(addPhotos)
 					.then(addCooperations)
+					.then(addUserCooperations)
 					.then(done)
 					.catch(done);
 			} else {
@@ -195,6 +199,21 @@ function addUserActivitys() {
 		});
 }
 
+function addUserCooperations() {
+	var usercooperations = UserCooperations.forge();
+	_.times(numUserCooperations, function () {
+		usercooperations.add(UserCooperation.forge({
+			'userid': _.random(1, numUsers),
+			'cooperationid': _.random(1, numCooperations),
+			'isaccepted': false
+		}));
+	});
+	return usercooperations.invokeThen('save')
+		.then(function () {
+			console.log('%d usercooperations added', numCooperations);
+		});
+}
+
 function addIssues() {
 	var issues = Issues.forge();
 	_.times(numIssues, function () {
@@ -225,7 +244,7 @@ function addPhotos() {
 function addCooperations() {
 	var cooperations = Cooperations.forge();
 	_.times(numCooperations, function () {
-		cooperations.add(Cooperation.randomForge());
+		cooperations.add(Cooperation.randomForge().set({ 'isprivate': true }));
 	});
 	return cooperations.invokeThen('save')
 		.then(function () {

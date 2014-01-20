@@ -54,16 +54,22 @@ module.exports = function (app) {
 						id: cooperation.get('id')
 					});
 				}).catch(next);
-		});
+			});
 
 	});
 
 	app.get('/api/cooperations/join', function(req, res, next) {
-		var userid = req.session['userid'];
+		var userid = 1;//req.session['userid'];
 		Cooperation.forge(req.body)
 			.fetch().
-			then(function (cooperaction) {
-				//return cooperation.
+			then(function (cooperation) {
+				return cooperation.joinCooperation(userid)
+					.then(function (usership) {
+						next({
+							msg: 'join success',
+							id: usership.get('id')
+						});
+				}).catch(next);
 			});
 	});
 }

@@ -15,6 +15,10 @@ var fs = require('fs'),
 	Users = User.Set,
 	CoStatus = require('./co-status'),
 	CoStatuses = CoStatus.Set,
+	UserCooperation = require('./user-cooperation'),
+	UserCooperations = UserCooperation.Set,
+	GroupMember = require('./group-membership'),
+	GroupMembers = GroupMember.Set,
 	Cooperation, Cooperations,
 	fkStatus = 'statusid';
 
@@ -61,6 +65,41 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 			'statusid': statusid,
 			'isprivate': isprivate
 		}).save();
+	},
+
+	joinCooperation: function (userid) {
+		//check the cooperation isprivate
+		var self = this,
+			isprivate = this.get('isprivate'),
+			id = this.get('id'),
+			ownerid = this.get('ownerid');
+
+		//check if already apply
+		return UserCooperation.forge({
+					'userid': userid,
+					'cooperationid': id
+				}).fetch()
+				.then(function (usercooperation) {
+					if (usercooperation != null) return Promise.rejected(errors[40002]);
+					if (!isprivate) {
+						return UserCooperation.forge({
+							'userid': userid,
+							'cooperationid': id,
+							'isaccepted': false
+						}).save();
+					} else {
+						//check the user if in the same group
+						GroupMembers.forge()
+							.query(function (qb) {
+								qb.where('userid', ownerid);
+							}).fetch()
+							.then(function (groupmembers) {
+								groupmembers.mapThen(function (groupmember) {
+
+								})
+							});
+					}
+				});
 	}
 
 }, {

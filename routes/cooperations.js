@@ -63,7 +63,7 @@ module.exports = function (app) {
 		Cooperation.forge(req.body)
 			.fetch().
 			then(function (cooperaction) {
-				return cooperation.
+				//return cooperation.
 			});
 	});
 }

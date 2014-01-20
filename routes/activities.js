@@ -146,6 +146,7 @@ module.exports = function (app) {
 	 * @param {Number}  [statusid] 活动状态  0接受报名、1截止报名、2活动结束、3活动取消
 	 * @param {Number}  [money] 活动费用
 	 * @param {String}  [name] 活动名称
+	 * @param {String}  [site] 活动地点
 	 * @return {JSON}
 	 * <pre>{
 	 * 		msg: update success,  
@@ -161,10 +162,11 @@ module.exports = function (app) {
 			duration = req.body.duration,
 			statusid = req.body.statusid,
 			money = req.body.money,
-			name = req.body.name;
+			name = req.body.name,
+			site = req.body.site;
 		Activity.forge({ 'id': id }).fetch()
 			.then(function(activity) {
-				activity.updateActivity(userid, content, maxnum, starttime, duration, statusid, money, name)
+				activity.updateActivity(userid, content, maxnum, starttime, duration, statusid, money, name, site)
 				.then(function (activity) {
 					next({
 						msg: 'update success',
@@ -185,6 +187,7 @@ module.exports = function (app) {
 	 * @param {Number} statusid 活动状态  0接受报名、1截止报名、2活动结束、3活动取消
 	 * @param {Number} money 活动费用
 	 * @param {String} name 活动名称
+	 * @param {String} site 活动地点
 	 * @return {JSON}
 	 * <pre>{
 	 * 		msg: create success,  
@@ -200,8 +203,9 @@ module.exports = function (app) {
 			duration = req.body.duration,
 			statusid = req.body.statusid,
 			money = req.body.money,
-			name = req.body.name;
-		Activity.forge().createActivity(userid, groupid, content, maxnum, starttime, duration, statusid, money, name)
+			name = req.body.name,
+			site = req.body.site;
+		Activity.forge().createActivity(userid, groupid, content, maxnum, starttime, duration, statusid, money, name, site)
 			.then(function (activity) {
 				next({
 					msg: 'create success',

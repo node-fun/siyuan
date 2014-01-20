@@ -1,6 +1,6 @@
 URL={};
 URL.root = 'http://' + location.host + '/';
-function loadUserTable(page){
+function loadUserTable(page, func){
 	var url = URL.root+'api/users/find?limit=7';
 	if(page){
 		url += '&page='+page;
@@ -9,6 +9,7 @@ function loadUserTable(page){
 		{
 			success: function(data){
 				var users = data['users'];
+				if(!users.length)return;
 				var str = '';
 				for(var i=0; i<users.length; i++ ){
 					str = str + '<tr>'
@@ -28,41 +29,51 @@ function loadUserTable(page){
 						+ '</tr>';
 				}
 				$('#usertable>tbody').html(str);
+				func(5);//参数：总页数，后面林亮会传过来
 			}
 		}
 	);
 }
 
 function loadPager(containerId, minPage, maxPage, activePage){
-	minPage?minPage:minPage=1;
+	minPage&&minPage>0?minPage:minPage=1;//页码都从1开始
 	maxPage?maxPage:maxPage=10;
 	activePage?activePage:activePage=1;
 	activePage = parseInt(activePage);
-	loadUserTable(activePage);
-	var pager = $('<ul>').addClass('pure-paginator');
-	var pagerPrev = $('<li>').addClass('pure-button prev').text('<'),
-		pagerNext = $('<li>').addClass('pure-button next').text('>');
-	if(activePage>minPage){
-		pagerPrev.on('click', function(){
-			loadPager(containerId, minPage, maxPage, activePage-1);
-		});
-	}
-	if(activePage<maxPage){
-		pagerNext.on('click', function(){
-			loadPager(containerId, minPage, maxPage, activePage+1);
-		});
-	}
-	pager.append(pagerPrev).append(pagerNext);
-	for(var i=1; i<=maxPage; i++){
-		var p = $('<li>').addClass('pure-button').text(i).on('click', function(){
-			loadPager(containerId, minPage, maxPage, $(this).text());
-		});
-		if(activePage == i){
-			p.addClass('pure-button-active');
+	loadUserTable(activePage, function(maxpage){//传回来的是真正存在的最大页码
+		if(maxpage<maxPage){
+			maxPage = maxpage;
 		}
-		pagerNext.before(p);
-	}
-	$(containerId).html(pager);
+		var pager = $('<ul>').addClass('pure-paginator');
+		var pagerPrev = $('<li>').addClass('pure-button prev').text('<'),
+			pagerNext = $('<li>').addClass('pure-button next').text('>');
+		pagerPrev.on('click', function(){
+			if(minPage>1 && activePage==minPage){
+				loadPager(containerId, minPage-1, maxPage-1, activePage-1);
+			}else{
+				loadPager(containerId, minPage, maxPage, activePage-1);
+			}
+		});
+		pagerNext.on('click', function(){
+			if(activePage==maxPage){
+				loadPager(containerId, minPage+1, maxPage+1, activePage+1);
+			}else{
+				loadPager(containerId, minPage, maxPage, activePage+1);
+			}
+		});
+		pager.append(pagerPrev).append(pagerNext);
+		for(var i=minPage; i<=maxPage; i++){
+			var p = $('<li>').addClass('pure-button').text(i).on('click', function(){
+				loadPager(containerId, minPage, maxPage, $(this).text());
+			});
+			if(activePage == i){
+				p.addClass('pure-button-active');
+			}
+			pagerNext.before(p);
+		}
+		$(containerId).html(pager);
+	});
+	
 }
 
 // 对Date的扩展，将 Date 转化为指定格式的String   
@@ -91,5 +102,5 @@ Date.prototype.format = function(fmt)
 }
 
 $(function(){
-	loadPager('#pager');
+	loadPager('#pager',1,10,1);
 });

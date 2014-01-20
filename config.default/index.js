@@ -21,6 +21,7 @@ module.exports = {
 	docsDir: path.join(rootDir, 'docs'),
 	staticDir: staticDir,
 	adminDir: path.join(staticDir, 'admin'),
+	adDir: path.join(rootDir, 'static/ad'),
 
 	defaultContentDir: defaultContentDir,
 	contentDir: contentDir,

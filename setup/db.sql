@@ -155,6 +155,7 @@ CREATE TABLE IF NOT EXISTS `activities` (
   `avatar` VARCHAR(45) NULL,
   `money` DECIMAL NULL,
   `name` VARCHAR(45) NULL,
+  `site` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_activities_activity_status1_idx` (`statusid` ASC),
   INDEX `fk_activities_users1_idx` (`ownerid` ASC),
@@ -366,5 +367,4 @@ INSERT INTO `co_status` (`id`, `name`) VALUES (1, '发布');
 INSERT INTO `co_status` (`id`, `name`) VALUES (2, '结束');
 
 COMMIT;
-
 

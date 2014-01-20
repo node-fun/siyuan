@@ -113,11 +113,10 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 	countIssues: function () {
 		var self = this;
-		return this.issues().query('orderBy', 'posttime', 'desc').fetch()
+		return this.issues().fetch()
 			.then(function (issues) {
 				var numIssues = issues.length;
-				return self.data('numIssues', numIssues)
-					.data('lastIssue', issues.first());
+				return self.data('numIssues', numIssues);
 			});
 	},
 	countPhotos: function () {

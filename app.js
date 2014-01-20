@@ -48,6 +48,7 @@ require('./routes')(app);
 // static
 app.use('/avatars', express.static(config.avatarDir));
 app.use('/photos', express.static(config.photoDir));
+app.use('/docs', express.static(config.docsDir));
 app.use('/admin', express.static(config.adminDir));
 app.use('/ad', express.static(config.adDir));
 

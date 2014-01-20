@@ -23,6 +23,8 @@ var fs = require('fs-extra'),
 	GroupMembershipSet = GroupMembership.Set,
 	Issue = require('../models/issue'),
 	Issues = Issue.Set,
+	IssueComment = require('../models/issue-comment'),
+	IssueComments = IssueComment.Set,
 	Photo = require('../models/photo'),
 	Photos = Photo.Set,
 	Cooperation = require('../models/cooperation'),
@@ -36,6 +38,7 @@ var fs = require('fs-extra'),
 	numActivities = numGroups * 2,
 	numUserActivitys = numActivities * 5,
 	numIssues = numUsers * 3,
+	numComments = numIssues * 8,
 	numPhotos = numUsers * 3,
 	numCooperations = 20,
 	numUserCooperations = 100,
@@ -70,6 +73,7 @@ execsql.config(connConfig)
 					.then(addActivities)
 					.then(addUserActivitys)
 					.then(addIssues)
+					.then(addComments)
 					.then(addPhotos)
 					.then(addCooperations)
 					.then(addUserCooperations)
@@ -224,6 +228,19 @@ function addIssues() {
 	return issues.invokeThen('save')
 		.then(function () {
 			console.log('%d issues added', numIssues);
+		});
+}
+function addComments() {
+	var comments = IssueComments.forge();
+	_.times(numComments, function () {
+		var comment = IssueComment.randomForge();
+		comment.set('userid', _.random(1, numUsers));
+		comment.set('issueid', _.random(1, numIssues));
+		comments.add(comment);
+	});
+	return comments.invokeThen('save')
+		.then(function () {
+			console.log('%d comments added', numComments);
 		});
 }
 

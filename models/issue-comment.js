@@ -1,7 +1,8 @@
 /**
  * Created by fritz on 1/11/14.
  */
-var syBookshelf = require('./base'),
+var chance = new (require('chance'))(),
+	syBookshelf = require('./base'),
 	IssueComment, IssueComments;
 
 IssueComment = module.exports = syBookshelf.Model.extend({
@@ -15,9 +16,15 @@ IssueComment = module.exports = syBookshelf.Model.extend({
 			posttime: new Date()
 		};
 	},
-
 	user: function () {
 		return this.belongsTo(require('./user'), 'userid');
+	}
+}, {
+	randomForge: function () {
+		return IssueComment.forge({
+			body: chance.sentence(),
+			posttime: chance.date({ year: 2013 })
+		});
 	}
 });
 

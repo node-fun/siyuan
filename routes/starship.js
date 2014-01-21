@@ -12,8 +12,9 @@ module.exports = function (app) {
 	/**
 	 * GET /api/starship/find
 	 * @method 收藏列表
+	 * @param {Number} [id] 收藏ID
 	 * @param {Number} [userid] 用户ID
-	 * @param {Number} [itemtype] 类别ID - `1`话题, `2`活动, `3`商务合作
+	 * @param {Number} [itemtype] 类别ID - `1`用户, `2`话题, `3`活动, `4`商务合作
 	 * @param {Number} [itemid] 资源ID
 	 * @return {JSON}
 	 */
@@ -45,7 +46,7 @@ module.exports = function (app) {
 					_.pick(req.body, ['userid', 'itemtype', 'itemid', 'remark'])
 				).save();
 			}).then(function () {
-				res.send({ msg: 'Resource starred' });
+				next({ msg: 'Resource starred' });
 			}).catch(next);
 	});
 
@@ -68,7 +69,7 @@ module.exports = function (app) {
 				}
 				return starship.destroy();
 			}).then(function () {
-				res.send({ msg: 'Resource unstarred' });
+				next({ msg: 'Resource unstarred' });
 			}).catch(next);
 	});
 
@@ -94,7 +95,7 @@ module.exports = function (app) {
 					_.pick(req.body, 'remark')
 				).save();
 			}).then(function () {
-				res.send({ msg: 'Resource remarked' });
+				next({ msg: 'Resource remarked' });
 			}).catch(next);
 	});
 };

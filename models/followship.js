@@ -1,5 +1,4 @@
-var _ = require('underscore'),
-	syBookshelf = require('./base'),
+var syBookshelf = require('./base'),
 	Followship, FollowshipSet;
 
 Followship = module.exports = syBookshelf.Model.extend({
@@ -20,7 +19,9 @@ Followship = module.exports = syBookshelf.Model.extend({
 		return FollowshipSet.forge()
 			.query(function (qb) {
 				['userid'].forEach(function (k) {
-					qb.where(k, query[k]);
+					if (k in query) {
+						qb.where(k, query[k]);
+					}
 				});
 			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
@@ -32,7 +33,9 @@ Followship = module.exports = syBookshelf.Model.extend({
 		return FollowshipSet.forge()
 			.query(function (qb) {
 				['followid'].forEach(function (k) {
-					qb.where(k, query[k]);
+					if (k in query) {
+						qb.where(k, query[k]);
+					}
 				});
 			}).query('offset', query['offset'])
 			.query('limit', query['limit'])

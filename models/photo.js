@@ -1,6 +1,5 @@
 var fs = require('fs-extra'),
 	path = require('path'),
-	_ = require('underscore'),
 	Promise = require('bluebird'),
 	chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
@@ -92,10 +91,9 @@ Photo = module.exports = syBookshelf.Model.extend({
 	},
 
 	find: function (query) {
-		var accepts = ['id', 'userid'];
 		return Photos.forge()
 			.query(function (qb) {
-				_.each(accepts, function (k) {
+				['id', 'userid'].forEach(function (k) {
 					if (k in query) {
 						qb.where(k, query[k]);
 					}

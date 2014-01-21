@@ -16,46 +16,7 @@ module.exports = function (app) {
 	 * @param {String} [ownerid] 创建者id
 	 * @param {String} [name] 圈子名
 	 * @return {JSON}
-	 * <pre>
-	{
-		"groups": [
-		{
-			"id": 1,
-			"ownerid": 26,
-			"name": "cab",
-			"description": "Cavgob ija of bilzoro ded gibruzup mar mi pabigkum gegwubez je mig kegiso ufaica votojnuj zavo iki iw. Fefufi bawum gamokzap ni si nizifca con magi evubinek wawke cutero tan hanasboz wozes upvip su owicore. Ne lupwegsav medap ipajies pek ge jucrokub otihuham bi rafma peobizon teh",
-			"createtime": 1380494258000,
-			"avatar": null,
-			"memberships": [
-				{
-					"userid": 24,
-					"isowner": 0,
-					"isadmin": 0,
-					"remark": "jumefojek",
-					"member": {
-						"id": 24,
-						"username": "mifi_94",
-						"regtime": 1385861668000,
-						"isonline": 0,
-						"profile": {
-							"email": "hipignoz@inojuptuw.com",
-							"nickname": "Angelina Swanson",
-							"name": "Savannah Patterson",
-							"gender": "f",
-							"age": 53,
-							"grade": 1978,
-							"university": "Tonadde University",
-							"major": "Onpuval"
-						},
-						"avatar": "/avatars/24.jpg"
-					}
-				},
-				...
-			]
-		}
-	]
-	}
-	</pre>
+	 * 含owner,memberships
 	 */
 	app.get('/api/groups/find', function (req, res, next) {
 		var query = req.query,
@@ -71,7 +32,7 @@ module.exports = function (app) {
 			.fetch()
 			.then(function (groups) {
 				groups.mapThen(function (group) {
-					return group.load(['memberships', 'memberships.member']);
+					return group.load(['owner', 'owner.profile', 'memberships', 'memberships.user']);
 				}).then(function(groups) {
 						next({
 							groups: groups
@@ -320,6 +281,36 @@ module.exports = function (app) {
 					next(errors[21301]);
 				}else{
 					return quit(req.body['userid'], req.body['groupid'], next);
+				}
+			});
+	});
+
+	/**
+	 * POST /api/groups/update
+	 * @method 更新圈子信息
+	 * @param {Number} id 圈子id
+	 * @param {String} name
+	 * @param {String} description
+	 * @return {JSON}
+	 { msg: 'group profile updated' }
+	 */
+	app.post('/api/groups/update', function(req, res, next){
+		var user = req.user;
+		if(!user){
+			next(errors[21301]);
+		}
+		Group.forge({
+			id: req.body['id']
+		}).fetch()
+			.then(function(g){
+				if(g.get('ownerid') != user.id){
+					next(errors[20102]);//not your own
+				}else{
+					g.set(req.body)
+						.save()
+						.then(function(){
+							next({ msg: 'group profile updated' });
+						});
 				}
 			});
 	});

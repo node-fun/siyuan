@@ -19,7 +19,9 @@ Group = module.exports = syBookshelf.Model.extend({
 			createtime: new Date()
 		};
 	},
-	//omitInJSON: ['id'],
+	owner: function () {
+		return this.belongsTo(require('./user'), 'ownerid');
+	},
 	memberships: function () {
 		return this.hasMany(GroupMember, fkGroup);
 	}

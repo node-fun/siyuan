@@ -26,15 +26,13 @@ module.exports = function (app) {
 				if (!user) return Promise.rejected(errors[20003]);
 			}).then(function () {
 				return Followship.forge(
-						_.pick(req.body, ['userid', 'followid'])
-					).fetch()
-					.then(function (followship) {
-						if (followship) return Promise.rejected(errors[20506]);
+						_.pick(req.body, ['userid', 'followid', 'remark'])
+					).save()
+					.catch(function () {
+						return Promise.rejected(errors[20506]);
 					});
 			}).then(function () {
-				return Followship.forge(req.body).save();
-			}).then(function () {
-				res.send({ msg: 'Followee followed' });
+				next({ msg: 'Followee followed' });
 			}).catch(next);
 	});
 
@@ -55,7 +53,7 @@ module.exports = function (app) {
 				if (!followship) return Promise.rejected(errors[20603]);
 				return followship.destroy();
 			}).then(function () {
-				res.send({ msg: 'Followee unfollowed' });
+				next({ msg: 'Followee unfollowed' });
 			}).catch(next);
 	});
 
@@ -79,7 +77,7 @@ module.exports = function (app) {
 					_.pick(req.body, 'remark')
 				).save();
 			}).then(function () {
-				res.send({ msg: 'Followee remarked' });
+				next({ msg: 'Followee remarked' });
 			}).catch(next);
 	});
 
@@ -92,7 +90,7 @@ module.exports = function (app) {
 	app.get('/api/followship/following', function (req, res, next) {
 		Followship.findFollowing(req.query)
 			.then(function (followshipSet) {
-				res.send({ following: followshipSet });
+				next({ following: followshipSet });
 			}).catch(next);
 	});
 
@@ -105,7 +103,7 @@ module.exports = function (app) {
 	app.get('/api/followship/followers', function (req, res, next) {
 		Followship.findFollowers(req.query)
 			.then(function (followshipSet) {
-				res.send({ followers: followshipSet });
+				next({ followers: followshipSet });
 			}).catch(next);
 	});
 };

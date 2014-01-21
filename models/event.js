@@ -16,7 +16,7 @@ Event = module.exports = syBookshelf.Model.extend({
 	}
 }, {
 	find: function (query) {
-		var accepts = ['id', 'userid', 'itemtype', 'itemid'];
+		var accepts = ['id', 'userid', 'groupid', 'itemtype', 'itemid'];
 		return Events.forge()
 			.query(function (qb) {
 				_.each(accepts, function (k) {
@@ -27,7 +27,7 @@ Event = module.exports = syBookshelf.Model.extend({
 			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
 			.fetch({
-				withRelated: ['user']
+				withRelated: ['user.profile']
 			});
 	}
 });

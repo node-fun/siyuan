@@ -1,8 +1,7 @@
 /**
  * Created by fritz on 1/20/14.
  */
-var _ = require('underscore'),
-	syBookshelf = require('./base'),
+var syBookshelf = require('./base'),
 	Starship, StarshipSet;
 
 Starship = module.exports = syBookshelf.Model.extend({
@@ -17,10 +16,9 @@ Starship = module.exports = syBookshelf.Model.extend({
 	}
 }, {
 	find: function (query) {
-		var accepts = ['id', 'userid', 'itemtype', 'itemid'];
 		return StarshipSet.forge()
 			.query(function (qb) {
-				_.each(accepts, function (k) {
+				['id', 'userid', 'itemtype', 'itemid'].forEach(function (k) {
 					if (k in query) {
 						qb.where(k, query[k]);
 					}

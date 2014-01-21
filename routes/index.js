@@ -4,6 +4,7 @@ module.exports = function (app) {
 	require('./users')(app);
 	require('./followship')(app);
 	require('./admin')(app);
+	require('./admin/')(app);
 	require('./groups')(app);
 	require('./activities')(app);
 	require('./issues')(app);
@@ -11,7 +12,6 @@ module.exports = function (app) {
 	require('./cooperations')(app);
 	require('./starship')(app);
 	require('./events')(app);
-	require('./admin')(app);
 
 	app.use('/api', function (data, req, res, next) {
 		if (data instanceof Error) return next(data);

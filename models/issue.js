@@ -1,5 +1,4 @@
-var _ = require('underscore'),
-	Promise = require('bluebird'),
+var Promise = require('bluebird'),
 	chance = new (require('chance'))(),
 	errors = require('../lib/errors'),
 	syBookshelf = require('./base'),
@@ -54,10 +53,9 @@ Issue = module.exports = syBookshelf.Model.extend({
 	},
 
 	find: function (query) {
-		var accepts = ['id', 'userid', 'title'];
 		return Issues.forge()
 			.query(function (qb) {
-				_.each(accepts, function (k) {
+				['id', 'userid', 'title'].forEach(function (k) {
 					if (k in query) {
 						qb.where(k, query[k]);
 					}
@@ -70,18 +68,16 @@ Issue = module.exports = syBookshelf.Model.extend({
 	},
 
 	search: function (query) {
-		var forSearch = ['title', 'body'],
-			forFind = ['userid'],
-			count = 0;
+		var count = 0;
 		return Issues.forge()
 			.query(function (qb) {
-				_.each(forFind, function (k) {
+				['title', 'body'].forEach(function (k) {
 					if (k in query) {
 						count++;
 						qb.where(k, query[k]);
 					}
 				});
-				_.each(forSearch, function (k) {
+				['userid'].forEach(function (k) {
 					if (k in query) {
 						count++;
 						qb.where(k, 'like', '%' + query[k] + '%');

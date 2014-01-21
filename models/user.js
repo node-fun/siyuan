@@ -10,6 +10,7 @@ var fs = require('fs'),
 	Issue = require('./issue'),
 	Photo = require('./photo'),
 	Starship = require('./starship'),
+	Event = require('./event'),
 	config = require('../config'),
 	avatarDir = config.avatarDir,
 	avatarExt = config.avatarExt,
@@ -58,6 +59,9 @@ User = module.exports = syBookshelf.Model.extend({
 	staring: function () {
 		return this.hasMany(Starship, 'userid');
 	},
+	events: function () {
+		return this.hasMany(Event, 'userid');
+	},
 
 	created: function () {
 		var self = this;
@@ -95,6 +99,8 @@ User = module.exports = syBookshelf.Model.extend({
 						return user.countPhotos();
 					}).then(function () {
 						return user.countStarship();
+					}).then(function () {
+						return user.countEvents();
 					});
 			});
 	},
@@ -133,6 +139,14 @@ User = module.exports = syBookshelf.Model.extend({
 			.then(function (starshipSet) {
 				var numStarring = starshipSet.length;
 				return self.data('numStarring', numStarring);
+			});
+	},
+	countEvents: function () {
+		var self = this;
+		return this.events().fetch()
+			.then(function (events) {
+				var numEvents = events.length;
+				return self.data('numEvents', numEvents);
 			});
 	},
 
@@ -224,13 +238,13 @@ User = module.exports = syBookshelf.Model.extend({
 			.query(function (qb) {
 				qb.join(tbProfile, tbProfile + '.userid', '=', tbUser + '.id');
 				// find for user
-				_.each(['id', 'username', 'isonline'], function (k) {
+				['id', 'username', 'isonline'].forEach(function (k) {
 					if (k in query) {
 						qb.where(tbUser + '.' + k, '=', query[k]);
 					}
 				});
 				// find for profile
-				_.each(['nickname', 'name', 'gender'], function (k) {
+				['nickname', 'name', 'gender'].forEach(function (k) {
 					if (k in query['profile']) {
 						qb.where(tbProfile + '.' + k, '=', query['profile'][k]);
 					}
@@ -249,28 +263,28 @@ User = module.exports = syBookshelf.Model.extend({
 			.query(function (qb) {
 				qb.join(tbProfile, tbProfile + '.userid', '=', tbUser + '.id');
 				// find for user
-				_.each(['isonline'], function (k) {
+				['isonline'].forEach(function (k) {
 					if (k in query) {
 						count++;
 						qb.where(tbUser + '.' + k, '=', query[k]);
 					}
 				});
 				// find for profile
-				_.each(['gender'], function (k) {
+				['gender'].forEach(function (k) {
 					if (k in query['profile']) {
 						count++;
 						qb.where(tbProfile + '.' + k, '=', query['profile'][k]);
 					}
 				});
 				// search for user
-				_.each(['username'], function (k) {
+				['username'].forEach(function (k) {
 					if (k in query) {
 						count++;
 						qb.where(tbUser + '.' + k, 'like', '%' + query[k] + '%');
 					}
 				});
 				// search for profile
-				_.each(['nickname', 'name', 'university', 'major'], function (k) {
+				['nickname', 'name', 'university', 'major'].forEach(function (k) {
 					if (k in query['profile']) {
 						count++;
 						qb.where(tbProfile + '.' + k, 'like', '%' + query['profile'][k] + '%');

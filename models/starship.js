@@ -8,7 +8,7 @@ var _ = require('underscore'),
 Starship = module.exports = syBookshelf.Model.extend({
 	tableName: 'starship',
 	fields: [
-		'id', 'userid', 'typeid', 'srcid', 'remark'
+		'id', 'userid', 'typeid', 'itemid', 'remark'
 	],
 	omitInJSON: ['userid'],
 

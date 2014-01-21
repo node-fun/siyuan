@@ -4,7 +4,6 @@ module.exports = function (app) {
 	require('./users')(app);
 	require('./followship')(app);
 	require('./admin')(app);
-	require('./admin/')(app);
 	require('./groups')(app);
 	require('./activities')(app);
 	require('./issues')(app);
@@ -26,5 +25,11 @@ module.exports = function (app) {
 	});
 	app.use('/api', function (req, res) {
 		res.sendErr(errors[10020]);
+	});
+	app.use('/admin', function (req, res, next){
+		if(!req.admin){
+			res.end('please login first!');
+		}
+		next();
 	});
 };

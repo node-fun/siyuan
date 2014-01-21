@@ -1,16 +1,15 @@
 /**
- * Created by fritz on 1/20/14.
+ * Created by fritz on 1/21/14.
  */
 var _ = require('underscore'),
 	syBookshelf = require('./base'),
-	Starship, StarshipSet;
+	Event, Events;
 
-Starship = module.exports = syBookshelf.Model.extend({
+Event = module.exports = syBookshelf.Model.extend({
 	tableName: 'starship',
 	fields: [
-		'id', 'userid', 'itemtype', 'itemid', 'remark'
+		'id', 'userid', 'groupid', 'itemtype', 'itemid', 'message'
 	],
-	omitInJSON: ['userid'],
 
 	user: function () {
 		return this.belongsTo(require('./user'), 'userid');
@@ -18,7 +17,7 @@ Starship = module.exports = syBookshelf.Model.extend({
 }, {
 	find: function (query) {
 		var accepts = ['id', 'userid', 'itemtype', 'itemid'];
-		return StarshipSet.forge()
+		return Events.forge()
 			.query(function (qb) {
 				_.each(accepts, function (k) {
 					if (k in query) {
@@ -27,10 +26,12 @@ Starship = module.exports = syBookshelf.Model.extend({
 				});
 			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
-			.fetch();
+			.fetch({
+				withRelated: ['user']
+			});
 	}
 });
 
-StarshipSet = Starship.Set = syBookshelf.Collection.extend({
-	model: Starship
+Events = Event.Set = syBookshelf.Collection.extend({
+	model: Event
 });

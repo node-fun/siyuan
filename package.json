@@ -12,11 +12,11 @@
 		"mysql": "2.0.0-rc2",
 		"bluebird": "0.11.6-0",
 		"bookshelf": "0.6.1",
-		"execsql": "0.0.2"
+		"execsql": "0.0.3"
 	},
 	"devDependencies": {
+		"localface": "0.0.3",
 		"request": "2.29.0",
-		"localface": "0.0.2",
 		"mocha": "1.15.1"
 	},
 	"scripts": {

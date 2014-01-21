@@ -10,7 +10,8 @@ module.exports = function (app) {
 	require('./photos')(app);
 	require('./cooperations')(app);
 	require('./starship')(app);
-	require('./admin/index.js')(app);
+	require('./events')(app);
+	require('./admin')(app);
 
 	app.use('/api', function (data, req, res, next) {
 		if (data instanceof Error) return next(data);

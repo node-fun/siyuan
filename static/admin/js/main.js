@@ -103,7 +103,7 @@ Date.prototype.format = function(fmt)
 
 function loadUserList(){
 	$.ajax({
-		url: URL.root+'admin/userlist.html',
+		url: URL.root+'admin/list_user.html',
 		success: function(data){
 			$('#content').html(data);
 			loadPager('#pager',1,10,1);

@@ -365,6 +365,7 @@ CREATE TABLE IF NOT EXISTS `starship` (
   PRIMARY KEY (`id`),
   INDEX `fk_starship_users1_idx` (`userid` ASC),
   INDEX `fk_starship_source_types1_idx` (`itemtype` ASC),
+  UNIQUE INDEX `uq_starship_1_idx` (`userid` ASC, `itemtype` ASC, `itemid` ASC),
   CONSTRAINT `fk_starship_users1`
     FOREIGN KEY (`userid`)
     REFERENCES `users` (`id`)

@@ -46,7 +46,7 @@ module.exports = function (app) {
 					_.pick(req.body, ['userid', 'itemtype', 'itemid', 'remark'])
 				).save();
 			}).then(function () {
-				res.send({ msg: 'Resource starred' });
+				next({ msg: 'Resource starred' });
 			}).catch(next);
 	});
 
@@ -69,7 +69,7 @@ module.exports = function (app) {
 				}
 				return starship.destroy();
 			}).then(function () {
-				res.send({ msg: 'Resource unstarred' });
+				next({ msg: 'Resource unstarred' });
 			}).catch(next);
 	});
 
@@ -95,7 +95,7 @@ module.exports = function (app) {
 					_.pick(req.body, 'remark')
 				).save();
 			}).then(function () {
-				res.send({ msg: 'Resource remarked' });
+				next({ msg: 'Resource remarked' });
 			}).catch(next);
 	});
 };

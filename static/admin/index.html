@@ -10,13 +10,27 @@
 <body class="pure-skin-cam">
 
 <div class="pure-g header">
-    <div class="grids-unit-bar pure-u-1">
+    <div class="grids-unit-bar pure-u-4-5">
         <h1>思源群后台管理系统</h1>
+    </div>
+    <div class="grids-unit-bar pure-u-1-5">
+        <a href="javascript:$.post('/api/admin/logout',{},function(){location.reload();});">退出</a>
     </div>
 </div>
 <div class="pure-g">
     <div class="pure-u-1-6">
-        {sider}
+        <div class="pure-menu pure-menu-open">
+            <a class="pure-menu-heading">公告管理</a>
+
+            <ul>
+                <li><a href="javascript:load('add_bulletin.html')">发布公告</a></li>
+                <li><a href="javascript:load('list_bulletin.html')">公告列表</a></li>
+                <li class="pure-menu-heading">用户管理</li>
+                <li><a href="javascript:loadUserList()">用户列表</a></li>
+                <li class="pure-menu-heading">管理员管理</li>
+                <li><a href="javascript:load('list_admin.html')">管理员列表</a></li>
+            </ul>
+        </div>
     </div>
     <div class="pure-u-5-6">
         <div id="content">

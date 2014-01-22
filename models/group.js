@@ -24,6 +24,21 @@ Group = module.exports = syBookshelf.Model.extend({
 	},
 	memberships: function () {
 		return this.hasMany(GroupMember, fkGroup);
+	},
+	countMembership: function(){
+		var self = this;
+		return this.memberships()
+			.fetch()
+			.then(function(membershipSet){
+			return self.data('numMembers', membershipSet.length);
+		});
+	},
+	fetch: function () {
+		return Group.__super__.fetch.apply(this, arguments)
+			.then(function (group) {
+				if (!group) return group;
+				return group.countMembership();
+			});
 	}
 });
 

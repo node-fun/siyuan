@@ -5,7 +5,7 @@ var _ = require('underscore'),
 	User = require('../models/user'),
 	errors = require('../lib/errors'),
 	config = require('../config'),
-	imageLitmit = config.imageLitmit;
+	imageLimit = config.imageLimit;
 
 module.exports = function (app) {
 	/**
@@ -206,7 +206,7 @@ module.exports = function (app) {
 		if (!user) return next(errors[21301]);
 		if (!file) return next(errors[20007]);
 		if (file['type'] != 'image/jpeg') return next(errors[20005]);
-		if (file['size'] > imageLitmit) return next(errors[20006]);
+		if (file['size'] > imageLimit) return next(errors[20006]);
 		user.updateAvatar(file['path'])
 			.then(function () {
 				next({ msg: 'Avatar updated' });

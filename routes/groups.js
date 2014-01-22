@@ -16,7 +16,7 @@ module.exports = function (app) {
 	 * @param {String} [ownerid] 创建者id
 	 * @param {String} [name] 圈子名
 	 * @return {JSON}
-	 * 含owner,memberships
+	 * 含owner,numMembers
 	 */
 	app.get('/api/groups/find', function (req, res, next) {
 		var query = req.query,
@@ -32,7 +32,7 @@ module.exports = function (app) {
 			.fetch()
 			.then(function (groups) {
 				groups.mapThen(function (group) {
-					return group.load(['owner', 'owner.profile', 'memberships', 'memberships.user']);
+					return group.load(['owner', 'owner.profile']);
 				}).then(function(groups) {
 						next({
 							groups: groups
@@ -41,6 +41,36 @@ module.exports = function (app) {
 			}).catch(next);
 	});
 
+	/**
+	 * post /api/groups/view
+	 * @method 圈子列表
+	 * @param {Number} id
+	 * @return {JSON}
+	 * 含owner,memberships
+	 */
+	app.get('/api/groups/view', function (req, res, next) {
+		var query = req.query,
+			accepts = ['id', 'ownerid', 'name'];
+		Groups.forge().query(function (qb) {
+			_.each(accepts, function (k) {
+				if (k in query) {
+					qb.where(k, query[k]);
+				}
+			});
+		}).query('offset', query['offset'])
+			.query('limit', query['limit'])
+			.fetch()
+			.then(function (groups) {
+				groups.mapThen(function (group) {
+					return group.load(['owner', 'owner.profile', 'memberships', 'memberships.user', 'memberships.user.profile']);
+				}).then(function(groups) {
+						next({
+							groups: groups
+						});
+					});
+			}).catch(next);
+	});
+	
 	/**
 	 * post /api/groups/create
 	 * @method 创建圈子

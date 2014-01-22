@@ -4,6 +4,7 @@
 var _ = require('underscore'),
 	Promise = require('bluebird'),
 	Activity = require('../models/activity'),
+	UserActivity = require('../models/user-activity'),
 	errors = require('../lib/errors');
 
 module.exports = function (app) {
@@ -52,11 +53,62 @@ module.exports = function (app) {
 		Activity.find(req.query)
 			.then(function (activities) {
 				activities.mapThen(function (activity) {
-					return activity.load(['usership', 'status']);
+					return activity.load(['usership', 'status', 'owner']);
 				})
 				.then(function (activities) {
 					next({
 						activities: activities
+					});
+				});
+			}).catch(next);
+	});
+
+	/**
+	 * GET /api/activities/history
+	 * @method 活动参加历史
+	 * @param {Number} [id] 申请id,就是usership的id
+	 * @param {Number} [userid] 用户id
+	 * @param {Number} [activityid] 活动id
+	 * @return {Array}
+	 * <pre>{
+  "usership": [
+    {
+      "id": 1,
+      "userid": 27,
+      "activityid": 5,
+      "isaccepted": 0,
+      "user": {
+        "id": 27,
+        "username": "mi_132",
+        "regtime": 1376071590000,
+        "isonline": 0,
+        "avatar": "/avatars/27.jpg"
+      }
+    },
+    {
+      "id": 2,
+      "userid": 26,
+      "activityid": 4,
+      "isaccepted": 1,
+      "user": {
+        "id": 26,
+        "username": "na_954",
+        "regtime": 1372878494000,
+        "isonline": 1,
+        "avatar": "/avatars/26.jpg"
+      }
+    }
+    ]</pre>
+	*/
+	app.get('/api/activities/history', function (req, res, next) {
+		UserActivity.find(req.query)
+			.then(function (useractivitys) {
+				useractivitys.mapThen(function (useractivity) {
+					return useractivity.load(['user']);
+				})
+				.then(function (useractivitys) {
+					next({
+						usership: useractivitys
 					});
 				});
 			}).catch(next);

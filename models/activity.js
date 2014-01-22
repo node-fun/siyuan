@@ -18,6 +18,7 @@ var fs = require('fs'),
 	avatarDir = config.activityAvatarDir,
 	avatarExt = config.avatarExt,
 	fkActivity = 'activityid',
+	fkOwner = 'ownerid',
 	fkStatus = 'statusid',
 	Activity, Activities;
 
@@ -39,6 +40,9 @@ Activity = module.exports = syBookshelf.Model.extend({
 
 	status: function () {
 		return this.belongsTo(ActivityStatus, fkStatus);
+	},
+	owner: function () {
+		return this.belongsTo(User, fkOwner);
 	},
 
 	createActivity: function (userid, groupid, content, maxnum, starttime, duration, statusid, money, name, site) {

@@ -53,8 +53,8 @@ module.exports = function (app) {
 						msg: 'update success',
 						id: cooperation.get('id')
 					});
-				}).catch(next);
-			});
+				});
+			}).catch(next);
 
 	});
 
@@ -69,7 +69,7 @@ module.exports = function (app) {
 							msg: 'join success',
 							id: usership.get('id')
 						});
-				}).catch(next);
-			});
+				});
+			}).catch(next);
 	});
 }

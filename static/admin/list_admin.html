@@ -1,13 +1,12 @@
-<h3>公告列表</h3>
-<table id="bulletintable" class="pure-table">
+<h3>管理员列表</h3>
+<table id="admintable" class="pure-table">
     <thead>
     <tr>
         <th>#</th>
-        <th>标题</th>
-        <th>内容</th>
-        <th>图片</th>
-        <th>时间</th>
-        <th>发布人</th>
+        <th>用户名</th>
+        <th>邮箱</th>
+        <th>最后登录IP</th>
+        <th>最后登录时间</th>
     </tr>
     </thead>
 
@@ -21,20 +20,27 @@
     </ul>
 </div>
         <script>
-            function loadBulletinTable(){
+            function loadAdminTable(){
                 $.ajax({
                     url:'/api/admin/find',
                     success:function(data){
                         var admins = data['admins'];
                         var str = '';
                         for(var i=0; i<admins.length; i++){
-                            str = '<tr>'
+                            str += '<tr>'
+                                +'<td>'+admins[i]['id']+'</td>'
                                 +'<td>'+admins[i]['username']+'</td>'
+                                +'<td>'+admins[i]['email']+'</td>'
+                                +'<td>'+admins[i]['lastip']+'</td>'
+                                +'<td>'+admins[i]['lasttime']+'</td>'
                                 +'</tr>';
                         }
                         console.log(admins);
-                        $('#bulletintable>tbody').html(str);
+                        $('#admintable>tbody').html(str);
                     }
                 });
             }
+            $(function(){
+                loadAdminTable();
+            });
         </script>

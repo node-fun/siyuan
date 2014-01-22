@@ -1,20 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>思源群后台管理系统</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.3.0/pure-min.css">
+    <link rel="stylesheet" href="css/pure-skin-cam.css" />
+    <link rel="stylesheet" href="css/main.css" />
+    <script src="http://code.jquery.com/jquery.js"></script>
+</head>
+<body class="pure-skin-cam">
+
 <div style="line-height: 100px; text-align: center;font-size: 36px;">
     欢迎进入思源群后台管理系统
 </div>
-<form class="pure-form pure-form-aligned" style="text-align: center">
+<form id="loginform" class="pure-form pure-form-aligned" style="text-align: center">
     <fieldset>
         <div class="pure-control-group">
-            <label for="name">Username</label>
-            <input id="name" type="text" placeholder="Username">
+            <label for="username">Username</label>
+            <input id="username" name="username" type="text" placeholder="Username">
         </div>
 
         <div class="pure-control-group">
             <label for="password">Password</label>
-            <input id="password" type="password" placeholder="Password">
+            <input id="password" name="password" type="password" placeholder="Password">
         </div>
 
         <div class="pure-controls">
-            <button type="submit" class="pure-button pure-button-primary">Login</button>
+            <input type="submit" onclick="event.preventDefault();dologin()" class="pure-button pure-button-primary" value="Login"/>
         </div>
     </fieldset>
 </form>
+        <script>
+            function dologin(){
+                $.post("/api/admin/login",
+                        {
+                        username: $('#username')[0].value,
+                        password: $('#password')[0].value
+                        },
+                        function(data){
+                            if(data['msg']){
+                                location.reload();
+                            }else{
+                                alert('用户名或密码错误！');
+                            }
+                        });
+            }
+        </script>
+</body>
+
+</html>

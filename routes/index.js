@@ -1,4 +1,5 @@
-var errors = require('../lib/errors');
+var errors = require('../lib/errors'),
+	fs = require('fs');;
 
 module.exports = function (app) {
 	require('./users')(app);
@@ -27,9 +28,12 @@ module.exports = function (app) {
 		res.sendErr(errors[10020]);
 	});
 	app.use('/admin', function (req, res, next){
-		if(!req.admin){
-			res.end('please login first!');
+		if(!req.session.adminid){
+			fs.readFile('./static/admin/login.html',{encoding:'utf8'}, function (err, index) {
+				res.end(index);
+			});
+		}else{
+			next();
 		}
-		next();
 	});
 };

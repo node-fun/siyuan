@@ -12,7 +12,7 @@ function loadUserTable(page, func){
 				if(!users.length)return;
 				var str = '';
 				for(var i=0; i<users.length; i++ ){
-					str = str + '<tr>'
+					str += '<tr>'
 						+ '<td>'+ users[i]['id'] +'</td>'
 						+ '<td>'+ users[i]['username'] +'</td>'
 						+ '<td>'+ users[i]['profile']['nickname'] +'</td>'
@@ -119,8 +119,3 @@ function load(file){
 		}
 	});
 }
-
-//test
-$(function(){
-	load('login.html');
-});

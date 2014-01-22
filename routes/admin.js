@@ -132,9 +132,4 @@ module.exports = function (app) {
 			}).catch(next);
 	});
 
-	app.get('/admin/login', function (req, res, next) {
-		res.render('login', {
-
-		});
-	});
 };

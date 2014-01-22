@@ -9,7 +9,7 @@ var fs = require('fs'),
 	_ = require('underscore'),
 	chance = new (require('chance'))(),
 	Promise = require('bluebird'),
-	errors = require('./base'),
+	errors = require('../lib/errors'),
 	syBookshelf = require('./base'),
 	User = require('./user'),
 	Users = User.Set,
@@ -20,7 +20,8 @@ var fs = require('fs'),
 	GroupMember = require('./group-membership'),
 	GroupMembers = GroupMember.Set,
 	Cooperation, Cooperations,
-	fkStatus = 'statusid';
+	fkStatus = 'statusid',
+	fkCooperation = 'cooperationid';
 
 Cooperation = module.exports = syBookshelf.Model.extend({
 	tableName: 'cooperations',
@@ -31,6 +32,11 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 		return Cooperation.__super__
 			.saving.apply(this, arguments);
 	},
+
+	usership: function () {
+		return this.hasMany(UserCooperations, fkCooperation);
+	},
+
 	status: function () {
 		return this.belongsTo(CoStatus, fkStatus);
 	},
@@ -74,6 +80,9 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 			id = this.get('id'),
 			ownerid = this.get('ownerid');
 
+		var isfounded = false,
+			theGroupid = [];
+
 		//check if already apply
 		return UserCooperation.forge({
 					'userid': userid,
@@ -89,19 +98,78 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 						}).save();
 					} else {
 						//check the user if in the same group
-						GroupMembers.forge()
+
+						return GroupMembers.forge()
 							.query(function (qb) {
 								qb.where('userid', ownerid);
 							}).fetch()
 							.then(function (groupmembers) {
-								groupmembers.mapThen(function (groupmember) {
-
-								})
+								return groupmembers.mapThen(function (groupmember) {
+									var groupid = groupmember.get('groupid');
+									return GroupMember.forge({
+										'userid': userid,
+										'groupid': groupid
+									})
+									.fetch()
+									.then(function (groupmember) {
+										if (groupmember != null) {
+											isfounded = true;
+											theGroupid.push(groupmember.get('groupid'));
+										}
+									});
+								}).then(function (groupmembers) {
+										if(!isfounded) return Promise.rejected(errors[21301]);
+										return UserCooperation.forge({
+											'userid': userid,
+											'cooperationid': id,
+											'isaccepted': false
+										}).save();
+								});
 							});
 					}
 				});
-	}
+	},
+	cancelCooperation: function (userid) {
+		var self = this;
+		if (userid == null) {
+			return Promise.rejected(errors[21301]);
+		}
+		return self.load(['usership']).then(function (cooperation) {
+			var userships = cooperation.related('usership').models,
+				isfounded = false;
+			_.each(userships, function (usership) {
+				if (usership.get('userid') == userid) {
+					isfounded = true;
+				}
+			});
+			if (isfounded)
+				return UserCooperation.forge({
+					'userid': userid,
+					'cooperationid': self.get('id')
+				}).fetch()
+				.then(function (usership) {
+					if (usership.get('isaccepted') == 1)
+						return Promise.rejected(errors[40016]);
+					return usership.destroy();
+				})
+		});
+	},
 
+	endCooperation: function (userid) {
+		if (userid == null) {
+			return Promise.rejected(errors[21301]);
+		}
+		var self = this;
+		return self.load(['usership']).then(function (cooperation) {
+			if (!(self.get('ownerid') == userid)) {
+				return Promise.rejected(errors[20102]);
+			}
+			return self.set({
+				'statusid': 2
+			}).save();
+		});
+
+	}
 }, {
 	randomForge: function () {
 		var status = _.random(1, 2);

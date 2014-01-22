@@ -33,27 +33,24 @@ module.exports = function (app) {
 			"id": 4,  
 			"name": "活动取消"  
 		  },  
-		  "usership": [  
-			{  
-			  "id": 4,  
-			  "userid": 10,  
-			  "activityid": 1,  
-			  "isaccepted": 0  
-			},  
-			{  
-			  "id": 58,  
-			  "userid": 5,  
-			  "activityid": 1,  
-			  "isaccepted": 0  
-			}  
-		  ]  
+		  "usership": []
 		}]</pre>
 	*/
 	app.get('/api/activities/find', function (req, res, next) {
 		Activity.find(req.query)
 			.then(function (activities) {
 				activities.mapThen(function (activity) {
-					return activity.load(['usership', 'status', 'owner']);
+					return activity.load(['usership', 'status', 'owner'])
+						.then(function (activity) {
+							var userships = activity.related('usership');
+							activity.set({
+								'usershipNum': userships.length
+							});
+							var str = JSON.stringify(activity),
+								act = JSON.parse(str);
+							act.usership = [];
+							return act;
+						});
 				})
 				.then(function (activities) {
 					next({
@@ -177,7 +174,7 @@ module.exports = function (app) {
 			.fetch()
 			.then(function (activity) {
 				if (activity == null) {
-					return Promise.rejected(errors[40017]);
+					return Promise.rejected(errors[40018]);
 				}
 				return activity.endActivity(userid)
 					.then(function () {

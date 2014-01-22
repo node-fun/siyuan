@@ -43,8 +43,11 @@ module.exports = function (app) {
 			.then(function (resource) {
 				if (!resource) return Promise.rejected(errors[20605]);
 				return Starship.forge(
-					_.pick(req.body, ['userid', 'itemtype', 'itemid', 'remark'])
-				).save();
+						_.pick(req.body, ['userid', 'itemtype', 'itemid', 'remark'])
+					).save()
+					.catch(function () {
+						return Promise.rejected(errors[20506]);
+					});
 			}).then(function () {
 				next({ msg: 'Resource starred' });
 			}).catch(next);

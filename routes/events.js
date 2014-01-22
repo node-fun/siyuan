@@ -8,8 +8,9 @@ module.exports = function (app) {
 	/**
 	 * GET /api/event/find
 	 * @method 动态列表
-	 * @param {Number} [id] 动爱ID
+	 * @param {Number} [id] 动态ID
 	 * @param {Number} [userid] 用户ID
+	 * @param {Number} [groupid] 圈子ID
 	 * @param {Number} [itemtype] 类别ID - `1`用户, `2`话题, `3`活动, `4`商务合作
 	 * @param {Number} [itemid] 资源ID
 	 * @return {JSON}

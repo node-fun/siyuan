@@ -1,5 +1,6 @@
 body {
     background-color: #ffffff;
+    min-width:800px;
 }
 
 /* from PURE buttons-core.css */
@@ -922,6 +923,7 @@ margin: 7px 2px;
     font-size: 90%;
     margin-top: 0.5em;
     border-bottom: solid 1px #e6eaf4;
+    background: #AFC5F5;
 }
 
 

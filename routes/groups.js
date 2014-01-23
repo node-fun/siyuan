@@ -32,6 +32,7 @@ module.exports = function (app) {
 			.fetch()
 			.then(function (groups) {
 				groups.mapThen(function (group) {
+					group.countMembership();
 					return group.load(['owner', 'owner.profile']);
 				}).then(function(groups) {
 						next({
@@ -49,27 +50,14 @@ module.exports = function (app) {
 	 * 含owner,memberships
 	 */
 	app.get('/api/groups/view', function (req, res, next) {
-		var query = req.query,
-			accepts = ['id', 'ownerid', 'name'];
-		Groups.forge().query(function (qb) {
-			_.each(accepts, function (k) {
-				if (k in query) {
-					qb.where(k, query[k]);
-				}
-			});
-		}).query('offset', query['offset'])
-			.query('limit', query['limit'])
+		Group.forge({id: req.query.id})
 			.fetch()
-			.then(function (groups) {
-				groups.mapThen(function (group) {
+			.then(function (group) {
 					return group.load(['owner', 'owner.profile', 'memberships', 'memberships.user', 'memberships.user.profile']);
-				}).then(function(groups) {
-						next({
-							groups: groups
-						});
-					});
+			}).then(function(group) {
+					next(group);
 			}).catch(next);
-	});
+		})
 	
 	/**
 	 * post /api/groups/create

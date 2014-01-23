@@ -27,10 +27,11 @@ Group = module.exports = syBookshelf.Model.extend({
 	},
 	countMembership: function(){
 		var self = this;
-		return this.memberships()
-			.fetch()
-			.then(function(membershipSet){
-			return self.data('numMembers', membershipSet.length);
+		return GroupMember.forge().query()
+			.where(fkGroup, '=', this.id)
+			.count('id')
+			.then(function(d){
+				return self.data('numMembers', d[0]["count(`id`)"]);
 		});
 	},
 	fetch: function () {

@@ -21,7 +21,8 @@ var fs = require('fs'),
 	GroupMembers = GroupMember.Set,
 	Cooperation, Cooperations,
 	fkStatus = 'statusid',
-	fkCooperation = 'cooperationid';
+	fkCooperation = 'cooperationid',
+	fkOwner = 'ownerid';
 
 Cooperation = module.exports = syBookshelf.Model.extend({
 	tableName: 'cooperations',
@@ -39,6 +40,9 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 
 	status: function () {
 		return this.belongsTo(CoStatus, fkStatus);
+	},
+	owner: function () {
+		return this.belongsTo(User, fkOwner);
 	},
 
 	createCooperation: function (ownerid, name, description, company, deadline, statusid, isprivate) {
@@ -181,7 +185,7 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 				max: 20
 			}),
 			'company': chance.word(),
-			'deadline': chance.date({ string: true }),
+			'deadline': chance.date({ year: 2013 }),
 			'avatar': chance.word(),
 			'statusid': status,
 			'isprivate': chance.bool()
@@ -201,7 +205,9 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 			})
 			.query('offset', query['offset'])
 			.query('limit', query['limit'])
-			.fetch();
+			.fetch({
+				withRelated: ['owner.profile']
+			});
 	}
 });
 

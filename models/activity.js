@@ -232,8 +232,8 @@ Activity = module.exports = syBookshelf.Model.extend({
 		return Activity.forge({
 			'content': chance.paragraph(),
 			'maxnum': maxnum,
-			'createtime': new Date(),
-			'starttime': chance.date({ string: true }),
+			'createtime': chance.date({ year: 2013 }),
+			'starttime': chance.date({ year: 2013 }),
 			'duration': duration,
 			'statusid': status,
 			'avatar': chance.word(),
@@ -259,7 +259,9 @@ Activity = module.exports = syBookshelf.Model.extend({
 			})
 			.query('offset', query['offset'])
 			.query('limit', query['limit'])
-			.fetch();
+			.fetch({
+				withRelated: ['owner.profile']
+			});
 	},
 
 	getAvatarName: function (id) {

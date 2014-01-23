@@ -292,12 +292,12 @@ module.exports = function (app) {
 			id = req.body.id;
 		Activity.forge({ 'id': id }).fetch()
 			.then(function(activity) {
-				activity
+				return activity
 					.getUserList(userid)
 					.then(function(users) {
 						next({ users: users });
-					}).catch(next);
-			});
+					});
+			}).catch(next);
 	});
 
 	/**
@@ -317,12 +317,12 @@ module.exports = function (app) {
 		Activity.forge({ 'id': activityid })
 			.fetch()
 			.then(function(activity) {
-				activity.
+				return activity.
 					acceptJoin(userid, id)
 					.then(function(activity) {
 						next({ msg: 'accept success' });
-					}).catch(next);
-			});
+					});
+			}).catch(next);
 	});
 
 	/**

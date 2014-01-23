@@ -77,6 +77,33 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 		}).save();
 	},
 
+	getUserList: function () {
+		var self = this,
+			id = self.get('id');
+		return self.load(['usership']).then(function (cooperation) {
+			var userships = cooperation.related('usership');
+			return userships.mapThen(function (usership) {
+				return User.forge({ 'id':usership.get('userid') })
+					.fetch()
+					.then(function (user) {
+						return usership.set({ 'name': user.get('username') });
+					});
+			}).then(function (userships) {
+					return userships;
+				});
+		});
+	},
+
+	acceptJoin: function (userid, usershipid) {
+		var self = this,
+			ownerid = self.get('ownerid');
+		if (userid != ownerid) return Promise.rejected(errors[20102]);
+		return UserCooperation.forge({ 'id': usershipid }).fetch()
+			.then(function (usership) {
+				return usership.set({ 'isaccepted': true }).save();
+			});
+	},
+
 	joinCooperation: function (userid) {
 		//check the cooperation isprivate
 		var self = this,

@@ -14,37 +14,37 @@ module.exports = function (app) {
 	 * // GET /api/cooperations/find?id=20
 	 *
 	 * <pre>{
-  "cooperations": [
-    {
-      "id": 20,
-      "name": "kaghurat",
-      "ownerid": 15,
-      "description": "Lohnahab hocuwe ju titov dubwavji evto ehacib",
-      "company": "ciccociw",
-      "deadline": "2013-05-03 09:42:55.498",
-      "avatar": "muzesgan",
-      "statusid": 1,
-      "isprivate": 1,
-      "owner": {
-        "id": 15,
-        "username": "ji_104",
-        "regtime": 1387749830000,
-        "isonline": 0,
-        "profile": {
-          "email": "zodvarod@uvues.org",
-	 "nickname": "Alexis Kim",
-	 "name": "Katherine Stone",
-	 "gender": "f",
-	 "age": 42,
-	 "grade": 1990,
-	 "university": "Rezzaso University",
-	 "major": "Ruzuit"
+	 * "cooperations": [
+	 {
+	  "id": 1,
+	  "name": "ur",
+	  "ownerid": 5,
+	  "description": "Pec jeffo zewbugni bokzifvik ollu volsoz wane",
+	  "company": "wos",
+	  "deadline": "2013-02-03 01:24:43.364",
+	  "avatar": "atijev",
+	  "statusid": 1,
+	  "isprivate": 1,
+	  "user": {
+		"id": 5,
+		"username": "odeikzop_57",
+		"regtime": 1363814596000,
+		"isonline": 1,
+		"profile": {
+		  "email": "fu@donzog.co.uk",
+	 "nickname": "London George",
+	 "name": "Adriana Montgomery",
+	 "gender": "m",
+	 "age": 57,
+	 "grade": 1972,
+	 "university": "Ikhilo University",
+	 "major": "Cagok"
 	 },
-	 "avatar": "/avatars/15.jpg"
+	 "avatar": "/avatars/5.jpg"
 	 },
 	 "status": {
         "id": 1,
-        "name": "发布"
+        "name": "??"
       }
 	 }
 	 ]
@@ -54,7 +54,7 @@ module.exports = function (app) {
 		Cooperation.find(req.query)
 			.then(function (cooperations) {
 				cooperations.mapThen(function (cooperation) {
-					return cooperation.load(['status']);
+					return cooperation.load(['status', 'user', 'user.profile']);
 				})
 				.then(function (cooperations) {
 					next({

@@ -15,7 +15,47 @@ module.exports = function (app) {
 	 * @param {String} [name] 活动名称
 	 * @return {Array}
 	 * // GET /api/activities/find?id=45
-	 * GET it yourself
+	 * <pre>{
+  "activities": [
+    {
+      "id": 1,
+      "ownerid": 6,
+      "groupid": 4,
+      "content": "Lemkazvu fegubezu gow venneg vec vukonmic gac",
+      "maxnum": 34,
+      "createtime": 1358884697000,
+      "starttime": 1367641060000,
+      "duration": 10,
+      "statusid": 3,
+      "avatar": "avecu",
+      "money": 813,
+      "name": "wojomsa",
+      "site": "jabe",
+      "user": {
+        "id": 6,
+        "username": "be_689",
+        "regtime": 1377558747000,
+        "isonline": 1,
+        "profile": {
+          "email": "lakzaki@te.co.uk",
+	 "nickname": "Xander Schneider",
+	 "name": "Alexandria Carlson",
+	 "gender": "f",
+	 "age": 26,
+	 "grade": 2006,
+	 "university": "Donhegra University",
+	 "major": "Vormiwi"
+	 },
+	 "avatar": "/avatars/6.jpg"
+	 },
+	 "status": {
+        "id": 3,
+        "name": "????"
+      },
+	 "numUsership": 2
+	 }
+	 ]
+	 }</pre>
 	*/
 	app.get('/api/activities/find', function (req, res, next) {
 		Activity.find(req.query)

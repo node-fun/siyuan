@@ -38,10 +38,20 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 		return this.hasMany(UserCooperations, fkCooperation);
 	},
 
+	countUsership: function () {
+		var self = this;
+		UserCooperations.forge().query()
+			.where(fkCooperation, '=', self.id)
+			.count('id')
+			.then(function (d) {
+				return self.data('numUsership', d[0]["count(`id`)"]);
+			});
+	},
+
 	status: function () {
 		return this.belongsTo(CoStatus, fkStatus);
 	},
-	owner: function () {
+	user: function () {
 		return this.belongsTo(User, fkOwner);
 	},
 
@@ -233,7 +243,7 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 			.query('offset', query['offset'])
 			.query('limit', query['limit'])
 			.fetch({
-				withRelated: ['owner.profile']
+				withRelated: ['user.profile']
 			});
 	}
 });

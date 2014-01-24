@@ -37,12 +37,12 @@ Activity = module.exports = syBookshelf.Model.extend({
 	usership: function () {
 		return this.hasMany(UserActivitys, fkActivity);
 	},
-	countUsership: function(){
+	countUsership: function () {
 		var self = this;
 		UserActivitys.forge().query()
-			.where(fkActivity,'=',self.id)
+			.where(fkActivity, '=', self.id)
 			.count('id')
-			.then(function(d){
+			.then(function (d) {
 				return self.data('numUsership', d[0]["count(`id`)"]);
 			});
 	},
@@ -189,25 +189,29 @@ Activity = module.exports = syBookshelf.Model.extend({
 
 	getUserList: function (userid) {
 		var self = this;
-		return GroupMembers.forge({
+		/*return GroupMembers.forge({
 			'groupid': self.get('groupid'),
 			'userid': userid
 		}).fetch().then(function (groupmember) {
-				if (groupmember == null) return Promise.rejected(errors[40001]);
+				if (groupmember == null) return Promise.rejected(errors[40001]);*/
 				return self.load(['usership']).then(function (activity) {
 					var userships = activity.related('usership');
 					return userships.mapThen(function (usership) {
 						return User.forge({ 'id': usership.get('userid') })
 							.fetch()
 							.then(function (user) {
-								return usership.set({ 'name': user.get('username') });
+								return user.load(['profile']).then(function (user) {
+									return usership.set({
+										'user': user
+									});
+								});
 							});
 					}).then(function (userships) {
 							return userships;
 						});
 
 				});
-			});
+			/*});*/
 	},
 
 	acceptJoin: function (userid, usershipid) {

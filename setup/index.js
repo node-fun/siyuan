@@ -29,6 +29,8 @@ var fs = require('fs-extra'),
 	Photos = Photo.Set,
 	Cooperation = require('../models/cooperation'),
 	Cooperations = Cooperation.Set,
+	CoComment = require('../models/co-comment'),
+	CoComments = CoComment.Set,
 	UserCooperation = require('../models/user-cooperation'),
 	UserCooperations = UserCooperation.Set,
 	numUsers = 35,
@@ -42,6 +44,7 @@ var fs = require('fs-extra'),
 	numPhotos = numUsers * 3,
 	numCooperations = 20,
 	numUserCooperations = 100,
+	numCoComments = numCooperations * 8,
 	sqlFile = __dirname + '/db.sql';
 
 // copy directories
@@ -77,6 +80,7 @@ execsql.config(connConfig)
 					.then(addPhotos)
 					.then(addCooperations)
 					.then(addUserCooperations)
+					.then(addCoComments)
 					.then(done)
 					.catch(done);
 			} else {
@@ -266,6 +270,20 @@ function addCooperations() {
 	return cooperations.invokeThen('save')
 		.then(function () {
 			console.log('%d cooperations added', numCooperations);
+		});
+}
+
+function addCoComments () {
+	var cocomments = CoComments.forge();
+	_.times(numCoComments, function () {
+		var cocomment = CoComment.randomForge();
+		cocomment.set('userid', _.random(1, numUsers));
+		cocomment.set('cooperationid', _.random(1, numCooperations));
+		cocomments.add(cocomment);
+	});
+	return cocomments.invokeThen('save')
+		.then(function () {
+			console.log('%d cocomments added', numCoComments);
 		});
 }
 

@@ -12,6 +12,7 @@ module.exports = function (app) {
 	require('./cooperations')(app);
 	require('./starship')(app);
 	require('./events')(app);
+	require('./ads')(app);
 
 	app.use('/api', function (data, req, res, next) {
 		if (data instanceof Error) return next(data);

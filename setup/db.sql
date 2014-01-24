@@ -411,6 +411,27 @@ CREATE TABLE IF NOT EXISTS `events` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `ad`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `ad` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(45) NULL,
+  `content` VARCHAR(1000) NULL,
+  `picture` VARCHAR(200) NULL,
+  `posttime` DATETIME NULL,
+  `adminid` INT NULL,
+  `isoutofdate` TINYINT(1) NULL,
+  PRIMARY KEY (`id`),
+  INDEX `adminid_idx` (`adminid` ASC),
+  CONSTRAINT `adminid`
+    FOREIGN KEY (`adminid`)
+    REFERENCES `admin` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

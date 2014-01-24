@@ -119,3 +119,12 @@ function load(file){
 		}
 	});
 }
+
+function ajaxSubmit(url, form, success){
+	var arr = form.serializeArray();
+	var data = {};
+	for(var i=0; i<arr.length; i++){
+		data[ arr[i]['name'] ] = arr[i]['value'];
+	}
+	$.post(url, data, success);
+}

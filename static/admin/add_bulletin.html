@@ -1,5 +1,5 @@
 <h3>发布公告</h3>
-<form class="pure-form pure-form-aligned">
+<form id="adform" class="pure-form pure-form-aligned" action="/api/ads/add" method="post">
     <fieldset>
         <div class="pure-control-group">
             <label for="title">标题</label>
@@ -12,12 +12,21 @@
         </div>
 
         <div class="pure-control-group">
-            <label for="img">图片</label>
-            <input id="img" type="file" name="img"/>
+            <label for="img">图片(720*120)</label>
+            <input id="img" type="file" name="picture"/>
         </div>
 
         <div class="pure-controls">
-            <button type="submit" class="pure-button pure-button-primary">Submit</button>
+            <button type="button" onclick="add()" class="pure-button pure-button-primary">Submit</button>
         </div>
     </fieldset>
 </form>
+        <script>
+            function add(){
+                $.post('/api/ads/add', $('#adform').serialize(), function(data){
+                    if(data['msg']){
+                        alert('添加成功！');
+                    }
+                });
+            }
+        </script>

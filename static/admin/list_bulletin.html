@@ -7,7 +7,8 @@
         <th>内容</th>
         <th>图片</th>
         <th>时间</th>
-        <th>发布人</th>
+        <th>已过期</th>
+        <th>发布人id</th>
     </tr>
     </thead>
 
@@ -23,18 +24,23 @@
         <script>
             function loadBulletinTable(){
                 $.ajax({
-                    url:'/api/admin/find',
-                    success:function(data){
-                        var admins = data['admins'];
+                    url:'/api/ads/find',
+                    success:function(ads){
                         var str = '';
-                        for(var i=0; i<admins.length; i++){
-                            str = '<tr>'
-                                +'<td>'+admins[i]['username']+'</td>'
+                        for(var i=0; i<ads.length; i++){
+                            str += '<tr>'
+                                +'<td>'+ads[i]['id']+'</td>'
+                                +'<td>'+ads[i]['title']+'</td>'
+                                +'<td>'+ads[i]['content']+'</td>'
+                                +'<td>'+ads[i]['picture']+'</td>'
+                                +'<td>'+ads[i]['posttime']+'</td>'
+                                +'<td>'+ads[i]['isoutofdate']+'</td>'
+                                +'<td>'+ads[i]['adminid']+'</td>'
                                 +'</tr>';
                         }
-                        console.log(admins);
                         $('#bulletintable>tbody').html(str);
                     }
                 });
             }
+            loadBulletinTable();
         </script>

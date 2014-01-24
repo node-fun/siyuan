@@ -66,7 +66,31 @@ module.exports = function (app) {
 	});
 
 
-
+	/**
+	 * GET /api/cooperations/history
+	 * @method 参加合作历史
+	 * @param {Number} [id] 申请id,就是usership的id
+	 * @param {Number} [userid] 用户id
+	 * @param {Number} [cooperationid] 合作id
+	 * @return {Array}
+	 * <pre>{
+		  "usership": [
+			{
+			  "id": 7,
+			  "userid": 31,
+			  "cooperationid": 11,
+			  "isaccepted": 0,
+			  "user": {
+				"id": 31,
+				"username": "mo_168",
+				"regtime": 1374861840000,
+				"isonline": 0,
+				"avatar": "/avatars/31.jpg"
+			  }
+			}
+		  ]
+		}</pre>
+	 */
 	app.get('/api/cooperations/history', function (req, res, next) {
 		UserCooperations.find(req.query)
 			.then(function (usercooperations) {
@@ -81,6 +105,18 @@ module.exports = function (app) {
 			}).catch(next);
 	});
 
+	/**
+	 * POST /api/cooperations/join
+	 * @method 加入合作
+	 * @param {Number} id 合作id
+	 * @return {JSON}
+	 * <pre>
+	 *     {
+	 *     		msg: join success
+	 *     		id: 6
+	 *     }
+	 * </pre>
+	 */
 	app.post('/api/cooperations/join', function(req, res, next) {
 		var userid = req.session['userid'];
 		Cooperation.forge(req.body)
@@ -96,6 +132,17 @@ module.exports = function (app) {
 			}).catch(next);
 	});
 
+	/**
+	 * POST /api/cooperations/cancel
+	 * @method 成员取消参加合作
+	 * @param {Number} id 合作id
+	 * @return {JSON}
+	 * <pre>
+	 * {
+	 * 		msg: cancel success
+	 * }
+	 * </pre>
+	 */
 	app.post('/api/cooperations/cancel', function (req, res, next) {
 		var userid = req.session['userid'];
 			id = req.body.id;
@@ -111,6 +158,17 @@ module.exports = function (app) {
 			}).catch(next);
 	});
 
+	/**
+	 * POST /api/cooperations/end
+	 * @method 发起者终止合作
+	 * @param {Number} id 合作id
+	 * @return {JSON}
+	 * <pre>
+	 *     {
+	 *     		msg: end success
+	 *     }
+	 * </pre>
+	 */
 	app.post('/api/cooperations/end', function (req, res, next) {
 		var userid = req.session['userid'],
 			id = req.body.id;
@@ -129,6 +187,23 @@ module.exports = function (app) {
 			}).catch(next);
 	});
 
+	/**
+	 * POST /api/cooperations/update
+	 * @method 发起者更新合作资料
+	 * @param {Number} id 合作id
+	 * @param {String} name 合作名称
+	 * @param {String} description 合作简介
+	 * @param {String} company 公司或组织
+	 * @param {DATETIME} deadline 合作期限
+	 * @param {Number} statusid 1发布 2结束
+	 * @return {Array}
+	 * <pre>
+	 *     {
+	 *     		msg: update success,
+	 *     		id: 6
+	 *     }
+	 * </pre>
+	 */
 	app.post('/api/cooperations/update', function(req, res, next) {
 		var userid = 1,//req.session['userid'],
 			id = req.body.id,
@@ -151,8 +226,25 @@ module.exports = function (app) {
 
 	});
 
+	/**
+	 * POST /api/cooperations/create
+	 * @method 发起合作
+	 * @param {String} name 合作名称
+	 * @param {String} description 合作简介
+	 * @param {String} company 公司或组织
+	 * @param {String} deadline 合作期限
+	 * @param {Number} statusid 1发布 2结束
+	 * @param {BOOLEAN} isprivate 是否私有
+	 * @return {JSON}
+	 * <pre>
+	 *     {
+	 *     		msg: create success,
+	 *     		id: 6
+	 *     }
+	 * </pre>
+	 */
 	app.post('/api/cooperations/create', function(req, res, next) {
-		var ownerid = 1,//req.session['userid'],
+		var ownerid = req.session['userid'],
 			name = req.body.name,
 			description = req.body.description,
 			company = req.body.company,
@@ -168,6 +260,51 @@ module.exports = function (app) {
 			}).catch(next);
 	});
 
+	/**
+	 * POST /api/cooperations/userlist
+	 * @method 获取合作人员名单
+	 * @param {Number} id 合作id
+	 * @return {Array}
+	 * <pre>{
+  "users": [
+    {
+      "id": 11,
+      "userid": 14,
+      "cooperationid": 12,
+      "isaccepted": 0,
+      "name": "nonteg_926"
+    },
+    {
+      "id": 28,
+      "userid": 1,
+      "cooperationid": 12,
+      "isaccepted": 0,
+      "name": "eje_95"
+    },
+    {
+      "id": 33,
+      "userid": 15,
+      "cooperationid": 12,
+      "isaccepted": 0,
+      "name": "ji_104"
+    },
+    {
+      "id": 70,
+      "userid": 12,
+      "cooperationid": 12,
+      "isaccepted": 0,
+      "name": "ca_938"
+    },
+    {
+      "id": 78,
+      "userid": 24,
+      "cooperationid": 12,
+      "isaccepted": 0,
+      "name": "niz_742"
+    }
+  ]
+}</pre>
+	 */
 	app.get('/api/cooperations/userlist', function (req, res, next) {
 		var id = req.body.id;
 		Cooperation.forge({ 'id': id }).fetch()
@@ -181,6 +318,18 @@ module.exports = function (app) {
 			}).catch(next);
 	});
 
+	/**
+	 * POST /api/cooperations/accept
+	 * @method 发起人接受申请人
+	 * @param {Number} id userslist接口里面的那个id,不是userid
+	 * @param {Number} cooperationid 合作id
+	 * @return {JSON}
+	 * <pre>
+	 *    {
+	 *    		msg: accept success
+	 *    }
+	 * </pre>
+	 */
 	app.post('/api/cooperations/accept', function (req, res, next) {
 		var userid = req.session['userid'],
 			id = req.body.id,

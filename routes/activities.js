@@ -111,7 +111,7 @@ module.exports = function (app) {
 	/**
 	 * POST /api/activities/cancel
 	 * @method 成员取消参加活动
-	 * @param {Number} id:活动id
+	 * @param {Number} id 活动id
 	 * @return {JSON}
 	 * <pre>{
 	 *		msg: cancel success  
@@ -134,7 +134,7 @@ module.exports = function (app) {
 	/**
 	 * POST /api/activities/end
 	 * @method 发起者终止活动
-	 * @param {Number}  id:活动id
+	 * @param {Number}  id 活动id
 	 * @return {JSON}
 	 * <pre>{
 	 * 		msg: end success  
@@ -163,8 +163,8 @@ module.exports = function (app) {
 	 * @param {Number}  id:活动id
 	 * @param {String}  [content] 活动内容
 	 * @param {Number}  [maxnum] 最大人数
-	 * @param {Number}  [duration] 持续时间,单位为分钟
-	 * @param {Number}  [statusid] 活动状态  0接受报名、1截止报名、2活动结束、3活动取消
+	 * @param {Number}  [duration] 持续时间,单位为天
+	 * @param {Number}  [statusid] 活动状态  1接受报名、2截止报名、3活动结束、4活动取消
 	 * @param {Number}  [money] 活动费用
 	 * @param {String}  [name] 活动名称
 	 * @param {String}  [site] 活动地点
@@ -238,7 +238,7 @@ module.exports = function (app) {
 	/**
 	 * POST /api/activities/userslist
 	 * @method 获取活动人员名单
-	 * @param {Number} id:活动id
+	 * @param {Number} id 活动id
 	 * @return {Array}
 	 * <pre>{
 	"users": [
@@ -275,8 +275,8 @@ module.exports = function (app) {
 	/**
 	 * POST /api/activities/accept
 	 * @method 发起人接受申请人
-	 * @param {Number} id:userslist接口里面的那个id,不是userid
-	 * @param {Number} activityid:活动id
+	 * @param {Number} id userslist接口里面的那个id,不是userid
+	 * @param {Number} activityid 活动id
 	 * @return {JSON}
 	 * <pre>{
 	 * 		msg: accept success  

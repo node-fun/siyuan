@@ -2,13 +2,14 @@ var _ = require('underscore'),
 	Promise = require('bluebird'),
 	Cooperation = require('../models/cooperation'),
 	UserCooperations = require('../models/user-cooperation'),
+	CoComment = require('../models/co-comment'),
 	errors = require('../lib/errors');
 
 module.exports = function (app) {
 	/**
 	 * GET /api/cooperations/find
 	 * @method 合作列表
-	 * @param {Number} [id] 合作id
+	 * @param {Number} [id] 合作ID
 	 * @param {String} [name] 合作名称
 	 * @return {Array}
 	 * // GET /api/cooperations/find?id=20
@@ -70,8 +71,8 @@ module.exports = function (app) {
 	 * GET /api/cooperations/history
 	 * @method 参加合作历史
 	 * @param {Number} [id] 申请id,就是usership的id
-	 * @param {Number} [userid] 用户id
-	 * @param {Number} [cooperationid] 合作id
+	 * @param {Number} [userid] 用户ID
+	 * @param {Number} [cooperationid] 合作ID
 	 * @return {Array}
 	 * <pre>{
 		  "usership": [
@@ -108,7 +109,7 @@ module.exports = function (app) {
 	/**
 	 * POST /api/cooperations/join
 	 * @method 加入合作
-	 * @param {Number} id 合作id
+	 * @param {Number} id 合作ID
 	 * @return {JSON}
 	 * <pre>
 	 *     {
@@ -135,7 +136,7 @@ module.exports = function (app) {
 	/**
 	 * POST /api/cooperations/cancel
 	 * @method 成员取消参加合作
-	 * @param {Number} id 合作id
+	 * @param {Number} id 合作ID
 	 * @return {JSON}
 	 * <pre>
 	 * {
@@ -161,7 +162,7 @@ module.exports = function (app) {
 	/**
 	 * POST /api/cooperations/end
 	 * @method 发起者终止合作
-	 * @param {Number} id 合作id
+	 * @param {Number} id 合作ID
 	 * @return {JSON}
 	 * <pre>
 	 *     {
@@ -190,7 +191,7 @@ module.exports = function (app) {
 	/**
 	 * POST /api/cooperations/update
 	 * @method 发起者更新合作资料
-	 * @param {Number} id 合作id
+	 * @param {Number} id 合作ID
 	 * @param {String} name 合作名称
 	 * @param {String} description 合作简介
 	 * @param {String} company 公司或组织
@@ -263,7 +264,7 @@ module.exports = function (app) {
 	/**
 	 * POST /api/cooperations/userlist
 	 * @method 获取合作人员名单
-	 * @param {Number} id 合作id
+	 * @param {Number} id 合作ID
 	 * @return {Array}
 	 * <pre>{
   "users": [
@@ -322,7 +323,7 @@ module.exports = function (app) {
 	 * POST /api/cooperations/accept
 	 * @method 发起人接受申请人
 	 * @param {Number} id userslist接口里面的那个id,不是userid
-	 * @param {Number} cooperationid 合作id
+	 * @param {Number} cooperationid 合作ID
 	 * @return {JSON}
 	 * <pre>
 	 *    {
@@ -341,6 +342,91 @@ module.exports = function (app) {
 					.then(function (cooperation) {
 						next({ msg: 'accept success' });
 					});
+			}).catch(next);
+	});
+
+	/**
+	 * POST /api/cooperations/comments/post
+	 * @method 评论合作
+	 * @param {Number} cooperationid 合作ID
+	 * @param {String} body 内容
+	 * @return {JSON}
+	 * <pre>
+	 *     {
+	 *     		msg: Comment posted
+	 *     }
+	 * </pre>
+	 */
+	app.post('/api/cooperations/comments/post', function (req, res, next) {
+		var user = req.user;
+		if (!user) return next(errors[21301]);
+		Cooperation.forge({ 'id': req.body['cooperationid'] }).fetch()
+			.then(function (cooperation) {
+				if (!cooperation) return Promise.rejected(errors[20603]);
+				req.body['userid'] = user.id;
+				return CoComment.forge(req.body).save();
+			}).then(function (cocomment) {
+				next({
+					msg: 'Comment posted',
+					id: cocomment.id
+				});
+			}).catch(next);
+	});
+
+	/**
+	 * POST /api/cooperations/comments/update
+	 * @method 更新评论
+	 * @param {Number} id 评论ID
+	 * @param {String} [body] 内容
+	 * @return {JSON}
+	 * <pre>
+	 *     {
+	 *     		msg: Coment updated
+	 *     }
+	 * </pre>
+	 */
+	app.post('/api/cooperations/comments/update', function (req, res, next) {
+		var user = req.user;
+		if (!user) return next(errors[21301]);
+		var id = req.body['id'];
+		delete req.body['id'];
+		CoComment.forge({ 'id': id }).fetch()
+			.then(function (cocomment) {
+				if (!cocomment) return Promise.rejected(errors[20603]);
+				if (cocomment.get('userid') != user.id) {
+					return Promise.rejected(errors[20102]);
+				}
+				return cocomment.set(req.body).save();
+			}).then(function () {
+				next({
+					msg: 'Coment updated'
+				});
+			}).catch(next);
+	});
+
+	/**
+	 * POST /api/cooperations/comments/delete
+	 * @method 删除评论
+	 * @param {Number} id 评论ID
+	 * @return {JSON}
+	 * <pre>
+	 *     {
+	 *     		msg: Comment deleted
+	 *     }
+	 * </pre>
+	 */
+	app.post('/api/cooperations/comments/delete', function (req, res, next) {
+		var user = req.user;
+		if (!user) return next(errors[21301]);
+		CoComment.forge({ 'id': req.body['id'] }).fetch()
+			.then(function (cocomment) {
+				if (!cocomment) return Promise.rejected(errors[20603]);
+				if (cocomment.get('userid') != user.id) {
+					return Promise.rejected(errors[20102]);
+				}
+				return cocomment.destroy();
+			}).then(function () {
+				next({ msg: 'Comment deleted' });
 			}).catch(next);
 	});
 

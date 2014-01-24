@@ -290,14 +290,23 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `co_comments` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `cooperationid` INT NOT NULL,
+  `cooperationid` INT NULL,
+  `userid` INT NULL,
+  `body` VARCHAR(512) NULL,
+  `posttime` DATETIME NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_co_comment_cooperations1_idx` (`cooperationid` ASC),
+  INDEX `fk_co_comments_users1_idx` (`userid` ASC),
   CONSTRAINT `fk_co_comment_cooperations1`
     FOREIGN KEY (`cooperationid`)
     REFERENCES `cooperations` (`id`)
     ON DELETE CASCADE
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_co_comments_users1`
+    FOREIGN KEY (`userid`)
+    REFERENCES `users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -468,4 +477,5 @@ INSERT INTO `resource_types` (`id`, `name`) VALUES (3, 'activity');
 INSERT INTO `resource_types` (`id`, `name`) VALUES (4, 'cooperation');
 
 COMMIT;
+
 

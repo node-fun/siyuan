@@ -25,14 +25,14 @@ Group = module.exports = syBookshelf.Model.extend({
 	memberships: function () {
 		return this.hasMany(GroupMember, fkGroup);
 	},
-	countMembership: function(){
+	countMembership: function () {
 		var self = this;
 		return GroupMember.forge().query()
 			.where(fkGroup, '=', this.id)
 			.count('id')
-			.then(function(d){
+			.then(function (d) {
 				return self.data('numMembers', d[0]["count(`id`)"]);
-		});
+			});
 	},
 	fetch: function () {
 		return Group.__super__.fetch.apply(this, arguments)

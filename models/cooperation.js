@@ -93,7 +93,7 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 		return self.load(['usership']).then(function (cooperation) {
 			var userships = cooperation.related('usership');
 			return userships.mapThen(function (usership) {
-				return User.forge({ 'id':usership.get('userid') })
+				return User.forge({ 'id': usership.get('userid') })
 					.fetch()
 					.then(function (user) {
 						return usership.set({ 'name': user.get('username') });
@@ -126,31 +126,31 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 
 		//check if already apply
 		return UserCooperation.forge({
-					'userid': userid,
-					'cooperationid': id
-				}).fetch()
-				.then(function (usercooperation) {
-					if (usercooperation != null) return Promise.rejected(errors[40002]);
-					if (!isprivate) {
-						return UserCooperation.forge({
-							'userid': userid,
-							'cooperationid': id,
-							'isaccepted': false
-						}).save();
-					} else {
-						//check the user if in the same group
+			'userid': userid,
+			'cooperationid': id
+		}).fetch()
+			.then(function (usercooperation) {
+				if (usercooperation != null) return Promise.rejected(errors[40002]);
+				if (!isprivate) {
+					return UserCooperation.forge({
+						'userid': userid,
+						'cooperationid': id,
+						'isaccepted': false
+					}).save();
+				} else {
+					//check the user if in the same group
 
-						return GroupMembers.forge()
-							.query(function (qb) {
-								qb.where('userid', ownerid);
-							}).fetch()
-							.then(function (groupmembers) {
-								return groupmembers.mapThen(function (groupmember) {
-									var groupid = groupmember.get('groupid');
-									return GroupMember.forge({
-										'userid': userid,
-										'groupid': groupid
-									})
+					return GroupMembers.forge()
+						.query(function (qb) {
+							qb.where('userid', ownerid);
+						}).fetch()
+						.then(function (groupmembers) {
+							return groupmembers.mapThen(function (groupmember) {
+								var groupid = groupmember.get('groupid');
+								return GroupMember.forge({
+									'userid': userid,
+									'groupid': groupid
+								})
 									.fetch()
 									.then(function (groupmember) {
 										if (groupmember != null) {
@@ -158,17 +158,17 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 											theGroupid.push(groupmember.get('groupid'));
 										}
 									});
-								}).then(function (groupmembers) {
-										if(!isfounded) return Promise.rejected(errors[21301]);
-										return UserCooperation.forge({
-											'userid': userid,
-											'cooperationid': id,
-											'isaccepted': false
-										}).save();
+							}).then(function (groupmembers) {
+									if (!isfounded) return Promise.rejected(errors[21301]);
+									return UserCooperation.forge({
+										'userid': userid,
+										'cooperationid': id,
+										'isaccepted': false
+									}).save();
 								});
-							});
-					}
-				});
+						});
+				}
+			});
 	},
 	cancelCooperation: function (userid) {
 		var self = this;
@@ -188,11 +188,11 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 					'userid': userid,
 					'cooperationid': self.get('id')
 				}).fetch()
-				.then(function (usership) {
-					if (usership.get('isaccepted') == 1)
-						return Promise.rejected(errors[40016]);
-					return usership.destroy();
-				})
+					.then(function (usership) {
+						if (usership.get('isaccepted') == 1)
+							return Promise.rejected(errors[40016]);
+						return usership.destroy();
+					})
 		});
 	},
 

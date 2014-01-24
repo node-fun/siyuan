@@ -37,12 +37,12 @@ Activity = module.exports = syBookshelf.Model.extend({
 	usership: function () {
 		return this.hasMany(UserActivitys, fkActivity);
 	},
-	countUsership: function(){
+	countUsership: function () {
 		var self = this;
 		UserActivitys.forge().query()
-			.where(fkActivity,'=',self.id)
+			.where(fkActivity, '=', self.id)
 			.count('id')
-			.then(function(d){
+			.then(function (d) {
 				return self.data('numUsership', d[0]["count(`id`)"]);
 			});
 	},

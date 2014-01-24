@@ -29,9 +29,7 @@ module.exports = function (app) {
 	});
 	app.use('/admin', function (req, res, next){
 		if(!req.session.adminid){
-			fs.readFile('./static/admin/login.html',{encoding:'utf8'}, function (err, index) {
-				res.end(index);
-			});
+			res.sendfile('./static/admin/login.html');
 		}else{
 			next();
 		}

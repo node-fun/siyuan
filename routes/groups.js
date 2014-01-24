@@ -44,7 +44,7 @@ module.exports = function (app) {
 
 	/**
 	 * post /api/groups/view
-	 * @method 圈子列表
+	 * @method 圈子详细资料
 	 * @param {Number} id
 	 * @return {JSON}
 	 * 含owner,memberships

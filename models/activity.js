@@ -37,11 +37,20 @@ Activity = module.exports = syBookshelf.Model.extend({
 	usership: function () {
 		return this.hasMany(UserActivitys, fkActivity);
 	},
+	countUsership: function(){
+		var self = this;
+		UserActivitys.forge().query()
+			.where(fkActivity,'=',self.id)
+			.count('id')
+			.then(function(d){
+				return self.data('numUsership', d[0]["count(`id`)"]);
+			});
+	},
 
 	status: function () {
 		return this.belongsTo(ActivityStatus, fkStatus);
 	},
-	owner: function () {
+	user: function () {
 		return this.belongsTo(User, fkOwner);
 	},
 
@@ -260,7 +269,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 			.query('offset', query['offset'])
 			.query('limit', query['limit'])
 			.fetch({
-				withRelated: ['owner.profile']
+				withRelated: ['user.profile']
 			});
 	},
 

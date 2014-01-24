@@ -15,42 +15,14 @@ module.exports = function (app) {
 	 * @param {String} [name] 活动名称
 	 * @return {Array}
 	 * // GET /api/activities/find?id=45
-	 * <pre>{
-  	"activities": [
-		{  
-		  "id": 1,  
-		  "ownerid": 11,  
-		  "groupid": 1,  
-		  "content": "Puhobjo wonava cukce vo ivo huti havjeli le t",  
-		  "maxnum": 29,  
-		  "createtime": 1389706483000,  
-		  "starttime": "0000-00-00 00:00:00",  
-		  "duration": 7,  
-		  "statusid": 4,  
-		  "avatar": "sihomre",  
-		  "money": 1037,  
-		  "status": {  
-			"id": 4,  
-			"name": "活动取消"  
-		  },  
-		  "usership": []
-		}]</pre>
+	 * GET it yourself
 	*/
 	app.get('/api/activities/find', function (req, res, next) {
 		Activity.find(req.query)
 			.then(function (activities) {
 				activities.mapThen(function (activity) {
-					return activity.load(['usership', 'status', 'owner'])
-						.then(function (activity) {
-							var userships = activity.related('usership');
-							activity.set({
-								'usershipNum': userships.length
-							});
-							var str = JSON.stringify(activity),
-								act = JSON.parse(str);
-							act.usership = [];
-							return act;
-						});
+					activity.countUsership();
+					return activity.load(['status', 'user', 'user.profile']);
 				})
 				.then(function (activities) {
 					next({

@@ -1,3 +1,6 @@
+/**
+ * @class 商务合作
+ */
 var _ = require('underscore'),
 	Promise = require('bluebird'),
 	Cooperation = require('../models/cooperation'),

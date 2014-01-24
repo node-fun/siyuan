@@ -96,7 +96,12 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 				return User.forge({ 'id': usership.get('userid') })
 					.fetch()
 					.then(function (user) {
-						return usership.set({ 'name': user.get('username') });
+						return user.load(['profile']).then(function (user) {
+							return usership.set({
+								'user': user
+							});
+						});
+
 					});
 			}).then(function (userships) {
 					return userships;

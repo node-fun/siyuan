@@ -308,7 +308,7 @@ module.exports = function (app) {
 				return activity
 					.getUserList(userid)
 					.then(function(users) {
-						next({ users: users });
+						next({ userships: users });
 					});
 			}).catch(next);
 	});

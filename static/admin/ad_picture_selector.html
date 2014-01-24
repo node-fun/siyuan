@@ -18,5 +18,10 @@
             $(this).css({border: "solid red 2px"});
             callback($(this).attr('src'));
         });
+        document.body.onkeydown = function(){
+            if(event.keyCode==27){
+                callback();
+            }
+        };
     }
 </script>

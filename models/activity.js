@@ -202,8 +202,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 							.then(function (user) {
 								return user.load(['profile']).then(function (user) {
 									return usership.set({
-										'name': user.get('username'),
-										'profile': user.related('profile')
+										'user': user
 									});
 								});
 							});

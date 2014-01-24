@@ -304,6 +304,7 @@ module.exports = function (app) {
 			id = req.body.id;
 		Activity.forge({ 'id': id }).fetch()
 			.then(function(activity) {
+				if (!activity) return Promise.rejected(errors[20603]);
 				return activity
 					.getUserList(userid)
 					.then(function(users) {

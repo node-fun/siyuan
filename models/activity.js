@@ -189,11 +189,11 @@ Activity = module.exports = syBookshelf.Model.extend({
 
 	getUserList: function (userid) {
 		var self = this;
-		return GroupMembers.forge({
+		/*return GroupMembers.forge({
 			'groupid': self.get('groupid'),
 			'userid': userid
 		}).fetch().then(function (groupmember) {
-				if (groupmember == null) return Promise.rejected(errors[40001]);
+				if (groupmember == null) return Promise.rejected(errors[40001]);*/
 				return self.load(['usership']).then(function (activity) {
 					var userships = activity.related('usership');
 					return userships.mapThen(function (usership) {
@@ -207,7 +207,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 						});
 
 				});
-			});
+			/*});*/
 	},
 
 	acceptJoin: function (userid, usershipid) {

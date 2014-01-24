@@ -1,0 +1,22 @@
+<style>
+    #imglist img{
+        width: 360px;
+        float: left;
+        margin: 2px;;
+    }
+</style>
+<div id="imglist">
+    <img src="/ad/img/1.png"/>
+    <img src="/ad/img/2.png"/>
+    <img src="/ad/img/3.png"/>
+    <input type="button" value="Cancel" onclick="callback()"/>
+</div>
+<script>
+    function init($, callback){
+        window.callback = callback;
+        $('#imglist img', window.document).on('click',function(){
+            $(this).css({border: "solid red 2px"});
+            callback($(this).attr('src'));
+        });
+    }
+</script>

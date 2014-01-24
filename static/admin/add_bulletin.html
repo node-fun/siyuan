@@ -13,7 +13,8 @@
 
         <div class="pure-control-group">
             <label for="img">图片(720*120)</label>
-            <input id="img" type="file" name="picture"/>
+            <input id="img" type="text" name="picture" class="pure-button-disabled" onclick="this.blur()"/>
+            <input type="button" value="选择图片" onclick="selectPicture()" class="pure-button">
         </div>
 
         <div class="pure-controls">
@@ -21,6 +22,9 @@
         </div>
     </fieldset>
 </form>
+<iframe id="pictureFrame" width="800" height="600" frameborder="0" style="display: none;position: absolute;border: solid lightskyblue 2px; background: #FFF; top:0; left:0;z-index:99">
+    
+</iframe>
         <script>
             function add(){
                 $.post('/api/ads/add', $('#adform').serialize(), function(data){
@@ -29,4 +33,25 @@
                     }
                 });
             }
+            function selectPicture(){
+                var pictureFrame = $('#pictureFrame');
+                pictureFrame.css({display:'block'});
+                pictureFrame.attr({src: 'ad_picture_selector.html'});
+                pictureFrame.css({top: window.scrollY+20+'px', left: '200px'});
+                pictureFrame.on('load',function(){
+                    pictureFrame[0].contentWindow.init($, selectok);
+                });
+                selectPicture.isSelecting = true;
+            }
+            function selectok(url){
+                $('#img').attr({value: url});
+                $('#pictureFrame').css({display:'none'});
+                selectPicture.isSelecting = false;
+            }
+
+            document.body.onkeydown = function(){
+                if(event.keyCode==27 && selectPicture.isSelecting){
+                    selectok();
+                }
+            };
         </script>

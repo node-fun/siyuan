@@ -29,7 +29,8 @@ module.exports = {
 	activityAvatarDir: path.join(contentDir, 'activities'),
 	photoDir: path.join(contentDir, 'photos'),
 
-	port: ('PORT' in process.env) ? process.env['PORT'] : 8088,
+	port: ('PORT' in process.env) ? process.env['PORT'] :
+		env == 'test' ? 8099 : 8088,
 	secret: 'bad',
 	db: {
 		client: 'mysql',

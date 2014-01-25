@@ -22,21 +22,30 @@
 </head>
 <body>
     <div id="imgarea">
-        <a href="http://baidu.com"><img src="/ad/img/1.png"/></a>
-        <a href="http://baidu.com"><img src="/ad/img/2.png"/></a>
-        <a href="http://baidu.com"><img src="/ad/img/3.png"/></a>
+        <a ><img src="/ad/img/1.png"/></a>
     </div>
     <script src="http://code.jquery.com/jquery.min.js"></script>
     <script>
-        var imgs = $('#imgarea').children(),
-                len = imgs.length,
-                cur = 0;
-        $(imgs[cur]).fadeIn('slow');
-        setInterval(function(){
-            $(imgs[cur]).fadeOut('slow');
-            cur = (cur+1)%len;
-            $(imgs[cur]).fadeIn('slow');
-        },3000);
+        $.ajax({
+            url: '/api/ads/list',
+            success: function(data){
+                var str = '';
+                for(var i=0; i<data.length; i++){
+                    str+='<a ><img src="'+data[i]['picture']+'" title="'+data[i]['title']+'" /></a>';
+                }
+                $('#imgarea').html(str);
+                //动画效果
+                var imgs = $('#imgarea').children(),
+                        len = imgs.length,
+                        cur = 0;
+                $(imgs[cur]).fadeIn('slow');
+                setInterval(function(){
+                    $(imgs[cur]).fadeOut('slow');
+                    cur = (cur+1)%len;
+                    $(imgs[cur]).fadeIn('slow');
+                },3000);
+            }
+        })
     </script>
 </body>
 </html>

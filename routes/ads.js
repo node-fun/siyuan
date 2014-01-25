@@ -20,7 +20,7 @@ module.exports = function (app) {
 	app.get('/api/ads/list', function (req, res, next){
 		Ads.forge().query('where', 'isoutofdate', '=', 'false')
 			.fetch({
-				columns: ['title','content']
+				columns: ['title','picture']
 			})
 			.then(function(ads){
 				next(ads);

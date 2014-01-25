@@ -31,7 +31,7 @@
             success: function(data){
                 var str = '';
                 for(var i=0; i<data.length; i++){
-                    str+='<a ><img src="'+data[i]['picture']+'" title="'+data[i]['title']+'" /></a>';
+                    str+='<a href="content.html?id='+data[i]['id']+'"><img src="'+data[i]['picture']+'" title="'+data[i]['title']+'" /></a>';
                 }
                 $('#imgarea').html(str);
                 //动画效果

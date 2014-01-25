@@ -1,0 +1,53 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <style>
+        #title,#content{
+            margin: 10px;
+            border: solid #AFC5F5 2px;
+            background: #ECF2FF;
+            border-radius: 10px;
+            -webkit-border-radius: 10px;
+            line-height: 25px;
+            font-family: 微软雅黑;
+            text-align: center;
+        }
+        #title{
+            height:10%;
+        }
+        #content{
+            min-height:80%;
+        }
+    </style>
+</head>
+<body>
+    <div id="title">标题</div>
+    <div id="content">
+        <span style="display:inline-block;width:50%;text-align: right;">Loading</span><span style="display:inline-block;width:50%;text-align: left;" id="loadingspan">...</span>
+    </div>
+</body>
+<script src="http://code.jquery.com/jquery.min.js"></script>
+<script>
+    loadingdots = 1;
+    loading = setInterval(function(){
+        var str='';
+        for(var i=0; i<=loadingdots; i++){
+            str += '.';
+        }
+        loadingdots = (loadingdots+1)%6;
+        $('#loadingspan').html(str);
+    },70)
+    $.ajax({
+        url: '/api/ads/view'+location.search,
+        success: function(d){
+            clearInterval(loading);
+            $('#title').text(d['title']);
+            if(!d['content']){
+                $('#content').html('访问错误。');
+            }else{
+                $('#content').html(d['content']);
+            }
+        }
+    })
+</script>
+</html>

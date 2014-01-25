@@ -20,7 +20,7 @@ module.exports = function (app) {
 	app.get('/api/ads/list', function (req, res, next){
 		Ads.forge().query('where', 'isoutofdate', '=', 'false')
 			.fetch({
-				columns: ['title','picture']
+				columns: ['id','title','picture']
 			})
 			.then(function(ads){
 				next(ads);
@@ -29,7 +29,7 @@ module.exports = function (app) {
 	
 	/**
 	 * get /api/ads/find
-	 * @method 广告列表（全）
+	 * @method 广告列表（全部）
 	 * @param {null}
 	 * @return {JSON} 
 	 * 含ad模型的所有字段
@@ -43,6 +43,22 @@ module.exports = function (app) {
 			);
 	});
 
+	/**
+	 * get /api/ads/view
+	 * @method 广告详细内容
+	 * @param {String} id
+	 * @return {JSON}
+	 * 含ad模型的所有字段
+	 */
+	app.get('/api/ads/view', function (req, res, next){
+		Ad.forge(req.body)
+			.fetch().then(
+			function(ad){
+				next(ad);
+			}
+		);
+	});
+	
 	/**
 	 * post /api/ads/add
 	 * @method 添加广告

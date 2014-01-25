@@ -63,4 +63,24 @@ module.exports = function (app) {
 				next({msg: 'ad added'});
 			});
 	});
+	
+	/**
+	 * post /api/ads/del
+	 * @method 删除广告
+	 * @param {String} id
+	 * @return {JSON}
+	 * {msg: 'ad deleted'}
+	 */
+	app.post('/api/ads/del', function(req, res, next){
+		if(!req.session.adminid){
+			next(errors[21301]);
+		}
+		Ad.forge({id: req.body['id']})
+			.fetch()
+			.then(function(ad){
+				ad.destroy().then(function(){
+					next({msg: 'ad deleted'});
+				});
+			});
+	});
 };

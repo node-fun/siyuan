@@ -1,5 +1,5 @@
 <h3>公告列表</h3>
-<table id="bulletintable" class="pure-table">
+<table id="Adtable" class="pure-table">
     <thead>
     <tr>
         <th>#</th>
@@ -9,6 +9,7 @@
         <th>时间</th>
         <th>已过期</th>
         <th>发布人id</th>
+        <th></th>
     </tr>
     </thead>
 
@@ -22,7 +23,7 @@
     </ul>
 </div>
         <script>
-            function loadBulletinTable(){
+            function loadAdTable(){
                 $.ajax({
                     url:'/api/ads/find',
                     success:function(ads){
@@ -36,11 +37,28 @@
                                 +'<td>'+ads[i]['posttime']+'</td>'
                                 +'<td>'+ads[i]['isoutofdate']+'</td>'
                                 +'<td>'+ads[i]['adminid']+'</td>'
+                                +'<td><button type="button" class="pure-button" onclick="del('+ads[i]['id']+')">刪除</button></td>'
                                 +'</tr>';
                         }
-                        $('#bulletintable>tbody').html(str);
+                        $('#Adtable>tbody').html(str);
                     }
                 });
             }
-            loadBulletinTable();
+            loadAdTable();
+            function del(id){
+                if(!confirm('真的要删除id为'+id+'的记录吗？'))return;
+                $.ajax({
+                    url: '/api/ads/del?id='+id,
+                    type: "POST",
+                    success: function(data){
+                        if(data['msg']){
+                            loadAdTable();
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert('出错了。open console for more information.');
+                        console.log(XMLHttpRequest, textStatus, errorThrown);
+                    }
+                })
+            }
         </script>

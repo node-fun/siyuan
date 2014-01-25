@@ -38,13 +38,13 @@ module.exports = function (app) {
 			"numPhotos": 1,
 			"profile": {
 				"email": "in@okoducrag.co.uk",
-				"nickname": "Ryker Guerrero",
 				"name": "Emmanuel Salazar",
 				"gender": "f",
 				"age": 23,
 				"grade": 2009,
 				"university": "Zukubhi University",
-				"major": "Le"
+				"major": "Le",
+	 			"summary": "Olaruwit pagko jut jouzicev vetab ipuwatbec faknok dini helasawe hu ospu lom mopucco."
 			},
 			"avatar": "/avatars/1.jpg"
 		},
@@ -65,11 +65,11 @@ module.exports = function (app) {
 	 * @method 模糊搜索用户
 	 * @param {String} [username] 用户名
 	 * @param {Number} [isonline] 是否在线
-	 * @param {String} [profile.nickname] 昵称
 	 * @param {String} [profile.name] 姓名
 	 * @param {String} [profile.gender] 性别
 	 * @param {String} [profile.university] 学校
 	 * @param {String} [profile.major] 专业
+	 * @param {String} [profile.summary] 个性签名
 	 * @return {JSON}
 	 */
 	app.get('/api/users/search', function (req, res, next) {
@@ -98,17 +98,16 @@ module.exports = function (app) {
 	 * @param {String} username 用户名
 	 * @param {String} password 密码
 	 * @param {String} [profile.email] 邮箱
-	 * @param {String} [profile.nickname] 昵称
 	 * @param {String} [profile.name] 姓名
 	 * @param {String} [profile.gender] 性别
 	 * @param {Number} [profile.age] 年龄
 	 * @param {Number} [profile.grade] 入学级数
 	 * @param {String} [profile.university] 学校
 	 * @param {String} [profile.major] 专业
+	 * @param {String} [profile.summary] 个性签名
 	 * @return {JSON}
 	 * <pre>
-//   username, password, profile[email],
-//   profile[nickname], profile[name] ...
+//   username, password, profile[email], profile[name] ...
 {
 	"msg": "User registered",
 	"id": 36
@@ -176,13 +175,13 @@ module.exports = function (app) {
 	 * POST /api/users/profile/update
 	 * @method 更新个人档案
 	 * @param {String} [email] 邮箱
-	 * @param {String} [nickname] 昵称
 	 * @param {String} [name] 姓名
 	 * @param {String} [gender] 性别
 	 * @param {Number} [age] 年龄
 	 * @param {Number} [grade] 入学级数
 	 * @param {String} [university] 学校
 	 * @param {String} [major] 专业
+	 * @param {String} [summary] 个性签名
 	 * @return {JSON}
 	 */
 	app.post('/api/users/profile/update', function (req, res, next) {

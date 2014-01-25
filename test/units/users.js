@@ -97,7 +97,7 @@ describe('users', function () {
 	it('updates profile', function (done) {
 		request.post(apiHost + '/profile/update', {
 			jar: jar,
-			form: { 'nickname': 'hahaha' }
+			form: { 'major': 'Software Engineer' }
 		}, function (err, res, data) {
 			assert.ok(data['msg']);
 			done();

@@ -12,6 +12,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   `password` VARCHAR(45) NULL,
   `regtime` DATETIME NULL,
   `isonline` TINYINT(1) NULL,
+  `avatar` VARCHAR(45) NULL,
+  `cover` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `username_UNIQUE` (`username` ASC))
 ENGINE = InnoDB;
@@ -24,13 +26,13 @@ CREATE TABLE IF NOT EXISTS `user_profiles` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `userid` INT NOT NULL,
   `email` VARCHAR(45) NULL,
-  `nickname` VARCHAR(45) NULL,
   `name` VARCHAR(45) NULL,
   `gender` ENUM('m','f') NULL,
   `age` TINYINT NULL,
   `grade` YEAR NULL,
   `university` VARCHAR(45) NULL,
   `major` VARCHAR(45) NULL,
+  `summary` VARCHAR(280) NULL,
   PRIMARY KEY (`id`),
   INDEX `id_idx` (`userid` ASC),
   CONSTRAINT `fk_user_profiles_1`
@@ -477,5 +479,4 @@ INSERT INTO `resource_types` (`id`, `name`) VALUES (3, 'activity');
 INSERT INTO `resource_types` (`id`, `name`) VALUES (4, 'cooperation');
 
 COMMIT;
-
 

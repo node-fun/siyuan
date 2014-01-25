@@ -24,7 +24,6 @@ CREATE TABLE IF NOT EXISTS `user_profiles` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `userid` INT NOT NULL,
   `email` VARCHAR(45) NULL,
-  `nickname` VARCHAR(45) NULL,
   `name` VARCHAR(45) NULL,
   `gender` ENUM('m','f') NULL,
   `age` TINYINT NULL,
@@ -477,5 +476,4 @@ INSERT INTO `resource_types` (`id`, `name`) VALUES (3, 'activity');
 INSERT INTO `resource_types` (`id`, `name`) VALUES (4, 'cooperation');
 
 COMMIT;
-
 

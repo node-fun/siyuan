@@ -17,6 +17,7 @@ module.exports = function (app) {
 	 * @param {String} [profile.email] 邮箱
 	 * @param {String} [profile.name] 姓名
 	 * @param {String} [profile.gender] 性别 - `m`男, `f`女
+	 * @param {String} [profile.summary] 个性签名
 	 * @return {JSON}
 	 * <pre>
 {
@@ -43,7 +44,8 @@ module.exports = function (app) {
 				"age": 23,
 				"grade": 2009,
 				"university": "Zukubhi University",
-				"major": "Le"
+				"major": "Le",
+	 			"summary": "Olaruwit pagko jut jouzicev vetab ipuwatbec faknok dini helasawe hu ospu lom mopucco."
 			},
 			"avatar": "/avatars/1.jpg"
 		},
@@ -68,6 +70,7 @@ module.exports = function (app) {
 	 * @param {String} [profile.gender] 性别
 	 * @param {String} [profile.university] 学校
 	 * @param {String} [profile.major] 专业
+	 * @param {String} [profile.summary] 个性签名
 	 * @return {JSON}
 	 */
 	app.get('/api/users/search', function (req, res, next) {
@@ -102,6 +105,7 @@ module.exports = function (app) {
 	 * @param {Number} [profile.grade] 入学级数
 	 * @param {String} [profile.university] 学校
 	 * @param {String} [profile.major] 专业
+	 * @param {String} [profile.summary] 个性签名
 	 * @return {JSON}
 	 * <pre>
 //   username, password, profile[email], profile[name] ...
@@ -178,6 +182,7 @@ module.exports = function (app) {
 	 * @param {Number} [grade] 入学级数
 	 * @param {String} [university] 学校
 	 * @param {String} [major] 专业
+	 * @param {String} [summary] 个性签名
 	 * @return {JSON}
 	 */
 	app.post('/api/users/profile/update', function (req, res, next) {

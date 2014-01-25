@@ -17,7 +17,6 @@ module.exports = function (app) {
 	 * @param {String} [profile.email] 邮箱
 	 * @param {String} [profile.name] 姓名
 	 * @param {String} [profile.gender] 性别 - `m`男, `f`女
-	 * @param {String} [profile.summary] 个性签名
 	 * @return {JSON}
 	 * <pre>
 {

@@ -284,7 +284,7 @@ User = module.exports = syBookshelf.Model.extend({
 					}
 				});
 				// search for profile
-				['name', 'university', 'major'].forEach(function (k) {
+				['name', 'university', 'major', 'summary'].forEach(function (k) {
 					if (k in query['profile']) {
 						count++;
 						qb.where(tbProfile + '.' + k, 'like', '%' + query['profile'][k] + '%');

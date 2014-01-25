@@ -9,7 +9,7 @@ var cp = require('child_process'),
 describe('database for test', function () {
 	it('setups', function (done) {
 		// might take long for db creating
-		this.timeout(20000);
+		this.timeout(60000);
 		var cmd = 'node ' + rootDir + '/setup ' + env;
 		cp.exec(cmd, function (err, stdout, stderr) {
 			if (stdout) process.stdout.write(stdout);

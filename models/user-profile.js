@@ -6,7 +6,7 @@ var _ = require('underscore'),
 UserProfile = module.exports = syBookshelf.Model.extend({
 	tableName: 'user_profiles',
 	fields: [
-		'id', 'userid', 'email', 'nickname', 'name', 'gender',
+		'id', 'userid', 'email', 'name', 'gender',
 		'age', 'grade', 'university', 'major'
 	],
 	omitInJSON: ['id', 'userid'],
@@ -25,7 +25,6 @@ UserProfile = module.exports = syBookshelf.Model.extend({
 		var age = _.random(20, 60);
 		return UserProfile.forge({
 			email: chance.email(),
-			nickname: chance.name(),
 			name: chance.name(),
 			gender: _.sample(['m', 'f']),
 			age: age,

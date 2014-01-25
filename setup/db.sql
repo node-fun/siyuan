@@ -12,6 +12,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   `password` VARCHAR(45) NULL,
   `regtime` DATETIME NULL,
   `isonline` TINYINT(1) NULL,
+  `avatar` VARCHAR(45) NULL,
+  `cover` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `username_UNIQUE` (`username` ASC))
 ENGINE = InnoDB;

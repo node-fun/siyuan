@@ -284,7 +284,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 		return path.join(avatarDir, Activity.getAvatarName(id));
 	},
 	getAvatarURI: function (id) {
-		return 'activities' + Activity.getAvatarName(id);
+		return '/activities/' + Activity.getAvatarName(id);
 	}
 });
 

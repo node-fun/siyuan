@@ -187,9 +187,17 @@ function addActivities() {
 		}));
 	});
 	return activities.invokeThen('save')
-		.then(function () {
+		/*.then(function () {
+			return activities.mapThen(function (activity) {
+				//copy avatar
+				var gender = 'f',
+					face = localface.get(gender);
+					console.log(face);
+				return activity.updateAvatar(face);
+			});
+		})*/.then(function () {
 			console.log('%d activities added', numActivities);
-		});
+		}).catch(done);
 }
 
 function addUserActivitys() {

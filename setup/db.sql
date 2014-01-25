@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `user_profiles` (
   `grade` YEAR NULL,
   `university` VARCHAR(45) NULL,
   `major` VARCHAR(45) NULL,
+  `summary` VARCHAR(280) NULL,
   PRIMARY KEY (`id`),
   INDEX `id_idx` (`userid` ASC),
   CONSTRAINT `fk_user_profiles_1`

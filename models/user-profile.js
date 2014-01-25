@@ -7,7 +7,7 @@ UserProfile = module.exports = syBookshelf.Model.extend({
 	tableName: 'user_profiles',
 	fields: [
 		'id', 'userid', 'email', 'name', 'gender',
-		'age', 'grade', 'university', 'major'
+		'age', 'grade', 'university', 'major', 'summary'
 	],
 	omitInJSON: ['id', 'userid'],
 
@@ -30,7 +30,8 @@ UserProfile = module.exports = syBookshelf.Model.extend({
 			age: age,
 			grade: 2011 - age + 20 + _.random(-2, 2),
 			university: chance.city() + ' University',
-			major: chance.capitalize(chance.word())
+			major: chance.capitalize(chance.word()),
+			summary: chance.sentence()
 		});
 	}
 });

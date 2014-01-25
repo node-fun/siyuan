@@ -21,7 +21,10 @@ var fs = require('fs'),
 
 User = module.exports = syBookshelf.Model.extend({
 	tableName: tbUser,
-	fields: ['id', 'username', 'password', 'regtime', 'isonline'],
+	fields: [
+		'id', 'username', 'password', 'regtime',
+		'isonline', 'avatar', 'cover'
+	],
 	omitInJSON: ['password'],
 
 	defaults: function () {
@@ -32,8 +35,8 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 	toJSON: function () {
 		var ret = User.__super__.toJSON.apply(this, arguments);
-		// append avatar
-		if (this.id) {
+		// to avatar uri if exists
+		if (this.get('avatar')) {
 			ret['avatar'] = User.getAvatarURI(this.id);
 		}
 		return ret;
@@ -211,15 +214,26 @@ User = module.exports = syBookshelf.Model.extend({
 	updateAvatar: function (tmp) {
 		var file = User.getAvatarPath(this.id),
 			self = this;
-		return new Promise(function (resolve, reject) {
-			fs.readFile(tmp, function (err, data) {
-				if (err) return reject(errors[30000]);
-				fs.writeFile(file, data, function (err) {
-					if (err) return reject(errors[30001]);
-					resolve(self);
+		return new Promise(
+			function (resolve, reject) {
+				fs.readFile(tmp, function (err, data) {
+					if (err) return reject(errors[30000]);
+					fs.writeFile(file, data, function (err) {
+						if (err) return reject(errors[30001]);
+						resolve();
+					});
 				});
+			}).then(function () {
+				return self.set('avatar', self.id).save()
+					.then(function () {
+						return self;
+					});
+			}).catch(function (err) {
+				return self.set('avatar', null).save()
+					.then(function () {
+						return Promise.rejected(err);
+					});
 			});
-		});
 	}
 }, {
 	randomForge: function () {
@@ -228,7 +242,9 @@ User = module.exports = syBookshelf.Model.extend({
 				username: chance.word() + '_' + _.random(0, 999),
 				password: chance.string(),
 				isonline: chance.bool(),
-				regtime: chance.date({ year: 2013 })
+				regtime: chance.date({ year: 2013 }),
+				avatar: null,
+				cover: null
 			}).data('profile', UserProfile.randomForge().attributes);
 	},
 

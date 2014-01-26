@@ -39,7 +39,7 @@
                 pictureFrame.attr({src: 'ad_picture_selector.html'});
                 pictureFrame.css({top: window.scrollY+20+'px', left: '200px'});
                 pictureFrame.on('load',function(){
-                    pictureFrame[0].contentWindow.init($, selectok);
+                    pictureFrame[0].contentWindow.init(selectok);
                 });
                 selectPicture.isSelecting = true;
             }

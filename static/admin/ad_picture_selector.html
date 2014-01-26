@@ -1,27 +1,109 @@
 <style>
+    body,ul,li{
+        margin: 0;
+        padding: 0;
+    }
     #imglist img{
         width: 360px;
         float: left;
-        margin: 2px;;
+        border: 4px transparent solid;
+        margin: 1px;
+    }
+    #imglist img:hover{
+        border-color: dodgerblue;
+        cursor: hand;
+    }
+    .button_exit{
+        width: 60px;
+        height: 60px;
+        background: gray;
+        float: right;
+        border-bottom-left-radius: 60px;
+        color: white;
+        font-size: 40px;
+        font-weight: bold;
+        line-height: 50px;
+        text-indent: 15px;
+    }
+    .button_exit:hover{
+        background: dodgerblue;
+        cursor: hand;
+    }
+    .hide{
+        display: none;
+    }
+    #contextmenu{
+        position: absolute;
+        background: white;
+    }
+    #contextmenu li{
+        border: solid blue 1px;
+        list-style: none;
+        padding: 10px;
+    }
+    #contextmenu li:hover{
+        cursor: hand;
+        background: dodgerblue;
     }
 </style>
+<body>
+<div class="button_exit" onclick="callback()">×</div>
 <div id="imglist">
     <img src="/ad/img/1.png"/>
     <img src="/ad/img/2.png"/>
-    <img src="/ad/img/3.png"/>
-    <input type="button" value="Cancel" onclick="callback()"/>
 </div>
+<hr style="clear: both;"/>
+<div id="imgupload">
+    <form method="post" action="/api/ads/imgs/upload" enctype="multipart/form-data">
+        <p>上传新文件：</p>
+        <input name="picture" type="file"/>
+        <input type="submit"/>
+    </form>
+</div>
+<div id="contextmenu" class="hide">
+    <ul>
+        <li onclick="delfile($('#filename').attr('value'))">删除</li>
+    </ul>
+    <input type="hidden" id="filename"/>
+</div>
+<script src="http://code.jquery.com/jquery.min.js"></script>
 <script>
-    function init($, callback){
+    function init(callback){
         window.callback = callback;
-        $('#imglist img', window.document).on('click',function(){
-            $(this).css({border: "solid red 2px"});
-            callback($(this).attr('src'));
-        });
-        document.body.onkeydown = function(){
-            if(event.keyCode==27){
-                callback();
+        $.ajax({
+            url: '/api/ads/imgs',
+            success: function(d){
+                var str = '';
+                for(var k in d){
+                    str+='<img src="/ad/img/'+d[k]+'" title="'+d[k]+'" onclick="callback(this.src)" oncontextmenu="event.returnValue=false;showDelMenu(event,this.title);"/>';
+                }
+                $('#imglist').html(str);
+            },
+            error: function(err){
+                console.log(err);
             }
-        };
+        })
+    }
+    document.body.onkeydown = function(){
+        if(event.keyCode==27){
+            callback();
+        }
+    };
+    function showDelMenu(event, filename){
+        var cmenu = $('#contextmenu');
+        cmenu.css({top: event.clientY+'px', left: event.clientX+'px'});
+        cmenu.removeClass('hide');
+        $('#filename').attr({value: filename});
+        setTimeout("$('#contextmenu').addClass('hide')",4000);
+    }
+    function delfile(filename){
+        console.log(filename);
+        $.ajax({
+            url: '/api/ads/imgs/del?name='+filename,
+            success:function(d){
+                location.reload();
+            }
+        })
     }
 </script>
+</body>

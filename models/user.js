@@ -263,6 +263,10 @@ User = module.exports = syBookshelf.Model.extend({
 						qb.where(tbProfile + '.' + k, '=', query['profile'][k]);
 					}
 				});
+			}).query(function(qb){
+				query['sorts'].forEach(function (sort) {
+					qb.orderBy(sort[0], sort[1]);
+				});
 			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
 			.fetch({
@@ -303,6 +307,10 @@ User = module.exports = syBookshelf.Model.extend({
 						count++;
 						qb.where(tbProfile + '.' + k, 'like', '%' + query['profile'][k] + '%');
 					}
+				});
+			}).query(function(qb){
+				query['sorts'].forEach(function (sort) {
+					qb.orderBy(sort[0], sort[1]);
 				});
 			}).query('offset', query['offset'])
 			.query('limit', count ? query['limit'] : 0)

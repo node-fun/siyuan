@@ -1,4 +1,4 @@
-var fs = require('fs'),
+var fs = require('fs-extra'),
 	path = require('path'),
 	_ = require('underscore'),
 	chance = new (require('chance'))(),
@@ -216,12 +216,9 @@ User = module.exports = syBookshelf.Model.extend({
 			self = this;
 		return new Promise(
 			function (resolve, reject) {
-				fs.readFile(tmp, function (err, data) {
-					if (err) return reject(errors[30000]);
-					fs.writeFile(file, data, function (err) {
-						if (err) return reject(errors[30001]);
-						resolve();
-					});
+				fs.copy(tmp, file, function (err) {
+					if (err) return reject(errors[30003]);
+					resolve();
 				});
 			}).then(function () {
 				return self.set('avatar', self.id).save()

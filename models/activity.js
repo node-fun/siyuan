@@ -298,6 +298,31 @@ Activity = module.exports = syBookshelf.Model.extend({
 			});
 	},
 
+	search: function (query) {
+		var count = 0;
+		return Activities.forge()
+			.query(function (qb) {
+				['name', 'content'].forEach(function (k) {
+					if (k in query) {
+						count++;
+						qb.where(k, query[k]);
+					}
+				});
+				['ownerid'].forEach(function (k) {
+					if (k in query) {
+						count++;
+						qb.where(k, 'like', '%' + query[k] + '%');
+					}
+				});
+			})
+			.query('orderBy', 'id', 'desc')
+			.query('offset', query['offset'])
+			.query('limit', count ? query['limit'] : 0)
+			.fetch({
+				withRelated: ['user.profile', 'status']
+			});
+	},
+
 	getAvatarName: function (id) {
 		return id + avatarExt;
 	},

@@ -18,6 +18,7 @@ var fs = require('fs'),
 	UserCooperations = UserCooperation.Set,
 	GroupMember = require('./group-membership'),
 	GroupMembers = GroupMember.Set,
+	CoComment = require('./co-comment'),
 	Cooperation, Cooperations,
 	config = require('../config'),
 	avatarDir = config.cooperationAvatarDir,
@@ -64,6 +65,19 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 	},
 	user: function () {
 		return this.belongsTo(User, fkOwner);
+	},
+
+	cocomments: function () {
+		return this.hasMany(CoComment, 'cooperationid');
+	},
+
+	countComments: function () {
+		var self = this;
+		return this.cocomments().fetch()
+			.then(function (cocomments) {
+				var numComments = cocomments.length;
+				return self.data('numComments', numComments);
+			});
 	},
 
 	createCooperation: function (ownerid, name, description, company, deadline, statusid, isprivate) {
@@ -286,6 +300,41 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 			.query('limit', query['limit'])
 			.fetch({
 				withRelated: ['user.profile', 'status']
+			});
+	},
+
+	search: function (query) {
+		var count = 0;
+		return Cooperations.forge()
+			.query(function (qb) {
+				['name', 'description'].forEach(function (k) {
+					if (k in query) {
+						count++;
+						qb.where(k, query[k]);
+					}
+				});
+				['ownerid'].forEach(function (k) {
+					if (k in query) {
+						count++;
+						qb.where(k, 'like', '%' + query[k] + '%');
+					}
+				});
+			})
+			.query('orderBy', 'id', 'desc')
+			.query('offset', query['offset'])
+			.query('limit', count ? query['limit'] : 0)
+			.fetch({
+				withRelated: ['user.profile', 'status']
+			});
+	},
+
+	view: function (query) {
+		return Cooperation.forge({ id: query['id'] })
+			.fetch({
+				withRelated: ['user.profile', 'cocomments.user.profile']
+			}).then(function (cooperation) {
+				if (!cooperation) return Promise.rejected(errors[20603]);
+				return cooperation;
 			});
 	},
 

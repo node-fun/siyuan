@@ -60,14 +60,8 @@ module.exports = function (app) {
 	app.get('/api/activities/find', function (req, res, next) {
 		Activity.find(req.query)
 			.then(function (activities) {
-				activities.mapThen(function (activity) {
-					activity.countUsership();
-					return activity.load(['status', 'user', 'user.profile']);
-				})
-				.then(function (activities) {
-					next({
-						activities: activities
-					});
+				next({
+					activities: activities
 				});
 			}).catch(next);
 	});

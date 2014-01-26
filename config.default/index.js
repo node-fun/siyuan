@@ -27,6 +27,7 @@ module.exports = {
 	contentDir: contentDir,
 	avatarDir: path.join(contentDir, 'avatars'),
 	activityAvatarDir: path.join(contentDir, 'activities'),
+	cooperationAvatarDir: path.join(contentDir, 'cooperations'),
 	photoDir: path.join(contentDir, 'photos'),
 
 	port: ('PORT' in process.env) ? process.env['PORT'] :

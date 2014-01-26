@@ -29,6 +29,15 @@ Activity = module.exports = syBookshelf.Model.extend({
 		'starttime', 'duration', 'statusid', 'avatar', 'money', 'name', 'site'
 	],
 
+	toJSON: function () {
+		var ret = Activity.__super__.toJSON.apply(this, arguments);
+		// to avatar uri fi exists
+		if (this.get('avatar')) {
+			ret['avatar'] = Activity.getAvatarURI(this.id);
+		}
+		return ret;
+	},
+
 	saving: function () {
 		return Activity.__super__
 			.saving.apply(this, arguments);
@@ -227,15 +236,26 @@ Activity = module.exports = syBookshelf.Model.extend({
 	updateAvatar: function (tmp) {
 		var file = Activity.getAvatarPath(this.id),
 			self = this;
-		return new Promise(function (resolve, reject) {
-			fs.readFile(tmp, function (err, data) {
-				if (err) return reject(errors[30000]);
-				fs.writeFile(file, data, function (err) {
-					if (err) return reject(errors[30001]);
-					resolve(self);
+		return new Promise(
+			function (resolve, reject) {
+				fs.readFile(tmp, function (err, data) {
+					if (err) return reject(errors[30000]);
+					fs.writeFile(file, data, function (err) {
+						if (err) return reject(errors[30001]);
+						resolve(self);
+					});
 				});
-			});
-		});
+			}).then(function () {
+				return self.set('avatar', self.id).save()
+					.then(function () {
+						return self;
+					});
+			}).catch(function (err) {
+				return self.set('avatar', null).save()
+					.then(function () {
+						return Promise.rejected(err);
+					})
+			})
 	}
 }, {
 	randomForge: function () {
@@ -273,7 +293,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 			.query('offset', query['offset'])
 			.query('limit', query['limit'])
 			.fetch({
-				withRelated: ['user.profile']
+				withRelated: ['user.profile', 'status']
 			});
 	},
 
@@ -289,5 +309,12 @@ Activity = module.exports = syBookshelf.Model.extend({
 });
 
 Activities = Activity.Set = syBookshelf.Collection.extend({
-	model: Activity
+	model: Activity,
+
+	fetch: function () {
+		return Activities.__super__.fetch.apply(this, arguments)
+			.then(function (collection) {
+				return collection.invokeThen('fetch');
+			});
+	}
 });

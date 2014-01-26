@@ -57,15 +57,9 @@ module.exports = function (app) {
 	app.get('/api/cooperations/find', function (req, res, next) {
 		Cooperation.find(req.query)
 			.then(function (cooperations) {
-				cooperations.mapThen(function (cooperation) {
-					return cooperation.load(['status', 'user', 'user.profile']);
-				})
-				.then(function (cooperations) {
-					next({
-						cooperations: cooperations
-					});
+				next({
+					cooperations: cooperations
 				});
-
 			}).catch(next);
 	});
 

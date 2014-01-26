@@ -63,12 +63,39 @@ module.exports = function (app) {
 			}).catch(next);
 	});
 
+	/**
+	 * GET /api/cooperations/search
+	 * @method 合作搜索
+	 * @param {Number} [userid] 作者ID
+	 * @param {String} [name] 标题关键字
+	 * @param {String} [description] 内容关键字
+	 * @return {JSON}
+	 */
+	app.get('/api/cooperations/search', function (req, res, next) {
+		Cooperation.search(req.query)
+			.then(function (cooperations) {
+				next({ cooperations: cooperations });
+			}).catch(next);
+	});
+
+	/**
+	 * GET /api/cooperations/view
+	 * @method 合作详情
+	 * @param {Number} id 合作ID
+	 * @return {JSON}
+	 */
+	app.get('/api/cooperations/view', function (req, res, next) {
+		Cooperation.view(req.query)
+			.then(function (cooperation) {
+				next({ cooperation: cooperation});
+			}).catch(next);
+	});
 
 	/**
 	 * GET /api/cooperations/history
 	 * @method 参加合作历史
 	 * @param {Number} [id] 申请id,就是usership的id
-	 * @param {Number} [userid] 用户ID
+	 * @param {Number} [ownerid] 用户ID
 	 * @param {Number} [cooperationid] 合作ID
 	 * @return {Array}
 	 * <pre>{

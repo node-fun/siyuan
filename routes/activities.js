@@ -67,6 +67,21 @@ module.exports = function (app) {
 	});
 
 	/**
+	 * GET /api/activities/search
+	 * @method 活动搜索
+	 * @param {Number} [ownerid] 作者ID
+	 * @param {String} [name] 标题关键字
+	 * @param {String} [content] 内容关键字
+	 * @return {JSON}
+	 */
+	app.get('/api/activities/search', function (req, res, next) {
+		Activity.search(req.query)
+			.then(function (activities) {
+				next({ activities: activities });
+			});
+	});
+
+	/**
 	 * GET /api/activities/history
 	 * @method 活动参加历史
 	 * @param {Number} [id] 申请id,就是usership的id

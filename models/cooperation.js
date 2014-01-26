@@ -14,12 +14,15 @@ var fs = require('fs'),
 	User = require('./user'),
 	Users = User.Set,
 	CoStatus = require('./co-status'),
-	CoStatuses = CoStatus.Set,
 	UserCooperation = require('./user-cooperation'),
 	UserCooperations = UserCooperation.Set,
 	GroupMember = require('./group-membership'),
 	GroupMembers = GroupMember.Set,
+	CoComment = require('./co-comment'),
 	Cooperation, Cooperations,
+	config = require('../config'),
+	avatarDir = config.cooperationAvatarDir,
+	avatarExt = config.avatarExt,
 	fkStatus = 'statusid',
 	fkCooperation = 'cooperationid',
 	fkOwner = 'ownerid';
@@ -29,6 +32,23 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 	fields: [
 		'id', 'name', 'description', 'company', 'deadline', 'avatar', 'statusid', 'ownerid', 'isprivate'
 	],
+
+	toJSON: function () {
+		var ret = Cooperation.__super__.toJSON.apply(this, arguments);
+		if (this.get('avatar')) {
+			ret['avatar'] = Cooperation.getAvatarURI(this.id);
+		}
+		return ret;
+	},
+
+	fetch: function () {
+		return Cooperation.__super__.fetch.apply(this, arguments)
+			.then(function (cooperation) {
+				if (!cooperation) return cooperation;
+				return cooperation.countComments();
+			});
+	},
+
 	saving: function () {
 		return Cooperation.__super__
 			.saving.apply(this, arguments);
@@ -53,6 +73,19 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 	},
 	user: function () {
 		return this.belongsTo(User, fkOwner);
+	},
+
+	cocomments: function () {
+		return this.hasMany(CoComment, 'cooperationid');
+	},
+
+	countComments: function () {
+		var self = this;
+		return this.cocomments().fetch()
+			.then(function (cocomments) {
+				var numComments = cocomments.length;
+				return self.data('numComments', numComments);
+			});
 	},
 
 	createCooperation: function (ownerid, name, description, company, deadline, statusid, isprivate) {
@@ -117,6 +150,31 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 			.then(function (usership) {
 				return usership.set({ 'isaccepted': true }).save();
 			});
+	},
+
+	updateAvatar: function (tmp) {
+		var file = Cooperation.getAvatarPath(this.id),
+			self = this;
+		return new Promise(
+			function (resolve, reject) {
+				fs.readFile(tmp, function (err, data) {
+					if (err) return reject(errors[30000]);
+					fs.writeFile(file, data, function (err) {
+						if (err) return reject(errors[30001]);
+						resolve(self);
+					});
+				});
+			}).then(function () {
+				return self.set('avatar', self.id).save()
+					.then(function () {
+						return self;
+					});
+			}).catch(function (err) {
+				return self.set('avatar', null).save()
+					.then(function () {
+						return Promise.rejected(err);
+					});
+			})
 	},
 
 	joinCooperation: function (userid) {
@@ -245,14 +303,67 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 					}
 				});
 			})
+			.query('orderBy', 'id', 'desc')
 			.query('offset', query['offset'])
 			.query('limit', query['limit'])
 			.fetch({
-				withRelated: ['user.profile']
+				withRelated: ['user.profile', 'status']
 			});
+	},
+
+	search: function (query) {
+		var count = 0;
+		return Cooperations.forge()
+			.query(function (qb) {
+				['name', 'description'].forEach(function (k) {
+					if (k in query) {
+						count++;
+						qb.where(k, query[k]);
+					}
+				});
+				['ownerid'].forEach(function (k) {
+					if (k in query) {
+						count++;
+						qb.where(k, 'like', '%' + query[k] + '%');
+					}
+				});
+			})
+			.query('orderBy', 'id', 'desc')
+			.query('offset', query['offset'])
+			.query('limit', count ? query['limit'] : 0)
+			.fetch({
+				withRelated: ['user.profile', 'status']
+			});
+	},
+
+	view: function (query) {
+		return Cooperation.forge({ id: query['id'] })
+			.fetch({
+				withRelated: ['user.profile', 'cocomments.user.profile']
+			}).then(function (cooperation) {
+				if (!cooperation) return Promise.rejected(errors[20603]);
+				return cooperation;
+			});
+	},
+
+	getAvatarName: function (id) {
+		return id + avatarExt;
+	},
+	getAvatarPath: function (id) {
+		return path.join(avatarDir, Cooperation.getAvatarName(id));
+	},
+	getAvatarURI: function (id) {
+		return '/cooperations/' + Cooperation.getAvatarName(id);
 	}
 });
 
 Cooperations = Cooperation.Set = syBookshelf.Collection.extend({
-	model: Cooperation
+	model: Cooperation,
+
+	fetch: function () {
+		return Cooperations.__super__.fetch.apply(this, arguments)
+			.then(function (collection) {
+				return collection.invokeThen('fetch');
+			});
+	}
 });

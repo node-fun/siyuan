@@ -57,24 +57,45 @@ module.exports = function (app) {
 	app.get('/api/cooperations/find', function (req, res, next) {
 		Cooperation.find(req.query)
 			.then(function (cooperations) {
-				cooperations.mapThen(function (cooperation) {
-					return cooperation.load(['status', 'user', 'user.profile']);
-				})
-				.then(function (cooperations) {
-					next({
-						cooperations: cooperations
-					});
+				next({
+					cooperations: cooperations
 				});
-
 			}).catch(next);
 	});
 
+	/**
+	 * GET /api/cooperations/search
+	 * @method 合作搜索
+	 * @param {Number} [userid] 作者ID
+	 * @param {String} [name] 标题关键字
+	 * @param {String} [description] 内容关键字
+	 * @return {JSON}
+	 */
+	app.get('/api/cooperations/search', function (req, res, next) {
+		Cooperation.search(req.query)
+			.then(function (cooperations) {
+				next({ cooperations: cooperations });
+			}).catch(next);
+	});
+
+	/**
+	 * GET /api/cooperations/view
+	 * @method 合作详情
+	 * @param {Number} id 合作ID
+	 * @return {JSON}
+	 */
+	app.get('/api/cooperations/view', function (req, res, next) {
+		Cooperation.view(req.query)
+			.then(function (cooperation) {
+				next({ cooperation: cooperation});
+			}).catch(next);
+	});
 
 	/**
 	 * GET /api/cooperations/history
 	 * @method 参加合作历史
 	 * @param {Number} [id] 申请id,就是usership的id
-	 * @param {Number} [userid] 用户ID
+	 * @param {Number} [ownerid] 用户ID
 	 * @param {Number} [cooperationid] 合作ID
 	 * @return {Array}
 	 * <pre>{
@@ -430,6 +451,30 @@ module.exports = function (app) {
 				return cocomment.destroy();
 			}).then(function () {
 				next({ msg: 'Comment deleted' });
+			}).catch(next);
+	});
+
+	/**
+	 * POST /api/cooperations/avatar/update
+	 * @method 更新合作图片
+	 * @param {File} avatar
+	 * @return {JSON}
+	 * <pre>
+	 *     {
+	 *     		msg: avatar updated
+	 *     }
+	 * </pre>
+	 */
+	app.post('/api/cooperations/avatar/update', function (req, res, next) {
+		if (!req.files['avatar']) return next(errors[20007]);
+		var file = req.files['avatar'],
+			_3M = 3 * 1024 * 1024;
+		if (file['type'] != 'image/jpeg') return next(errors[20005]);
+		if (file['size'] > _3M) return next(errors[20006]);
+		Cooperation.forge({ id: req.id })
+			.updateAvatar(file['path'])
+			.then(function () {
+				next({ msg: 'avatar updated' });
 			}).catch(next);
 	});
 

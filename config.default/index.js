@@ -23,10 +23,17 @@ module.exports = {
 	adminDir: path.join(staticDir, 'admin'),
 	adDir: path.join(staticDir, 'ad'),
 
+	avatarStaticPath: '/avatars',
+	photoStaticPath: '/photos',
+	docsStaticPath: '/docs',
+	adminStaticPath: '/admin',
+	adStaticPath: '/ad',
+
 	defaultContentDir: defaultContentDir,
 	contentDir: contentDir,
 	avatarDir: path.join(contentDir, 'avatars'),
 	activityAvatarDir: path.join(contentDir, 'activities'),
+	cooperationAvatarDir: path.join(contentDir, 'cooperations'),
 	photoDir: path.join(contentDir, 'photos'),
 
 	port: ('PORT' in process.env) ? process.env['PORT'] :

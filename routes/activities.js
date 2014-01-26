@@ -60,16 +60,25 @@ module.exports = function (app) {
 	app.get('/api/activities/find', function (req, res, next) {
 		Activity.find(req.query)
 			.then(function (activities) {
-				activities.mapThen(function (activity) {
-					activity.countUsership();
-					return activity.load(['status', 'user', 'user.profile']);
-				})
-				.then(function (activities) {
-					next({
-						activities: activities
-					});
+				next({
+					activities: activities
 				});
 			}).catch(next);
+	});
+
+	/**
+	 * GET /api/activities/search
+	 * @method 活动搜索
+	 * @param {Number} [ownerid] 作者ID
+	 * @param {String} [name] 标题关键字
+	 * @param {String} [content] 内容关键字
+	 * @return {JSON}
+	 */
+	app.get('/api/activities/search', function (req, res, next) {
+		Activity.search(req.query)
+			.then(function (activities) {
+				next({ activities: activities });
+			});
 	});
 
 	/**

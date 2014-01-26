@@ -45,11 +45,11 @@ app.use('/api', require('./lib/api/sender'));
 require('./routes')(app);
 
 // static
-app.use('/avatars', express.static(config.avatarDir));
-app.use('/photos', express.static(config.photoDir));
-app.use('/docs', express.static(config.docsDir));
-app.use('/admin', express.static(config.adminDir));
-app.use('/ad', express.static(config.adDir));
+app.use(config.avatarStaticPath, express.static(config.avatarDir));
+app.use(config.photoStaticPath, express.static(config.photoDir));
+app.use(config.docsStaticPath, express.static(config.docsDir));
+app.use(config.adminStaticPath, express.static(config.adminDir));
+app.use(config.adStaticPath, express.static(config.adDir));
 
 // listen on port
 app.listen(port, function () {

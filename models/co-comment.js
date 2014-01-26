@@ -15,10 +15,7 @@ CoComment = module.exports = syBookshelf.Model.extend({
 		}
 	},
 	user: function () {
-		return CoComment.forge({
-			body: chance.sentence(),
-			posttime: chance.date({ year: 2013 })
-		});
+		return this.belongsTo(require('./user'), 'userid');
 	}
 }, {
 	randomForge: function () {

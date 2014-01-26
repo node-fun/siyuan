@@ -23,30 +23,27 @@ module.exports = function (app) {
 	users: [
 		{
 			"id": 1,
-			"username": "la_810",
-			"regtime": 1384308065000,
+			"username": "ko_334",
+			"regtime": 1373071542000,
 			"isonline": 0,
-			"numFollowing": 1,
-			"numFollowers": 1,
-			"numIssues": 2,
-			"lastIssue": {
-				"id": 67,
-				"title": "Nesemohoz weke sojluka ciwiul dufa huki pik arokin ar agegopu du",
-				"body": "Adorocoz ijo nodijoc dabiute latzi oludum uv jo uldikpoj uvma wizdojpig ip gin fono fehceb tu. Vapgokis ani kusedira ubewehig dazusgi zu sakuthud ze fak sije zur do donajlu soujo fo. Bo ec mi siodi leeb avcusu suenit riwpize azakre linuv ifeevbud tenfeh kijreh decticup at. Anaweh guhoka vuhdib ligwapwe pevinki kiggeika ne kopmevo hifminre tezeg agsulo pif iseduhdel lieduji cebrop boshote bueteonu. Kiutufi dadpo najgijvak marsiive ra ajowiedi ed ataguc kag onivo fomihu wevih jewu wa pa da siunki.",
-				"posttime": 1387663599000
-			},
-			"numPhotos": 1,
+			"avatar": "/avatars/1.jpg",
+			"cover": null,
 			"profile": {
-				"email": "in@okoducrag.co.uk",
-				"name": "Emmanuel Salazar",
+				"email": "he@gec.net",
+				"name": "Nicolas Bailey",
 				"gender": "f",
-				"age": 23,
-				"grade": 2009,
-				"university": "Zukubhi University",
-				"major": "Le",
-	 			"summary": "Olaruwit pagko jut jouzicev vetab ipuwatbec faknok dini helasawe hu ospu lom mopucco."
+				"age": 45,
+				"grade": 1988,
+				"university": "Rizuuh University",
+				"major": "Asecoeb",
+				"summary": "Lubudzot ujumipji bu elahumi ze puezawuh acu bi ajbez pirwivu movatra ulazujtob bapbape."
 			},
-			"avatar": "/avatars/1.jpg"
+			"numFollowing": 0,
+			"numFollowers": 5,
+			"numIssues": 0,
+			"numPhotos": 5,
+			"numStarring": 0,
+			"numEvents": 0
 		},
 		...
 	]

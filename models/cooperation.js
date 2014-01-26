@@ -41,6 +41,14 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 		return ret;
 	},
 
+	fetch: function () {
+		return Cooperation.__super__.fetch.apply(this, arguments)
+			.then(function (cooperation) {
+				if (!cooperation) return cooperation;
+				return cooperation.countComments();
+			});
+	},
+
 	saving: function () {
 		return Cooperation.__super__
 			.saving.apply(this, arguments);

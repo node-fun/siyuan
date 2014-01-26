@@ -51,14 +51,11 @@ Photo = module.exports = syBookshelf.Model.extend({
 	updateImage: function (tmp) {
 		var target = this.getPath(), self = this;
 		return new Promise(function (resolve, reject) {
-			fs.readFile(tmp, function (err, data) {
+			fs.mkdirp(path.dirname(target), function (err) {
 				if (err) return reject(errors[30000]);
-				fs.mkdirp(path.dirname(target), function (err) {
-					if (err) return reject(errors[30001]);
-					fs.writeFile(target, data, function (err) {
-						if (err) return reject(errors[30001]);
-						resolve(self);
-					});
+				fs.copy(tmp, target, function (err) {
+					if (err) return reject(errors[30003]);
+					resolve(self);
 				});
 			});
 		});

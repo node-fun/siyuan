@@ -281,6 +281,7 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 					}
 				});
 			})
+			.query('orderBy', 'id', 'desc')
 			.query('offset', query['offset'])
 			.query('limit', query['limit'])
 			.fetch({

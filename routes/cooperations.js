@@ -427,4 +427,28 @@ module.exports = function (app) {
 			}).catch(next);
 	});
 
+	/**
+	 * POST /api/cooperations/avatar/update
+	 * @method 更新合作图片
+	 * @param {File} avatar
+	 * @return {JSON}
+	 * <pre>
+	 *     {
+	 *     		msg: avatar updated
+	 *     }
+	 * </pre>
+	 */
+	app.post('/api/cooperations/avatar/update', function (req, res, next) {
+		if (!req.files['avatar']) return next(errors[20007]);
+		var file = req.files['avatar'],
+			_3M = 3 * 1024 * 1024;
+		if (file['type'] != 'image/jpeg') return next(errors[20005]);
+		if (file['size'] > _3M) return next(errors[20006]);
+		Cooperation.forge({ id: req.id })
+			.updateAvatar(file['path'])
+			.then(function () {
+				next({ msg: 'avatar updated' });
+			}).catch(next);
+	});
+
 }

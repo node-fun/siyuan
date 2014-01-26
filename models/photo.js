@@ -73,11 +73,11 @@ Photo = module.exports = syBookshelf.Model.extend({
 	getName: function () {
 		return this.get('userid') + '/' + this.id + avatarExt;
 	},
-	getURI: function () {
-		return '/photos/' + this.getName();
-	},
 	getPath: function () {
 		return path.join(photoDir, this.getName());
+	},
+	getURI: function () {
+		return config.photoStaticPath + '/' + this.getName();
 	}
 }, {
 	randomForge: function () {

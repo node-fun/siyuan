@@ -23,6 +23,12 @@ module.exports = {
 	adminDir: path.join(staticDir, 'admin'),
 	adDir: path.join(staticDir, 'ad'),
 
+	avatarStaticPath: '/avatars',
+	photoStaticPath: '/photos',
+	docsStaticPath: '/docs',
+	adminStaticPath: '/admin',
+	adStaticPath: '/ad',
+
 	defaultContentDir: defaultContentDir,
 	contentDir: contentDir,
 	avatarDir: path.join(contentDir, 'avatars'),

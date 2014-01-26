@@ -12,8 +12,6 @@ var fs = require('fs-extra'),
 	Starship = require('./starship'),
 	Event = require('./event'),
 	config = require('../config'),
-	avatarDir = config.avatarDir,
-	avatarExt = config.avatarExt,
 	Group = require('./group'),
 	tbUser = 'users',
 	tbProfile = UserProfile.prototype.tableName,
@@ -34,11 +32,14 @@ User = module.exports = syBookshelf.Model.extend({
 		};
 	},
 	toJSON: function () {
-		var ret = User.__super__.toJSON.apply(this, arguments);
-		// to avatar uri if exists
-		if (this.get('avatar')) {
-			ret['avatar'] = User.getAvatarURI(this.id);
-		}
+		var ret = User.__super__.toJSON.apply(this, arguments),
+			self = this;
+		// to uri if exists
+		['avatar', 'cover'].forEach(function (type) {
+			if (self.get(type)) {
+				ret[type] = User.getPicURI(type, self.id);
+			}
+		});
 		return ret;
 	},
 	profile: function () {
@@ -211,8 +212,8 @@ User = module.exports = syBookshelf.Model.extend({
 				return self;
 			});
 	},
-	updateAvatar: function (tmp) {
-		var file = User.getAvatarPath(this.id),
+	updatePic: function (type, tmp) {
+		var file = User.getPicPath(type, this.id),
 			self = this;
 		return new Promise(
 			function (resolve, reject) {
@@ -221,12 +222,12 @@ User = module.exports = syBookshelf.Model.extend({
 					resolve();
 				});
 			}).then(function () {
-				return self.set('avatar', self.id).save()
+				return self.set(type, self.id).save()
 					.then(function () {
 						return self;
 					});
 			}).catch(function (err) {
-				return self.set('avatar', null).save()
+				return self.set(type, null).save()
 					.then(function () {
 						return Promise.rejected(err);
 					});
@@ -320,14 +321,14 @@ User = module.exports = syBookshelf.Model.extend({
 			});
 	},
 
-	getAvatarName: function (id) {
-		return id + avatarExt;
+	getPicName: function (id) {
+		return id + config.avatarExt;
 	},
-	getAvatarPath: function (id) {
-		return path.join(avatarDir, User.getAvatarName(id));
+	getPicPath: function (type, id) {
+		return path.join(config[type + 'Dir'], User.getPicName(id));
 	},
-	getAvatarURI: function (id) {
-		return config.avatarStaticPath + '/' + User.getAvatarName(id);
+	getPicURI: function (type, id) {
+		return config[type + 'StaticPath'] + '/' + User.getPicName(id);
 	}
 });
 

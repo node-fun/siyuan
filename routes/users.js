@@ -203,9 +203,28 @@ module.exports = function (app) {
 		if (!file) return next(errors[20007]);
 		if (file['type'] != 'image/jpeg') return next(errors[20005]);
 		if (file['size'] > imageLimit) return next(errors[20006]);
-		user.updateAvatar(file['path'])
+		user.updatePic('avatar', file['path'])
 			.then(function () {
 				next({ msg: 'Avatar updated' });
+			}).catch(next);
+	});
+
+	/**
+	 * POST /api/users/cover/update
+	 * @method 更新封面
+	 * @param {File} cover
+	 * @return {JSON}
+	 */
+	app.post('/api/users/cover/update', function (req, res, next) {
+		var user = req.user,
+			file = req.files['cover'];
+		if (!user) return next(errors[21301]);
+		if (!file) return next(errors[20007]);
+		if (file['type'] != 'image/jpeg') return next(errors[20005]);
+		if (file['size'] > imageLimit) return next(errors[20006]);
+		user.updatePic('cover', file['path'])
+			.then(function () {
+				next({ msg: 'Cover updated' });
 			}).catch(next);
 	});
 };

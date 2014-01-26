@@ -14,6 +14,7 @@ Photo = module.exports = syBookshelf.Model.extend({
 	fields: [
 		'id', 'userid', 'description', 'posttime'
 	],
+	omitInJSON: ['userid'],
 
 	defaults: function () {
 		return {

@@ -99,8 +99,12 @@ function addUsers() {
 			return users.mapThen(function (user) {
 				// copy avatar
 				var gender = user.data('profile')['gender'],
-					face = localface.get(gender);
-				return user.updateAvatar(face)
+					face = localface.get(gender),
+					cover = localface.get(gender);
+				return user.updatePic('avatar', face)
+					.then(function () {
+						return user.updatePic('cover', cover);
+					})
 					.then(function () {
 						// login or not
 						return chance.bool() ? user : user.login(true);
@@ -288,7 +292,7 @@ function addCooperations() {
 		}).catch(done);
 }
 
-function addCoComments () {
+function addCoComments() {
 	var cocomments = CoComments.forge();
 	_.times(numCoComments, function () {
 		var cocomment = CoComment.randomForge();

@@ -46,6 +46,7 @@ require('./routes')(app);
 
 // static
 app.use(config.avatarStaticPath, express.static(config.avatarDir));
+app.use(config.coverStaticPath, express.static(config.coverDir));
 app.use(config.photoStaticPath, express.static(config.photoDir));
 app.use(config.docsStaticPath, express.static(config.docsDir));
 app.use(config.adminStaticPath, express.static(config.adminDir));

@@ -291,9 +291,11 @@ Activity = module.exports = syBookshelf.Model.extend({
 						qb.where(k, query[k]);
 					}
 				})
-			})
-			.query('orderBy', 'id', 'desc')
-			.query('offset', query['offset'])
+			}).query(function (qb) {
+				query['sorts'].forEach(function (sort) {
+					qb.orderBy(sort[0], sort[1]);
+				});
+			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
 			.fetch({
 				withRelated: ['user.profile', 'status']
@@ -316,9 +318,11 @@ Activity = module.exports = syBookshelf.Model.extend({
 						qb.where(k, 'like', '%' + query[k] + '%');
 					}
 				});
-			})
-			.query('orderBy', 'id', 'desc')
-			.query('offset', query['offset'])
+			}).query(function (qb) {
+				query['sorts'].forEach(function (sort) {
+					qb.orderBy(sort[0], sort[1]);
+				});
+			}).query('offset', query['offset'])
 			.query('limit', count ? query['limit'] : 0)
 			.fetch({
 				withRelated: ['user.profile', 'status']

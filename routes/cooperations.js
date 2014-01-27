@@ -260,6 +260,7 @@ module.exports = function (app) {
 	 * @param {String} deadline 合作期限
 	 * @param {Number} statusid 1发布 2结束
 	 * @param {BOOLEAN} isprivate 是否私有
+	 * @param {DATETIME} regdeadline 合作截止时间
 	 * @return {JSON}
 	 * <pre>
 	 *     {

@@ -26,7 +26,8 @@ Activity = module.exports = syBookshelf.Model.extend({
 	tableName: 'activities',
 	fields: [
 		'id', 'ownerid', 'groupid', 'content', 'maxnum', 'createtime',
-		'starttime', 'duration', 'statusid', 'avatar', 'money', 'name', 'site'
+		'starttime', 'duration', 'statusid', 'avatar', 'money', 'name', 'site',
+		'regdeadline'
 	],
 
 	toJSON: function () {
@@ -275,7 +276,8 @@ Activity = module.exports = syBookshelf.Model.extend({
 				max: 1200
 			}),
 			'name': chance.word(),
-			'site': chance.word()
+			'site': chance.word(),
+			'regdeadline': chance.date({ year: 2013 })
 		});
 	},
 
@@ -289,9 +291,11 @@ Activity = module.exports = syBookshelf.Model.extend({
 						qb.where(k, query[k]);
 					}
 				})
-			})
-			.query('orderBy', 'id', 'desc')
-			.query('offset', query['offset'])
+			}).query(function (qb) {
+				query['sorts'].forEach(function (sort) {
+					qb.orderBy(sort[0], sort[1]);
+				});
+			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
 			.fetch({
 				withRelated: ['user.profile', 'status']
@@ -314,9 +318,11 @@ Activity = module.exports = syBookshelf.Model.extend({
 						qb.where(k, 'like', '%' + query[k] + '%');
 					}
 				});
-			})
-			.query('orderBy', 'id', 'desc')
-			.query('offset', query['offset'])
+			}).query(function (qb) {
+				query['sorts'].forEach(function (sort) {
+					qb.orderBy(sort[0], sort[1]);
+				});
+			}).query('offset', query['offset'])
 			.query('limit', count ? query['limit'] : 0)
 			.fetch({
 				withRelated: ['user.profile', 'status']

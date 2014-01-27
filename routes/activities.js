@@ -254,10 +254,11 @@ module.exports = function (app) {
 	 * @param {Number} maxnum 活动最大人数
 	 * @param {Datetime} starttime 活动开始时间
 	 * @param {Number} duration 活动持续时间,单位为分钟
-	 * @param {Number} statusid 活动状态  0接受报名、1截止报名、2活动结束、3活动取消
+	 * @param {Number} statusid 活动状态  1接受报名、2截止报名、3活动结束、4活动取消
 	 * @param {Number} money 活动费用
 	 * @param {String} name 活动名称
 	 * @param {String} site 活动地点
+	 * @param {DATETIME} regdeadline 活动截止时间
 	 * @return {JSON}
 	 * <pre>{
 	 * 		msg: create success,  

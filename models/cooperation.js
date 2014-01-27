@@ -30,7 +30,7 @@ var fs = require('fs'),
 Cooperation = module.exports = syBookshelf.Model.extend({
 	tableName: 'cooperations',
 	fields: [
-		'id', 'name', 'description', 'company', 'deadline', 'avatar', 'statusid', 'ownerid', 'isprivate'
+		'id', 'name', 'description', 'company', 'deadline', 'avatar', 'statusid', 'ownerid', 'isprivate', 'regdeadline'
 	],
 
 	toJSON: function () {
@@ -288,7 +288,8 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 			'deadline': chance.date({ year: 2013 }),
 			'avatar': chance.word(),
 			'statusid': status,
-			'isprivate': chance.bool()
+			'isprivate': chance.bool(),
+			'regdeadline': chance.date({ year: 2013 })
 		});
 	},
 
@@ -302,9 +303,11 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 						qb.where(k, query[k]);
 					}
 				});
-			})
-			.query('orderBy', 'id', 'desc')
-			.query('offset', query['offset'])
+			}).query(function (qb) {
+				query['sorts'].forEach(function (sort) {
+					qb.orderBy(sort[0], sort[1]);
+				});
+			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
 			.fetch({
 				withRelated: ['user.profile', 'status']
@@ -327,9 +330,11 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 						qb.where(k, 'like', '%' + query[k] + '%');
 					}
 				});
-			})
-			.query('orderBy', 'id', 'desc')
-			.query('offset', query['offset'])
+			}).query(function (qb) {
+				query['sorts'].forEach(function (sort) {
+					qb.orderBy(sort[0], sort[1]);
+				});
+			}).query('offset', query['offset'])
 			.query('limit', count ? query['limit'] : 0)
 			.fetch({
 				withRelated: ['user.profile', 'status']

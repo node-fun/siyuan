@@ -258,6 +258,7 @@ module.exports = function (app) {
 	 * @param {Number} money 活动费用
 	 * @param {String} name 活动名称
 	 * @param {String} site 活动地点
+	 * @param {DATETIME} regdeadline 活动截止时间
 	 * @return {JSON}
 	 * <pre>{
 	 * 		msg: create success,  

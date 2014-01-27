@@ -158,6 +158,7 @@ CREATE TABLE IF NOT EXISTS `activities` (
   `money` DECIMAL NULL,
   `name` VARCHAR(45) NULL,
   `site` VARCHAR(45) NULL,
+  `regdeadline` DATETIME NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_activities_activity_status1_idx` (`statusid` ASC),
   INDEX `fk_activities_users1_idx` (`ownerid` ASC),
@@ -271,6 +272,7 @@ CREATE TABLE IF NOT EXISTS `cooperations` (
   `avatar` VARCHAR(45) NULL,
   `statusid` INT NOT NULL,
   `isprivate` TINYINT NULL,
+  `regdeadline` DATETIME NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_cooperations_co_status1_idx` (`statusid` ASC),
   INDEX `fk_cooperations_users1_idx` (`ownerid` ASC),
@@ -479,4 +481,5 @@ INSERT INTO `resource_types` (`id`, `name`) VALUES (3, 'activity');
 INSERT INTO `resource_types` (`id`, `name`) VALUES (4, 'cooperation');
 
 COMMIT;
+
 

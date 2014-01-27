@@ -30,7 +30,7 @@ var fs = require('fs'),
 Cooperation = module.exports = syBookshelf.Model.extend({
 	tableName: 'cooperations',
 	fields: [
-		'id', 'name', 'description', 'company', 'deadline', 'avatar', 'statusid', 'ownerid', 'isprivate'
+		'id', 'name', 'description', 'company', 'deadline', 'avatar', 'statusid', 'ownerid', 'isprivate', 'regdeadline'
 	],
 
 	toJSON: function () {
@@ -288,7 +288,8 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 			'deadline': chance.date({ year: 2013 }),
 			'avatar': chance.word(),
 			'statusid': status,
-			'isprivate': chance.bool()
+			'isprivate': chance.bool(),
+			'regdeadline': chance.date({ year: 2013 })
 		});
 	},
 

@@ -26,7 +26,8 @@ Activity = module.exports = syBookshelf.Model.extend({
 	tableName: 'activities',
 	fields: [
 		'id', 'ownerid', 'groupid', 'content', 'maxnum', 'createtime',
-		'starttime', 'duration', 'statusid', 'avatar', 'money', 'name', 'site'
+		'starttime', 'duration', 'statusid', 'avatar', 'money', 'name', 'site',
+		'regdeadline'
 	],
 
 	toJSON: function () {
@@ -275,7 +276,8 @@ Activity = module.exports = syBookshelf.Model.extend({
 				max: 1200
 			}),
 			'name': chance.word(),
-			'site': chance.word()
+			'site': chance.word(),
+			'regdeadline': chance.date({ year: 2013 })
 		});
 	},
 

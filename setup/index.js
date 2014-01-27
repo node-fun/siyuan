@@ -33,6 +33,7 @@ var fs = require('fs-extra'),
 	CoComments = CoComment.Set,
 	UserCooperation = require('../models/user-cooperation'),
 	UserCooperations = UserCooperation.Set,
+	Ad = require('../models/ad'),
 	numUsers = 35,
 	numFollowship = numUsers * 3,
 	numGroups = ~~(numUsers / 5),
@@ -51,6 +52,8 @@ var fs = require('fs-extra'),
 try {
 	fs.removeSync(config.contentDir);
 	fs.copySync(config.defaultContentDir, config.contentDir);
+	fs.removeSync(config.staticDir+'/ad/img');
+	fs.copySync(config.staticDir+'/ad/img.default', config.staticDir+'/ad/img');
 	console.log('content directory reset');
 } catch (err) {
 	done(err);
@@ -83,6 +86,7 @@ execsql.config(connConfig)
 					.then(addCoComments)
 					.then(done)
 					.catch(done);
+				addAd();
 			} else {
 				done();
 			}
@@ -304,6 +308,18 @@ function addCoComments() {
 		.then(function () {
 			console.log('%d cocomments added', numCoComments);
 		});
+}
+
+function addAd(){
+	for(var i=0; i<3; i++){
+		Ad.forge({
+			title: '公告'+i,
+			content: '公告'+i+'内容，' +
+				'<p>此内容仅供测试</p>' +
+				'<p>正式上线请在后台删除此条公告</p>',
+			picture: i+'.png'
+		}).save();
+	}
 }
 
 function done(err) {

@@ -37,7 +37,9 @@
                 var pictureFrame = $('#pictureFrame');
                 pictureFrame.css({display:'block'});
                 pictureFrame.attr({src: 'ad_picture_selector.html'});
-                pictureFrame.css({top: window.scrollY+20+'px', left: '200px'});
+                var frameTop = ($(window).height()-pictureFrame.height())/2;
+                frameTop = frameTop>0?frameTop:0;
+                pictureFrame.css({top: frameTop+"px", left: ($(window).width()-pictureFrame.width())/2+"px"});
                 pictureFrame.on('load',function(){
                     pictureFrame[0].contentWindow.init(selectok);
                 });

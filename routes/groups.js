@@ -6,6 +6,8 @@ var _ = require('underscore'),
 	Group = require('../models/group'),
 	GroupMember = require('../models/group-membership'),
 	errors = require('../lib/errors'),
+	config = require('../config'),
+	imageLimit = config.imageLimit,
 	Groups = Group.Set;
 
 module.exports = function (app) {
@@ -330,6 +332,35 @@ module.exports = function (app) {
 							next({ msg: 'group profile updated' });
 						});
 				}
+			});
+	});
+
+	/**
+	 * POST /api/groups/avatar/update
+	 * @method 更新圈子头像
+	 * @param {Number} groupid
+	 * @param {File} avatar
+	 * @return {JSON}
+	 */
+	app.post('/api/groups/avatar/update', function (req, res, next) {
+		var user = req.user,
+			file = req.files['avatar'];
+		if (!user) return next(errors[21301]);
+		if (!file) return next(errors[20007]);
+		GroupMember.forge({userid: user.id, groupid: req.body['groupid']})
+			.then(function(groupMember){
+				if(!groupMember.get('isowner') && !groupMember.get('isadmin')){
+					return next(errors[21301]);
+				}
+				if (file['type'] != 'image/jpeg') return next(errors[20005]);
+				if (file['size'] > imageLimit) return next(errors[20006]);
+				Group.forge({id: req.body['groupid']})
+					.then(function(group){
+						group.updateAvatar(file['path'])
+							.then(function(){
+								next({msg: 'Avatar updated'});
+							}).catch(next);
+					});
 			});
 	});
 };

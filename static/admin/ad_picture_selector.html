@@ -75,7 +75,7 @@
             success: function(d){
                 var str = '';
                 for(var k in d){
-                    str+='<img src="/ad/img/'+d[k]+'" title="'+d[k]+'" onclick="callback(this.src)" oncontextmenu="event.returnValue=false;showDelMenu(event,this.title);"/>';
+                    str+='<img src="/ad/img/'+d[k]+'" title="'+d[k]+'" onclick="callback(\'/ad/img/'+d[k]+'\')" oncontextmenu="event.returnValue=false;showDelMenu(event,this.title);"/>';
                 }
                 $('#imglist').html(str);
             },

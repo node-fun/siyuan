@@ -311,13 +311,13 @@ function addCoComments() {
 }
 
 function addAd(){
-	for(var i=0; i<3; i++){
+	for(var i=1; i<=3; i++){
 		Ad.forge({
 			title: '公告'+i,
 			content: '公告'+i+'内容，' +
 				'<p>此内容仅供测试</p>' +
 				'<p>正式上线请在后台删除此条公告</p>',
-			picture: i+'.png'
+			picture: '/ad/img/'+i+'.png'
 		}).save();
 	}
 }

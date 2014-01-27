@@ -1,6 +1,6 @@
 {
 	"name": "siyuan",
-	"logo": "logo.png",
+	"logo": "../../logo.png",
 	"description": "An SNS backend framework, with Node and MySQL",
 	"version": "0.0.2",
 	"url": "https://github.com/node-fun/siyuan/",

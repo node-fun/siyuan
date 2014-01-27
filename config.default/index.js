@@ -22,6 +22,7 @@ module.exports = {
 	staticDir: staticDir,
 	adminDir: path.join(staticDir, 'admin'),
 	adDir: path.join(staticDir, 'ad'),
+	indexPath: path.join(staticDir, 'index'),
 
 	avatarStaticPath: '/avatars',
 	coverStaticPath: '/covers',
@@ -29,6 +30,7 @@ module.exports = {
 	docsStaticPath: '/docs',
 	adminStaticPath: '/admin',
 	adStaticPath: '/ad',
+	indexStaticPath: '/',
 
 	defaultContentDir: defaultContentDir,
 	contentDir: contentDir,

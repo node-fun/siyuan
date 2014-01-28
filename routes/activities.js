@@ -2,7 +2,7 @@
  * @class 活动
  */
 var _ = require('underscore'),
-	Promise = require('bluebird'),
+	User = require('../models/user'),
 	Activity = require('../models/activity'),
 	UserActivity = require('../models/user-activity'),
 	GroupMembers = require('../models/group-membership'),
@@ -147,9 +147,9 @@ module.exports = function (app) {
 	app.post('/api/activities/join', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) return next(errors[21301]);
+		if (!user) next(errors[21301]);
 		if (!req.body['id'])
-			return next(errors[10008]);
+			next(errors[10008]);
 
 		Activity.forge(req.body)
 			.fetch()
@@ -169,7 +169,7 @@ module.exports = function (app) {
 											isfounded = true;
 										}
 									});
-									if (!isfounded) return next(errors[40001]);
+									if (!isfounded) next(errors[40001]);
 
 									isfounded = false;//use it again
 									var userships = activity.related('usership').models;
@@ -178,12 +178,12 @@ module.exports = function (app) {
 											isfounded = true;
 										}
 									});
-									if (isfounded) return next(errors[40002]);
+									if (isfounded) next(errors[40002]);
 
 									var statusid = activity.related('status').get('id');
-									if (statusid == 2) return next(errors[40012]);
-									if (statusid == 3) return next(errors[40013]);
-									if (statusid == 4) return next(errors[40014]);
+									if (statusid == 2) next(errors[40012]);
+									if (statusid == 3) next(errors[40013]);
+									if (statusid == 4) next(errors[40014]);
 
 									if (statusid == 1) {
 										return UserActivity.forge({
@@ -198,7 +198,7 @@ module.exports = function (app) {
 											});
 										});
 									} else {
-										return next(errors[40015]);
+										next(errors[40015]);
 									}
 								})
 						});
@@ -218,9 +218,9 @@ module.exports = function (app) {
 	app.post('/api/activities/cancel', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) return next(errors[21301]);
+		if (!user) next(errors[21301]);
 		if (!req.body['id'])
-			return next(errors[10008]);
+			next(errors[10008]);
 
 		Activity.forge(req.body)
 			.fetch()
@@ -242,7 +242,7 @@ module.exports = function (app) {
 							'activityid': self.get('id')
 						}).fetch().then(function (usership) {
 								if (usership.get('isaccepted') == 1)
-									return next(errors[40016]);
+									next(errors[40016]);
 								return usership.destroy();
 							}).then(function () {
 								next({
@@ -268,9 +268,9 @@ module.exports = function (app) {
 	app.get('/api/activities/end', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) return next(errors[21301]);
+		if (!user) next(errors[21301]);
 		if (!req.body['id'])
-			return next(errors[10008]);
+			next(errors[10008]);
 		Activity.forge(req.body)
 			.fetch()
 			.then(function (activity) {
@@ -278,7 +278,7 @@ module.exports = function (app) {
 					groupid = self.get('groupid');
 				self.load(['usership']).then(function (activity) {
 					if (!(self.get('ownerid') == user.id)) {
-						return next(errors[20102]);
+						next(errors[20102]);
 					}
 					self.set({
 						'statusid': 4
@@ -312,19 +312,18 @@ module.exports = function (app) {
 	app.post('/api/activities/update', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) return next(errors[21301]);
-		if (!user) return next(errors[21301]);
+		if (!user) next(errors[21301]);
 		if (!req.body['id'] || !req.body['content'] ||
 			!req.body['starttime'] || !req.body['duration'] ||
 			!req.body['statusid'] || !req.body['money'] ||
 			!req.body['name'] || !req.body['site'] ||
 			!req.body['regdeadline'] || !req.body['maxnum'])
-			return next(errors[10008]);
+		next(errors[10008]);
 		Activity.forge({ 'id': req.body['id'] }).fetch()
 			.then(function (activity) {
 				var ownerid = activity.get('ownerid');
 				if (user.id != ownerid) {
-					return next(errors[20102]);
+					next(errors[20102]);
 				}
 				activity.set(req.body).save()
 					.then(function (activity) {
@@ -358,13 +357,13 @@ module.exports = function (app) {
 	app.post('/api/activities/create', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) return next(errors[21301]);
+		if (!user) next(errors[21301]);
 		if (!req.body['groupid'] || !req.body['content'] ||
 			!req.body['starttime'] || !req.body['duration'] ||
 			!req.body['statusid'] || !req.body['money'] ||
 			!req.body['name'] || !req.body['site'] ||
 			!req.body['regdeadline'] || !req.body['maxnum'])
-		return next(errors[10008]);
+		next(errors[10008]);
 
 		//check the dude belong to group
 		GroupMembers.forge({
@@ -376,7 +375,7 @@ module.exports = function (app) {
 				.fetch()
 				.then(function (activity) {
 					if (activity) {
-						return next(errors[20506]);
+						next(errors[20506]);
 					}
 					return Activity.forge(_.extend({
 						ownerid: user.id
@@ -422,17 +421,38 @@ module.exports = function (app) {
 		}</pre>
 	 */
 	app.post('/api/activities/userslist', function (req, res, next) {
-		var userid = req.session['userid'],
-			id = req.body.id;
-		Activity.forge({ 'id': id }).fetch()
+		var user = req.user;
+
+		if (!user) next(errors[21301]);
+		if (!req.body['id'])
+			next(errors[10008]);
+
+		Activity.forge({ 'id': req.body['id'] }).fetch()
 			.then(function (activity) {
-				if (!activity) return Promise.rejected(errors[20603]);
-				return activity
-					.getUserList(userid)
-					.then(function (users) {
+				if (!activity) next(errors[20603]);
+
+				var self = activity;
+
+				return self.load(['usership']).then(function (activity) {
+					var userships = activity.related('usership');
+					return userships.mapThen(function (usership) {
+						return User.forge({ 'id': usership.get('userid') })
+							.fetch()
+							.then(function (user) {
+								return user.load(['profile']).then(function (user) {
+									return usership.set({
+										'user': user
+									});
+								});
+							});
+					}).then(function (userships) {
+							return userships;
+						});
+				}).then(function (users) {
 						next({ userships: users });
 					});
-			}).catch(next);
+
+			});
 	});
 
 	/**
@@ -446,18 +466,28 @@ module.exports = function (app) {
 	 * }</pre>
 	 */
 	app.post('/api/activities/accept', function (req, res, next) {
-		var userid = req.session['userid'],
-			id = req.body.id,
-			activityid = req.body.activityid;
-		Activity.forge({ 'id': activityid })
+		var user = req.user;
+
+		if (!user) next(errors[21301]);
+		if (!req.body['id'] || !req.body['activityid'])
+			next(errors[10008]);
+
+		Activity.forge({ 'id': req.body['activityid'] })
 			.fetch()
 			.then(function (activity) {
-				return activity.
-					acceptJoin(userid, id)
-					.then(function (activity) {
-						next({ msg: 'accept success' });
+				if (!activity) next(errors[20603]);
+				var self = activity,
+					ownerid = self.get('ownerid');
+				if (user.id != ownerid) next(errors[20102]);
+				return UserActivity.forge({ 'id': req.body['id'] }).fetch()
+					.then(function (usership) {
+						if (!usership) next(errors[20603]);
+						return usership.set({ 'isaccepted': true }).save()
+							.then(function (activity) {
+							next({ msg: 'accept success' });
+						});
 					});
-			}).catch(next);
+			});
 	});
 
 	/**

@@ -30,7 +30,6 @@ module.exports = function (app) {
 	  "ownerid": 5,
 	  "description": "Pec jeffo zewbugni bokzifvik ollu volsoz wane",
 	  "company": "wos",
-	  "deadline": "2013-02-03 01:24:43.364",
 	  "avatar": "atijev",
 	  "statusid": 1,
 	  "isprivate": 1,
@@ -319,7 +318,6 @@ module.exports = function (app) {
 	 * @param {String} name 合作名称
 	 * @param {String} description 合作简介
 	 * @param {String} company 公司或组织
-	 * @param {DATETIME} deadline 合作期限
 	 * @param {Number} statusid 1发布 2结束
 	 * @param {DATETIME} [regdeadline] 合作截止时间
 	 * @return {Array}
@@ -336,8 +334,8 @@ module.exports = function (app) {
 		if (!user) next(errors[21301]);
 		if (!req.body['id'] || !req.body['name'] ||
 			!req.body['description'] || !req.body['company'] ||
-			!req.body['deadline'] || !req.body['statusid'] ||
-			!req.body['isprivate'] || !req.body['regdeadline'])
+			!req.body['statusid'] || !req.body['isprivate'] ||
+			!req.body['regdeadline'])
 			next(errors[10008]);
 		Cooperation.forge({ 'id': req.body['id'] }).fetch()
 			.then(function (cooperation) {
@@ -363,7 +361,6 @@ module.exports = function (app) {
 	 * @param {String} name 合作名称
 	 * @param {String} description 合作简介
 	 * @param {String} company 公司或组织
-	 * @param {String} deadline 合作期限
 	 * @param {Number} statusid 1发布 2结束
 	 * @param {BOOLEAN} isprivate 是否私有
 	 * @param {DATETIME} regdeadline 合作截止时间
@@ -380,9 +377,8 @@ module.exports = function (app) {
 
 		if (!user) next(errors[21301]);
 		if (!req.body['name'] || !req.body['description'] ||
-			!req.body['company'] || !req.body['deadline'] ||
-			!req.body['statusid'] || !req.body['isprivate'] ||
-			!req.body['regdeadline'])
+			!req.body['company'] || !req.body['statusid'] ||
+			!req.body['isprivate'] || !req.body['regdeadline'])
 			next(errors[10008]);
 
 		Cooperation.forge(_.extend({

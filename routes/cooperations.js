@@ -122,11 +122,11 @@ module.exports = function (app) {
 				usercooperations.mapThen(function (usercooperation) {
 					return usercooperation.load(['user']);
 				})
-				.then(function (usercooperations) {
-					next({
-						usership: usercooperations
-					});
-				})
+					.then(function (usercooperations) {
+						next({
+							usership: usercooperations
+						});
+					})
 			}).catch(next);
 	});
 
@@ -142,7 +142,7 @@ module.exports = function (app) {
 	 *     }
 	 * </pre>
 	 */
-	app.post('/api/cooperations/join', function(req, res, next) {
+	app.post('/api/cooperations/join', function (req, res, next) {
 		var userid = req.session['userid'];
 		Cooperation.forge(req.body)
 			.fetch().
@@ -170,7 +170,7 @@ module.exports = function (app) {
 	 */
 	app.post('/api/cooperations/cancel', function (req, res, next) {
 		var userid = req.session['userid'];
-			id = req.body.id;
+		id = req.body.id;
 		Cooperation.forge({ 'id': id })
 			.fetch()
 			.then(function (cooperation) {
@@ -229,7 +229,7 @@ module.exports = function (app) {
 	 *     }
 	 * </pre>
 	 */
-	app.post('/api/cooperations/update', function(req, res, next) {
+	app.post('/api/cooperations/update', function (req, res, next) {
 		var userid = 1,//req.session['userid'],
 			id = req.body.id,
 			name = req.body.name,
@@ -241,12 +241,12 @@ module.exports = function (app) {
 		Cooperation.forge({ 'id': id }).fetch()
 			.then(function (cooperation) {
 				return cooperation.updateCooperation(userid, name, description, company, deadline, statusid, isprivate)
-				.then(function (cooperation) {
-					next({
-						msg: 'update success',
-						id: cooperation.get('id')
+					.then(function (cooperation) {
+						next({
+							msg: 'update success',
+							id: cooperation.get('id')
+						});
 					});
-				});
 			}).catch(next);
 
 	});
@@ -269,7 +269,7 @@ module.exports = function (app) {
 	 *     }
 	 * </pre>
 	 */
-	app.post('/api/cooperations/create', function(req, res, next) {
+	app.post('/api/cooperations/create', function (req, res, next) {
 		var ownerid = req.session['userid'],
 			name = req.body.name,
 			description = req.body.description,

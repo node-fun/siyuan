@@ -110,7 +110,7 @@ module.exports = function (app) {
 		Admin.forge({ id: req.session.adminid }).logout()
 			.then(function () {
 				req.session.adminid = null,
-				next({ msg: 'logout success' });
+					next({ msg: 'logout success' });
 			}).catch(next);
 	});
 

@@ -1,5 +1,6 @@
 var errors = require('../lib/errors'),
-	fs = require('fs');;
+	fs = require('fs');
+;
 
 module.exports = function (app) {
 	require('./users')(app);
@@ -28,10 +29,10 @@ module.exports = function (app) {
 	app.use('/api', function (req, res) {
 		res.sendErr(errors[10020]);
 	});
-	app.use('/admin', function (req, res, next){
-		if(!req.session.adminid){
+	app.use('/admin', function (req, res, next) {
+		if (!req.session.adminid) {
 			res.sendfile('./static/admin/login.html');
-		}else{
+		} else {
 			next();
 		}
 	});

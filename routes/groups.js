@@ -14,7 +14,7 @@ module.exports = function (app) {
 	/**
 	 * post /api/groups/find
 	 * @method 圈子列表
-	 * @param {Number} [id] 
+	 * @param {Number} [id]
 	 * @param {String} [ownerid] 创建者id
 	 * @param {String} [name] 圈子名
 	 * @return {JSON}
@@ -36,7 +36,7 @@ module.exports = function (app) {
 				groups.mapThen(function (group) {
 					group.countMembership();
 					return group.load(['owner', 'owner.profile']);
-				}).then(function(groups) {
+				}).then(function (groups) {
 						next({
 							groups: groups
 						});
@@ -55,12 +55,12 @@ module.exports = function (app) {
 		Group.forge({id: req.query.id})
 			.fetch()
 			.then(function (group) {
-					return group.load(['owner', 'owner.profile', 'memberships', 'memberships.user', 'memberships.user.profile']);
-			}).then(function(group) {
-					next(group);
+				return group.load(['owner', 'owner.profile', 'memberships', 'memberships.user', 'memberships.user.profile']);
+			}).then(function (group) {
+				next(group);
 			}).catch(next);
-		})
-	
+	})
+
 	/**
 	 * post /api/groups/create
 	 * @method 创建圈子
@@ -72,7 +72,7 @@ module.exports = function (app) {
 	 * 　　id: group.id  
 	 * }
 	 */
-	app.post('/api/groups/create', function(req, res, next){
+	app.post('/api/groups/create', function (req, res, next) {
 		var user = req.user;
 		if (!user) return next(errors[21301]);
 		if (!req.body['name'] || !req.body['description']) {
@@ -93,7 +93,7 @@ module.exports = function (app) {
 					groupid: group.id,
 					isowner: 1
 				}).save()
-					.then(function(groupMember){
+					.then(function (groupMember) {
 						next({
 							msg: 'group created',
 							id: groupMember.get('groupid')
@@ -110,9 +110,9 @@ module.exports = function (app) {
 	 * 　　msg: 'join group success'  
 	 * }
 	 */
-	app.post('/api/groups/join', function (req, res, next){
+	app.post('/api/groups/join', function (req, res, next) {
 		var user = req.user;
-		if(!user) return next(errors[21301]);
+		if (!user) return next(errors[21301]);
 		return join(user.id, req.body['groupid'], next);
 	});
 
@@ -124,18 +124,18 @@ module.exports = function (app) {
 	 * 　　msg: 'quit group success'  
 	 * }
 	 */
-	app.post('/api/groups/quit', function(req, res, next){
+	app.post('/api/groups/quit', function (req, res, next) {
 		var user = req.user;
-		if(!user) return next(errors[21301]);
+		if (!user) return next(errors[21301]);
 		return quit(user.id, req.body['groupid'], next);
 	});
 
 	/**
-	 * GET /api/groups/my  
+	 * GET /api/groups/my
 	 * 含我加入的、我创建的圈子列表。
 	 * @method 我的圈子列表
 	 * @return {JSON}
-	{
+	 {
 		"groups": [
 			{
 				"id": 1,
@@ -160,9 +160,9 @@ module.exports = function (app) {
 		]
 	}
 	 */
-	app.get('/api/groups/my', function(req, res, next){
-		if(!req.user) return next(errors[21301]);
-		req.user.related('groups').fetch().then(function(groups){
+	app.get('/api/groups/my', function (req, res, next) {
+		if (!req.user) return next(errors[21301]);
+		req.user.related('groups').fetch().then(function (groups) {
 			next({groups: groups});
 		});
 	});
@@ -173,32 +173,32 @@ module.exports = function (app) {
 	 * @param {Number} userid 成员的id
 	 * @param {Number} groupid 圈子id
 	 * @return {JSON}
-		{
-			msg: "set admin success"
-		}
+	 {
+		msg: "set admin success"
+	}
 	 */
-	app.post('/api/groups/setadmin', function(req, res, next){
+	app.post('/api/groups/setadmin', function (req, res, next) {
 		var user = req.user;
-		if(!user){
+		if (!user) {
 			next(errors[21301]);
 		}
 		GroupMember.forge({
 			userid: user.id,
 			groupid: req.body['groupid']
 		}).fetch()
-			.then(function(m){
-				if(!m.get('isadmin')){
+			.then(function (m) {
+				if (!m.get('isadmin')) {
 					next(errors[21301]);
-				}else{
+				} else {
 					GroupMember.forge({
 						userid: req.body['userid'],
 						groupid: req.body['groupid']
 					})
 						.fetch()
-						.then(function(m){
-							m.set('isadmin',1);
+						.then(function (m) {
+							m.set('isadmin', 1);
 							m.save()
-								.then(function(){
+								.then(function () {
 									next({
 										msg: "set admin success"
 									});
@@ -218,28 +218,28 @@ module.exports = function (app) {
 		msg: "cancel admin success"
 	}
 	 */
-	app.post('/api/groups/canceladmin', function(req, res, next){
+	app.post('/api/groups/canceladmin', function (req, res, next) {
 		var user = req.user;
-		if(!user){
+		if (!user) {
 			next(errors[21301]);
 		}
 		GroupMember.forge({
 			userid: user.id,
 			groupid: req.body['groupid']
 		}).fetch()
-			.then(function(m){
-				if(!m.get('isadmin')){
+			.then(function (m) {
+				if (!m.get('isadmin')) {
 					next(errors[21301]);
-				}else{
+				} else {
 					GroupMember.forge({
 						userid: req.body['userid'],
 						groupid: req.body['groupid']
 					})
 						.fetch()
-						.then(function(m){
-							m.set('isadmin',0);
+						.then(function (m) {
+							m.set('isadmin', 0);
 							m.save()
-								.then(function(){
+								.then(function () {
 									next({
 										msg: "cancel admin success"
 									});
@@ -255,51 +255,51 @@ module.exports = function (app) {
 	 * @param {Number} userid
 	 * @param {Number} groupid
 	 * @return {JSON}
-	{
+	 {
 		msg: 'join group success'
 	}
 	 */
-	app.post('/api/groups/pull', function(req, res, next){
+	app.post('/api/groups/pull', function (req, res, next) {
 		var user = req.user;
-		if(!user){
+		if (!user) {
 			next(errors[21301]);
 		}
 		GroupMember.forge({
 			userid: user.id,
 			groupid: req.body['groupid']
 		}).fetch()
-			.then(function(m){
-				if(!m.get('isadmin') && !m.get('isowner')){
+			.then(function (m) {
+				if (!m.get('isadmin') && !m.get('isowner')) {
 					next(errors[21301]);
-				}else{
+				} else {
 					return join(req.body['userid'], req.body['groupid'], next);
 				}
 			});
 	});
-	
+
 	/**
 	 * POST /api/groups/remove
 	 * @method 踢人出圈子
 	 * @param {Number} userid
 	 * @param {Number} groupid
 	 * @return {JSON}
-	{
+	 {
 		msg: 'quit group success'
 	}
 	 */
-	app.post('/api/groups/remove', function(req, res, next){
+	app.post('/api/groups/remove', function (req, res, next) {
 		var user = req.user;
-		if(!user){
+		if (!user) {
 			next(errors[21301]);
 		}
 		GroupMember.forge({
 			userid: user.id,
 			groupid: req.body['groupid']
 		}).fetch()
-			.then(function(m){
-				if(!m.get('isadmin') && !m.get('isowner')){
+			.then(function (m) {
+				if (!m.get('isadmin') && !m.get('isowner')) {
 					next(errors[21301]);
-				}else{
+				} else {
 					return quit(req.body['userid'], req.body['groupid'], next);
 				}
 			});
@@ -314,21 +314,21 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 { msg: 'group profile updated' }
 	 */
-	app.post('/api/groups/update', function(req, res, next){
+	app.post('/api/groups/update', function (req, res, next) {
 		var user = req.user;
-		if(!user){
+		if (!user) {
 			next(errors[21301]);
 		}
 		Group.forge({
 			id: req.body['id']
 		}).fetch()
-			.then(function(g){
-				if(g.get('ownerid') != user.id){
+			.then(function (g) {
+				if (g.get('ownerid') != user.id) {
 					next(errors[20102]);//not your own
-				}else{
+				} else {
 					g.set(req.body)
 						.save()
-						.then(function(){
+						.then(function () {
 							next({ msg: 'group profile updated' });
 						});
 				}
@@ -348,16 +348,16 @@ module.exports = function (app) {
 		if (!user) return next(errors[21301]);
 		if (!file) return next(errors[20007]);
 		GroupMember.forge({userid: user.id, groupid: req.body['groupid']})
-			.then(function(groupMember){
-				if(!groupMember.get('isowner') && !groupMember.get('isadmin')){
+			.then(function (groupMember) {
+				if (!groupMember.get('isowner') && !groupMember.get('isadmin')) {
 					return next(errors[21301]);
 				}
 				if (file['type'] != 'image/jpeg') return next(errors[20005]);
 				if (file['size'] > imageLimit) return next(errors[20006]);
 				Group.forge({id: req.body['groupid']})
-					.then(function(group){
+					.then(function (group) {
 						group.updateAvatar(file['path'])
-							.then(function(){
+							.then(function () {
 								next({msg: 'Avatar updated'});
 							}).catch(next);
 					});
@@ -365,20 +365,20 @@ module.exports = function (app) {
 	});
 };
 
-function join(userid, groupid, next){
+function join(userid, groupid, next) {
 	return GroupMember.forge({
 		'userid': userid,
 		'groupid': groupid
 	}).fetch()
-		.then(function(groupMember){
-			if(groupMember){
+		.then(function (groupMember) {
+			if (groupMember) {
 				return next(errors[20506]);
 			}
 			return GroupMember.forge({
 				'userid': userid,
 				'groupid': groupid
 			}).save()
-				.then(function(){
+				.then(function () {
 					next({
 						msg: 'join group success'
 					});
@@ -386,17 +386,17 @@ function join(userid, groupid, next){
 		});
 }
 
-function quit(userid, groupid, next){
+function quit(userid, groupid, next) {
 	return GroupMember.forge({
 		'userid': userid,
 		'groupid': groupid
 	}).fetch()
-		.then(function(groupMember){
-			if(!groupMember){
+		.then(function (groupMember) {
+			if (!groupMember) {
 				return next(errors[40001]);
 			}
 			return groupMember.destroy()
-				.then(function(){
+				.then(function () {
 					next({
 						msg: 'quit group success'
 					});

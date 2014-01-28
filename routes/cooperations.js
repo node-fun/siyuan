@@ -3,8 +3,13 @@
  */
 var _ = require('underscore'),
 	Promise = require('bluebird'),
+	User = require('../models/user'),
+	Users = User.Set,
 	Cooperation = require('../models/cooperation'),
-	UserCooperations = require('../models/user-cooperation'),
+	UserCooperation = require('../models/user-cooperation'),
+	UserCooperations = UserCooperation.Set,
+	GroupMember = require('../models/group-membership'),
+	GroupMembers = GroupMember.Set,
 	CoComment = require('../models/co-comment'),
 	errors = require('../lib/errors');
 
@@ -143,18 +148,79 @@ module.exports = function (app) {
 	 * </pre>
 	 */
 	app.post('/api/cooperations/join', function (req, res, next) {
-		var userid = req.session['userid'];
+		var user = req.user;
+
+		if (!user) next(errors[21301]);
+		if (!req.body['id']) next(errors[10008]);
 		Cooperation.forge(req.body)
 			.fetch().
 			then(function (cooperation) {
-				return cooperation.joinCooperation(userid)
-					.then(function (usership) {
-						next({
-							msg: 'join success',
-							id: usership.get('id')
-						});
+
+				//check the cooperation isprivate
+				var self = cooperation,
+					isprivate = self.get('isprivate'),
+					id = self.get('id'),
+					ownerid = self.get('ownerid');
+
+				var isfounded = false,
+					theGroupid = [];
+
+				//check if already apply
+				return UserCooperation.forge({
+					'userid': user.id,
+					'cooperationid': id
+				}).fetch()
+					.then(function (usercooperation) {
+						if (usercooperation != null) next(errors[40002]);
+						if (!isprivate) {
+							UserCooperation.forge({
+								'userid': user.id,
+								'cooperationid': id,
+								'isaccepted': false
+							}).save()
+								.then(function (usership) {
+									next({
+										msg: 'join success',
+										id: usership.get('id')
+									});
+								});
+						} else {
+							//check the user if in the same group
+							return GroupMembers.forge()
+								.query(function (qb) {
+									qb.where('userid', ownerid);
+								}).fetch()
+								.then(function (groupmembers) {
+									return groupmembers.mapThen(function (groupmember) {
+										var groupid = groupmember.get('groupid');
+										return GroupMember.forge({
+											'userid': user.id,
+											'groupid': groupid
+										}).fetch()
+											.then(function (groupmember) {
+												if (groupmember != null) {
+													isfounded = true;
+													theGroupid.push(groupmember.get('groupid'));
+												}
+											});
+									}).then(function (groupmembers) {
+											if (!isfounded) return next(errors[21301]);
+											return UserCooperation.forge({
+												'userid': user.id,
+												'cooperationid': id,
+												'isaccepted': false
+											}).save()
+												.then(function (usership) {
+													next({
+														msg: 'join success',
+														id: usership.get('id')
+													});
+												});
+										});
+								});
+						}
 					});
-			}).catch(next);
+			});
 	});
 
 	/**
@@ -169,18 +235,42 @@ module.exports = function (app) {
 	 * </pre>
 	 */
 	app.post('/api/cooperations/cancel', function (req, res, next) {
-		var userid = req.session['userid'];
-		id = req.body.id;
-		Cooperation.forge({ 'id': id })
+		var user = req.user;
+
+		if (!user) next(errors[21301]);
+		if (!req.body['id']) next(errors[10008]);
+		Cooperation.forge({ 'id': req.body['id'] })
 			.fetch()
 			.then(function (cooperation) {
-				return cooperation.cancelCooperation(userid)
-					.then(function () {
-						next({
-							msg: 'cancel success'
-						});
-					})
-			}).catch(next);
+				if (cooperation == null) next(20603);
+				var self = cooperation;
+				self.load(['usership']).then(function (cooperation) {
+					var userships = cooperation.related('usership').models,
+						isfounded = false;
+					_.each(userships, function (usership) {
+						if (usership.get('userid') == user.id) {
+							isfounded = true;
+						}
+					});
+					if (isfounded)
+						return UserCooperation.forge({
+							'userid': user.id,
+							'cooperationid': self.get('id')
+						}).fetch()
+							.then(function (usership) {
+								if (usership.get('isaccepted') == 1)
+									next(errors[40016]);
+								return usership.destroy()
+									.then(function () {
+										next({
+											msg: 'cancel success'
+										});
+									});
+							})
+					else
+						next(errors[20605]);
+				});
+			});
 	});
 
 	/**
@@ -194,22 +284,32 @@ module.exports = function (app) {
 	 *     }
 	 * </pre>
 	 */
-	app.post('/api/cooperations/end', function (req, res, next) {
-		var userid = req.session['userid'],
-			id = req.body.id;
-		Cooperation.forge({ 'id': id })
+	app.get('/api/cooperations/end', function (req, res, next) {
+		var user = req.user;
+
+		if (!user) next(errors[21301]);
+		if (!req.body['id']) next(errors[10008]);
+		Cooperation.forge({ 'id': req.body['id'] })
 			.fetch()
 			.then(function (cooperation) {
 				if (cooperation == null) {
-					return Promise.rejected(errors[40018]);
+					next(errors[20603]);
 				}
-				return cooperation.endCooperation(userid)
+				var self = cooperation;
+				return self.load(['usership']).then(function () {
+					if (!(self.get('ownerid') == user.id)) {
+						return next(errors[20102]);
+					}
+					return self.set({
+						'statusid': 2
+					}).save()
 					.then(function () {
 						next({
 							msg: 'end success'
 						});
 					});
-			}).catch(next);
+				});
+			});
 	});
 
 	/**
@@ -221,6 +321,7 @@ module.exports = function (app) {
 	 * @param {String} company 公司或组织
 	 * @param {DATETIME} deadline 合作期限
 	 * @param {Number} statusid 1发布 2结束
+	 * @param {DATETIME} [regdeadline] 合作截止时间
 	 * @return {Array}
 	 * <pre>
 	 *     {
@@ -230,24 +331,29 @@ module.exports = function (app) {
 	 * </pre>
 	 */
 	app.post('/api/cooperations/update', function (req, res, next) {
-		var userid = 1,//req.session['userid'],
-			id = req.body.id,
-			name = req.body.name,
-			description = req.body.description,
-			company = req.body.company,
-			deadline = req.body.deadline,
-			statusid = req.body.statusid,
-			isprivate = req.body.isprivate;
-		Cooperation.forge({ 'id': id }).fetch()
+		var user = req.user;
+
+		if (!user) next(errors[21301]);
+		if (!req.body['id'] || !req.body['name'] ||
+			!req.body['description'] || !req.body['company'] ||
+			!req.body['deadline'] || !req.body['statusid'] ||
+			!req.body['isprivate'] || !req.body['regdeadline'])
+			next(errors[10008]);
+		Cooperation.forge({ 'id': req.body['id'] }).fetch()
 			.then(function (cooperation) {
-				return cooperation.updateCooperation(userid, name, description, company, deadline, statusid, isprivate)
+				var self = cooperation;
+				var ownerid = cooperation.get('ownerid');
+				if (user.id != ownerid) {
+					next(errors[20102]);
+				}
+				self.set(req.body).save()
 					.then(function (cooperation) {
-						next({
-							msg: 'update success',
-							id: cooperation.get('id')
-						});
+					next({
+						msg: 'update success',
+						id: cooperation.get('id')
 					});
-			}).catch(next);
+				});
+			});
 
 	});
 
@@ -270,29 +376,33 @@ module.exports = function (app) {
 	 * </pre>
 	 */
 	app.post('/api/cooperations/create', function (req, res, next) {
-		var ownerid = req.session['userid'],
-			name = req.body.name,
-			description = req.body.description,
-			company = req.body.company,
-			deadline = req.body.deadline,
-			statusid = req.body.statusid,
-			isprivate = req.body.isprivate;
-		Cooperation.forge().createCooperation(ownerid, name, description, company, deadline, statusid, isprivate)
+		var user = req.user;
+
+		if (!user) next(errors[21301]);
+		if (!req.body['name'] || !req.body['description'] ||
+			!req.body['company'] || !req.body['deadline'] ||
+			!req.body['statusid'] || !req.body['isprivate'] ||
+			!req.body['regdeadline'])
+			next(errors[10008]);
+
+		Cooperation.forge(_.extend({
+				ownerid: user.id
+			}, req.body)).save()
 			.then(function (cooperation) {
 				next({
 					msg: 'create success',
 					id: cooperation.get('id')
 				});
-			}).catch(next);
+			});
 	});
 
 	/**
-	 * POST /api/cooperations/userlist
+	 * POST /api/cooperations/userslist
 	 * @method 获取合作人员名单
 	 * @param {Number} id 合作ID
 	 * @return {Array}
 	 * <pre>{
-  "users": [
+  "userships": [
     {
       "id": 11,
       "userid": 14,
@@ -331,17 +441,37 @@ module.exports = function (app) {
   ]
 }</pre>
 	 */
-	app.get('/api/cooperations/userlist', function (req, res, next) {
-		var id = req.body.id;
-		Cooperation.forge({ 'id': id }).fetch()
+	app.post('/api/cooperations/userslist', function (req, res, next) {
+		var user = req.user;
+
+		if (!user) next(errors[21301]);
+		if (!req.body['id'])
+			next(errors[10008]);
+		Cooperation.forge({ 'id': req.body['id'] }).fetch()
 			.then(function (cooperation) {
-				return cooperation.getUserList()
-					.then(function (users) {
-						next({
-							users: users
+
+				var self = cooperation,
+					id = self.get('id');
+				return self.load(['usership']).then(function (cooperation) {
+					var userships = cooperation.related('usership');
+					return userships.mapThen(function (usership) {
+						return User.forge({ 'id': usership.get('userid') })
+							.fetch()
+							.then(function (user) {
+								return user.load(['profile']).then(function (user) {
+									return usership.set({
+										'user': user
+									});
+								});
+
+							});
+					}).then(function (userships) {
+							return userships;
 						});
+				}).then(function (users) {
+						next({ userships: users });
 					});
-			}).catch(next);
+			});
 	});
 
 	/**
@@ -357,17 +487,25 @@ module.exports = function (app) {
 	 * </pre>
 	 */
 	app.post('/api/cooperations/accept', function (req, res, next) {
-		var userid = req.session['userid'],
-			id = req.body.id,
-			cooperationid = req.body.cooperationid;
-		Cooperation.forge({ 'id': cooperationid })
+		var user = req.user;
+
+		if (!user) next(errors[21301]);
+		if (!req.body['id'] || !req.body['cooperationid'])
+			next(errors[10008]);
+		Cooperation.forge({ 'id': req.body['cooperationid'] })
 			.fetch()
 			.then(function (cooperation) {
-				return cooperation.acceptJoin(userid, id)
-					.then(function (cooperation) {
+
+				var self = cooperation,
+					ownerid = self.get('ownerid');
+				if (user.id != ownerid) next(errors[20102]);
+				return UserCooperation.forge({ 'id': req.body['id'] }).fetch()
+					.then(function (usership) {
+						return usership.set({ 'isaccepted': true }).save();
+					}).then(function () {
 						next({ msg: 'accept success' });
 					});
-			}).catch(next);
+			});
 	});
 
 	/**

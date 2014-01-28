@@ -191,12 +191,12 @@ module.exports = function (app) {
 											'activityid': activity.get('id'),
 											'isaccepted': false
 										}).save()
-										.then(function (usership) {
-											next({
-												msg: 'join success',
-												id: usership.get('id')
+											.then(function (usership) {
+												next({
+													msg: 'join success',
+													id: usership.get('id')
+												});
 											});
-										});
 									} else {
 										next(errors[40015]);
 									}
@@ -283,11 +283,11 @@ module.exports = function (app) {
 					self.set({
 						'statusid': 4
 					}).save()
-					.then(function () {
-						next({
-							msg: 'end success'
+						.then(function () {
+							next({
+								msg: 'end success'
+							});
 						});
-					});
 				});
 			});
 	});
@@ -303,6 +303,7 @@ module.exports = function (app) {
 	 * @param {Number}  [money] 活动费用
 	 * @param {String}  [name] 活动名称
 	 * @param {String}  [site] 活动地点
+	 * @param {DATETIME} [regdeadline] 活动截止时间
 	 * @return {JSON}
 	 * <pre>{
 	 * 		msg: update success,  
@@ -313,12 +314,8 @@ module.exports = function (app) {
 		var user = req.user;
 
 		if (!user) next(errors[21301]);
-		if (!req.body['id'] || !req.body['content'] ||
-			!req.body['starttime'] || !req.body['duration'] ||
-			!req.body['statusid'] || !req.body['money'] ||
-			!req.body['name'] || !req.body['site'] ||
-			!req.body['regdeadline'] || !req.body['maxnum'])
-		next(errors[10008]);
+		if (!req.body['id'] || !req.body['content'] || !req.body['starttime'] || !req.body['duration'] || !req.body['statusid'] || !req.body['money'] || !req.body['name'] || !req.body['site'] || !req.body['regdeadline'] || !req.body['maxnum'])
+			next(errors[10008]);
 		Activity.forge({ 'id': req.body['id'] }).fetch()
 			.then(function (activity) {
 				var ownerid = activity.get('ownerid');
@@ -327,11 +324,11 @@ module.exports = function (app) {
 				}
 				activity.set(req.body).save()
 					.then(function (activity) {
-					next({
-						msg: 'update success',
-						id: activity.get('id')
+						next({
+							msg: 'update success',
+							id: activity.get('id')
+						});
 					});
-				});
 			});
 	});
 
@@ -363,37 +360,37 @@ module.exports = function (app) {
 			!req.body['statusid'] || !req.body['money'] ||
 			!req.body['name'] || !req.body['site'] ||
 			!req.body['regdeadline'] || !req.body['maxnum'])
-		next(errors[10008]);
+			next(errors[10008]);
 
 		//check the dude belong to group
 		GroupMembers.forge({
 			'groupid': req.body['groupid'],
 			'userid': user.id
 		}).fetch().then(function (groupmember) {
-			if (groupmember == null) next(errors[40001]);
-			Activity.forge({ name: req.body['name'] })
-				.fetch()
-				.then(function (activity) {
-					if (activity) {
-						next(errors[20506]);
-					}
-					return Activity.forge(_.extend({
-						ownerid: user.id
-					}, req.body)).save();
-				}).then(function (activity) {
-					UserActivity.forge({
-						'userid': user.id,
-						'activityid': activity.id,
-						'isaccepted': 1
-					}).save()
-						.then(function (usership) {
-							next({
-								msg: 'create success',
-								id: usership.get('activityid')
+				if (groupmember == null) next(errors[40001]);
+				Activity.forge({ name: req.body['name'] })
+					.fetch()
+					.then(function (activity) {
+						if (activity) {
+							next(errors[20506]);
+						}
+						return Activity.forge(_.extend({
+							ownerid: user.id
+						}, req.body)).save();
+					}).then(function (activity) {
+						UserActivity.forge({
+							'userid': user.id,
+							'activityid': activity.id,
+							'isaccepted': 1
+						}).save()
+							.then(function (usership) {
+								next({
+									msg: 'create success',
+									id: usership.get('activityid')
+								});
 							});
-						});
-				})
-		});
+					})
+			});
 	});
 
 	/**
@@ -451,7 +448,6 @@ module.exports = function (app) {
 				}).then(function (users) {
 						next({ userships: users });
 					});
-
 			});
 	});
 
@@ -484,8 +480,8 @@ module.exports = function (app) {
 						if (!usership) next(errors[20603]);
 						return usership.set({ 'isaccepted': true }).save()
 							.then(function (activity) {
-							next({ msg: 'accept success' });
-						});
+								next({ msg: 'accept success' });
+							});
 					});
 			});
 	});

@@ -372,8 +372,12 @@ module.exports = function (app) {
 	 *     }
 	 * </pre>
 	 */
-	app.post('/api/cooperations/create', function (req, res, next) {
-		var user = req.user;
+	app.get('/api/cooperations/create', function (req, res, next) {
+		//var user = req.user;
+
+		var user = {
+			id: 3
+		};
 
 		if (!user) next(errors[21301]);
 		if (!req.body['name'] || !req.body['description'] ||
@@ -387,7 +391,8 @@ module.exports = function (app) {
 			.then(function (cooperation) {
 				next({
 					msg: 'create success',
-					id: cooperation.get('id')
+					id: cooperation.get('id'),
+					isprivate: cooperation.get('isprivate')
 				});
 			});
 	});
@@ -556,9 +561,11 @@ module.exports = function (app) {
 					return Promise.rejected(errors[20102]);
 				}
 				return cocomment.set(req.body).save();
-			}).then(function () {
+			}).then(function (cooperation) {
 				next({
-					msg: 'Coment updated'
+					msg: 'Coment updated',
+					id: cooperation.get('id'),
+					isprivate: cooperation.get('isprivate')
 				});
 			}).catch(next);
 	});

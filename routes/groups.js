@@ -55,7 +55,7 @@ module.exports = function (app) {
 		Group.forge({id: req.query.id})
 			.fetch()
 			.then(function (group) {
-				return group.load(['owner', 'owner.profile', 'memberships', 'memberships.user', 'memberships.user.profile']);
+				return group.load(['owner', 'owner.profile', 'memberships', 'memberships.user', 'memberships.user.profile', 'activities']);
 			}).then(function (group) {
 				next(group);
 			}).catch(next);

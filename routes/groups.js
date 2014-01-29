@@ -113,7 +113,7 @@ module.exports = function (app) {
 	app.post('/api/groups/join', function (req, res, next){
 		var user = req.user;
 		if(!user) return next(errors[21301]);
-		return join(user.id, req.body['groupid'], next);
+		return join([user.id], req.body['groupid'], next);
 	});
 
 	/**
@@ -252,7 +252,7 @@ module.exports = function (app) {
 	/**
 	 * POST /api/groups/pull
 	 * @method 拉好友进圈子
-	 * @param {Number} userid
+	 * @param {Number} userid[]
 	 * @param {Number} groupid
 	 * @return {JSON}
 	{
@@ -366,24 +366,18 @@ module.exports = function (app) {
 };
 
 function join(userid, groupid, next){
-	return GroupMember.forge({
-		'userid': userid,
-		'groupid': groupid
-	}).fetch()
-		.then(function(groupMember){
-			if(groupMember){
-				return next(errors[20506]);
-			}
-			return GroupMember.forge({
-				'userid': userid,
-				'groupid': groupid
-			}).save()
-				.then(function(){
-					next({
-						msg: 'join group success'
-					});
-				});
-		});
+	var members = GroupMember.Set.forge();
+	for(var i=0; i<userid.length; i++){
+		members.add(GroupMember.forge({
+			'userid': userid[i],
+			'groupid': groupid
+		}));
+	}
+	//这里没有判断重复加入，在数据库里控制
+	return members.invokeThen('save')
+		.then(function(){
+			next({msg: 'join group success'});
+		}).catch(next);
 }
 
 function quit(userid, groupid, next){

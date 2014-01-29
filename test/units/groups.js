@@ -48,7 +48,7 @@ describe('groups', function () {
 		request.post(apiHost + '/join', {
 			jar: jar,
 			form: {
-				groupid: groupid
+				'groupid[]': groupid
 			}
 		}, function(err, res, data){
 			assert.ok(data['msg']);

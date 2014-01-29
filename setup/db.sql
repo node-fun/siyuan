@@ -268,7 +268,6 @@ CREATE TABLE IF NOT EXISTS `cooperations` (
   `ownerid` INT NOT NULL,
   `description` VARCHAR(45) NULL,
   `company` VARCHAR(45) NULL,
-  `deadline` DATETIME NULL,
   `avatar` VARCHAR(45) NULL,
   `statusid` INT NOT NULL,
   `isprivate` TINYINT NULL,

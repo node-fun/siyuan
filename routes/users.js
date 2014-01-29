@@ -19,35 +19,35 @@ module.exports = function (app) {
 	 * @param {String} [profile.gender] 性别 - `m`男, `f`女
 	 * @return {JSON}
 	 * <pre>
-{
-	users: [
-		{
-			"id": 1,
-			"username": "ko_334",
-			"regtime": 1373071542000,
-			"isonline": 0,
-			"avatar": "/avatars/1.jpg",
-			"cover": null,
-			"profile": {
-				"email": "he@gec.net",
-				"name": "Nicolas Bailey",
-				"gender": "f",
-				"age": 45,
-				"grade": 1988,
-				"university": "Rizuuh University",
-				"major": "Asecoeb",
-				"summary": "Lubudzot ujumipji bu elahumi ze puezawuh acu bi ajbez pirwivu movatra ulazujtob bapbape."
-			},
-			"numFollowing": 0,
-			"numFollowers": 5,
-			"numIssues": 0,
-			"numPhotos": 5,
-			"numStarring": 0,
-			"numEvents": 0
-		},
-		...
-	]
-}
+	 {
+		users: [
+			{
+				"id": 1,
+				"username": "ko_334",
+				"regtime": 1373071542000,
+				"isonline": 0,
+				"avatar": "/avatars/1.jpg",
+				"cover": null,
+				"profile": {
+					"email": "he@gec.net",
+	 "name": "Nicolas Bailey",
+	 "gender": "f",
+	 "age": 45,
+	 "grade": 1988,
+	 "university": "Rizuuh University",
+	 "major": "Asecoeb",
+	 "summary": "Lubudzot ujumipji bu elahumi ze puezawuh acu bi ajbez pirwivu movatra ulazujtob bapbape."
+	 },
+	 "numFollowing": 0,
+	 "numFollowers": 5,
+	 "numIssues": 0,
+	 "numPhotos": 5,
+	 "numStarring": 0,
+	 "numEvents": 0
+	 },
+	 ...
+	 ]
+	 }
 	 * </pre>
 	 */
 	app.get('/api/users/find', function (req, res, next) {
@@ -104,11 +104,11 @@ module.exports = function (app) {
 	 * @param {String} [profile.summary] 个性签名
 	 * @return {JSON}
 	 * <pre>
-//   username, password, profile[email], profile[name] ...
-{
-	"msg": "User registered",
-	"id": 36
-}
+	 //   username, password, profile[email], profile[name] ...
+	 {
+		"msg": "User registered",
+		"id": 36
+	}
 	 * </pre>
 	 */
 	app.post('/api/users/register', function (req, res, next) {

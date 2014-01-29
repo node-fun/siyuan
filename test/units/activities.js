@@ -20,6 +20,7 @@ describe('activities', function () {
 	var activityid;
 	var groupid;
 	var _groupid;
+	var usershipid;
 	it('creates activity', function (done) {
 		request.post('http://localhost:' + config.port + '/api/groups/create', {
 			jar: jar,
@@ -73,10 +74,38 @@ describe('activities', function () {
 					}
 				}, function (err, res, data) {
 					assert.ok(data['msg']);
+					assert.ok(usershipid = data['id'])
 					done();
 				})
 			})
 		})
 	})
+
+	it('cancel join activity', function (done) {
+		request.post(apiHost + '/cancel', {
+			jar: jar,
+			form: {
+				id: actID
+			}
+		},function (err, res, data) {
+			assert.ok(data['msg']);
+			done();
+		})
+	})
+
+	it('activities history', function (done) {
+		request.get(apiHost + '/history', {
+			jar: jar,
+			form: {
+				page: 1,
+				limit: 3
+			}
+		}, function (err, res, data) {
+			var histories = data['usership'];
+			assert.ok(histories.length, 3);
+			done();
+		})
+	})
 });
+
 

@@ -372,12 +372,8 @@ module.exports = function (app) {
 	 *     }
 	 * </pre>
 	 */
-	app.get('/api/cooperations/create', function (req, res, next) {
-		//var user = req.user;
-
-		var user = {
-			id: 3
-		};
+	app.post('/api/cooperations/create', function (req, res, next) {
+		var user = req.user;
 
 		if (!user) next(errors[21301]);
 		if (!req.body['name'] || !req.body['description'] ||

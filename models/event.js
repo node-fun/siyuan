@@ -6,7 +6,7 @@ var _ = require('underscore'),
 	Event, Events;
 
 Event = module.exports = syBookshelf.Model.extend({
-	tableName: 'starship',
+	tableName: 'events',
 	fields: [
 		'id', 'userid', 'groupid', 'itemtype', 'itemid', 'message'
 	],
@@ -24,7 +24,7 @@ Event = module.exports = syBookshelf.Model.extend({
 						qb.where(k, query[k]);
 					}
 				});
-			}).query(function(qb){
+			}).query(function (qb) {
 				query['sorts'].forEach(function (sort) {
 					qb.orderBy(sort[0], sort[1]);
 				});

@@ -283,7 +283,7 @@ module.exports = function (app) {
 	 *     }
 	 * </pre>
 	 */
-	app.get('/api/cooperations/end', function (req, res, next) {
+	app.post('/api/cooperations/end', function (req, res, next) {
 		var user = req.user;
 
 		if (!user) next(errors[21301]);

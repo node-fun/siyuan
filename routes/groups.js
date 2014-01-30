@@ -251,6 +251,7 @@ module.exports = function (app) {
 
 	/**
 	 * POST /api/groups/pull
+	 * 必须是管理员或圈主才能拉好友进圈子
 	 * @method 拉好友进圈子
 	 * @param {Number} userid[]
 	 * @param {Number} groupid

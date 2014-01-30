@@ -1,0 +1,46 @@
+<html>
+<head>
+    <title>API测试页</title>
+    <style>
+        li{
+            list-style: none;
+        }
+        form{
+            border: solid blue 1px;
+        }
+    </style>
+    <script src="http://code.jquery.com/jquery.min.js"></script>
+</head>
+<body>
+<h2>API测试页</h2>
+<form>
+    url:<input type="text" id="url"/><br/>
+    method:<select name="_method">
+            <option>get</option>
+            <option>post</option>
+        </select>
+    <table>
+        <tr>
+            <td>key</td>
+            <td>value</td>
+        </tr><tr>
+            <td><input type="text" onblur="$('#key1').attr({name: this.value});"/></td>
+            <td><input type="text" id="key1"/></td>
+        </tr><tr>
+            <td><input type="text" onblur="$('#key2').attr({name: this.value});"/></td>
+            <td><input type="text" id="key2"/></td>
+        </tr><tr>
+            <td><input type="text" onblur="$('#key3').attr({name: this.value});"/></td>
+            <td><input type="text" id="key3"/></td>
+        </tr><tr>
+            <td><input type="text" onblur="$('#key4').attr({name: this.value});"/></td>
+            <td><input type="text" id="key4"/></td>
+        </tr><tr>
+            <td><input type="text" onblur="$('#key5').attr({name: this.value});"/></td>
+            <td><input type="text" id="key5"/></td>
+        </tr>
+    </table>
+    <button type="button">提交</button>
+</form>
+</body>
+</html>

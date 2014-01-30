@@ -265,7 +265,7 @@ module.exports = function (app) {
 	 * 		msg: end success  
 	 * }</pre>
 	 */
-	app.get('/api/activities/end', function (req, res, next) {
+	app.post('/api/activities/end', function (req, res, next) {
 		var user = req.user;
 
 		if (!user) next(errors[21301]);

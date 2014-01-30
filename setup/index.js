@@ -188,11 +188,14 @@ function addGroupMembers() {
 
 function addActivities() {
 	var activities = Activities.forge();
+	var i = 1;
 	_.times(numActivities, function () {
 		activities.add(Activity.randomForge().set({
 			'ownerid': _.random(1, numUsers),
-			'groupid': _.random(1, numGroups)
+			'groupid': i,
+			'statusid': 1
 		}));
+		if(i < numGroups) i++;  //it will influence activity test, please don't recorrect it
 	});
 	return activities.invokeThen('save')
 		.then(function () {

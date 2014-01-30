@@ -54,3 +54,4 @@ global.jar = request.jar();
 require('./units/users');
 require('./units/photos');
 require('./units/groups');
+require('./units/activities');

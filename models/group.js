@@ -3,6 +3,7 @@
  */
 var syBookshelf = require('./base'),
 	GroupMember = require('./group-membership'),
+	Activity = require('./activity'),
 	_ = require('underscore'),
 	chance = new (require('chance'))(),
 	Promise = require('bluebird'),
@@ -46,6 +47,9 @@ Group = module.exports = syBookshelf.Model.extend({
 			.then(function (d) {
 				return self.data('numMembers', d[0]["count(`id`)"]);
 			});
+	},
+	activities: function () {
+		return this.hasMany(Activity, fkGroup);
 	},
 	fetch: function () {
 		return Group.__super__.fetch.apply(this, arguments)

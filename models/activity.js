@@ -5,8 +5,6 @@ var fs = require('fs'),
 	Promise = require('bluebird'),
 	errors = require('../lib/errors'),
 	syBookshelf = require('./base'),
-	User = require('./user'),
-	Users = User.Set,
 	ActivityStatus = require('./activity-status'),
 	UserActivity = require('./user-activity'),
 	UserActivitys = UserActivity.Set,
@@ -61,7 +59,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 		return this.belongsTo(ActivityStatus, fkStatus);
 	},
 	user: function () {
-		return this.belongsTo(User, fkOwner);
+		return this.belongsTo(require('./user'), fkOwner);
 	},
 
 	updateAvatar: function (tmp) {

@@ -1,8 +1,6 @@
 var _ = require('underscore'),
 	chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
-	User = require('./user'),
-	Users = User.Set,
 	UserActivity, UserActivitys,
 	fkUser = 'userid';
 
@@ -12,7 +10,7 @@ UserActivity = module.exports = syBookshelf.Model.extend({
 		'id', 'userid', 'activityid', 'isaccepted'
 	],
 	user: function () {
-		return this.belongsTo(User, fkUser);
+		return this.belongsTo(require('./user'), fkUser);
 	}
 }, {
 	find: function (query) {

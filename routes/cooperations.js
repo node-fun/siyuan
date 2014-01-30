@@ -387,7 +387,8 @@ module.exports = function (app) {
 			.then(function (cooperation) {
 				next({
 					msg: 'create success',
-					id: cooperation.get('id')
+					id: cooperation.get('id'),
+					isprivate: cooperation.get('isprivate')
 				});
 			});
 	});
@@ -556,9 +557,11 @@ module.exports = function (app) {
 					return Promise.rejected(errors[20102]);
 				}
 				return cocomment.set(req.body).save();
-			}).then(function () {
+			}).then(function (cooperation) {
 				next({
-					msg: 'Coment updated'
+					msg: 'Coment updated',
+					id: cooperation.get('id'),
+					isprivate: cooperation.get('isprivate')
 				});
 			}).catch(next);
 	});

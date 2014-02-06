@@ -3,6 +3,7 @@ var Promise = require('bluebird'),
 	errors = require('../lib/errors'),
 	syBookshelf = require('./base'),
 	IssueComment = require('./issue-comment'),
+	IssueComments = IssueComment.Set,
 	Issue, Issues;
 
 Issue = module.exports = syBookshelf.Model.extend({
@@ -11,6 +12,7 @@ Issue = module.exports = syBookshelf.Model.extend({
 		'id', 'userid', 'title', 'body', 'posttime'
 	],
 	omitInJSON: ['userid'],
+	withRelated: ['user.profile'],
 
 	defaults: function () {
 		return {
@@ -37,10 +39,11 @@ Issue = module.exports = syBookshelf.Model.extend({
 
 	countComments: function () {
 		var self = this;
-		return this.comments().fetch()
-			.then(function (comments) {
-				var numComments = comments.length;
-				return self.data('numComments', numComments);
+		return IssueComments.forge().query()
+			.where('issueid', '=', self.id)
+			.count('id')
+			.then(function (d) {
+				return self.data('numComments', d[0]["count(`id`)"]);
 			});
 	}
 }, {
@@ -60,15 +63,13 @@ Issue = module.exports = syBookshelf.Model.extend({
 						qb.where(k, query[k]);
 					}
 				});
-			}).query(function(qb){
-				query['sorts'].forEach(function (sort) {
-					qb.orderBy(sort[0], sort[1]);
+			}).query(function (qb) {
+				query['orders'].forEach(function (order) {
+					qb.orderBy(order[0], order[1]);
 				});
 			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
-			.fetch({
-				withRelated: ['user.profile']
-			});
+			.fetch();
 	},
 
 	search: function (query) {
@@ -87,24 +88,26 @@ Issue = module.exports = syBookshelf.Model.extend({
 						qb.where(k, 'like', '%' + query[k] + '%');
 					}
 				});
-			}).query(function(qb){
-				query['sorts'].forEach(function (sort) {
-					qb.orderBy(sort[0], sort[1]);
+			}).query(function (qb) {
+				query['orders'].forEach(function (order) {
+					qb.orderBy(order[0], order[1]);
 				});
 			}).query('offset', query['offset'])
 			.query('limit', count ? query['limit'] : 0)
-			.fetch({
-				withRelated: ['user.profile']
-			});
+			.fetch();
 	},
 
 	view: function (query) {
 		return Issue.forge({ id: query['id'] })
 			.fetch({
-				withRelated: ['user.profile', 'comments.user.profile']
+				withRelated: ['user.profile']
 			}).then(function (issue) {
 				if (!issue) return Promise.rejected(errors[20603]);
-				return issue;
+				return IssueComments.forge({ issueid: issue.id })
+					.query('orderBy', 'id', 'desc')
+					.fetch().then(function (comments) {
+						return issue.set('comments', comments);
+					});
 			});
 	}
 });

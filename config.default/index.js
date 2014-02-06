@@ -29,6 +29,8 @@ module.exports = {
 	photoStaticPath: '/photos',
 	docsStaticPath: '/docs',
 	adminStaticPath: '/admin',
+	activityStaticPath: '/activities',
+	cooperationStaticPath: '/cooperations',
 	adStaticPath: '/ad',
 	indexStaticPath: '/',
 
@@ -55,6 +57,7 @@ module.exports = {
 		}
 	},
 
+	resources: ['user', 'issue', 'activity', 'cooperation'],
 	avatarExt: '.jpg',
 	imageLimit: 4 * 1024 * 1024,
 	admins: [

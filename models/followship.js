@@ -24,8 +24,8 @@ Followship = module.exports = syBookshelf.Model.extend({
 					}
 				});
 			}).query(function(qb){
-				query['sorts'].forEach(function (sort) {
-					qb.orderBy(sort[0], sort[1]);
+				query['orders'].forEach(function (order) {
+					qb.orderBy(order[0], order[1]);
 				});
 			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
@@ -42,8 +42,8 @@ Followship = module.exports = syBookshelf.Model.extend({
 					}
 				});
 			}).query(function(qb){
-				query['sorts'].forEach(function (sort) {
-					qb.orderBy(sort[0], sort[1]);
+				query['orders'].forEach(function (order) {
+					qb.orderBy(order[0], order[1]);
 				});
 			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
@@ -54,5 +54,12 @@ Followship = module.exports = syBookshelf.Model.extend({
 });
 
 FollowshipSet = Followship.Set = syBookshelf.Collection.extend({
-	model: Followship
+	model: Followship,
+
+	fetch: function () {
+		return FollowshipSet.__super__.fetch.apply(this, arguments)
+			.then(function (collection) {
+				return collection.invokeThen('fetch');
+			});
+	}
 });

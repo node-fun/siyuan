@@ -7,6 +7,7 @@ var fs = require('fs-extra'),
 	env = config.env,
 	connConfig = config.db.connection,
 	dbName = connConfig.database,
+	resources = config.resources,
 	User = require('../models/user'),
 	Users = User.Set,
 	Followship = require('../models/followship'),
@@ -34,6 +35,10 @@ var fs = require('fs-extra'),
 	UserCooperation = require('../models/user-cooperation'),
 	UserCooperations = UserCooperation.Set,
 	Ad = require('../models/ad'),
+	Starship = require('../models/starship'),
+	StarshipSet = Starship.Set,
+	Event = require('../models/event'),
+	Events = Event.Set,
 	numUsers = 35,
 	numFollowship = numUsers * 3,
 	numGroups = ~~(numUsers / 5),
@@ -43,6 +48,8 @@ var fs = require('fs-extra'),
 	numIssues = numUsers * 3,
 	numComments = numIssues * 4,
 	numPhotos = numUsers * 3,
+	numStarship = numUsers * 4,
+	numEvents = numUsers * 4,
 	numCooperations = 20,
 	numUserCooperations = 100,
 	numCoComments = numCooperations * 8,
@@ -52,8 +59,8 @@ var fs = require('fs-extra'),
 try {
 	fs.removeSync(config.contentDir);
 	fs.copySync(config.defaultContentDir, config.contentDir);
-	fs.removeSync(config.staticDir+'/ad/img');
-	fs.copySync(config.staticDir+'/ad/img.default', config.staticDir+'/ad/img');
+	fs.removeSync(config.staticDir + '/ad/img');
+	fs.copySync(config.staticDir + '/ad/img.default', config.staticDir + '/ad/img');
 	console.log('content directory reset');
 } catch (err) {
 	done(err);
@@ -84,6 +91,8 @@ execsql.config(connConfig)
 					.then(addCooperations)
 					.then(addUserCooperations)
 					.then(addCoComments)
+					.then(addStarship)
+					.then(addEvents)
 					.then(done)
 					.catch(done);
 				addAd();
@@ -134,7 +143,7 @@ function addFollowship() {
 				followshipSet.remove(followship);
 			});
 		}).then(function () {
-			console.log('%d followship added', followshipSet.length);
+			console.log('%d followship added', numFollowship = followshipSet.length);
 		});
 }
 
@@ -280,10 +289,61 @@ function addPhotos() {
 		});
 }
 
+function addStarship() {
+	var starshipSet = StarshipSet.forge();
+	_.times(numStarship, function () {
+		var starship = Starship.forge({
+			userid: _.random(1, numUsers),
+			itemtype: _.random(1, resources.length),
+			itemid: _.random(1, 20),
+			remark: chance.word()
+		});
+		starshipSet.add(starship);
+	});
+	return starshipSet
+		.mapThen(function (starship) {
+			return starship.save().catch(function () {
+				starshipSet.remove(starship);
+			});
+		}).then(function () {
+			console.log('%d starship added', numStarship = starshipSet.length);
+		});
+}
+
+function addEvents() {
+	var events = Events.forge();
+	_.times(numEvents, function () {
+		var oEvent = {
+			userid: _.random(1, numUsers),
+			groupid: chance.bool()? null: _.random(1, numGroups),
+			itemid: _.random(1, 20)
+		};
+		_.extend(oEvent, _.sample([{
+			itemtype: resources.indexOf('user') + 1,
+			message: chance.name() + ' ' + _.sample(['拉黑', '玩弄']) + '了用户 ' + chance.name()
+		}, {
+			itemtype: resources.indexOf('issue') + 1,
+			message: chance.name() + ' ' + _.sample(['发表', '评论']) + '了话题 ' + chance.sentence()
+		}, {
+			itemtype: resources.indexOf('activity') + 1,
+			message: chance.name() + ' ' + _.sample(['发布', '参与']) + '了活动 ' + chance.sentence()
+		}, {
+			itemtype: resources.indexOf('cooperation') + 1,
+			message: chance.name() + ' ' + _.sample(['发布', '参与']) + '了商务合作 ' + chance.sentence()
+		}]));
+		var event = Event.forge(oEvent);
+		events.add(event);
+	});
+	return events.invokeThen('save')
+		.then(function () {
+			console.log('%d events added', numEvents = events.length);
+		});
+}
+
 function addCooperations() {
 	var cooperations = Cooperations.forge();
 	_.times(numCooperations, function () {
-		cooperations.add(Cooperation.randomForge().set({ 'isprivate': true }));
+		cooperations.add(Cooperation.randomForge().set({ 'isprivate': false }));
 	});
 	return cooperations.invokeThen('save')
 		.then(function () {
@@ -313,14 +373,14 @@ function addCoComments() {
 		});
 }
 
-function addAd(){
-	for(var i=1; i<=3; i++){
+function addAd() {
+	for (var i = 1; i <= 3; i++) {
 		Ad.forge({
-			title: '公告'+i,
-			content: '公告'+i+'内容，' +
+			title: '公告' + i,
+			content: '公告' + i + '内容，' +
 				'<p>此内容仅供测试</p>' +
 				'<p>正式上线请在后台删除此条公告</p>',
-			picture: '/ad/img/'+i+'.png'
+			picture: '/ad/img/' + i + '.png'
 		}).save();
 	}
 }

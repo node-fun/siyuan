@@ -33,6 +33,8 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 		'id', 'name', 'description', 'company', 'avatar', 'statusid', 'ownerid', 'isprivate', 'regdeadline'
 	],
 
+	withRelated: ['user.profile', 'status'],
+
 	toJSON: function () {
 		var ret = Cooperation.__super__.toJSON.apply(this, arguments);
 		if (this.get('avatar')) {
@@ -140,14 +142,12 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 					}
 				});
 			}).query(function (qb) {
-				query['sorts'].forEach(function (sort) {
-					qb.orderBy(sort[0], sort[1]);
+				query['orders'].forEach(function (order) {
+					qb.orderBy(order[0], order[1]);
 				});
 			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
-			.fetch({
-				withRelated: ['user.profile', 'status']
-			});
+			.fetch();
 	},
 
 	search: function (query) {
@@ -167,21 +167,17 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 					}
 				});
 			}).query(function (qb) {
-				query['sorts'].forEach(function (sort) {
-					qb.orderBy(sort[0], sort[1]);
+				query['orders'].forEach(function (order) {
+					qb.orderBy(order[0], order[1]);
 				});
 			}).query('offset', query['offset'])
 			.query('limit', count ? query['limit'] : 0)
-			.fetch({
-				withRelated: ['user.profile', 'status']
-			});
+			.fetch();
 	},
 
 	view: function (query) {
 		return Cooperation.forge({ id: query['id'] })
-			.fetch({
-				withRelated: ['user.profile', 'cocomments.user.profile']
-			}).then(function (cooperation) {
+			.fetch().then(function (cooperation) {
 				if (!cooperation) return Promise.rejected(errors[20603]);
 				return cooperation;
 			});

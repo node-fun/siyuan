@@ -11,6 +11,7 @@ syModel = syBookshelf.Model = syModel.extend({
 	tableName: '',
 	fields: [],
 	omitInJSON: [],
+	withRelated: [],
 
 	initialize: function () {
 		syModel.__super__.initialize.apply(this, arguments);
@@ -58,6 +59,23 @@ syModel = syBookshelf.Model = syModel.extend({
 	},
 	destroyed: function () {
 		return Promise.resolve(this);
+	},
+
+	fetch: function (options) {
+		var self = this;
+		return syModel.__super__.fetch.call(this, options)
+			.then(function (model) {
+				if (!model) return model;
+				// withRelated
+				if (!options) options = {};
+				var relation = options.withRelated || [];
+				model.withRelated.forEach(function (k) {
+					if (!~relation.indexOf(k)) relation.unshift(k);
+				});
+				options.withRelated = relation;
+				// `this` in model.prototype.fetch is gonna be true self
+				return syModel.__super__.fetch.call(self, options);
+			});
 	},
 
 	toJSON: function () {
@@ -121,5 +139,12 @@ syModel = syBookshelf.Model = syModel.extend({
 });
 
 syCollection = syModel.Set = syCollection.extend({
-	model: syModel
+	model: syModel,
+
+	fetch: function () {
+		return syCollection.__super__.fetch.apply(this, arguments)
+			.then(function (collection) {
+				return collection.invokeThen('fetch');
+			});
+	}
 });

@@ -55,3 +55,4 @@ require('./units/users');
 require('./units/photos');
 require('./units/groups');
 require('./units/activities');
+require('./units/cooperations');

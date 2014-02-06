@@ -61,7 +61,10 @@ module.exports = function (app) {
 	 */
 	app.get('/api/activities/find', function (req, res, next) {
 		Activity.find(req.query)
-			.then(function (activities) {
+			.then(function (activities) {/*
+				activities.mapThen(function (activity) {
+					activity.countUsership();
+				});*/
 				next({
 					activities: activities
 				});
@@ -490,6 +493,7 @@ module.exports = function (app) {
 	/**
 	 * POST /api/activities/avatar/update
 	 * @method 更新活动图片
+	 * @param {Number} id 活动ID
 	 * @param {File} avatar
 	 * @return {JSON}
 	 * <pre>{

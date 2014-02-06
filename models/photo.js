@@ -15,6 +15,7 @@ Photo = module.exports = syBookshelf.Model.extend({
 		'id', 'userid', 'description', 'posttime'
 	],
 	omitInJSON: ['userid'],
+	withRelated: ['user.profile'],
 
 	defaults: function () {
 		return {
@@ -97,17 +98,22 @@ Photo = module.exports = syBookshelf.Model.extend({
 					}
 				});
 			}).query(function(qb){
-				query['sorts'].forEach(function (sort) {
-					qb.orderBy(sort[0], sort[1]);
+				query['orders'].forEach(function (order) {
+					qb.orderBy(order[0], order[1]);
 				});
 			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
-			.fetch({
-				withRelated: ['user.profile']
-			});
+			.fetch();
 	}
 });
 
 Photos = Photo.Set = syBookshelf.Collection.extend({
-	model: Photo
+	model: Photo,
+
+	fetch: function () {
+		return Photos.__super__.fetch.apply(this, arguments)
+			.then(function (collection) {
+				return collection.invokeThen('fetch');
+			});
+	}
 });

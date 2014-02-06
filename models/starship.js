@@ -24,8 +24,8 @@ Starship = module.exports = syBookshelf.Model.extend({
 					}
 				});
 			}).query(function(qb){
-				query['sorts'].forEach(function (sort) {
-					qb.orderBy(sort[0], sort[1]);
+				query['orders'].forEach(function (order) {
+					qb.orderBy(order[0], order[1]);
 				});
 			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
@@ -34,5 +34,12 @@ Starship = module.exports = syBookshelf.Model.extend({
 });
 
 StarshipSet = Starship.Set = syBookshelf.Collection.extend({
-	model: Starship
+	model: Starship,
+
+	fetch: function () {
+		return StarshipSet.__super__.fetch.apply(this, arguments)
+			.then(function (collection) {
+				return collection.invokeThen('fetch');
+			});
+	}
 });

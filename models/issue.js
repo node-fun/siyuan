@@ -62,7 +62,7 @@ Issue = module.exports = syBookshelf.Model.extend({
 						qb.where(k, query[k]);
 					}
 				});
-			}).query(function(qb){
+			}).query(function (qb) {
 				query['orders'].forEach(function (order) {
 					qb.orderBy(order[0], order[1]);
 				});
@@ -89,7 +89,7 @@ Issue = module.exports = syBookshelf.Model.extend({
 						qb.where(k, 'like', '%' + query[k] + '%');
 					}
 				});
-			}).query(function(qb){
+			}).query(function (qb) {
 				query['orders'].forEach(function (order) {
 					qb.orderBy(order[0], order[1]);
 				});
@@ -103,10 +103,16 @@ Issue = module.exports = syBookshelf.Model.extend({
 	view: function (query) {
 		return Issue.forge({ id: query['id'] })
 			.fetch({
-				withRelated: ['user.profile', 'comments.user.profile']
+				withRelated: ['user.profile']
 			}).then(function (issue) {
 				if (!issue) return Promise.rejected(errors[20603]);
-				return issue;
+				return IssueComments.forge({ issueid: issue.id })
+					.query('orderBy', 'id', 'desc')
+					.fetch({
+						withRelated: ['user.profile']
+					}).then(function (comments) {
+						return issue.set('comments', comments);
+					});
 			});
 	}
 });

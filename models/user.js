@@ -30,6 +30,7 @@ User = module.exports = syBookshelf.Model.extend({
 		'isonline', 'avatar', 'cover'
 	],
 	omitInJSON: ['password'],
+	withRelated: ['profile'],
 
 	defaults: function () {
 		return {
@@ -98,8 +99,8 @@ User = module.exports = syBookshelf.Model.extend({
 			});
 	},
 
-	fetch: function () {
-		return User.__super__.fetch.apply(this, arguments)
+	fetch: function (options) {
+		return User.__super__.fetch.call(this, options)
 			.then(function (user) {
 				if (!user) return user;
 				return user.countFollowship()
@@ -282,9 +283,7 @@ User = module.exports = syBookshelf.Model.extend({
 				});
 			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
-			.fetch({
-				withRelated: ['profile']
-			});
+			.fetch();
 	},
 
 	search: function (query) {
@@ -327,19 +326,7 @@ User = module.exports = syBookshelf.Model.extend({
 				});
 			}).query('offset', query['offset'])
 			.query('limit', count ? query['limit'] : 0)
-			.fetch({
-				withRelated: ['profile']
-			});
-	},
-
-	view: function (query) {
-		return User.forge({ id: query['id'] })
-			.fetch({
-				withRelated: ['profile']
-			}).then(function (user) {
-				if (!user) return Promise.rejected(errors[20003]);
-				return user;
-			});
+			.fetch();
 	},
 
 	getPicName: function (id) {
@@ -356,6 +343,7 @@ User = module.exports = syBookshelf.Model.extend({
 Users = User.Set = syBookshelf.Collection.extend({
 	model: User,
 
+	// this overwriting can not be left out in each Collection
 	fetch: function () {
 		return Users.__super__.fetch.apply(this, arguments)
 			.then(function (collection) {

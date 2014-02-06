@@ -54,5 +54,12 @@ Followship = module.exports = syBookshelf.Model.extend({
 });
 
 FollowshipSet = Followship.Set = syBookshelf.Collection.extend({
-	model: Followship
+	model: Followship,
+
+	fetch: function () {
+		return FollowshipSet.__super__.fetch.apply(this, arguments)
+			.then(function (collection) {
+				return collection.invokeThen('fetch');
+			});
+	}
 });

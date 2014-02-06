@@ -33,18 +33,6 @@ describe('users', function () {
 			done();
 		});
 	});
-	it('views', function (done) {
-		var id = 3;
-		request(apiHost + '/view', {
-			qs: {
-				id: id
-			}
-		}, function (err, res, data) {
-			var user = data['user'];
-			assert.equal(user.id, id);
-			done();
-		});
-	});
 
 	var user = User.randomForge().set(authData), id;
 	it('registers', function (done) {

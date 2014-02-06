@@ -9,6 +9,7 @@ IssueComment = module.exports = syBookshelf.Model.extend({
 	tableName: 'issue_comments',
 	fields: ['id', 'issueid', 'userid', 'body', 'posttime'],
 	omitInJSON: ['id', 'userid', 'issueid'],
+	withRelated: ['user.profile'],
 
 	defaults: function () {
 		return {
@@ -29,5 +30,12 @@ IssueComment = module.exports = syBookshelf.Model.extend({
 });
 
 IssueComments = IssueComment.Set = syBookshelf.Collection.extend({
-	model: IssueComment
+	model: IssueComment,
+
+	fetch: function () {
+		return IssueComments.__super__.fetch.apply(this, arguments)
+			.then(function (collection) {
+				return collection.invokeThen('fetch');
+			});
+	}
 });

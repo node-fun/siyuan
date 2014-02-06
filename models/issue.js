@@ -12,6 +12,7 @@ Issue = module.exports = syBookshelf.Model.extend({
 		'id', 'userid', 'title', 'body', 'posttime'
 	],
 	omitInJSON: ['userid'],
+	withRelated: ['user.profile'],
 
 	defaults: function () {
 		return {
@@ -68,9 +69,7 @@ Issue = module.exports = syBookshelf.Model.extend({
 				});
 			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
-			.fetch({
-				withRelated: ['user.profile']
-			});
+			.fetch();
 	},
 
 	search: function (query) {
@@ -95,9 +94,7 @@ Issue = module.exports = syBookshelf.Model.extend({
 				});
 			}).query('offset', query['offset'])
 			.query('limit', count ? query['limit'] : 0)
-			.fetch({
-				withRelated: ['user.profile']
-			});
+			.fetch();
 	},
 
 	view: function (query) {
@@ -108,9 +105,7 @@ Issue = module.exports = syBookshelf.Model.extend({
 				if (!issue) return Promise.rejected(errors[20603]);
 				return IssueComments.forge({ issueid: issue.id })
 					.query('orderBy', 'id', 'desc')
-					.fetch({
-						withRelated: ['user.profile']
-					}).then(function (comments) {
+					.fetch().then(function (comments) {
 						return issue.set('comments', comments);
 					});
 			});

@@ -10,6 +10,7 @@ Event = module.exports = syBookshelf.Model.extend({
 	fields: [
 		'id', 'userid', 'groupid', 'itemtype', 'itemid', 'message'
 	],
+	withRelated: ['user.profile'],
 
 	user: function () {
 		return this.belongsTo(require('./user'), 'userid');
@@ -30,12 +31,17 @@ Event = module.exports = syBookshelf.Model.extend({
 				});
 			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
-			.fetch({
-				withRelated: ['user.profile']
-			});
+			.fetch();
 	}
 });
 
 Events = Event.Set = syBookshelf.Collection.extend({
-	model: Event
+	model: Event,
+
+	fetch: function () {
+		return Events.__super__.fetch.apply(this, arguments)
+			.then(function (collection) {
+				return collection.invokeThen('fetch');
+			});
+	}
 });

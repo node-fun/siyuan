@@ -1,0 +1,40 @@
+<h3>发布新版本</h3>
+<iframe id="contentframe" width="600" height="800" frameborder="0">
+</iframe>
+<div id="addclientdiv" style="display: none">
+<form class="pure-form pure-form-aligned" enctype="multipart/form-data" action="/api/clients/add" method="post">
+    <fieldset>
+        <div class="pure-control-group">
+            <label for="versioncode">VersionCode</label>
+            <input id="versioncode" type="text" name="versioncode">
+        </div>
+
+        <div class="pure-control-group">
+            <label for="versionname">VersionName</label>
+            <input id="versionname" type="text" name="versionname">
+        </div>
+
+        <div class="pure-control-group">
+            <label for="description">描述</label>
+            <textarea id="description" name="description" rows="5" cols="50"></textarea>
+        </div>
+
+        <div class="pure-control-group">
+            <label for="comment">注释</label>
+            <textarea id="comment" name="comment" rows="5" cols="50"></textarea>
+        </div>
+
+        <div class="pure-control-group">
+            <label for="file">apk文件</label>
+            <input id="file" type="file" name="file" />
+        </div>
+
+        <div class="pure-controls">
+            <input type="submit" class="pure-button pure-button-primary"/>
+        </div>
+    </fieldset>
+</form>
+</div>
+        <script>
+            $('#contentframe')[0].contentWindow.document.body.innerHTML = $('#addclientdiv').html();
+        </script>

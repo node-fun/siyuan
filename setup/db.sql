@@ -444,6 +444,20 @@ CREATE TABLE IF NOT EXISTS `ad` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `client_versions`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `client_versions` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `versioncode` VARCHAR(45) NULL,
+  `versionname` VARCHAR(45) NULL,
+  `description` VARCHAR(45) NULL,
+  `comment` VARCHAR(45) NULL,
+  `posttime` DATETIME NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
@@ -480,5 +494,4 @@ INSERT INTO `resource_types` (`id`, `name`) VALUES (3, 'activity');
 INSERT INTO `resource_types` (`id`, `name`) VALUES (4, 'cooperation');
 
 COMMIT;
-
 

@@ -1,0 +1,47 @@
+<h3>版本列表</h3>
+<table id="admintable" class="pure-table">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>VersionCode</th>
+        <th>VersionName</th>
+        <th>描述</th>
+        <th>备注</th>
+        <th>发布时间</th>
+    </tr>
+    </thead>
+
+    <tbody>
+
+    </tbody>
+</table>
+
+<div id="pager">
+    <ul class="pure-paginator">
+    </ul>
+</div>
+        <script>
+            function loadAdminTable(){
+                $.ajax({
+                    url:'/api/clients/find',
+                    success:function(data){
+                        var admins = data['clients'];
+                        var str = '';
+                        for(var i=0; i<admins.length; i++){
+                            str += '<tr>'
+                                +'<td>'+admins[i]['id']+'</td>'
+                                +'<td>'+admins[i]['versioncode']+'</td>'
+                                +'<td>'+admins[i]['versionname']+'</td>'
+                                +'<td>'+admins[i]['description']+'</td>'
+                                +'<td>'+admins[i]['comment']+'</td>'
+                                +'<td>'+admins[i]['posttime']+'</td>'
+                                +'</tr>';
+                        }
+                        $('#admintable>tbody').html(str);
+                    }
+                });
+            }
+            $(function(){
+                loadAdminTable();
+            });
+        </script>

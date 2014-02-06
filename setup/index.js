@@ -343,7 +343,7 @@ function addEvents() {
 function addCooperations() {
 	var cooperations = Cooperations.forge();
 	_.times(numCooperations, function () {
-		cooperations.add(Cooperation.randomForge().set({ 'isprivate': true }));
+		cooperations.add(Cooperation.randomForge().set({ 'isprivate': false }));
 	});
 	return cooperations.invokeThen('save')
 		.then(function () {

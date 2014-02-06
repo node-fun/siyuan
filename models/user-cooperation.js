@@ -1,6 +1,3 @@
-/**
- * Created by cin on 1/20/14.
- */
 var _ = require('underscore'),
 	chance = new (require('chance'))(),
 	syBookshelf = require('./base'),

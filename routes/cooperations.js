@@ -121,7 +121,7 @@ module.exports = function (app) {
 		}</pre>
 	 */
 	app.get('/api/cooperations/history', function (req, res, next) {
-		UserCooperations.find(req.query)
+		UserCooperation.find(req.query)
 			.then(function (usercooperations) {
 				usercooperations.mapThen(function (usercooperation) {
 					return usercooperation.load(['user']);
@@ -384,6 +384,14 @@ module.exports = function (app) {
 		Cooperation.forge(_.extend({
 				ownerid: user.id
 			}, req.body)).save()
+			.then(function (cooperation) {
+				UserCooperation.forge({
+					'userid': user.id,
+					'cooperatonid': cooperation.id,
+					isaccepted: true
+				}).save();
+				return cooperation;
+			})
 			.then(function (cooperation) {
 				next({
 					msg: 'create success',

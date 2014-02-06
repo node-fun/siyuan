@@ -3,6 +3,7 @@ var Promise = require('bluebird'),
 	errors = require('../lib/errors'),
 	syBookshelf = require('./base'),
 	IssueComment = require('./issue-comment'),
+	IssueComments = IssueComment.Set,
 	Issue, Issues;
 
 Issue = module.exports = syBookshelf.Model.extend({
@@ -37,10 +38,11 @@ Issue = module.exports = syBookshelf.Model.extend({
 
 	countComments: function () {
 		var self = this;
-		return this.comments().fetch()
-			.then(function (comments) {
-				var numComments = comments.length;
-				return self.data('numComments', numComments);
+		return IssueComments.forge().query()
+			.where('issueid', '=', self.id)
+			.count('id')
+			.then(function (d) {
+				return self.data('numComments', d[0]["count(`id`)"]);
 			});
 	}
 }, {
@@ -61,8 +63,8 @@ Issue = module.exports = syBookshelf.Model.extend({
 					}
 				});
 			}).query(function(qb){
-				query['sorts'].forEach(function (sort) {
-					qb.orderBy(sort[0], sort[1]);
+				query['orders'].forEach(function (order) {
+					qb.orderBy(order[0], order[1]);
 				});
 			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
@@ -88,8 +90,8 @@ Issue = module.exports = syBookshelf.Model.extend({
 					}
 				});
 			}).query(function(qb){
-				query['sorts'].forEach(function (sort) {
-					qb.orderBy(sort[0], sort[1]);
+				query['orders'].forEach(function (order) {
+					qb.orderBy(order[0], order[1]);
 				});
 			}).query('offset', query['offset'])
 			.query('limit', count ? query['limit'] : 0)

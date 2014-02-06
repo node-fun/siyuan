@@ -7,10 +7,16 @@ var fs = require('fs-extra'),
 	encrypt = require('../lib/encrypt'),
 	syBookshelf = require('./base'),
 	UserProfile = require('./user-profile'),
+	Followship = require('./followship'),
+	FollowshipSet = Followship.Set,
 	Issue = require('./issue'),
+	Issues = Issue.Set,
 	Photo = require('./photo'),
+	Photos = Photo.Set,
 	Starship = require('./starship'),
+	StarshipSet = Starship.Set,
 	Event = require('./event'),
+	Events = Event.Set,
 	config = require('../config'),
 	Group = require('./group'),
 	tbUser = 'users',
@@ -111,46 +117,53 @@ User = module.exports = syBookshelf.Model.extend({
 
 	countFollowship: function () {
 		var self = this;
-		return self.following().fetch()
-			.then(function (followshipSet) {
-				var numFollowing = followshipSet.length;
-				return self.data('numFollowing', numFollowing)
-					.followers().fetch();
-			}).then(function (followshipSet) {
-				var numFollowers = followshipSet.length;
-				return self.data('numFollowers', numFollowers);
+		return FollowshipSet.forge().query()
+			.where('userid', '=', self.id)
+			.count('id')
+			.then(function (d) {
+				self.data('numFollowing', d[0]["count(`id`)"]);
+			}).then(function () {
+				return FollowshipSet.forge().query()
+					.where('followid', '=', self.id)
+					.count('id')
+			}).then(function (d) {
+				return self.data('numFollowers', d[0]["count(`id`)"]);
 			});
 	},
 	countIssues: function () {
 		var self = this;
-		return this.issues().fetch()
-			.then(function (issues) {
-				var numIssues = issues.length;
-				return self.data('numIssues', numIssues);
+		return Issues.forge().query()
+			.where('userid', '=', self.id)
+			.count('id')
+			.then(function (d) {
+				return self.data('numIssues', d[0]["count(`id`)"]);
 			});
 	},
 	countPhotos: function () {
 		var self = this;
-		return this.photos().fetch()
-			.then(function (photos) {
-				var numPhotos = photos.length;
-				return self.data('numPhotos', numPhotos);
+		return Photos.forge().query()
+			.where('userid', '=', self.id)
+			.count('id')
+			.then(function (d) {
+				return self.data('numPhotos', d[0]["count(`id`)"]);
 			});
 	},
 	countStarship: function () {
 		var self = this;
-		return this.staring().fetch()
-			.then(function (starshipSet) {
-				var numStarring = starshipSet.length;
-				return self.data('numStarring', numStarring);
+		return StarshipSet.forge().query()
+			.where('userid', '=', self.id)
+			.count('id')
+			.then(function (d) {
+				return self.data('numStarring', d[0]["count(`id`)"]);
 			});
 	},
 	countEvents: function () {
 		var self = this;
-		return this.events().fetch()
-			.then(function (events) {
-				var numEvents = events.length;
-				return self.data('numEvents', numEvents);
+		return Events.forge().query()
+			.where('userid', '=', self.id)
+			.count('id')
+			.then(function (d) {
+				return self.data('numEvents', d[0]["count(`id`)"]);
 			});
 	},
 
@@ -263,9 +276,9 @@ User = module.exports = syBookshelf.Model.extend({
 						qb.where(tbProfile + '.' + k, '=', query['profile'][k]);
 					}
 				});
-			}).query(function(qb){
-				query['sorts'].forEach(function (sort) {
-					qb.orderBy(sort[0], sort[1]);
+			}).query(function (qb) {
+				query['orders'].forEach(function (order) {
+					qb.orderBy(order[0], order[1]);
 				});
 			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
@@ -308,9 +321,9 @@ User = module.exports = syBookshelf.Model.extend({
 						qb.where(tbProfile + '.' + k, 'like', '%' + query['profile'][k] + '%');
 					}
 				});
-			}).query(function(qb){
-				query['sorts'].forEach(function (sort) {
-					qb.orderBy(sort[0], sort[1]);
+			}).query(function (qb) {
+				query['orders'].forEach(function (order) {
+					qb.orderBy(order[0], order[1]);
 				});
 			}).query('offset', query['offset'])
 			.query('limit', count ? query['limit'] : 0)

@@ -23,6 +23,8 @@ Activity = module.exports = syBookshelf.Model.extend({
 		'starttime', 'duration', 'statusid', 'avatar', 'money', 'name', 'site',
 		'regdeadline'
 	],
+	withRelated: ['user.profile', 'status'],
+
 	defaults: function () {
 		return {
 			createtime: new Date()
@@ -45,9 +47,18 @@ Activity = module.exports = syBookshelf.Model.extend({
 	usership: function () {
 		return this.hasMany(UserActivitys, fkActivity);
 	},
+
+	fetch: function (options) {
+		return Activity.__super__.fetch.call(this, options)
+			.then(function (activity) {
+				if (!activity) return activity;
+				return activity.countUsership();
+			})
+	},
+
 	countUsership: function () {
 		var self = this;
-		UserActivitys.forge().query()
+		return UserActivitys.forge().query()
 			.where(fkActivity, '=', self.id)
 			.count('id')
 			.then(function (d) {
@@ -125,9 +136,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 				});
 			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
-			.fetch({
-				withRelated: ['user.profile', 'status']
-			});
+			.fetch();
 	},
 
 	search: function (query) {
@@ -152,9 +161,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 				});
 			}).query('offset', query['offset'])
 			.query('limit', count ? query['limit'] : 0)
-			.fetch({
-				withRelated: ['user.profile', 'status']
-			});
+			.fetch();
 	},
 
 	getAvatarName: function (id) {

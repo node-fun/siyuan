@@ -29,6 +29,8 @@ module.exports = {
 	photoStaticPath: '/photos',
 	docsStaticPath: '/docs',
 	adminStaticPath: '/admin',
+	activityStaticPath: '/activities',
+	cooperationStaticPath: '/cooperations',
 	adStaticPath: '/ad',
 	indexStaticPath: '/',
 

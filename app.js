@@ -52,7 +52,8 @@ app.use(config.docsStaticPath, express.static(config.docsDir));
 app.use(config.adminStaticPath, express.static(config.adminDir));
 app.use(config.adStaticPath, express.static(config.adDir));
 app.use(config.indexStaticPath, express.static(config.indexPath));
-
+app.use(config.activityStaticPath, express.static(config.activityAvatarDir));
+app.use(config.cooperationStaticPath, express.static(config.cooperationAvatarDir));
 // listen on port
 app.listen(port, function () {
 	console.log([

@@ -493,6 +493,7 @@ module.exports = function (app) {
 	/**
 	 * POST /api/activities/avatar/update
 	 * @method 更新活动图片
+	 * @param {Number} id 活动ID
 	 * @param {File} avatar
 	 * @return {JSON}
 	 * <pre>{

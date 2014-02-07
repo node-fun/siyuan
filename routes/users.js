@@ -62,11 +62,11 @@ module.exports = function (app) {
 	 * @method 模糊搜索用户
 	 * @param {String} [username] 用户名
 	 * @param {Number} [isonline] 是否在线
-	 * @param {String} [profile.name] 姓名
-	 * @param {String} [profile.gender] 性别
-	 * @param {String} [profile.university] 学校
-	 * @param {String} [profile.major] 专业
-	 * @param {String} [profile.summary] 个性签名
+	 * @param {String} [name] 姓名
+	 * @param {String} [gender] 性别
+	 * @param {String} [university] 学校
+	 * @param {String} [major] 专业
+	 * @param {String} [summary] 个性签名
 	 * @return {JSON}
 	 */
 	app.get('/api/users/search', function (req, res, next) {

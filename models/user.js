@@ -290,7 +290,6 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 
 	search: function (query) {
-		query['profile'] = query['profile'] || {};
 		var count = 0;
 		return Users.forge()
 			.query(function (qb) {
@@ -304,9 +303,9 @@ User = module.exports = syBookshelf.Model.extend({
 				});
 				// find for profile
 				['gender'].forEach(function (k) {
-					if (k in query['profile']) {
+					if (k in query) {
 						count++;
-						qb.where(tbProfile + '.' + k, '=', query['profile'][k]);
+						qb.where(tbProfile + '.' + k, '=', query[k]);
 					}
 				});
 				// search for user
@@ -318,9 +317,9 @@ User = module.exports = syBookshelf.Model.extend({
 				});
 				// search for profile
 				['name', 'university', 'major', 'summary'].forEach(function (k) {
-					if (k in query['profile']) {
+					if (k in query) {
 						count++;
-						qb.where(tbProfile + '.' + k, 'like', '%' + query['profile'][k] + '%');
+						qb.where(tbProfile + '.' + k, 'like', '%' + query[k] + '%');
 					}
 				});
 			}).query(function (qb) {

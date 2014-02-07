@@ -168,7 +168,7 @@ User = module.exports = syBookshelf.Model.extend({
 			});
 	},
 
-	register: function () {
+	register: function (reqbody) {
 		var keys = ['username', 'password', 'regtime'],
 			self = this;
 		this.attributes = this.pick(keys);
@@ -179,7 +179,10 @@ User = module.exports = syBookshelf.Model.extend({
 			.catch(function () {
 				return Promise.rejected(errors[20506]);
 			}).then(function () {
-				return self.fetch();
+				return self.fetch()
+					.then(function(user){
+					return user.updateProfile(reqbody);
+				});
 			});
 	},
 	login: function (encrypted) {

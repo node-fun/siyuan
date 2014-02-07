@@ -94,17 +94,17 @@ module.exports = function (app) {
 	 * @method 注册
 	 * @param {String} username 用户名
 	 * @param {String} password 密码
-	 * @param {String} [profile.email] 邮箱
-	 * @param {String} [profile.name] 姓名
-	 * @param {String} [profile.gender] 性别
-	 * @param {Number} [profile.age] 年龄
-	 * @param {Number} [profile.grade] 入学级数
-	 * @param {String} [profile.university] 学校
-	 * @param {String} [profile.major] 专业
-	 * @param {String} [profile.summary] 个性签名
+	 * @param {String} [email] 邮箱
+	 * @param {String} [name] 姓名
+	 * @param {String} [gender] 性别
+	 * @param {Number} [age] 年龄
+	 * @param {Number} [grade] 入学级数
+	 * @param {String} [university] 学校
+	 * @param {String} [major] 专业
+	 * @param {String} [summary] 个性签名
 	 * @return {JSON}
 	 * <pre>
-	 //   username, password, profile[email], profile[name] ...
+	 //   username, password, email, name
 	 {
 		"msg": "User registered",
 		"id": 36
@@ -112,7 +112,7 @@ module.exports = function (app) {
 	 * </pre>
 	 */
 	app.post('/api/users/register', function (req, res, next) {
-		User.forge(req.body).register()
+		User.forge(req.body).register(req.body)
 			.then(function (user) {
 				next({
 					msg: 'User registered',

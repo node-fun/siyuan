@@ -14,7 +14,7 @@ module.exports = function (app) {
 	 * @method 收藏列表
 	 * @param {Number} [id] 收藏ID
 	 * @param {Number} [userid] 用户ID
-	 * @param {Number} [itemtype] 类别ID - `1`用户, `2`话题, `3`活动, `4`商务合作
+	 * @param {Number} [itemtype] 类别ID - `1`话题, `2`活动, `3`商务合作
 	 * @param {Number} [itemid] 资源ID
 	 * @return {JSON}
 	 */

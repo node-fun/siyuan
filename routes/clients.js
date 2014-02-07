@@ -18,9 +18,51 @@ module.exports = function (app) {
 	 */
 	app.get('/api/clients/find', function (req, res, next) {
 		ClientVersions.forge()
+			.query(function(qb){
+				qb.orderBy('id', 'desc');
+			})
 			.fetch().then(
 			function (clients) {
 				next({clients: clients});
+			}
+		);
+	});
+
+	/**
+	 * get /api/clients/latest
+	 * @method 最新版本信息
+	 * @param {null}
+	 * @return {JSON}
+	 */
+	app.get('/api/clients/latest', function (req, res, next) {
+		ClientVersion.forge()
+			.query(function(qb){
+				qb.orderBy('id', 'desc');
+				qb.limit(1);
+			})
+			.fetch().then(
+			function (client) {
+				next(client);
+			}
+		);
+	});
+
+	/**
+	 * get /api/clients/download
+	 * @method 客户端下载（最新版本）
+	 * @param {null}
+	 * @return {JSON}
+	 */
+	app.get('/api/clients/download', function (req, res, next) {
+		ClientVersion.forge()
+			.query(function(qb){
+				qb.orderBy('id', 'desc');
+				qb.limit(1);
+			})
+			.fetch().then(
+			function (client) {
+				var path = config.contentDir+'/clients/siyuan'+client.get('versioncode')+'.apk';
+				res.download(path, 'siyuan.apk');
 			}
 		);
 	});

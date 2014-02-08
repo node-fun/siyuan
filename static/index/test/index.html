@@ -82,6 +82,7 @@
     }
     document.body.onkeydown=function(){
         if(event.keyCode==13){
+            event.preventDefault();
             submitTest();
         }
     }

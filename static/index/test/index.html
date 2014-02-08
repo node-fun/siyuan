@@ -32,10 +32,9 @@
 <h3>表单</h3><span style="color: gray;font-size: 12px;">tips:按Enter键可以快速“ajax提交”</span>
 <form id="testform" method="post" enctype="multipart/form-data" action="/api/groups/avatar/update">
     url:<input type="text" id="url"/><br/>
-    method:<select name="_method">
-            <option>get</option>
-            <option>post</option>
-        </select>
+    method:<br/>
+        <input id="get" type="radio" name="_method" value="get" checked="checked"/><label for="get">GET</label><br/>
+        <input id="post" type="radio" name="_method" value="post"/><label for="post">POST</label>
     <table>
         <tr>
             <td>key</td>

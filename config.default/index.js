@@ -33,6 +33,7 @@ module.exports = {
 	cooperationStaticPath: '/cooperations',
 	adStaticPath: '/ad',
 	indexStaticPath: '/',
+	groupStaticDir: '/groups',
 
 	defaultContentDir: defaultContentDir,
 	contentDir: contentDir,

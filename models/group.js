@@ -58,7 +58,7 @@ Group = module.exports = syBookshelf.Model.extend({
 			});
 	},
 	updateAvatar: function (tmp) {
-		var file = path.join( config['groupDir'], this.id + config.avatarExt),
+		var file = Group.getAvatarPath(this.id),
 			self = this;
 		return new Promise(
 			function (resolve, reject) {
@@ -79,8 +79,11 @@ Group = module.exports = syBookshelf.Model.extend({
 			});
 	}
 },{
-	getAvatarURI: function (id) {
+	getAvatarPath: function (id) {
 		return path.join( config['groupDir'], id + config.avatarExt);
+	},
+	getAvatarURI: function (id) {
+		return config['groupStaticDir'] +'/'+ id + config.avatarExt;
 	}
 });
 

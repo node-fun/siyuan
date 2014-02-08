@@ -77,19 +77,6 @@ module.exports = function (app) {
 	});
 
 	/**
-	 * Get /api/users/view
-	 * @method 会员详细资料
-	 * @param {Number} id 用户ID
-	 * @return {JSON}
-	 */
-	app.get('/api/users/view', function (req, res, next) {
-		User.view(req.query)
-			.then(function (user) {
-				next({ user: user });
-			}).catch(next);
-	});
-
-	/**
 	 * POST /api/users/register
 	 * @method 注册
 	 * @param {String} username 用户名
@@ -102,6 +89,7 @@ module.exports = function (app) {
 	 * @param {String} [university] 学校
 	 * @param {String} [major] 专业
 	 * @param {String} [summary] 个性签名
+	 * @param {String} [tag] 标签
 	 * @return {JSON}
 	 * <pre>
 	 //   username, password, email, name
@@ -179,6 +167,7 @@ module.exports = function (app) {
 	 * @param {String} [university] 学校
 	 * @param {String} [major] 专业
 	 * @param {String} [summary] 个性签名
+	 * @param {String} [tag] 标签
 	 * @return {JSON}
 	 */
 	app.post('/api/users/profile/update', function (req, res, next) {

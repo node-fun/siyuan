@@ -31,7 +31,7 @@ User = module.exports = syBookshelf.Model.extend({
 	],
 	omitInJSON: ['password'],
 	withRelated: ['profile'],
-	required: ['username'],
+	required: ['username', 'password'],
 	validators: {
 		/*username: function (v) {
 		 if (!/^[a-z][a-z0-9_\-\.]{2,16}[a-z0-9]$/i.test(v)) {

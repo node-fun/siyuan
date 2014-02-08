@@ -26,11 +26,9 @@ Group = module.exports = syBookshelf.Model.extend({
 		var ret = Group.__super__.toJSON.apply(this, arguments),
 			self = this;
 		// to uri if exists
-		['avatar'].forEach(function (type) {
-			if (self.get(type)) {
-				ret[type] = Group.getPicURI(type, self.id);
-			}
-		});
+		if (self.get('avatar')) {
+			ret['avatar'] = Group.getAvatarURI(self.id);
+		}
 		return ret;
 	},
 	owner: function () {
@@ -59,7 +57,7 @@ Group = module.exports = syBookshelf.Model.extend({
 			});
 	},
 	updateAvatar: function (tmp) {
-		var file = path.join( config['avatarDir'], this.id + config.avatarExt),
+		var file = path.join( config['groupDir'], this.id + config.avatarExt),
 			self = this;
 		return new Promise(
 			function (resolve, reject) {
@@ -73,15 +71,15 @@ Group = module.exports = syBookshelf.Model.extend({
 						return self;
 					});
 			}).catch(function (err) {
-				return self.set(type, null).save()
+				return self.set('avatar', null).save()
 					.then(function () {
 						return Promise.rejected(err);
 					});
 			});
 	}
 },{
-	getPicURI: function (type, id) {
-		return path.join( config[type+'Dir'], id + config.avatarExt);
+	getAvatarURI: function (id) {
+		return path.join( config['groupDir'], id + config.avatarExt);
 	}
 });
 

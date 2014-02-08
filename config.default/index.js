@@ -41,6 +41,7 @@ module.exports = {
 	activityAvatarDir: path.join(contentDir, 'activities'),
 	cooperationAvatarDir: path.join(contentDir, 'cooperations'),
 	photoDir: path.join(contentDir, 'photos'),
+	groupDir: path.join(contentDir, 'groups'),
 
 	port: ('PORT' in process.env) ? process.env['PORT'] :
 		env == 'test' ? 8099 : 8088,

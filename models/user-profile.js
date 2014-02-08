@@ -1,5 +1,7 @@
 var _ = require('underscore'),
 	chance = new (require('chance'))(),
+	Promise = require('bluebird'),
+	errors = require('../lib/errors'),
 	syBookshelf = require('./base'),
 	UserProfile, UserProfiles;
 
@@ -11,6 +13,14 @@ UserProfile = module.exports = syBookshelf.Model.extend({
 		'tag'
 	],
 	omitInJSON: ['id', 'userid'],
+	required: ['name'],
+	validators: {
+		email: function (v) {
+			if (!/^[a-z]([a-z0-9]*[-_]?[a-z0-9]+)*@([a-z0-9]*[-_]?[a-z0-9]+)+[\.][a-z]{2,3}([\.][a-z]{2})?$/i.test(v)) {
+				return errors[21312];
+			}
+		}
+	},
 
 	saving: function () {
 		var self = this;

@@ -2,6 +2,7 @@ var _ = require('underscore'),
 	Bookshelf = require('bookshelf'),
 	Promise = require('bluebird'),
 	config = require('../config'),
+	errors = require('../lib/errors'),
 	dbConfig = config.db,
 	syBookshelf = module.exports = Bookshelf.initialize(dbConfig),
 	syModel = syBookshelf.Model,
@@ -12,6 +13,7 @@ syModel = syBookshelf.Model = syModel.extend({
 	fields: [],
 	omitInJSON: [],
 	withRelated: [],
+	required: [],
 	validators: {},
 
 	initialize: function () {
@@ -30,12 +32,32 @@ syModel = syBookshelf.Model = syModel.extend({
 	},
 
 	creating: function () {
+		var self = this;
+		if (this.required.some(function (k) {
+			return self.get(k) == null;
+		})) {
+			return Promise.reject(errors[10008]);
+		}
+		var err;
+		if (_.some(this.validators, function (validator, k) {
+			return err = validator.call(self, self.get(k));
+		})) {
+			return Promise.reject(err);
+		}
 		return Promise.resolve(this);
 	},
 	created: function () {
 		return Promise.resolve(this);
 	},
 	updating: function () {
+		var self = this;
+		var err;
+		if (_.some(this.validators, function (validator, k) {
+			if (self.get(k) == null) return false;
+			return err = validator.call(self, self.get(k));
+		})) {
+			return Promise.reject(err);
+		}
 		return Promise.resolve(this);
 	},
 	updated: function () {
@@ -44,15 +66,6 @@ syModel = syBookshelf.Model = syModel.extend({
 	saving: function () {
 		// pick attributes
 		this.attributes = this.pick(this.fields);
-		var err;
-		for (var i = 0, k; i < this.fields.length; i++) {
-			k = this.fields[i];
-			if (this.validators[k]) {
-				err = this.validators[k].call(this, this.get(k));
-				if (err) break;
-			}
-		}
-		if (err) return Promise.reject(err);
 		return Promise.resolve(this);
 	},
 	saved: function () {

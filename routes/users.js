@@ -81,8 +81,8 @@ module.exports = function (app) {
 	 * @method 注册
 	 * @param {String} username 用户名
 	 * @param {String} password 密码
-	 * @param {String} [profile.email] 邮箱
-	 * @param {String} [profile.name] 姓名
+	 * @param {String} profile.email 邮箱
+	 * @param {String} profile.name 姓名
 	 * @param {String} [profile.gender] 性别
 	 * @param {Number} [profile.age] 年龄
 	 * @param {Number} [profile.grade] 入学级数

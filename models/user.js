@@ -31,13 +31,19 @@ User = module.exports = syBookshelf.Model.extend({
 	],
 	omitInJSON: ['password'],
 	withRelated: ['profile'],
+	required: ['username'],
 	validators: {
+		/*username: function (v) {
+		 if (!/^[a-z][a-z0-9_\-\.]{2,16}[a-z0-9]$/i.test(v)) {
+		 return errors[21310];
+		 }
+		 },
 		password: function (v) {
 			if (!this.hasChanged('password')) return;
-			if (!/^[a-zA-Z]\w{5,17}$/.test(v)) {
-				return errors[21310];
+			if (!/^\w{6,18}$/i.test(v)) {
+				return errors[21311];
 			}
-		}
+		}*/
 	},
 
 	defaults: function () {
@@ -75,22 +81,13 @@ User = module.exports = syBookshelf.Model.extend({
 	photos: function () {
 		return this.hasMany(Photo, 'userid');
 	},
-	staring: function () {
+	starring: function () {
 		return this.hasMany(Starship, 'userid');
 	},
 	events: function () {
 		return this.hasMany(Event, 'userid');
 	},
 
-	creating: function () {
-		var profileData = this.get('profile');
-		this.data('profile', profileData);
-		var self = this;
-		return User.__super__.creating.call(self)
-			.then(function () {
-				return self;
-			});
-	},
 	created: function () {
 		var self = this;
 		return User.__super__.created.call(self)
@@ -100,6 +97,12 @@ User = module.exports = syBookshelf.Model.extend({
 				return profile.set('userid', self.id).save();
 			}).then(function () {
 				return self;
+			}, function (err) {
+				// rollback
+				return self.destroy()
+					.then(function () {
+						return Promise.reject(err);
+					});
 			});
 	},
 	saving: function () {
@@ -187,10 +190,10 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 
 	register: function () {
-		this.attributes = this.pick(['username', 'password', 'regtime', 'profile']);
-		if (!this.get('username') || !this.get('password')) {
-			return Promise.reject(errors[10008]);
+		if (!this.data('profile')) {
+			this.data('profile', this.get('profile') || {});
 		}
+		this.attributes = this.pick(['username', 'password', 'regtime']);
 		var self = this;
 		return self.save()
 			.catch(function (err) {

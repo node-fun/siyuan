@@ -179,7 +179,7 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 		return Cooperation.forge({ id: query['id'] })
 			.fetch().then(function (cooperation) {
 				if (!cooperation) return Promise.rejected(errors[20603]);
-				return cooperation;
+				return cooperation.load(['cocomments']);
 			});
 	},
 

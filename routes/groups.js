@@ -253,7 +253,7 @@ module.exports = function (app) {
 	 * POST /api/groups/pull
 	 * 必须是管理员或圈主才能拉好友进圈子
 	 * @method 拉好友进圈子
-	 * @param {Number} userid[]
+	 * @param {Number} userid
 	 * @param {Number} groupid
 	 * @return {JSON}
 	 {
@@ -349,6 +349,7 @@ module.exports = function (app) {
 		if (!user) return next(errors[21301]);
 		if (!file) return next(errors[20007]);
 		GroupMember.forge({userid: user.id, groupid: req.body['groupid']})
+			.fetch()
 			.then(function (groupMember) {
 				if (!groupMember.get('isowner') && !groupMember.get('isadmin')) {
 					return next(errors[21301]);
@@ -356,6 +357,7 @@ module.exports = function (app) {
 				if (file['type'] != 'image/jpeg') return next(errors[20005]);
 				if (file['size'] > imageLimit) return next(errors[20006]);
 				Group.forge({id: req.body['groupid']})
+					.fetch()
 					.then(function (group) {
 						group.updateAvatar(file['path'])
 							.then(function () {

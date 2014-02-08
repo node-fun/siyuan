@@ -9,6 +9,7 @@ var syBookshelf = require('./base'),
 	Promise = require('bluebird'),
 	config = require('../config'),
 	path = require('path'),
+	fs = require('fs-extra'),
 	fkGroup = 'groupid',
 	Group, Groups;
 

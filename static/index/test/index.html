@@ -29,8 +29,8 @@
 <body>
 <div id="left" class="fl">
 <h2>API测试页</h2>
-<h3>表单</h3>
-<form id="testform">
+<h3>表单</h3><span style="color: gray;font-size: 12px;">tips:按Enter键可以快速“ajax提交”</span>
+<form id="testform" method="post" enctype="multipart/form-data" action="/api/groups/avatar/update">
     url:<input type="text" id="url"/><br/>
     method:<select name="_method">
             <option>get</option>
@@ -53,11 +53,15 @@
             <td><input type="text" onblur="$('#key4').attr({name: this.value});"/></td>
             <td><input type="text" id="key4"/></td>
         </tr><tr>
-            <td><input type="text" onblur="$('#key5').attr({name: this.value});"/></td>
-            <td><input type="text" id="key5"/></td>
+        <td><input type="text" onblur="$('#key5').attr({name: this.value});"/></td>
+        <td><input type="text" id="key5"/></td>
+        </tr><tr>
+            <td><input type="text" onblur="$('#key6').attr({name: this.value});"/></td>
+            <td><input type="file" id="key6"/></td>
         </tr>
     </table>
-    <button type="button" class="submitbutton" onclick="submitTest()">提交</button>
+    <button type="button" class="submitbutton" onclick="submitTest()">ajax提交</button>
+    <input type="submit" class="submitbutton" onclick="beforeSubmit()" value="带文件提交"/>
 </form>
 </div>
 <div id="right" class="fl">
@@ -72,6 +76,7 @@
 <script>
     resultiframe = document.getElementById('resultiframe');
     url = document.getElementById('url');
+    testform = document.getElementById('testform');
     function submitTest(){
         resultiframe.src = url.value + '?' + $('#testform').serialize();
     }
@@ -79,6 +84,9 @@
         if(event.keyCode==13){
             submitTest();
         }
+    }
+    function beforeSubmit(){
+        testform.action = url.value;
     }
 </script>
 </body>

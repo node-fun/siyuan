@@ -12,6 +12,7 @@ syModel = syBookshelf.Model = syModel.extend({
 	fields: [],
 	omitInJSON: [],
 	withRelated: [],
+	validators: {},
 
 	initialize: function () {
 		syModel.__super__.initialize.apply(this, arguments);
@@ -43,6 +44,15 @@ syModel = syBookshelf.Model = syModel.extend({
 	saving: function () {
 		// pick attributes
 		this.attributes = this.pick(this.fields);
+		var err;
+		for (var i = 0, k; i < this.fields.length; i++) {
+			k = this.fields[i];
+			if (this.validators[k]) {
+				err = this.validators[k].call(this, this.get(k));
+				if (err) break;
+			}
+		}
+		if (err) return Promise.reject(err);
 		return Promise.resolve(this);
 	},
 	saved: function () {

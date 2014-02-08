@@ -92,7 +92,7 @@ module.exports = function (app) {
 	 * @param {String} [profile.tag] 标签
 	 * @return {JSON}
 	 * <pre>
-	 //   username, password, email, name
+	 //   username, password, profile[email], profile[name] ...
 	 {
 		"msg": "User registered",
 		"id": 36

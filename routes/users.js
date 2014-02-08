@@ -62,11 +62,11 @@ module.exports = function (app) {
 	 * @method 模糊搜索用户
 	 * @param {String} [username] 用户名
 	 * @param {Number} [isonline] 是否在线
-	 * @param {String} [name] 姓名
-	 * @param {String} [gender] 性别
-	 * @param {String} [university] 学校
-	 * @param {String} [major] 专业
-	 * @param {String} [summary] 个性签名
+	 * @param {String} [profile.name] 姓名
+	 * @param {String} [profile.gender] 性别
+	 * @param {String} [profile.university] 学校
+	 * @param {String} [profile.major] 专业
+	 * @param {String} [profile.summary] 个性签名
 	 * @return {JSON}
 	 */
 	app.get('/api/users/search', function (req, res, next) {
@@ -81,15 +81,15 @@ module.exports = function (app) {
 	 * @method 注册
 	 * @param {String} username 用户名
 	 * @param {String} password 密码
-	 * @param {String} [email] 邮箱
-	 * @param {String} [name] 姓名
-	 * @param {String} [gender] 性别
-	 * @param {Number} [age] 年龄
-	 * @param {Number} [grade] 入学级数
-	 * @param {String} [university] 学校
-	 * @param {String} [major] 专业
-	 * @param {String} [summary] 个性签名
-	 * @param {String} [tag] 标签
+	 * @param {String} [profile.email] 邮箱
+	 * @param {String} [profile.name] 姓名
+	 * @param {String} [profile.gender] 性别
+	 * @param {Number} [profile.age] 年龄
+	 * @param {Number} [profile.grade] 入学级数
+	 * @param {String} [profile.university] 学校
+	 * @param {String} [profile.major] 专业
+	 * @param {String} [profile.summary] 个性签名
+	 * @param {String} [profile.tag] 标签
 	 * @return {JSON}
 	 * <pre>
 	 //   username, password, email, name
@@ -100,7 +100,7 @@ module.exports = function (app) {
 	 * </pre>
 	 */
 	app.post('/api/users/register', function (req, res, next) {
-		User.forge(req.body).register(req.body)
+		User.forge(req.body).register()
 			.then(function (user) {
 				next({
 					msg: 'User registered',

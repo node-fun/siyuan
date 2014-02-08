@@ -74,6 +74,15 @@ User = module.exports = syBookshelf.Model.extend({
 		return this.hasMany(Event, 'userid');
 	},
 
+	creating: function () {
+		var profileData = this.get('profile');
+		this.data('profile', profileData);
+		var self = this;
+		return User.__super__.creating.call(self)
+			.then(function () {
+				return self;
+			});
+	},
 	created: function () {
 		var self = this;
 		return User.__super__.created.call(self)
@@ -168,8 +177,8 @@ User = module.exports = syBookshelf.Model.extend({
 			});
 	},
 
-	register: function (reqbody) {
-		var keys = ['username', 'password', 'regtime'],
+	register: function () {
+		var keys = ['username', 'password', 'regtime', 'profile'],
 			self = this;
 		this.attributes = this.pick(keys);
 		if (!this.get('username') || !this.get('password')) {
@@ -179,10 +188,7 @@ User = module.exports = syBookshelf.Model.extend({
 			.catch(function () {
 				return Promise.rejected(errors[20506]);
 			}).then(function () {
-				return self.fetch()
-					.then(function(user){
-					return user.updateProfile(reqbody);
-				});
+				return self.fetch();
 			});
 	},
 	login: function (encrypted) {
@@ -290,6 +296,7 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 
 	search: function (query) {
+		query['profile'] = query['profile'] || {};
 		var count = 0;
 		return Users.forge()
 			.query(function (qb) {
@@ -303,9 +310,9 @@ User = module.exports = syBookshelf.Model.extend({
 				});
 				// find for profile
 				['gender'].forEach(function (k) {
-					if (k in query) {
+					if (k in query['profile']) {
 						count++;
-						qb.where(tbProfile + '.' + k, '=', query[k]);
+						qb.where(tbProfile + '.' + k, '=', query['profile'][k]);
 					}
 				});
 				// search for user
@@ -317,9 +324,9 @@ User = module.exports = syBookshelf.Model.extend({
 				});
 				// search for profile
 				['name', 'university', 'major', 'summary'].forEach(function (k) {
-					if (k in query) {
+					if (k in query['profile']) {
 						count++;
-						qb.where(tbProfile + '.' + k, 'like', '%' + query[k] + '%');
+						qb.where(tbProfile + '.' + k, 'like', '%' + query['profile'][k] + '%');
 					}
 				});
 			}).query(function (qb) {

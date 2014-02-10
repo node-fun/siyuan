@@ -70,7 +70,7 @@ module.exports = function (app) {
 	/**
 	 * GET /api/cooperations/search
 	 * @method 合作搜索
-	 * @param {Number} [userid] 作者ID
+	 * @param {Number} [ownerid] 作者ID
 	 * @param {String} [name] 标题关键字
 	 * @param {String} [description] 内容关键字
 	 * @return {JSON}

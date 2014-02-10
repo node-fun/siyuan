@@ -48,7 +48,11 @@ require('./units/admin');
 
 global.authData = {
 	username: '_test_',
-	password: '123321'
+	password: '123321',
+	profile: {
+		email: 'caonima@av.com',
+		name: 'Fvck Sh1t'
+	}
 };
 global.jar = request.jar();
 require('./units/users');

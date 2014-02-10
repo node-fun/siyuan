@@ -31,6 +31,20 @@ User = module.exports = syBookshelf.Model.extend({
 	],
 	omitInJSON: ['password'],
 	withRelated: ['profile'],
+	required: ['username', 'password'],
+	validators: {
+		/*username: function (v) {
+		 if (!/^[a-z][a-z0-9_\-\.]{2,16}[a-z0-9]$/i.test(v)) {
+		 return errors[21310];
+		 }
+		 },
+		password: function (v) {
+			if (!this.hasChanged('password')) return;
+			if (!/^\w{6,18}$/i.test(v)) {
+				return errors[21311];
+			}
+		}*/
+	},
 
 	defaults: function () {
 		return {
@@ -67,7 +81,7 @@ User = module.exports = syBookshelf.Model.extend({
 	photos: function () {
 		return this.hasMany(Photo, 'userid');
 	},
-	staring: function () {
+	starring: function () {
 		return this.hasMany(Starship, 'userid');
 	},
 	events: function () {
@@ -83,6 +97,12 @@ User = module.exports = syBookshelf.Model.extend({
 				return profile.set('userid', self.id).save();
 			}).then(function () {
 				return self;
+			}, function (err) {
+				// rollback
+				return self.destroy()
+					.then(function () {
+						return Promise.reject(err);
+					});
 			});
 	},
 	saving: function () {
@@ -92,6 +112,7 @@ User = module.exports = syBookshelf.Model.extend({
 				// fix lower case
 				self.fixLowerCase(['username']);
 				if (self.hasChanged('password')) {
+
 					// encrypt password
 					self.set('password', encrypt(self.get('password')));
 				}
@@ -168,21 +189,20 @@ User = module.exports = syBookshelf.Model.extend({
 			});
 	},
 
-	register: function (reqbody) {
-		var keys = ['username', 'password', 'regtime'],
-			self = this;
-		this.attributes = this.pick(keys);
-		if (!this.get('username') || !this.get('password')) {
-			return Promise.rejected(errors[10008]);
+	register: function () {
+		if (!this.data('profile')) {
+			this.data('profile', this.get('profile') || {});
 		}
+		this.attributes = this.pick(['username', 'password', 'regtime']);
+		var self = this;
 		return self.save()
-			.catch(function () {
-				return Promise.rejected(errors[20506]);
+			.catch(function (err) {
+				if (/^ER_DUP_ENTRY/.test(err.message)) {
+					return Promise.reject(errors[20506]);
+				}
+				return Promise.reject(err);
 			}).then(function () {
-				return self.fetch()
-					.then(function(user){
-					return user.updateProfile(reqbody);
-				});
+				return self.fetch();
 			});
 	},
 	login: function (encrypted) {
@@ -191,7 +211,7 @@ User = module.exports = syBookshelf.Model.extend({
 		if (!_.all(keys, function (key) {
 			return loginData[key];
 		})) {
-			return Promise.rejected(errors[10008]);
+			return Promise.reject(errors[10008]);
 		}
 		if (!encrypted) {
 			// encrypt password
@@ -199,7 +219,7 @@ User = module.exports = syBookshelf.Model.extend({
 		}
 		return User.forge(loginData).fetch()
 			.then(function (user) {
-				if (!user) return Promise.rejected(errors[21302]);
+				if (!user) return Promise.reject(errors[21302]);
 				return user.set('isonline', 1).save();
 			});
 	},
@@ -215,7 +235,7 @@ User = module.exports = syBookshelf.Model.extend({
 			self = this;
 		return this.fetch().then(function () {
 			if (encrypt(oldPassword) != self.get('password')) {
-				return Promise.rejected(errors[21301])
+				return Promise.reject(errors[21301])
 			}
 			return self.set('password', newPassword).save();
 		});
@@ -246,7 +266,7 @@ User = module.exports = syBookshelf.Model.extend({
 			}).catch(function (err) {
 				return self.set(type, null).save()
 					.then(function () {
-						return Promise.rejected(err);
+						return Promise.reject(err);
 					});
 			});
 	}
@@ -290,6 +310,7 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 
 	search: function (query) {
+		query['profile'] = query['profile'] || {};
 		var count = 0;
 		return Users.forge()
 			.query(function (qb) {
@@ -303,9 +324,9 @@ User = module.exports = syBookshelf.Model.extend({
 				});
 				// find for profile
 				['gender'].forEach(function (k) {
-					if (k in query) {
+					if (k in query['profile']) {
 						count++;
-						qb.where(tbProfile + '.' + k, '=', query[k]);
+						qb.where(tbProfile + '.' + k, '=', query['profile'][k]);
 					}
 				});
 				// search for user
@@ -317,9 +338,9 @@ User = module.exports = syBookshelf.Model.extend({
 				});
 				// search for profile
 				['name', 'university', 'major', 'summary'].forEach(function (k) {
-					if (k in query) {
+					if (k in query['profile']) {
 						count++;
-						qb.where(tbProfile + '.' + k, 'like', '%' + query[k] + '%');
+						qb.where(tbProfile + '.' + k, 'like', '%' + query['profile'][k] + '%');
 					}
 				});
 			}).query(function (qb) {

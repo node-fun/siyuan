@@ -514,6 +514,25 @@ module.exports = function (app) {
 	});
 
 	/**
+	 * @method 评论列表
+	 * @param {Number} [id] 评论ID
+	 * @param {Number} [cooperationid] 合作ID
+	 * @param {Number} [userid] 用户ID
+	 * @return {JSON}
+	 * {
+	 * 		cocomments: []
+	 * }
+	 */
+	app.get('/api/cooperations/comments/find', function (req, res, next) {
+		CoComment.find(req.query)
+			.then(function (cocomments) {
+				next({
+					cocomments: cocomments
+				});
+			}).catch(next);
+	})
+
+	/**
 	 * POST /api/cooperations/comments/post
 	 * @method 评论合作
 	 * @param {Number} cooperationid 合作ID

@@ -104,7 +104,7 @@ Issue = module.exports = syBookshelf.Model.extend({
 			}).then(function (issue) {
 				if (!issue) return Promise.rejected(errors[20603]);
 				return IssueComments.forge({ issueid: issue.id })
-					.query('orderBy', 'id', 'desc')
+					.query('orderBy', 'posttime', 'desc')
 					.fetch().then(function (comments) {
 						return issue.set('comments', comments);
 					});

@@ -19,6 +19,7 @@ var fs = require('fs'),
 	GroupMember = require('./group-membership'),
 	GroupMembers = GroupMember.Set,
 	CoComment = require('./co-comment'),
+	CoComments = CoComment.Set,
 	Cooperation, Cooperations,
 	config = require('../config'),
 	avatarDir = config.cooperationAvatarDir,
@@ -179,7 +180,12 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 		return Cooperation.forge({ id: query['id'] })
 			.fetch().then(function (cooperation) {
 				if (!cooperation) return Promise.rejected(errors[20603]);
-				return cooperation.load(['cocomments']);
+				//return cooperation.load(['cocomments', 'user', 'user.profile']);
+				return CoComments.forge({ cooperationid: cooperation.id })
+					.query('orderBy', 'id', 'desc')
+					.fetch().then(function (cocomments) {
+						return cooperation.set('cocomments', cocomments);
+					})
 			});
 	},
 

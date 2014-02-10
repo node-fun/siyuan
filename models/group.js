@@ -18,6 +18,7 @@ Group = module.exports = syBookshelf.Model.extend({
 	fields: [
 		'id', 'ownerid', 'name', 'description', 'createtime', 'avatar'
 	],
+	omitInJSON: ['_pivot_userid', '_pivot_groupid'],
 	defaults: function () {
 		return {
 			createtime: new Date()

@@ -135,36 +135,50 @@ module.exports = function (app) {
 	 * 含我加入的、我创建的圈子列表。
 	 * @method 我的圈子列表
 	 * @return {JSON}
-	 {
+	{
 		"groups": [
-			{
-				"id": 1,
-				"ownerid": null,
-				"name": null,
-				"description": null,
-				"createtime": null,
+		{
+			"id": 8,
+			"ownerid": 40,
+			"name": "test4",
+			"description": "12345678",
+			"createtime": 1391844645000,
+			"avatar": "/groups/8.jpg",
+			"owner": {
+				"id": 40,
+				"username": "test4",
+				"regtime": 1391844558000,
+				"isonline": 1,
 				"avatar": null,
-				"_pivot_userid": 101,
-				"_pivot_groupid": 1
+				"cover": null,
+				"profile": {
+					"email": null,
+					"name": null,
+					"gender": null,
+					"age": null,
+					"grade": null,
+					"university": null,
+					"major": null,
+					"summary": null
+				}
 			},
-			{
-				"id": 2,
-				"ownerid": null,
-				"name": null,
-				"description": null,
-				"createtime": null,
-				"avatar": null,
-				"_pivot_userid": 101,
-				"_pivot_groupid": 2
-			}
-		]
+			"_pivot_userid": 40,
+			"_pivot_groupid": 8,
+			"numMembers": 1
+		}
+	]
 	}
 	 */
 	app.get('/api/groups/my', function (req, res, next) {
 		if (!req.user) return next(errors[21301]);
 		req.user.related('groups').fetch().then(function (groups) {
-			next({groups: groups});
-		});
+			groups.mapThen(function (group) {
+				group.countMembership();
+				return group.load(['owner', 'owner.profile']);
+			}).then(function (groups) {
+					next({groups: groups});
+				});
+		}).catch(next);
 	});
 
 	/**

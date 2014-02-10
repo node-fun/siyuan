@@ -181,7 +181,8 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 			.fetch().then(function (cooperation) {
 				if (!cooperation) return Promise.rejected(errors[20603]);
 				//return cooperation.load(['cocomments', 'user', 'user.profile']);
-				return CoComments.forge({ cooperationid: cooperation.id })
+				return CoComments.forge()
+					.query('where', 'cooperationid', '=', cooperation.get('id'))
 					.query('orderBy', 'id', 'desc')
 					.fetch().then(function (cocomments) {
 						return cooperation.set('cocomments', cocomments);

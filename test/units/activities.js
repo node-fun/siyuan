@@ -1,5 +1,7 @@
 var assert = require('assert'),
+	fs = require('fs'),
 	request = require('request').defaults({ json: true }),
+	localface = require('localface'),
 	config = require('../../config'),
 	apiHost = 'http://localhost:' + config.port + '/api/activities';
 
@@ -106,7 +108,26 @@ describe('activities', function () {
 			done();
 		})
 	})
+/*
+	it('updates avatar', function (done) {
+		var gender = 'f',
+			file = localface.get(gender),
+			req, form;
 
+		req = request.post(apiHost + '/avatar/update', {
+			jar: jar,
+			form: {
+				id: activityid
+			}
+		}, function(err, res, data) {
+			//console.log(err);
+			assert.ok(data['msg']);
+			done();
+		});
+
+		form = req.form();
+		form.append('avatar', fs.createReadStream(file));
+	})*/
 
 });
 

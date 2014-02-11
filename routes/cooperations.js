@@ -70,7 +70,7 @@ module.exports = function (app) {
 	/**
 	 * GET /api/cooperations/search
 	 * @method 合作搜索
-	 * @param {Number} [userid] 作者ID
+	 * @param {Number} [ownerid] 作者ID
 	 * @param {String} [name] 标题关键字
 	 * @param {String} [description] 内容关键字
 	 * @return {JSON}
@@ -634,9 +634,10 @@ module.exports = function (app) {
 		if (!req.files['avatar']) return next(errors[20007]);
 		var file = req.files['avatar'],
 			_3M = 3 * 1024 * 1024;
+		if (!req.body['id']) next(errors[10008]);
 		if (file['type'] != 'image/jpeg') return next(errors[20005]);
 		if (file['size'] > _3M) return next(errors[20006]);
-		Cooperation.forge({ id: req.id })
+		Cooperation.forge({ id: req.body['id'] })
 			.updateAvatar(file['path'])
 			.then(function () {
 				next({ msg: 'avatar updated' });

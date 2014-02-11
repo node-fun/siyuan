@@ -507,6 +507,7 @@ module.exports = function (app) {
 		var user = req.user,
 			file = req.files['avatar'];
 		if (!user) next(errors[21301]);
+		if (!req.body['id']) next(errors[10008]);
 		if (file['type'] != 'image/jpeg') next(errors[20005]);
 		if (file['size'] > imageLimit) next(errors[20006]);
 		Activity.forge({ id: req.body['id'] }).fetch()

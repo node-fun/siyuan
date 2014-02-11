@@ -7,7 +7,9 @@ var _ = require('underscore'),
 	UserActivity = require('../models/user-activity'),
 	GroupMembers = require('../models/group-membership'),
 	Group = require('../models/group'),
-	errors = require('../lib/errors');
+	errors = require('../lib/errors'),
+	config = require('../config'),
+	imageLimit = config.imageLimit;
 
 module.exports = function (app) {
 	/**
@@ -501,16 +503,20 @@ module.exports = function (app) {
 	 * }</pre>
 	 */
 	app.post('/api/activities/avatar/update', function (req, res, next) {
-		if (!req.files['avatar']) return next(errors[20007]);
-		var file = req.files['avatar'],
-			_3M = 3 * 1024 * 1024;
-		if (file['type'] != 'image/jpeg') return next(errors[20005]);
-		if (file['size'] > _3M) return next(errors[20006]);
-		Activity.forge({ id: req.id })
-			.updateAvatar(file['path'])
-			.then(function () {
-				next({ msg: 'avatar updated' });
-			}).catch(next);
+		if (!req.files['avatar']) next(errors[20007]);
+		var user = req.user,
+			file = req.files['avatar'];
+		if (!user) next(errors[21301]);
+		if (file['type'] != 'image/jpeg') next(errors[20005]);
+		if (file['size'] > imageLimit) next(errors[20006]);
+		Activity.forge({ id: req.body['id'] }).fetch()
+			.then(function (activity) {
+				console.log(file['path']);
+				activity.updateAvatar(file['path'])
+					.then(function () {
+						next({ msg: 'avatar updated' });
+					}).catch(next);
+			});
 	});
 };
 

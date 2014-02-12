@@ -7,7 +7,7 @@ var fs = require('fs'),
 	syBookshelf = require('./base'),
 	ActivityStatus = require('./activity-status'),
 	UserActivity = require('./user-activity'),
-	UserActivitys = UserActivity.Set,
+	UserActivities = UserActivity.Set,
 	config = require('../config'),
 	avatarDir = config.activityAvatarDir,
 	avatarExt = config.avatarExt,
@@ -45,7 +45,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 			.saving.apply(this, arguments);
 	},
 	usership: function () {
-		return this.hasMany(UserActivitys, fkActivity);
+		return this.hasMany(UserActivities, fkActivity);
 	},
 
 	fetch: function (options) {
@@ -58,7 +58,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 
 	countUsership: function () {
 		var self = this;
-		return UserActivitys.forge().query()
+		return UserActivities.forge().query()
 			.where(fkActivity, '=', self.id)
 			.count('id')
 			.then(function (d) {

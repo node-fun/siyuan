@@ -39,7 +39,7 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 	toJSON: function () {
 		var ret = Cooperation.__super__.toJSON.apply(this, arguments);
 		if (this.get('avatar')) {
-			ret['avatar'] = Cooperation.getAvatarURI(this.id);
+			ret['avatar'] = Cooperation.getAvatarURI(this.id) + '?t=' + ret['avatar'];
 		}
 		return ret;
 	},
@@ -103,7 +103,7 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 					});
 				});
 			}).then(function () {
-				return self.set('avatar', self.id).save()
+				return self.set('avatar', Date.now()).save()
 					.then(function () {
 						return self;
 					});

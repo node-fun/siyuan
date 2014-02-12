@@ -103,9 +103,11 @@ Issue = module.exports = syBookshelf.Model.extend({
 				withRelated: ['user.profile']
 			}).then(function (issue) {
 				if (!issue) return Promise.rejected(errors[20603]);
-				return IssueComments.forge({ issueid: issue.id })
-					.query('orderBy', 'posttime', 'desc')
-					.fetch().then(function (comments) {
+				return IssueComments.forge()
+					.query(function (qb) {
+						qb.where('issueid', '=', issue.id);
+						qb.orderBy('posttime', 'desc');
+					}).fetch().then(function (comments) {
 						return issue.set('comments', comments);
 					});
 			});

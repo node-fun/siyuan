@@ -35,7 +35,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 		var ret = Activity.__super__.toJSON.apply(this, arguments);
 		// to avatar uri fi exists
 		if (this.get('avatar')) {
-			ret['avatar'] = Activity.getAvatarURI(this.id);
+			ret['avatar'] = Activity.getAvatarURI(this.id) + '?t=' + ret['avatar'];
 		}
 		return ret;
 	},
@@ -86,7 +86,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 					});
 				});
 			}).then(function () {
-				return self.set('avatar', self.id).save()
+				return self.set('avatar', Date.now()).save()
 					.then(function () {
 						return self;
 					});

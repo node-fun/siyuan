@@ -57,8 +57,8 @@ User = module.exports = syBookshelf.Model.extend({
 			self = this;
 		// to uri if exists
 		['avatar', 'cover'].forEach(function (type) {
-			if (self.get(type)) {
-				ret[type] = User.getPicURI(type, self.id);
+			if (self.get(type) != null) {
+				ret[type] = User.getPicURI(type, self.id) + '?t=' + ret[type];
 			}
 		});
 		return ret;
@@ -259,7 +259,7 @@ User = module.exports = syBookshelf.Model.extend({
 					resolve();
 				});
 			}).then(function () {
-				return self.set(type, self.id).save()
+				return self.set(type, Date.now()).save()
 					.then(function () {
 						return self;
 					});

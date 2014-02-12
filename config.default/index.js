@@ -1,6 +1,7 @@
 // app environment
 // usually -- production | development | test
-var defaultEnv = 'development',
+var _ = require('underscore'),
+	defaultEnv = 'development',
 	env = process.env['NODE_ENV'];
 if (!env) {
 	env = process.argv && process.argv[2] || defaultEnv;
@@ -12,9 +13,23 @@ var path = require('path'),
 	staticDir = path.join(rootDir, 'static'),
 	defaultContentDir = path.join(rootDir, 'content.default'),
 	contentDir = path.join(rootDir, 'content')
-		+ (env == 'test' ? '_test' : '');
+		+ (env == 'test' ? '_test' : ''),
+	imageExt = '.jpg';
 
-module.exports = {
+var assets = (function () {
+	var o = {}, proto = {
+		ext: '.jpg',
+		public: true
+	};
+	['avatars', 'covers', 'photos'].forEach(function (type) {
+		o[type] = _.extend({}, proto, {
+			dir: path.join(contentDir, type)
+		});
+	});
+	return o;
+})();
+
+var config = module.exports = {
 	env: env,
 	rootDir: rootDir,
 
@@ -24,9 +39,6 @@ module.exports = {
 	adDir: path.join(staticDir, 'ad'),
 	indexPath: path.join(staticDir, 'index'),
 
-	avatarStaticPath: '/avatars',
-	coverStaticPath: '/covers',
-	photoStaticPath: '/photos',
 	docsStaticPath: '/docs',
 	adminStaticPath: '/admin',
 	activityStaticPath: '/activities',
@@ -37,11 +49,13 @@ module.exports = {
 
 	defaultContentDir: defaultContentDir,
 	contentDir: contentDir,
-	avatarDir: path.join(contentDir, 'avatars'),
-	coverDir: path.join(contentDir, 'covers'),
+	assets: assets,
+	toStaticURI: function (file) {
+		return path.resolve(file).replace(contentDir, '');
+	},
+
 	activityAvatarDir: path.join(contentDir, 'activities'),
 	cooperationAvatarDir: path.join(contentDir, 'cooperations'),
-	photoDir: path.join(contentDir, 'photos'),
 	groupDir: path.join(contentDir, 'groups'),
 
 	port: ('PORT' in process.env) ? process.env['PORT'] :
@@ -60,7 +74,7 @@ module.exports = {
 	},
 
 	resources: ['user', 'issue', 'activity', 'cooperation'],
-	avatarExt: '.jpg',
+	avatarExt: imageExt,
 	imageLimit: 4 * 1024 * 1024,
 	admins: [
 		{

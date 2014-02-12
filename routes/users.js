@@ -192,7 +192,7 @@ module.exports = function (app) {
 		if (!file) return next(errors[20007]);
 		if (file['type'] != 'image/jpeg') return next(errors[20005]);
 		if (file['size'] > imageLimit) return next(errors[20006]);
-		user.updatePic('avatar', file['path'])
+		user.updateAsset('avatar', file['path'])
 			.then(function () {
 				next({ msg: 'Avatar updated' });
 			}).catch(next);
@@ -211,7 +211,7 @@ module.exports = function (app) {
 		if (!file) return next(errors[20007]);
 		if (file['type'] != 'image/jpeg') return next(errors[20005]);
 		if (file['size'] > imageLimit) return next(errors[20006]);
-		user.updatePic('cover', file['path'])
+		user.updateAsset('cover', file['path'])
 			.then(function () {
 				next({ msg: 'Cover updated' });
 			}).catch(next);

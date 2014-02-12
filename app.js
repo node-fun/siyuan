@@ -45,9 +45,11 @@ app.use('/api', require('./lib/api/sender'));
 require('./routes')(app);
 
 // static
-app.use(config.avatarStaticPath, express.static(config.avatarDir));
-app.use(config.coverStaticPath, express.static(config.coverDir));
-app.use(config.photoStaticPath, express.static(config.photoDir));
+_.each(config.assets, function (o) {
+	if (o.public) {
+		app.use(config.toStaticURI(o.dir), express.static(o.dir));
+	}
+});
 app.use(config.docsStaticPath, express.static(config.docsDir));
 app.use(config.adminStaticPath, express.static(config.adminDir));
 app.use(config.adStaticPath, express.static(config.adDir));
@@ -55,6 +57,7 @@ app.use(config.indexStaticPath, express.static(config.indexPath));
 app.use(config.activityStaticPath, express.static(config.activityAvatarDir));
 app.use(config.cooperationStaticPath, express.static(config.cooperationAvatarDir));
 app.use(config.groupStaticDir, express.static(config.groupDir));
+
 // listen on port
 app.listen(port, function () {
 	console.log([

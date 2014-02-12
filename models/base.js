@@ -1,4 +1,6 @@
-var _ = require('underscore'),
+var fs = require('fs-extra'),
+	path = require('path'),
+	_ = require('underscore'),
 	Bookshelf = require('bookshelf'),
 	Promise = require('bluebird'),
 	config = require('../config'),
@@ -15,6 +17,7 @@ syModel = syBookshelf.Model = syModel.extend({
 	withRelated: [],
 	required: [],
 	validators: {},
+	fieldToAssets: {},
 
 	initialize: function () {
 		syModel.__super__.initialize.apply(this, arguments);
@@ -156,9 +159,37 @@ syModel = syBookshelf.Model = syModel.extend({
 				attrs[k] = attrs[k].toLowerCase();
 			}
 		});
+	},
+
+	updateAsset: function (field, tmp) {
+		var type = this.fieldToAssets[field],
+			file = this.constructor.getAssetPath(type, this.id),
+			self = this;
+		return new Promise(
+			function (resolve, reject) {
+				fs.copy(tmp, file, function (err) {
+					if (err) return reject(errors[30003]);
+					resolve();
+				});
+			}).then(function () {
+				return self.set(field, Date.now()).save()
+					.then(function () {
+						return self;
+					});
+			}).catch(function (err) {
+				return self.set(field, null).save()
+					.then(function () {
+						return Promise.reject(err);
+					});
+			});
 	}
 }, {
-
+	getAssetName: function (type, id) {
+		return id + config.assets[type].ext;
+	},
+	getAssetPath: function (type, id) {
+		return path.join(config.assets[type].dir, this.getAssetName(type, id));
+	}
 });
 
 syCollection = syModel.Set = syCollection.extend({

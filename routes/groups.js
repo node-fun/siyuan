@@ -118,16 +118,11 @@ module.exports = function (app) {
 		if (!req.body['name'] || !req.body['description']) {
 			return next(errors[10008]);
 		}
-		Group.forge({name: req.body['name']})
-			.fetch()
-			.then(function (group) {
-				if (group) {
-					return next(errors[20506]);
-				}
-				return Group.forge(_.extend({
+		Group.forge(_.extend({
 					ownerid: user.id
-				}, req.body)).save();
-			}).then(function (group) {
+				}, req.body))
+			.save()
+			.then(function (group) {
 				GroupMember.forge({
 					userid: user.id,
 					groupid: group.id,
@@ -139,6 +134,13 @@ module.exports = function (app) {
 							id: groupMember.get('groupid')
 						});
 					});
+			})
+			.catch(function(err){
+				if (/^ER_DUP_ENTRY/.test(err.message)){
+					next(errors[20506]);
+				}else{
+					next(err);
+				}
 			});
 	});
 
@@ -441,7 +443,7 @@ function join(userid, groupid, next){
 			'groupid': groupid
 		}));
 	}
-	//这里没有判断重复加入，在数据库里控制
+	//不能重复加入，在数据库里控制
 	return members.invokeThen('save')
 		.then(function(){
 			next({msg: 'join group success'});

@@ -68,7 +68,7 @@ Group = module.exports = syBookshelf.Model.extend({
 					resolve();
 				});
 			}).then(function () {
-				return self.set('avatar', self.id).save()
+				return self.set('avatar', Date.now()).save()
 					.then(function () {
 						return self;
 					});

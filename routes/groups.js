@@ -12,7 +12,7 @@ var _ = require('underscore'),
 
 module.exports = function (app) {
 	/**
-	 * post /api/groups/find <br>
+	 * get /api/groups/find <br>
 	 * 支持page、limit、orders
 	 * @method 圈子列表
 	 * @param {Number} [id]
@@ -52,7 +52,7 @@ module.exports = function (app) {
 	});
 
 	/**
-	 * post /api/groups/members <br>
+	 * get /api/groups/members <br>
 	 * 支持page、limit、orders
 	 * @method 圈子成员列表
 	 * @param {Number} id
@@ -77,7 +77,7 @@ module.exports = function (app) {
 	})
 
 	/**
-	 * post /api/groups/activities <br>
+	 * get /api/groups/activities <br>
 	 * 支持page、limit、orders
 	 * @method 圈子活动列表
 	 * @param {Number} id

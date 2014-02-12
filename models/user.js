@@ -1,6 +1,4 @@
-var fs = require('fs-extra'),
-	path = require('path'),
-	_ = require('underscore'),
+var _ = require('underscore'),
 	chance = new (require('chance'))(),
 	Promise = require('bluebird'),
 	errors = require('../lib/errors'),
@@ -38,12 +36,15 @@ User = module.exports = syBookshelf.Model.extend({
 		 return errors[21310];
 		 }
 		 },
-		password: function (v) {
-			if (!this.hasChanged('password')) return;
-			if (!/^\w{6,18}$/i.test(v)) {
-				return errors[21311];
-			}
-		}*/
+		 password: function (v) {
+		 if (!this.hasChanged('password')) return;
+		 if (!/^\w{6,18}$/i.test(v)) {
+		 return errors[21311];
+		 }
+		 }*/
+	},
+	fieldToAssets: {
+		avatar: 'avatars', cover: 'covers'
 	},
 
 	defaults: function () {
@@ -56,9 +57,10 @@ User = module.exports = syBookshelf.Model.extend({
 		var ret = User.__super__.toJSON.apply(this, arguments),
 			self = this;
 		// to uri if exists
-		['avatar', 'cover'].forEach(function (type) {
-			if (self.get(type) != null) {
-				ret[type] = User.getPicURI(type, self.id) + '?t=' + ret[type];
+		_.each(this.fieldToAssets, function (type, field) {
+			if (self.get(field) != null) {
+				var file = User.getAssetPath(type, self.id);
+				ret[field] = config.toStaticURI(file) + '?t=' + ret[field];
 			}
 		});
 		return ret;
@@ -248,27 +250,6 @@ User = module.exports = syBookshelf.Model.extend({
 			}).then(function () {
 				return self;
 			});
-	},
-	updatePic: function (type, tmp) {
-		var file = User.getPicPath(type, this.id),
-			self = this;
-		return new Promise(
-			function (resolve, reject) {
-				fs.copy(tmp, file, function (err) {
-					if (err) return reject(errors[30003]);
-					resolve();
-				});
-			}).then(function () {
-				return self.set(type, Date.now()).save()
-					.then(function () {
-						return self;
-					});
-			}).catch(function (err) {
-				return self.set(type, null).save()
-					.then(function () {
-						return Promise.reject(err);
-					});
-			});
 	}
 }, {
 	randomForge: function () {
@@ -350,16 +331,6 @@ User = module.exports = syBookshelf.Model.extend({
 			}).query('offset', query['offset'])
 			.query('limit', count ? query['limit'] : 0)
 			.fetch();
-	},
-
-	getPicName: function (id) {
-		return id + config.avatarExt;
-	},
-	getPicPath: function (type, id) {
-		return path.join(config[type + 'Dir'], User.getPicName(id));
-	},
-	getPicURI: function (type, id) {
-		return config[type + 'StaticPath'] + '/' + User.getPicName(id);
 	}
 });
 

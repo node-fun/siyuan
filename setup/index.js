@@ -114,9 +114,9 @@ function addUsers() {
 				var gender = user.data('profile')['gender'],
 					face = localface.get(gender),
 					cover = localface.get(gender);
-				return user.updatePic('avatar', face)
+				return user.updateAsset('avatar', face)
 					.then(function () {
-						return user.updatePic('cover', cover);
+						return user.updateAsset('cover', cover);
 					})
 					.then(function () {
 						// login or not

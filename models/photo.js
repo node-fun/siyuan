@@ -5,8 +5,8 @@ var fs = require('fs-extra'),
 	syBookshelf = require('./base'),
 	errors = require('../lib/errors'),
 	config = require('../config'),
-	photoDir = config.photoDir,
 	avatarExt = config.avatarExt,
+	albumDir = config.assets.photos.dir,
 	Photo, Photos;
 
 Photo = module.exports = syBookshelf.Model.extend({
@@ -27,7 +27,7 @@ Photo = module.exports = syBookshelf.Model.extend({
 		var ret = Photo.__super__.toJSON.apply(this, arguments);
 		// append avatar
 		if (!this.isNew()) {
-			ret['uri'] = this.getURI();
+			ret['uri'] = config.toStaticURI(this.getPath());
 		}
 		return ret;
 	},
@@ -76,10 +76,7 @@ Photo = module.exports = syBookshelf.Model.extend({
 		return this.get('userid') + '/' + this.id + avatarExt;
 	},
 	getPath: function () {
-		return path.join(photoDir, this.getName());
-	},
-	getURI: function () {
-		return config.photoStaticPath + '/' + this.getName();
+		return path.join(albumDir, this.getName());
 	}
 }, {
 	randomForge: function () {

@@ -33,7 +33,6 @@ CREATE TABLE IF NOT EXISTS `user_profiles` (
   `university` VARCHAR(45) NULL,
   `major` VARCHAR(45) NULL,
   `summary` VARCHAR(280) NULL,
-  `tag` VARCHAR(280) NULL,
   PRIMARY KEY (`id`),
   INDEX `id_idx` (`userid` ASC),
   CONSTRAINT `fk_user_profiles_1`
@@ -119,6 +118,7 @@ CREATE TABLE IF NOT EXISTS `group_membership` (
   PRIMARY KEY (`id`),
   INDEX `groupid_idx` (`groupid` ASC),
   INDEX `userid_idx` (`userid` ASC),
+  UNIQUE INDEX `group_member_unique` (`groupid` ASC, `userid` ASC)  COMMENT ' /* comment truncated */ /*不能重复加入圈子*/',
   CONSTRAINT `groupid`
     FOREIGN KEY (`groupid`)
     REFERENCES `groups` (`id`)
@@ -495,5 +495,4 @@ INSERT INTO `resource_types` (`id`, `name`) VALUES (3, 'activity');
 INSERT INTO `resource_types` (`id`, `name`) VALUES (4, 'cooperation');
 
 COMMIT;
-
 

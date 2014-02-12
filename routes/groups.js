@@ -12,7 +12,8 @@ var _ = require('underscore'),
 
 module.exports = function (app) {
 	/**
-	 * post /api/groups/find
+	 * post /api/groups/find <br>
+	 * 支持page、limit、orders
 	 * @method 圈子列表
 	 * @param {Number} [id]
 	 * @param {String} [ownerid] 创建者id
@@ -29,12 +30,18 @@ module.exports = function (app) {
 					qb.where(k, query[k]);
 				}
 			});
-		}).query('offset', query['offset'])
-			.query('limit', query['limit'])
+		})
+			.query(function (qb) {
+				req.query['orders'].forEach(function (order) {
+					qb.orderBy(order[0], order[1]);
+				});
+			}).query('offset', req.query['offset'])
+			.query('limit', req.query['limit'])
 			.fetch()
 			.then(function (groups) {
 				groups.mapThen(function (group) {
 					group.countMembership();
+					group.countActivities();
 					return group.load(['owner', 'owner.profile']);
 				}).then(function (groups) {
 						next({
@@ -45,19 +52,52 @@ module.exports = function (app) {
 	});
 
 	/**
-	 * post /api/groups/view
-	 * @method 圈子详细资料
+	 * post /api/groups/members <br>
+	 * 支持page、limit、orders
+	 * @method 圈子成员列表
 	 * @param {Number} id
 	 * @return {JSON}
-	 * 含owner,memberships
 	 */
-	app.get('/api/groups/view', function (req, res, next) {
+	app.get('/api/groups/members', function (req, res, next) {
 		Group.forge({id: req.query.id})
 			.fetch()
 			.then(function (group) {
-				return group.load(['owner', 'owner.profile', 'memberships', 'memberships.user', 'memberships.user.profile', 'activities']);
-			}).then(function (group) {
-				next(group);
+				return group
+					.related('memberships')
+					.query(function (qb) {
+						req.query['orders'].forEach(function (order) {
+							qb.orderBy(order[0], order[1]);
+						});
+					}).query('offset', req.query['offset'])
+					.query('limit', req.query['limit'])
+					.fetch({withRelated: ['user', 'user.profile']});
+			}).then(function (m) {
+				next({"memberships":m});
+			}).catch(next);
+	})
+
+	/**
+	 * post /api/groups/activities <br>
+	 * 支持page、limit、orders
+	 * @method 圈子活动列表
+	 * @param {Number} id
+	 * @return {JSON}
+	 */
+	app.get('/api/groups/activities', function (req, res, next) {
+		Group.forge({id: req.query.id})
+			.fetch()
+			.then(function (group) {
+				return group
+					.related('activities')
+					.query(function (qb) {
+						req.query['orders'].forEach(function (order) {
+							qb.orderBy(order[0], order[1]);
+						});
+					}).query('offset', req.query['offset'])
+					.query('limit', req.query['limit'])
+					.fetch({withRelated: ['user', 'user.profile']});
+			}).then(function (m) {
+				next({"activities":m});
 			}).catch(next);
 	})
 
@@ -132,7 +172,8 @@ module.exports = function (app) {
 
 	/**
 	 * GET /api/groups/my
-	 * 含我加入的、我创建的圈子列表。
+	 * 含我加入的、我创建的圈子列表。<br>
+	 * 支持page、limit、orders
 	 * @method 我的圈子列表
 	 * @return {JSON}
 	{
@@ -162,8 +203,7 @@ module.exports = function (app) {
 					"summary": null
 				}
 			},
-			"_pivot_userid": 40,
-			"_pivot_groupid": 8,
+			"numActivities": 0,
 			"numMembers": 1
 		}
 	]
@@ -171,9 +211,19 @@ module.exports = function (app) {
 	 */
 	app.get('/api/groups/my', function (req, res, next) {
 		if (!req.user) return next(errors[21301]);
-		req.user.related('groups').fetch().then(function (groups) {
+		req.user
+			.related('groups')
+			.query(function (qb) {
+				req.query['orders'].forEach(function (order) {
+					qb.orderBy(order[0], order[1]);
+				});
+			}).query('offset', req.query['offset'])
+			.query('limit', req.query['limit'])
+			.fetch()
+			.then(function (groups) {
 			groups.mapThen(function (group) {
 				group.countMembership();
+				group.countActivities();
 				return group.load(['owner', 'owner.profile']);
 			}).then(function (groups) {
 					next({groups: groups});
@@ -395,7 +445,13 @@ function join(userid, groupid, next){
 	return members.invokeThen('save')
 		.then(function(){
 			next({msg: 'join group success'});
-		}).catch(next);
+		}).catch(function(err){
+			if (/^ER_DUP_ENTRY/.test(err.message)){
+				next(errors[20506]);
+			}else{
+				next(err);
+			}
+		});
 }
 
 function quit(userid, groupid, next) {

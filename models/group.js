@@ -51,6 +51,15 @@ Group = module.exports = syBookshelf.Model.extend({
 	activities: function () {
 		return this.hasMany(Activity, fkGroup);
 	},
+	countActivities: function () {
+		var self = this;
+		return Activity.forge().query()
+			.where(fkGroup, '=', this.id)
+			.count('id')
+			.then(function (d) {
+				return self.data('numActivities', d[0]["count(`id`)"]);
+			});
+	},
 	fetch: function () {
 		return Group.__super__.fetch.apply(this, arguments)
 			.then(function (group) {

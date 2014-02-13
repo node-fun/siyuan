@@ -55,48 +55,8 @@ describe('activities', function () {
 				done();
 			})
 		})
-	});/*
+	});
 
-	it('join activity', function (done) {
-		request.post('http://localhost:' + config.port + '/api/groups/join', {
-			jar: jar,
-			form: {
-				groupid: _groupid
-			}
-		}, function (err, res, data) {
-			assert.ok(data['msg']);
-			request.get('http://localhost:' + config.port + '/api/groups/view?id=' + _groupid, {
-				jar: jar
-			}, function (err, res, data) {
-				console.log(data);
-				var actArr = data['activities'];
-					actID = actArr[0]['id'];
-				request.post(apiHost + '/join', {
-					jar: jar,
-					form: {
-						id: actID
-					}
-				}, function (err, res, data) {
-					assert.ok(data['msg']);
-					assert.ok(usershipid = data['id'])
-					done();
-				})
-			})
-		})
-	})
-
-	it('cancel join activity', function (done) {
-		request.post(apiHost + '/cancel', {
-			jar: jar,
-			form: {
-				id: actID
-			}
-		},function (err, res, data) {
-			assert.ok(data['msg']);
-			done();
-		})
-	})
-*/
 	it('activities history', function (done) {
 		request.get(apiHost + '/history', {
 			jar: jar,
@@ -110,27 +70,6 @@ describe('activities', function () {
 			done();
 		})
 	})
-/*
-	it('updates avatar', function (done) {
-		var gender = 'f',
-			file = localface.get(gender),
-			req, form;
-
-		req = request.post(apiHost + '/avatar/update', {
-			jar: jar,
-			form: {
-				id: activityid
-			}
-		}, function(err, res, data) {
-			//console.log(err);
-			assert.ok(data['msg']);
-			done();
-		});
-
-		form = req.form();
-		form.append('avatar', fs.createReadStream(file));
-	})*/
-
 });
 
 

@@ -58,7 +58,12 @@ Issue = module.exports = syBookshelf.Model.extend({
 	find: function (query) {
 		return Issues.forge()
 			.query(function (qb) {
-				['id', 'userid', 'groupid', 'title'].forEach(function (k) {
+				if(!query['groupid']){
+					qb.whereNull('groupid');
+				}else{
+					qb.where('groupid', query['groupid']);
+				}
+				['id', 'userid', 'title'].forEach(function (k) {
 					if (k in query) {
 						qb.where(k, query[k]);
 					}
@@ -76,7 +81,12 @@ Issue = module.exports = syBookshelf.Model.extend({
 		var count = 0;
 		return Issues.forge()
 			.query(function (qb) {
-				['userid', 'groupid'].forEach(function (k) {
+				if(!query['groupid']){
+					qb.whereNull('groupid');
+				}else{
+					qb.where('groupid', query['groupid']);
+				}
+				['userid'].forEach(function (k) {
 					if (k in query) {
 						count++;
 						qb.where(k, query[k]);

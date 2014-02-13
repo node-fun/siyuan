@@ -192,13 +192,19 @@ syModel = syBookshelf.Model = syModel.extend({
 	}
 });
 
-syCollection = syModel.Set = syCollection.extend({
-	model: syModel,
-
-	fetch: function () {
-		return syCollection.__super__.fetch.apply(this, arguments)
-			.then(function (collection) {
-				return collection.invokeThen('fetch');
-			});
+syBookshelf.Collection = syModel.Set = syCollection.extend({
+	model: syModel
+}, {
+	list: function (query, fn) {
+		return this.forge()
+			.query(function (qb) {
+				if (fn) fn(qb, query);
+			}).query(function (qb) {
+				query['orders'].forEach(function (order) {
+					qb.orderBy(order[0], order[1]);
+				});
+			}).query('offset', query['offset'])
+			.query('limit', query['limit'])
+			.fetch();
 	}
 });

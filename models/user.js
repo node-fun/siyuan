@@ -262,86 +262,69 @@ User = module.exports = syBookshelf.Model.extend({
 				avatar: null,
 				cover: null
 			}).data('profile', UserProfile.randomForge().attributes);
-	},
-
-	find: function (query) {
-		query['profile'] = query['profile'] || {};
-		return Users.forge()
-			.query(function (qb) {
-				qb.join(tbProfile, tbProfile + '.userid', '=', tbUser + '.id');
-				// find for user
-				['id', 'username', 'isonline'].forEach(function (k) {
-					if (k in query) {
-						qb.where(tbUser + '.' + k, '=', query[k]);
-					}
-				});
-				// find for profile
-				['name', 'gender'].forEach(function (k) {
-					if (k in query['profile']) {
-						qb.where(tbProfile + '.' + k, '=', query['profile'][k]);
-					}
-				});
-			}).query(function (qb) {
-				query['orders'].forEach(function (order) {
-					qb.orderBy(order[0], order[1]);
-				});
-			}).query('offset', query['offset'])
-			.query('limit', query['limit'])
-			.fetch();
-	},
-
-	search: function (query) {
-		query['profile'] = query['profile'] || {};
-		var count = 0;
-		return Users.forge()
-			.query(function (qb) {
-				qb.join(tbProfile, tbProfile + '.userid', '=', tbUser + '.id');
-				// find for user
-				['isonline'].forEach(function (k) {
-					if (k in query) {
-						count++;
-						qb.where(tbUser + '.' + k, '=', query[k]);
-					}
-				});
-				// find for profile
-				['gender'].forEach(function (k) {
-					if (k in query['profile']) {
-						count++;
-						qb.where(tbProfile + '.' + k, '=', query['profile'][k]);
-					}
-				});
-				// search for user
-				['username'].forEach(function (k) {
-					if (k in query) {
-						count++;
-						qb.where(tbUser + '.' + k, 'like', '%' + query[k] + '%');
-					}
-				});
-				// search for profile
-				['name', 'university', 'major', 'summary'].forEach(function (k) {
-					if (k in query['profile']) {
-						count++;
-						qb.where(tbProfile + '.' + k, 'like', '%' + query['profile'][k] + '%');
-					}
-				});
-			}).query(function (qb) {
-				query['orders'].forEach(function (order) {
-					qb.orderBy(order[0], order[1]);
-				});
-			}).query('offset', query['offset'])
-			.query('limit', count ? query['limit'] : 0)
-			.fetch();
 	}
 });
 
 Users = User.Set = syBookshelf.Collection.extend({
 	model: User,
 
+	// ATTENTION:
 	// this overwriting can not be left out in each Collection
 	fetch: function () {
 		return Users.__super__.fetch.apply(this, arguments)
 			.then(function (collection) {
 				return collection.invokeThen('fetch');
 			});
+	}
+}, {
+	finder: function (qb, query) {
+		query['profile'] = query['profile'] || {};
+		qb.join(tbProfile, tbProfile + '.userid', '=', tbUser + '.id');
+		// find for user
+		['id', 'username', 'isonline'].forEach(function (k) {
+			if (k in query) {
+				qb.where(tbUser + '.' + k, '=', query[k]);
+			}
+		});
+		// find for profile
+		['name', 'gender'].forEach(function (k) {
+			if (k in query['profile']) {
+				qb.where(tbProfile + '.' + k, '=', query['profile'][k]);
+			}
+		});
+	},
+
+	searcher: function (qb, query) {
+		query['profile'] = query['profile'] || {};
+		var count = 0;
+		qb.join(tbProfile, tbProfile + '.userid', '=', tbUser + '.id');
+		// find for user
+		['isonline'].forEach(function (k) {
+			if (k in query) {
+				count++;
+				qb.where(tbUser + '.' + k, '=', query[k]);
+			}
+		});
+		// find for profile
+		['gender'].forEach(function (k) {
+			if (k in query['profile']) {
+				count++;
+				qb.where(tbProfile + '.' + k, '=', query['profile'][k]);
+			}
+		});
+		// search for user
+		['username'].forEach(function (k) {
+			if (k in query) {
+				count++;
+				qb.where(tbUser + '.' + k, 'like', '%' + query[k] + '%');
+			}
+		});
+		// search for profile
+		['name', 'university', 'major', 'summary'].forEach(function (k) {
+			if (k in query['profile']) {
+				count++;
+				qb.where(tbProfile + '.' + k, 'like', '%' + query['profile'][k] + '%');
+			}
+		});
 	}
 });

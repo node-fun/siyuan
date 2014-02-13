@@ -3,6 +3,7 @@
  */
 var _ = require('underscore'),
 	User = require('../models/user'),
+	Users = User.Set,
 	errors = require('../lib/errors'),
 	config = require('../config'),
 	imageLimit = config.imageLimit;
@@ -51,7 +52,7 @@ module.exports = function (app) {
 	 * </pre>
 	 */
 	app.get('/api/users/find', function (req, res, next) {
-		User.find(req.query)
+		Users.list(req.query, Users.finder)
 			.then(function (users) {
 				next({ users: users });
 			}).catch(next);
@@ -70,7 +71,7 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.get('/api/users/search', function (req, res, next) {
-		User.search(req.query)
+		Users.list(req.query, Users.searcher)
 			.then(function (users) {
 				next({ users: users });
 			}).catch(next);

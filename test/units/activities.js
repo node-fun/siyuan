@@ -23,6 +23,7 @@ describe('activities', function () {
 	var groupid;
 	var _groupid;
 	var usershipid;
+	var actID;
 	it('creates activity', function (done) {
 		request.post('http://localhost:' + config.port + '/api/groups/create', {
 			jar: jar,
@@ -54,7 +55,7 @@ describe('activities', function () {
 				done();
 			})
 		})
-	});
+	});/*
 
 	it('join activity', function (done) {
 		request.post('http://localhost:' + config.port + '/api/groups/join', {
@@ -67,6 +68,7 @@ describe('activities', function () {
 			request.get('http://localhost:' + config.port + '/api/groups/view?id=' + _groupid, {
 				jar: jar
 			}, function (err, res, data) {
+				console.log(data);
 				var actArr = data['activities'];
 					actID = actArr[0]['id'];
 				request.post(apiHost + '/join', {
@@ -94,7 +96,7 @@ describe('activities', function () {
 			done();
 		})
 	})
-
+*/
 	it('activities history', function (done) {
 		request.get(apiHost + '/history', {
 			jar: jar,

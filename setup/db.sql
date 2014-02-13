@@ -213,16 +213,23 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `issues` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `userid` INT NOT NULL,
+  `groupid` INT NULL,
   `title` VARCHAR(64) NULL,
   `body` VARCHAR(512) NULL,
   `posttime` DATETIME NULL,
   PRIMARY KEY (`id`),
   INDEX `_idx` (`userid` ASC),
+  INDEX `fk_groupid_idx` (`groupid` ASC),
   CONSTRAINT `fk_issues_1`
     FOREIGN KEY (`userid`)
     REFERENCES `users` (`id`)
     ON DELETE CASCADE
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_groupid`
+    FOREIGN KEY (`groupid`)
+    REFERENCES `groups` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT)
 ENGINE = InnoDB;
 
 

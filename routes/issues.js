@@ -57,6 +57,7 @@ module.exports = function (app) {
 	 * @method 发布话题
 	 * @param {String} title 标题
 	 * @param {String} body 内容
+	 * @param {String} [groupid] 圈子id，不传值表示校友交流，传值表示圈内分享
 	 * @return {JSON}
 	 */
 	app.post('/api/issues/post', function (req, res, next) {

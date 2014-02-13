@@ -15,6 +15,7 @@ module.exports = function (app) {
 	 * @param {Number} [id] 话题ID
 	 * @param {Number} [userid] 作者ID
 	 * @param {String} [title] 标题
+	 * @param {String} [groupid] 圈子id，不传值表示校友交流，传值表示圈内分享
 	 * @return {JSON}
 	 */
 	app.get('/api/issues/find', function (req, res, next) {
@@ -30,6 +31,7 @@ module.exports = function (app) {
 	 * @param {Number} [userid] 作者ID
 	 * @param {String} [title] 标题关键字
 	 * @param {String} [body] 内容关键字
+	 * @param {String} [groupid] 圈子id，不传值表示校友交流，传值表示圈内分享
 	 * @return {JSON}
 	 */
 	app.get('/api/issues/search', function (req, res, next) {
@@ -57,6 +59,7 @@ module.exports = function (app) {
 	 * @method 发布话题
 	 * @param {String} title 标题
 	 * @param {String} body 内容
+	 * @param {String} [groupid] 圈子id，不传值表示校友交流，传值表示圈内分享
 	 * @return {JSON}
 	 */
 	app.post('/api/issues/post', function (req, res, next) {

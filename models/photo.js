@@ -42,7 +42,7 @@ Photo = module.exports = syBookshelf.Model.extend({
 
 	getAssetPath: function (type) {
 		// don't miss the `''+` below
-		return path.join(config.assets[type].dir, ''+this.get('userid'), this.getAssetName(type));
+		return path.join(config.assets[type].dir, '' + this.get('userid'), this.getAssetName(type));
 	}
 }, {
 	randomForge: function () {
@@ -50,23 +50,6 @@ Photo = module.exports = syBookshelf.Model.extend({
 			description: chance.sentence(),
 			posttime: chance.date({ year: 2013 })
 		});
-	},
-
-	find: function (query) {
-		return Photos.forge()
-			.query(function (qb) {
-				['id', 'userid'].forEach(function (k) {
-					if (k in query) {
-						qb.where(k, query[k]);
-					}
-				});
-			}).query(function(qb){
-				query['orders'].forEach(function (order) {
-					qb.orderBy(order[0], order[1]);
-				});
-			}).query('offset', query['offset'])
-			.query('limit', query['limit'])
-			.fetch();
 	}
 });
 
@@ -78,5 +61,21 @@ Photos = Photo.Set = syBookshelf.Collection.extend({
 			.then(function (collection) {
 				return collection.invokeThen('fetch');
 			});
+	}
+}, {
+	finder: function (qb, query) {
+		['id', 'userid'].forEach(function (k) {
+			if (k in query) {
+				qb.where(k, query[k]);
+			}
+		});
+	},
+
+	searcher: function (qb, query) {
+		['description'].forEach(function (k) {
+			if (k in query) {
+				qb.where(k, 'like', '%' + query[k] + '%');
+			}
+		});
 	}
 });

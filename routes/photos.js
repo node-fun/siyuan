@@ -5,6 +5,7 @@
 var _ = require('underscore'),
 	Promise = require('bluebird'),
 	Photo = require('../models/photo'),
+	Photos = Photo.Set,
 	errors = require('../lib/errors'),
 	config = require('../config'),
 	imageLitmit = config.imageLitmit;
@@ -18,7 +19,20 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.get('/api/photos/find', function (req, res, next) {
-		Photo.find(req.query)
+		Photos.list(req.query, Photos.finder)
+			.then(function (photos) {
+				next({ photos: photos });
+			}).catch(next);
+	});
+
+	/**
+	 * GET /api/photos/search
+	 * @method 相片搜索
+	 * @param {String} [description] 相片描述
+	 * @return {JSON}
+	 */
+	app.get('/api/photos/search', function (req, res, next) {
+		Photos.list(req.query, Photos.searcher)
 			.then(function (photos) {
 				next({ photos: photos });
 			}).catch(next);

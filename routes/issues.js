@@ -5,6 +5,7 @@
 var _ = require('underscore'),
 	Promise = require('bluebird'),
 	Issue = require('../models/issue'),
+	Issues = Issue.Set,
 	IssueComment = require('../models/issue-comment'),
 	errors = require('../lib/errors');
 
@@ -19,7 +20,7 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.get('/api/issues/find', function (req, res, next) {
-		Issue.find(req.query)
+		Issues.list(req.query, Issues.finder)
 			.then(function (issues) {
 				next({ issues: issues });
 			}).catch(next);
@@ -35,7 +36,7 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.get('/api/issues/search', function (req, res, next) {
-		Issue.search(req.query)
+		Issues.list(req.query, Issues.searcher)
 			.then(function (issues) {
 				next({ issues: issues });
 			}).catch(next);

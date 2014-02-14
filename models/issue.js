@@ -55,58 +55,6 @@ Issue = module.exports = syBookshelf.Model.extend({
 		});
 	},
 
-	find: function (query) {
-		return Issues.forge()
-			.query(function (qb) {
-				if(!query['groupid']){
-					qb.whereNull('groupid');
-				}else{
-					qb.where('groupid', query['groupid']);
-				}
-				['id', 'userid', 'title'].forEach(function (k) {
-					if (k in query) {
-						qb.where(k, query[k]);
-					}
-				});
-			}).query(function (qb) {
-				query['orders'].forEach(function (order) {
-					qb.orderBy(order[0], order[1]);
-				});
-			}).query('offset', query['offset'])
-			.query('limit', query['limit'])
-			.fetch();
-	},
-
-	search: function (query) {
-		var count = 0;
-		return Issues.forge()
-			.query(function (qb) {
-				if(!query['groupid']){
-					qb.whereNull('groupid');
-				}else{
-					qb.where('groupid', query['groupid']);
-				}
-				['userid'].forEach(function (k) {
-					if (k in query) {
-						count++;
-						qb.where(k, query[k]);
-					}
-				});
-				['title', 'body'].forEach(function (k) {
-					if (k in query) {
-						count++;
-						qb.where(k, 'like', '%' + query[k] + '%');
-					}
-				});
-			}).query(function (qb) {
-				query['orders'].forEach(function (order) {
-					qb.orderBy(order[0], order[1]);
-				});
-			}).query('offset', query['offset'])
-			.query('limit', count ? query['limit'] : 0)
-			.fetch();
-	},
-
 	view: function (query) {
 		return Issue.forge({ id: query['id'] })
 			.fetch({
@@ -132,5 +80,30 @@ Issues = Issue.Set = syBookshelf.Collection.extend({
 			.then(function (collection) {
 				return collection.invokeThen('fetch');
 			});
+	}
+}, {
+	finder: function (qb, query) {
+		['id', 'userid', 'title', 'groupid'].forEach(function (k) {
+			if (k in query) {
+				qb.where(k, query[k]);
+			}
+		});
+	},
+
+	searcher: function (qb, query) {
+		var count = 0;
+		['userid', 'groupid'].forEach(function (k) {
+			if (k in query) {
+				count++;
+				qb.where(k, query[k]);
+			}
+		});
+		['title', 'body'].forEach(function (k) {
+			if (k in query) {
+				count++;
+				qb.where(k, 'like', '%' + query[k] + '%');
+			}
+		});
+		if (count < 1) query['limit'] = 0;
 	}
 });

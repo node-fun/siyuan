@@ -15,22 +15,7 @@ Starship = module.exports = syBookshelf.Model.extend({
 		return this.belongsTo(require('./user'), 'userid');
 	}
 }, {
-	find: function (query) {
-		return StarshipSet.forge()
-			.query(function (qb) {
-				['id', 'userid', 'itemtype', 'itemid'].forEach(function (k) {
-					if (k in query) {
-						qb.where(k, query[k]);
-					}
-				});
-			}).query(function(qb){
-				query['orders'].forEach(function (order) {
-					qb.orderBy(order[0], order[1]);
-				});
-			}).query('offset', query['offset'])
-			.query('limit', query['limit'])
-			.fetch();
-	}
+
 });
 
 StarshipSet = Starship.Set = syBookshelf.Collection.extend({
@@ -41,5 +26,13 @@ StarshipSet = Starship.Set = syBookshelf.Collection.extend({
 			.then(function (collection) {
 				return collection.invokeThen('fetch');
 			});
+	}
+}, {
+	finder: function (qb, query) {
+		['id', 'userid', 'itemtype', 'itemid'].forEach(function (k) {
+			if (k in query) {
+				qb.where(k, query[k]);
+			}
+		});
 	}
 });

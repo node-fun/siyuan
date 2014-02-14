@@ -5,8 +5,9 @@
 var _ = require('underscore'),
 	Promise = require('bluebird'),
 	Starship = require('../models/starship'),
+	StarshipSet = Starship.Set,
 	errors = require('../lib/errors'),
-	Resource = require('../lib/resource');
+	Entity = require('../lib/entity');
 
 module.exports = function (app) {
 	/**
@@ -19,7 +20,7 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.get('/api/starship/find', function (req, res, next) {
-		Starship.find(req.query)
+		StarshipSet.list(req.query, StarshipSet.finder)
 			.then(function (starshipSet) {
 				next({ starring: starshipSet });
 			}).catch(next);
@@ -37,19 +38,23 @@ module.exports = function (app) {
 		var user = req.user;
 		if (!user) return next(errors[21301]);
 		req.body['userid'] = user.id;
-		Resource.forge(
-				_.pick(req.body, ['itemtype', 'itemid'])
-			).fetch()
-			.then(function (resource) {
-				if (!resource) return Promise.rejected(errors[20605]);
+		Entity.forge(req.body['itemtype'], {
+			id: req.body['itemid']
+		}).then(function (model) {
+				return model.fetch();
+			}).then(function (entity) {
+				if (!entity) return Promise.reject(errors[20605]);
 				return Starship.forge(
 						_.pick(req.body, ['userid', 'itemtype', 'itemid', 'remark'])
 					).save()
-					.catch(function () {
-						return Promise.rejected(errors[20506]);
+					.catch(function (err) {
+						if (/^ER_DUP_ENTRY/.test(err.message)) {
+							return Promise.reject(errors[20506]);
+						}
+						return Promise.reject(err);
 					});
 			}).then(function () {
-				next({ msg: 'Resource starred' });
+				next({ msg: 'Entity starred' });
 			}).catch(next);
 	});
 
@@ -66,13 +71,13 @@ module.exports = function (app) {
 				_.pick(req.body, 'id')
 			).fetch()
 			.then(function (starship) {
-				if (!starship) return Promise.rejected(errors[20603]);
+				if (!starship) return Promise.reject(errors[20603]);
 				if (starship.get('userid') != user.id) {
-					return Promise.rejected(errors[20102]);
+					return Promise.reject(errors[20102]);
 				}
 				return starship.destroy();
 			}).then(function () {
-				next({ msg: 'Resource unstarred' });
+				next({ msg: 'Entity unstarred' });
 			}).catch(next);
 	});
 
@@ -90,15 +95,15 @@ module.exports = function (app) {
 				_.pick(req.body, 'id')
 			).fetch()
 			.then(function (starship) {
-				if (!starship) return Promise.rejected(errors[20603]);
+				if (!starship) return Promise.reject(errors[20603]);
 				if (starship.get('userid') != user.id) {
-					return Promise.rejected(errors[20102]);
+					return Promise.reject(errors[20102]);
 				}
 				return starship.set(
 					_.pick(req.body, 'remark')
 				).save();
 			}).then(function () {
-				next({ msg: 'Resource remarked' });
+				next({ msg: 'Entity remarked' });
 			}).catch(next);
 	});
 };

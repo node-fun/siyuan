@@ -64,10 +64,7 @@ module.exports = function (app) {
 	 */
 	app.get('/api/activities/find', function (req, res, next) {
 		Activities.list(req.query, Activities.finder)
-			.then(function (activities) {/*
-				activities.mapThen(function (activity) {
-					activity.countUsership();
-				});*/
+			.then(function (activities) {
 				next({
 					activities: activities
 				});
@@ -150,65 +147,36 @@ module.exports = function (app) {
 	 * 		id: 6  
 	 * }</pre>
 	 */
-	app.post('/api/activities/join', function (req, res, next) {
+	app.get('/api/activities/join', function (req, res, next) {
 		var user = req.user;
 
 		if (!user) next(errors[21301]);
 		if (!req.body['id'])
 			next(errors[10008]);
 
-		Activity.forge(req.body)
+		Activity.forge({ id: req.body['id'] })
 			.fetch()
 			.then(function (activity) {
-				var groupid = activity.get('groupid');
-				activity.load(['usership', 'status']).then(function (activity) {
-					return Group.forge({
-						'id': groupid
-					}).fetch()
-						.then(function (group) {
-							return group.load(['memberships'])
-								.then(function (group) {
-									var members = group.related('memberships').models;
-									var isfounded = false;
-									_.each(members, function (member) {
-										if (member.get('userid') == user.id) {
-											isfounded = true;
-										}
-									});
-									if (!isfounded) next(errors[40001]);
+				var statusid = activity.get('statusid');
 
-									isfounded = false;//use it again
-									var userships = activity.related('usership').models;
-									_.each(userships, function (usership) {
-										if (usership.get('userid') == user.id) {
-											isfounded = true;
-										}
-									});
-									if (isfounded) next(errors[40002]);
+				if (statusid == 2) next(errors[40012]);
+				if (statusid == 3) next(errors[40013]);
+				if (statusid == 4) next(errors[40014]);
 
-									var statusid = activity.related('status').get('id');
-									if (statusid == 2) next(errors[40012]);
-									if (statusid == 3) next(errors[40013]);
-									if (statusid == 4) next(errors[40014]);
-
-									if (statusid == 1) {
-										return UserActivity.forge({
-											'userid': user.id,
-											'activityid': activity.get('id'),
-											'isaccepted': false
-										}).save()
-											.then(function (usership) {
-												next({
-													msg: 'join success',
-													id: usership.get('id')
-												});
-											});
-									} else {
-										next(errors[40015]);
-									}
-								})
-						});
-				});
+				UserActivity.forge({
+					'userid': user.id,
+					'activityid': activity.get('id'),
+					'isaccepted': false
+				}).save()
+				.then(function () {
+					next({ msg: 'join activity success' });
+				}).catch(function (err) {
+						if (/^ER_DUP_ENTRY/.test(err.message)) {
+							next(errors[20506]);
+						} else {
+							next(err);
+						}
+					})
 			});
 	});
 

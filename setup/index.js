@@ -238,10 +238,19 @@ function addUserActivitys() {
 			isaccepted: chance.bool()
 		}));
 	});
-	return useractivitys.invokeThen('save')
+	/*return useractivitys.invokeThen('save')
 		.then(function () {
 			console.log('%d useractivitys added', numUserActivitys);
-		});
+		});*/
+	return useractivitys
+		.mapThen(function (useractivity) {
+			return useractivity.save()
+				.catch(function () {
+					useractivitys.remove(useractivity);
+				});
+		}).then(function () {
+			console.log('%d useractivitys added', numUserActivitys = useractivitys.length);
+		})
 }
 
 function addUserCooperations() {

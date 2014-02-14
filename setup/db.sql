@@ -194,6 +194,7 @@ CREATE TABLE IF NOT EXISTS `user_activity` (
   PRIMARY KEY (`id`),
   INDEX `fk_user_activity_activities1_idx` (`activityid` ASC),
   INDEX `fk_user_activity_users1_idx` (`userid` ASC),
+  UNIQUE INDEX `userid_activityid_UNIQUE` (`userid` ASC, `activityid` ASC),
   CONSTRAINT `fk_user_activity_activities1`
     FOREIGN KEY (`activityid`)
     REFERENCES `activities` (`id`)
@@ -503,4 +504,5 @@ INSERT INTO `resource_types` (`id`, `name`) VALUES (3, 'activity');
 INSERT INTO `resource_types` (`id`, `name`) VALUES (4, 'cooperation');
 
 COMMIT;
+
 

@@ -173,9 +173,14 @@ function addGroups() {
 			createtime: chance.date({ year: 2013 })
 		}));
 	});
-	return groups.invokeThen('save')
-		.then(function () {
-			console.log('%d groups added', numGroups);
+	return groups
+		.mapThen(function (group) {
+			return group.save()
+				.catch(function () {
+					groups.remove(group);
+				});
+		}).then(function () {
+			console.log('%d groups added', numGroups = groups.length);
 		});
 }
 function addGroupMembers() {
@@ -189,9 +194,14 @@ function addGroupMembers() {
 			'remark': chance.word()
 		}));
 	});
-	return groupmembers.invokeThen('save')
-		.then(function () {
-			console.log('%d groupmembers added', numGroupMembers);
+	return groupmembers
+		.mapThen(function (groupmember) {
+			return groupmember.save()
+				.catch(function () {
+					groupmembers.remove(groupmember);
+				});
+		}).then(function () {
+			console.log('%d groupmembers added', numGroupMembers = groupmembers.length);
 		});
 }
 
@@ -204,7 +214,7 @@ function addActivities() {
 			'groupid': i,
 			'statusid': 1
 		}));
-		if(i < numGroups) i++;  //it will influence activity test, please don't recorrect it
+		if (i < numGroups) i++;  //it will influence activity test, please don't recorrect it
 	});
 	return activities.invokeThen('save')
 		.then(function () {
@@ -212,7 +222,7 @@ function addActivities() {
 				//copy avatar
 				var gender = 'f',
 					face = localface.get(gender);
-				return activity.updateAvatar(face);
+				return activity.updateAsset('avatar', face);
 			});
 		}).then(function () {
 			console.log('%d activities added', numActivities);
@@ -315,22 +325,27 @@ function addEvents() {
 	_.times(numEvents, function () {
 		var oEvent = {
 			userid: _.random(1, numUsers),
-			groupid: chance.bool()? null: _.random(1, numGroups),
+			groupid: chance.bool() ? null : _.random(1, numGroups),
 			itemid: _.random(1, 20)
 		};
-		_.extend(oEvent, _.sample([{
-			itemtype: resources.indexOf('user') + 1,
-			message: chance.name() + ' ' + _.sample(['拉黑', '玩弄']) + '了用户 ' + chance.name()
-		}, {
-			itemtype: resources.indexOf('issue') + 1,
-			message: chance.name() + ' ' + _.sample(['发表', '评论']) + '了话题 ' + chance.sentence()
-		}, {
-			itemtype: resources.indexOf('activity') + 1,
-			message: chance.name() + ' ' + _.sample(['发布', '参与']) + '了活动 ' + chance.sentence()
-		}, {
-			itemtype: resources.indexOf('cooperation') + 1,
-			message: chance.name() + ' ' + _.sample(['发布', '参与']) + '了商务合作 ' + chance.sentence()
-		}]));
+		_.extend(oEvent, _.sample([
+			{
+				itemtype: resources.indexOf('user') + 1,
+				message: chance.name() + ' ' + _.sample(['拉黑', '玩弄']) + '了用户 ' + chance.name()
+			},
+			{
+				itemtype: resources.indexOf('issue') + 1,
+				message: chance.name() + ' ' + _.sample(['发表', '评论']) + '了话题 ' + chance.sentence()
+			},
+			{
+				itemtype: resources.indexOf('activity') + 1,
+				message: chance.name() + ' ' + _.sample(['发布', '参与']) + '了活动 ' + chance.sentence()
+			},
+			{
+				itemtype: resources.indexOf('cooperation') + 1,
+				message: chance.name() + ' ' + _.sample(['发布', '参与']) + '了商务合作 ' + chance.sentence()
+			}
+		]));
 		var event = Event.forge(oEvent);
 		events.add(event);
 	});

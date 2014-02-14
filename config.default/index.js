@@ -21,7 +21,10 @@ var assets = (function () {
 		ext: '.jpg',
 		public: true
 	};
-	['avatars', 'covers', 'photos'].forEach(function (type) {
+	[
+		'avatars', 'covers', 'photos',
+		'activities', 'cooperations'
+	].forEach(function (type) {
 		o[type] = _.extend({}, proto, {
 			dir: path.join(contentDir, type)
 		});
@@ -41,8 +44,6 @@ var config = module.exports = {
 
 	docsStaticPath: '/docs',
 	adminStaticPath: '/admin',
-	activityStaticPath: '/activities',
-	cooperationStaticPath: '/cooperations',
 	adStaticPath: '/ad',
 	indexStaticPath: '/',
 	groupStaticDir: '/groups',
@@ -54,8 +55,6 @@ var config = module.exports = {
 		return path.resolve(file).replace(contentDir, '');
 	},
 
-	activityAvatarDir: path.join(contentDir, 'activities'),
-	cooperationAvatarDir: path.join(contentDir, 'cooperations'),
 	groupDir: path.join(contentDir, 'groups'),
 
 	port: ('PORT' in process.env) ? process.env['PORT'] :

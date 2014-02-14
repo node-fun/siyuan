@@ -54,12 +54,12 @@ User = module.exports = syBookshelf.Model.extend({
 		};
 	},
 	toJSON: function () {
-		var ret = User.__super__.toJSON.apply(this, arguments),
-			self = this;
+		var self = this, Model = this.constructor,
+			ret = Model.__super__.toJSON.apply(this, arguments);
 		// to uri if exists
 		_.each(this.fieldToAssets, function (type, field) {
 			if (self.get(field) != null) {
-				var file = User.getAssetPath(type, self.id);
+				var file = Model.getAssetPath(type, self.id);
 				ret[field] = config.toStaticURI(file) + '?t=' + ret[field];
 			}
 		});

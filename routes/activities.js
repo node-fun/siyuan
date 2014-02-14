@@ -512,7 +512,6 @@ module.exports = function (app) {
 		if (file['size'] > imageLimit) next(errors[20006]);
 		Activity.forge({ id: req.body['id'] }).fetch()
 			.then(function (activity) {
-				console.log(file['path']);
 				activity.updateAsset('avatar', file['path'])
 					.then(function () {
 						next({ msg: 'avatar updated' });

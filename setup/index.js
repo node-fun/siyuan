@@ -366,7 +366,7 @@ function addCooperations() {
 				//copy avatar
 				var gender = 'f',
 					face = localface.get(gender);
-				return cooperation.updateAvatar(face);
+				return cooperation.updateAsset('avatar', face);
 			});
 		})
 		.then(function () {

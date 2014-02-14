@@ -86,7 +86,9 @@ Issues = Issue.Set = syBookshelf.Collection.extend({
 	}
 }, {
 	finder: function (qb, query) {
-		['id', 'userid', 'title', 'groupid'].forEach(function (k) {
+		var k = 'groupid';
+		query[k] ? qb.where(k, query[k]) : qb.whereNull(k);//如果groupid没有传值，就要给他取null
+		['id', 'userid', 'title'].forEach(function (k) {
 			if (k in query) {
 				qb.where(k, query[k]);
 			}
@@ -95,7 +97,9 @@ Issues = Issue.Set = syBookshelf.Collection.extend({
 
 	searcher: function (qb, query) {
 		var count = 0;
-		['userid', 'groupid'].forEach(function (k) {
+		var k = 'groupid';
+		query[k] ? qb.where(k, query[k]) : qb.whereNull(k);//如果groupid没有传值，就要给他取null
+		['userid'].forEach(function (k) {
 			if (k in query) {
 				count++;
 				qb.where(k, query[k]);

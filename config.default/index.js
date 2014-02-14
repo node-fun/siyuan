@@ -70,7 +70,7 @@ var config = module.exports = {
 		}
 	},
 
-	resources: ['user', 'issue', 'activity', 'cooperation'],
+	entities: ['user', 'issue', 'activity', 'cooperation'],
 	avatarExt: imageExt,
 	imageLimit: 4 * 1024 * 1024,
 	admins: [

@@ -7,7 +7,7 @@ var fs = require('fs-extra'),
 	env = config.env,
 	connConfig = config.db.connection,
 	dbName = connConfig.database,
-	resources = config.resources,
+	entities = config.entities,
 	User = require('../models/user'),
 	Users = User.Set,
 	Followship = require('../models/followship'),
@@ -304,7 +304,7 @@ function addStarship() {
 	_.times(numStarship, function () {
 		var starship = Starship.forge({
 			userid: _.random(1, numUsers),
-			itemtype: _.random(1, resources.length),
+			itemtype: _.random(1, entities.length),
 			itemid: _.random(1, 20),
 			remark: chance.word()
 		});
@@ -330,19 +330,19 @@ function addEvents() {
 		};
 		_.extend(oEvent, _.sample([
 			{
-				itemtype: resources.indexOf('user') + 1,
+				itemtype: entities.indexOf('user') + 1,
 				message: chance.name() + ' ' + _.sample(['拉黑', '玩弄']) + '了用户 ' + chance.name()
 			},
 			{
-				itemtype: resources.indexOf('issue') + 1,
+				itemtype: entities.indexOf('issue') + 1,
 				message: chance.name() + ' ' + _.sample(['发表', '评论']) + '了话题 ' + chance.sentence()
 			},
 			{
-				itemtype: resources.indexOf('activity') + 1,
+				itemtype: entities.indexOf('activity') + 1,
 				message: chance.name() + ' ' + _.sample(['发布', '参与']) + '了活动 ' + chance.sentence()
 			},
 			{
-				itemtype: resources.indexOf('cooperation') + 1,
+				itemtype: entities.indexOf('cooperation') + 1,
 				message: chance.name() + ' ' + _.sample(['发布', '参与']) + '了商务合作 ' + chance.sentence()
 			}
 		]));

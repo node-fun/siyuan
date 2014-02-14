@@ -11,7 +11,9 @@ var _ = require('underscore'),
 	GroupMember = require('../models/group-membership'),
 	GroupMembers = GroupMember.Set,
 	CoComment = require('../models/co-comment'),
-	errors = require('../lib/errors');
+	errors = require('../lib/errors'),
+	config = require('../config'),
+	imageLimit = config.imageLimit;
 
 module.exports = function (app) {
 	/**
@@ -631,17 +633,20 @@ module.exports = function (app) {
 	 * </pre>
 	 */
 	app.post('/api/cooperations/avatar/update', function (req, res, next) {
-		if (!req.files['avatar']) return next(errors[20007]);
-		var file = req.files['avatar'],
-			_3M = 3 * 1024 * 1024;
+		if (!req.files['avatar']) next(errors[20007]);
+		var user = req.user,
+			file = req.files['avatar'];
+		if (!user) next(errors[21301]);
 		if (!req.body['id']) next(errors[10008]);
-		if (file['type'] != 'image/jpeg') return next(errors[20005]);
-		if (file['size'] > _3M) return next(errors[20006]);
-		Cooperation.forge({ id: req.body['id'] })
-			.updateAvatar(file['path'])
-			.then(function () {
-				next({ msg: 'avatar updated' });
-			}).catch(next);
+		if (file['type'] != 'image/jpeg') next(errors[20005]);
+		if (file['size'] > imageLimit) next(errors[20006]);
+		Cooperation.forge({ id: req.body['id'] }).fetch()
+			.then(function (cooperation) {
+				cooperation.updateAsset('avatar', file['path'])
+					.then(function () {
+						next({ msg: 'avatar updated' });
+					}).catch(next);
+			})
 	});
 
 }

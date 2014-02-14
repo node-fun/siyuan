@@ -105,7 +105,8 @@ syModel = syBookshelf.Model = syModel.extend({
 	},
 
 	toJSON: function () {
-		var ret = syModel.__super__.toJSON.apply(this, arguments);
+		var self = this,
+			ret = syModel.__super__.toJSON.apply(this, arguments);
 		// add data
 		ret = _.defaults(ret, this._data);
 		// omit
@@ -114,6 +115,17 @@ syModel = syBookshelf.Model = syModel.extend({
 		ret = this.forTimestamp(ret);
 		// for boolean
 		ret = this.forBoolean(ret);
+		// field uri
+		_.each(this.fieldToAssets, function (type, field) {
+			if (config.assets[type].public && self.get(field) !== null) {
+				var file = self.getAssetPath(type),
+					value = ret[field];
+				ret[field] = config.toStaticURI(file);
+				if (value != null) {
+					ret[field] += '?t=' + value;
+				}
+			}
+		});
 		return ret;
 	},
 
@@ -163,13 +175,16 @@ syModel = syBookshelf.Model = syModel.extend({
 
 	updateAsset: function (field, tmp) {
 		var type = this.fieldToAssets[field],
-			file = this.constructor.getAssetPath(type, this.id),
+			file = this.getAssetPath(type),
 			self = this;
 		return new Promise(
 			function (resolve, reject) {
-				fs.copy(tmp, file, function (err) {
-					if (err) return reject(errors[30003]);
-					resolve();
+				fs.mkdirp(path.dirname(file), function (err) {
+					if (err) return reject(errors[30000]);
+					fs.copy(tmp, file, function (err) {
+						if (err) return reject(errors[30003]);
+						resolve(self);
+					});
 				});
 			}).then(function () {
 				return self.set(field, Date.now()).save()
@@ -182,14 +197,27 @@ syModel = syBookshelf.Model = syModel.extend({
 						return Promise.reject(err);
 					});
 			});
+	},
+	deleteAsset: function (field) {
+		var type = this.fieldToAssets[field],
+			file = this.getAssetPath(type),
+			self = this;
+		return new Promise(function (resolve, reject) {
+			fs.unlink(file, function (err) {
+				if (err) return reject(errors[30002]);
+				resolve(self);
+			});
+		});
+	},
+
+	getAssetName: function (type) {
+		return this.id + config.assets[type].ext;
+	},
+	getAssetPath: function (type) {
+		return path.join(config.assets[type].dir, this.getAssetName(type));
 	}
 }, {
-	getAssetName: function (type, id) {
-		return id + config.assets[type].ext;
-	},
-	getAssetPath: function (type, id) {
-		return path.join(config.assets[type].dir, this.getAssetName(type, id));
-	}
+
 });
 
 syBookshelf.Collection = syModel.Set = syCollection.extend({

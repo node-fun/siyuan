@@ -24,7 +24,10 @@ Starship = module.exports = syBookshelf.Model.extend({
 						if (!model) return model;
 						return model.fetch();
 					}).then(function (entity) {
-						return starship.set(Entity.names[itemtype], entity);
+						return starship.set({
+							typename: Entity.names[itemtype],
+							item: entity
+						});
 					});
 			});
 	},

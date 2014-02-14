@@ -221,13 +221,12 @@ syModel = syBookshelf.Model = syModel.extend({
 });
 
 syBookshelf.Collection = syModel.Set = syCollection.extend({
-	model: syModel
-}, {
+	model: syModel,
+
 	list: function (query, looker) {
-		var Model = this.prototype.model,
+		var Model = this.model,
 			related = Model.prototype.withRelated.concat();	// `concat` is necessary
-		return this.forge()
-			.query(function (qb) {
+		return this.query(function (qb) {
 				if (looker) looker(qb, query, related);
 			}).query(function (qb) {
 				query['orders'].forEach(function (order) {
@@ -238,5 +237,9 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 			}).fetch({
 				withRelated: related
 			});
+	}
+}, {
+	list: function (query, looker) {
+		return this.forge().list(query, looker);
 	}
 });

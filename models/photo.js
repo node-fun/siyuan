@@ -1,12 +1,9 @@
-var fs = require('fs-extra'),
-	path = require('path'),
+var path = require('path'),
 	Promise = require('bluebird'),
 	chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
 	errors = require('../lib/errors'),
 	config = require('../config'),
-	avatarExt = config.avatarExt,
-	albumDir = config.assets.photos.dir,
 	Photo, Photos;
 
 Photo = module.exports = syBookshelf.Model.extend({
@@ -16,20 +13,13 @@ Photo = module.exports = syBookshelf.Model.extend({
 	],
 	omitInJSON: ['userid'],
 	withRelated: ['user.profile'],
+	fieldToAssets: { image: 'photos' },
 
 	defaults: function () {
 		return {
 			description: '',
 			posttime: new Date()
 		};
-	},
-	toJSON: function () {
-		var ret = Photo.__super__.toJSON.apply(this, arguments);
-		// append avatar
-		if (!this.isNew()) {
-			ret['uri'] = config.toStaticURI(this.getPath());
-		}
-		return ret;
 	},
 	user: function () {
 		return this.belongsTo(require('./user'), 'userid');
@@ -39,44 +29,20 @@ Photo = module.exports = syBookshelf.Model.extend({
 		var self = this;
 		return Photo.__super__.created.call(self)
 			.then(function () {
-				return self.updateImage(self.data('image'));
+				return self.updateAsset('image', self.data('image'));
 			});
 	},
 	destroying: function () {
 		var self = this;
 		return Photo.__super__.destroying.call(self)
 			.then(function () {
-				return self.deleteImage();
+				return self.deleteAsset('image');
 			});
 	},
 
-	updateImage: function (tmp) {
-		var target = this.getPath(), self = this;
-		return new Promise(function (resolve, reject) {
-			fs.mkdirp(path.dirname(target), function (err) {
-				if (err) return reject(errors[30000]);
-				fs.copy(tmp, target, function (err) {
-					if (err) return reject(errors[30003]);
-					resolve(self);
-				});
-			});
-		});
-	},
-	deleteImage: function () {
-		var target = this.getPath(), self = this;
-		return new Promise(function (resolve, reject) {
-			fs.unlink(target, function (err) {
-				if (err) return reject(errors[30002]);
-				resolve(self);
-			});
-		});
-	},
-
-	getName: function () {
-		return this.get('userid') + '/' + this.id + avatarExt;
-	},
-	getPath: function () {
-		return path.join(albumDir, this.getName());
+	getAssetPath: function (type) {
+		// don't miss the `''+` below
+		return path.join(config.assets[type].dir, ''+this.get('userid'), this.getAssetName(type));
 	}
 }, {
 	randomForge: function () {

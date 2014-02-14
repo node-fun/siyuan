@@ -53,18 +53,6 @@ User = module.exports = syBookshelf.Model.extend({
 			regtime: new Date()
 		};
 	},
-	toJSON: function () {
-		var self = this, Model = this.constructor,
-			ret = Model.__super__.toJSON.apply(this, arguments);
-		// to uri if exists
-		_.each(this.fieldToAssets, function (type, field) {
-			if (self.get(field) != null) {
-				var file = Model.getAssetPath(type, self.id);
-				ret[field] = config.toStaticURI(file) + '?t=' + ret[field];
-			}
-		});
-		return ret;
-	},
 	profile: function () {
 		return this.hasOne(UserProfile, 'userid');
 	},
@@ -114,7 +102,6 @@ User = module.exports = syBookshelf.Model.extend({
 				// fix lower case
 				self.fixLowerCase(['username']);
 				if (self.hasChanged('password')) {
-
 					// encrypt password
 					self.set('password', encrypt(self.get('password')));
 				}
@@ -270,6 +257,7 @@ Users = User.Set = syBookshelf.Collection.extend({
 
 	// ATTENTION:
 	// this overwriting can not be left out in each Collection
+	// DO NOT use `this` here, it is not the Collection
 	fetch: function () {
 		return Users.__super__.fetch.apply(this, arguments)
 			.then(function (collection) {

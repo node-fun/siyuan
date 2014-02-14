@@ -15,42 +15,7 @@ Followship = module.exports = syBookshelf.Model.extend({
 		return this.belongsTo(require('./user'), 'followid');
 	}
 }, {
-	findFollowing: function (query) {
-		return FollowshipSet.forge()
-			.query(function (qb) {
-				['userid'].forEach(function (k) {
-					if (k in query) {
-						qb.where(k, query[k]);
-					}
-				});
-			}).query(function(qb){
-				query['orders'].forEach(function (order) {
-					qb.orderBy(order[0], order[1]);
-				});
-			}).query('offset', query['offset'])
-			.query('limit', query['limit'])
-			.fetch({
-				withRelated: ['followee.profile']
-			});
-	},
-	findFollowers: function (query) {
-		return FollowshipSet.forge()
-			.query(function (qb) {
-				['followid'].forEach(function (k) {
-					if (k in query) {
-						qb.where(k, query[k]);
-					}
-				});
-			}).query(function(qb){
-				query['orders'].forEach(function (order) {
-					qb.orderBy(order[0], order[1]);
-				});
-			}).query('offset', query['offset'])
-			.query('limit', query['limit'])
-			.fetch({
-				withRelated: ['user.profile']
-			});
-	}
+
 });
 
 FollowshipSet = Followship.Set = syBookshelf.Collection.extend({
@@ -61,5 +26,22 @@ FollowshipSet = Followship.Set = syBookshelf.Collection.extend({
 			.then(function (collection) {
 				return collection.invokeThen('fetch');
 			});
+	}
+}, {
+	finderFollowing: function (qb, query, related) {
+		['userid'].forEach(function (k) {
+			if (k in query) {
+				qb.where(k, query[k]);
+			}
+		});
+		related.push('followee.profile');
+	},
+	finderFollowers: function (qb, query, related) {
+		['followid'].forEach(function (k) {
+			if (k in query) {
+				qb.where(k, query[k]);
+			}
+		});
+		related.push('user.profile');
 	}
 });

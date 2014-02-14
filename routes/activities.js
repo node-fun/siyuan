@@ -4,6 +4,7 @@
 var _ = require('underscore'),
 	User = require('../models/user'),
 	Activity = require('../models/activity'),
+	Activities = Activity.Set,
 	UserActivity = require('../models/user-activity'),
 	GroupMembers = require('../models/group-membership'),
 	Group = require('../models/group'),
@@ -62,7 +63,7 @@ module.exports = function (app) {
 	 }</pre>
 	 */
 	app.get('/api/activities/find', function (req, res, next) {
-		Activity.find(req.query)
+		Activities.list(req.query, Activities.finder)
 			.then(function (activities) {/*
 				activities.mapThen(function (activity) {
 					activity.countUsership();
@@ -82,7 +83,7 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.get('/api/activities/search', function (req, res, next) {
-		Activity.search(req.query)
+		Activities.list(req.query, Activities.searcher)
 			.then(function (activities) {
 				next({ activities: activities });
 			});

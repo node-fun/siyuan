@@ -4,10 +4,9 @@
 var _ = require('underscore'),
 	Promise = require('bluebird'),
 	User = require('../models/user'),
-	Users = User.Set,
 	Cooperation = require('../models/cooperation'),
+	Cooperations = Cooperation.Set,
 	UserCooperation = require('../models/user-cooperation'),
-	UserCooperations = UserCooperation.Set,
 	GroupMember = require('../models/group-membership'),
 	GroupMembers = GroupMember.Set,
 	CoComment = require('../models/co-comment'),
@@ -61,7 +60,7 @@ module.exports = function (app) {
 	 }</pre>
 	 */
 	app.get('/api/cooperations/find', function (req, res, next) {
-		Cooperation.find(req.query)
+		Cooperations.list(req.query, Cooperations.finder)
 			.then(function (cooperations) {
 				next({
 					cooperations: cooperations
@@ -78,7 +77,7 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.get('/api/cooperations/search', function (req, res, next) {
-		Cooperation.search(req.query)
+		Cooperations.list(req.query, Cooperations.searcher)
 			.then(function (cooperations) {
 				next({ cooperations: cooperations });
 			}).catch(next);

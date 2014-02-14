@@ -95,50 +95,6 @@ Activity = module.exports = syBookshelf.Model.extend({
 			'site': chance.word(),
 			'regdeadline': chance.date({ year: 2013 })
 		});
-	},
-
-	find: function (query) {
-		var forActivity = ['id', 'ownerid', 'groupid', 'content', 'statusid', 'name'],
-			activities = Activities.forge();
-		return activities
-			.query(function (qb) {
-				_.each(forActivity, function (k) {
-					if (k in query) {
-						qb.where(k, query[k]);
-					}
-				})
-			}).query(function (qb) {
-				query['orders'].forEach(function (order) {
-					qb.orderBy(order[0], order[1]);
-				});
-			}).query('offset', query['offset'])
-			.query('limit', query['limit'])
-			.fetch();
-	},
-
-	search: function (query) {
-		var count = 0;
-		return Activities.forge()
-			.query(function (qb) {
-				['name', 'content'].forEach(function (k) {
-					if (k in query) {
-						count++;
-						qb.where(k, query[k]);
-					}
-				});
-				['ownerid'].forEach(function (k) {
-					if (k in query) {
-						count++;
-						qb.where(k, 'like', '%' + query[k] + '%');
-					}
-				});
-			}).query(function (qb) {
-				query['orders'].forEach(function (order) {
-					qb.orderBy(order[0], order[1]);
-				});
-			}).query('offset', query['offset'])
-			.query('limit', count ? query['limit'] : 0)
-			.fetch();
 	}
 });
 
@@ -149,9 +105,34 @@ Activities = Activity.Set = syBookshelf.Collection.extend({
 		return Activities.__super__.fetch.apply(this, arguments)
 			.then(function (collection) {
 				return collection.invokeThen('fetch')
-					.then(function(){
+					.then(function () {
 						return collection;
 					});
 			});
+	}
+}, {
+	finder: function (qb, query) {
+		['id', 'ownerid', 'groupid', 'content', 'statusid', 'name'].forEach(function (k) {
+			if (k in query) {
+				qb.where(k, query[k]);
+			}
+		});
+	},
+
+	searcher: function (qb, query) {
+		var count = 0;
+		['ownerid', 'statusid', 'groupid'].forEach(function (k) {
+			if (k in query) {
+				count++;
+				qb.where(k, query[k]);
+			}
+		});
+		['name', 'content', 'site'].forEach(function (k) {
+			if (k in query) {
+				count++;
+				qb.where(k, 'like', '%' + query[k] + '%');
+			}
+		});
+		if (count < 1) query['limit'] = 0;
 	}
 });

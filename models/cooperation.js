@@ -15,13 +15,10 @@ var fs = require('fs'),
 	CoStatus = require('./co-status'),
 	UserCooperation = require('./user-cooperation'),
 	UserCooperations = UserCooperation.Set,
-	GroupMember = require('./group-membership'),
 	CoComment = require('./co-comment'),
 	CoComments = CoComment.Set,
 	Cooperation, Cooperations,
 	config = require('../config'),
-	avatarDir = config.assets.cooperations.dir,
-	avatarExt = config.avatarExt,
 	fkStatus = 'statusid',
 	fkCooperation = 'cooperationid',
 	fkOwner = 'ownerid';
@@ -111,50 +108,6 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 		});
 	},
 
-	find: function (query) {
-		var forCooperation = ['id', 'name', 'company', 'statusid'],
-			cooperations = Cooperations.forge();
-		return cooperations
-			.query(function (qb) {
-				_.each(forCooperation, function (k) {
-					if (k in query) {
-						qb.where(k, query[k]);
-					}
-				});
-			}).query(function (qb) {
-				query['orders'].forEach(function (order) {
-					qb.orderBy(order[0], order[1]);
-				});
-			}).query('offset', query['offset'])
-			.query('limit', query['limit'])
-			.fetch();
-	},
-
-	search: function (query) {
-		var count = 0;
-		return Cooperations.forge()
-			.query(function (qb) {
-				['name', 'description'].forEach(function (k) {
-					if (k in query) {
-						count++;
-						qb.where(k, query[k]);
-					}
-				});
-				['ownerid'].forEach(function (k) {
-					if (k in query) {
-						count++;
-						qb.where(k, 'like', '%' + query[k] + '%');
-					}
-				});
-			}).query(function (qb) {
-				query['orders'].forEach(function (order) {
-					qb.orderBy(order[0], order[1]);
-				});
-			}).query('offset', query['offset'])
-			.query('limit', count ? query['limit'] : 0)
-			.fetch();
-	},
-
 	view: function (query) {
 		return Cooperation.forge({ id: query['id'] })
 			.fetch().then(function (cooperation) {
@@ -177,9 +130,34 @@ Cooperations = Cooperation.Set = syBookshelf.Collection.extend({
 		return Cooperations.__super__.fetch.apply(this, arguments)
 			.then(function (collection) {
 				return collection.invokeThen('fetch')
-					.then(function(){
+					.then(function () {
 						return collection;
 					});
 			});
+	}
+}, {
+	finder: function (qb, query) {
+		['id', 'name', 'company', 'statusid'].forEach(function (k) {
+			if (k in query) {
+				qb.where(k, query[k]);
+			}
+		});
+	},
+
+	searcher: function (qb, query) {
+		var count = 0;
+		['ownerid', 'statusid'].forEach(function (k) {
+			if (k in query) {
+				count++;
+				qb.where(k, query[k]);
+			}
+		});
+		['name', 'company', 'description'].forEach(function (k) {
+			if (k in query) {
+				count++;
+				qb.where(k, 'like', '%' + query[k] + '%');
+			}
+		});
+		if (count < 1) query['limit'] = 0;
 	}
 });

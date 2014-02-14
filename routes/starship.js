@@ -38,9 +38,10 @@ module.exports = function (app) {
 		var user = req.user;
 		if (!user) return next(errors[21301]);
 		req.body['userid'] = user.id;
-		Entity.forge(req.body['itemtype'], {
-			id: req.body['itemid']
-		}).then(function (model) {
+		Entity
+			.forge(req.body['itemtype'], {
+				id: req.body['itemid']
+			}).then(function (model) {
 				return model.fetch();
 			}).then(function (entity) {
 				if (!entity) return Promise.reject(errors[20605]);

@@ -40,7 +40,7 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 			ret = Model.__super__.toJSON.apply(this, arguments);
 		_.each(this.fieldToAssets, function (type, field) {
 			if (self.get(field) != null) {
-				var file = Model.getAssetPath(type, self.id);
+				var file = self.getAssetPath(type);
 				ret[field] = config.toStaticURI(file) + '?t=' + ret[field];
 			}
 		});

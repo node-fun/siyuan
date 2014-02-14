@@ -54,7 +54,6 @@ app.use(config.docsStaticPath, express.static(config.docsDir));
 app.use(config.adminStaticPath, express.static(config.adminDir));
 app.use(config.adStaticPath, express.static(config.adDir));
 app.use(config.indexStaticPath, express.static(config.indexPath));
-app.use(config.groupStaticDir, express.static(config.groupDir));
 
 // listen on port
 app.listen(port, function () {

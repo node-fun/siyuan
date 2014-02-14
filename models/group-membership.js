@@ -25,5 +25,12 @@ GroupMembership = module.exports = syBookshelf.Model.extend({
 });
 
 GroupMembershipSet = GroupMembership.Set = syBookshelf.Collection.extend({
-	model: GroupMembership
+	model: GroupMembership,
+
+	fetch: function () {
+		return GroupMembershipSet.__super__.fetch.apply(this, arguments)
+			.then(function (collection) {
+				return collection.invokeThen('fetch');
+			});
+	}
 });

@@ -23,7 +23,8 @@ var assets = (function () {
 	};
 	[
 		'avatars', 'covers', 'photos',
-		'activities', 'cooperations'
+		'activities', 'cooperations',
+		'groups'
 	].forEach(function (type) {
 		o[type] = _.extend({}, proto, {
 			dir: path.join(contentDir, type)
@@ -46,7 +47,6 @@ var config = module.exports = {
 	adminStaticPath: '/admin',
 	adStaticPath: '/ad',
 	indexStaticPath: '/',
-	groupStaticDir: '/groups',
 
 	defaultContentDir: defaultContentDir,
 	contentDir: contentDir,
@@ -54,8 +54,6 @@ var config = module.exports = {
 	toStaticURI: function (file) {
 		return path.resolve(file).replace(contentDir, '');
 	},
-
-	groupDir: path.join(contentDir, 'groups'),
 
 	port: ('PORT' in process.env) ? process.env['PORT'] :
 		env == 'test' ? 8099 : 8088,

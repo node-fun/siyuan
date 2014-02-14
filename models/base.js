@@ -201,7 +201,6 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 		return this.forge()
 			.query(function (qb) {
 				if (looker) looker(qb, query, related);
-				console.log(related)
 			}).query(function (qb) {
 				query['orders'].forEach(function (order) {
 					qb.orderBy(order[0], order[1]);

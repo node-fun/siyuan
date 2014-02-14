@@ -5,6 +5,7 @@ var _ = require('underscore'),
 	Promise = require('bluebird'),
 	User = require('../models/user'),
 	Followship = require('../models/followship'),
+	FollowshipSet = Followship.Set,
 	errors = require('../lib/errors');
 
 module.exports = function (app) {
@@ -88,7 +89,7 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.get('/api/followship/following', function (req, res, next) {
-		Followship.findFollowing(req.query)
+		FollowshipSet.list(req.query, FollowshipSet.finderFollowing)
 			.then(function (followshipSet) {
 				next({ following: followshipSet });
 			}).catch(next);
@@ -101,7 +102,7 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.get('/api/followship/followers', function (req, res, next) {
-		Followship.findFollowers(req.query)
+		FollowshipSet.list(req.query, FollowshipSet.finderFollowers)
 			.then(function (followshipSet) {
 				next({ followers: followshipSet });
 			}).catch(next);

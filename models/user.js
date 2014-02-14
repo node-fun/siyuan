@@ -270,6 +270,7 @@ Users = User.Set = syBookshelf.Collection.extend({
 
 	// ATTENTION:
 	// this overwriting can not be left out in each Collection
+	// DO NOT use `this` here, it is not the Collection
 	fetch: function () {
 		return Users.__super__.fetch.apply(this, arguments)
 			.then(function (collection) {

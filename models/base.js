@@ -195,16 +195,21 @@ syModel = syBookshelf.Model = syModel.extend({
 syBookshelf.Collection = syModel.Set = syCollection.extend({
 	model: syModel
 }, {
-	list: function (query, fn) {
+	list: function (query, looker) {
+		var Model = this.prototype.model,
+			related = Model.prototype.withRelated.concat();	// `concat` is necessary
 		return this.forge()
 			.query(function (qb) {
-				if (fn) fn(qb, query);
+				if (looker) looker(qb, query, related);
+				console.log(related)
 			}).query(function (qb) {
 				query['orders'].forEach(function (order) {
 					qb.orderBy(order[0], order[1]);
 				});
 			}).query('offset', query['offset'])
 			.query('limit', query['limit'])
-			.fetch();
+			.fetch({
+				withRelated: related
+			});
 	}
 });

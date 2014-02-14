@@ -16,23 +16,7 @@ Event = module.exports = syBookshelf.Model.extend({
 		return this.belongsTo(require('./user'), 'userid');
 	}
 }, {
-	find: function (query) {
-		var accepts = ['id', 'userid', 'groupid', 'itemtype', 'itemid'];
-		return Events.forge()
-			.query(function (qb) {
-				_.each(accepts, function (k) {
-					if (k in query) {
-						qb.where(k, query[k]);
-					}
-				});
-			}).query(function (qb) {
-				query['orders'].forEach(function (order) {
-					qb.orderBy(order[0], order[1]);
-				});
-			}).query('offset', query['offset'])
-			.query('limit', query['limit'])
-			.fetch();
-	}
+
 });
 
 Events = Event.Set = syBookshelf.Collection.extend({
@@ -43,5 +27,13 @@ Events = Event.Set = syBookshelf.Collection.extend({
 			.then(function (collection) {
 				return collection.invokeThen('fetch');
 			});
+	}
+}, {
+	finder: function (qb, query) {
+		['id', 'userid', 'groupid', 'itemtype', 'itemid'].forEach(function (k) {
+			if (k in query) {
+				qb.where(k, query[k]);
+			}
+		});
 	}
 });

@@ -2,7 +2,8 @@
  * Created by fritz on 1/21/14.
  * @class 动态
  */
-var Event = require('../models/event');
+var Event = require('../models/event'),
+	Events = Event.Set;
 
 module.exports = function (app) {
 	/**
@@ -16,7 +17,7 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.get('/api/events/find', function (req, res, next) {
-		Event.find(req.query)
+		Events.list(req.query, Events.finder)
 			.then(function (events) {
 				next({ events: events });
 			}).catch(next);

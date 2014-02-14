@@ -314,5 +314,6 @@ Users = User.Set = syBookshelf.Collection.extend({
 				qb.where(tbProfile + '.' + k, 'like', '%' + query['profile'][k] + '%');
 			}
 		});
+		if (count < 1) query['limit'] = 0;
 	}
 });

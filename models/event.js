@@ -35,5 +35,22 @@ Events = Event.Set = syBookshelf.Collection.extend({
 				qb.where(k, query[k]);
 			}
 		});
+	},
+
+	searcher: function (qb, query) {
+		var count = 0;
+		['userid', 'groupid', 'itemtype', 'itemid'].forEach(function (k) {
+			if (k in query) {
+				count++;
+				qb.where(k, query[k]);
+			}
+		});
+		['message'].forEach(function (k) {
+			if (k in query) {
+				count++;
+				qb.where(k, 'like', '%' + query[k] + '%');
+			}
+		});
+		if (count < 1) query['limit'] = 0;
 	}
 });

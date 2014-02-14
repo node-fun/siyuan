@@ -72,10 +72,19 @@ Photos = Photo.Set = syBookshelf.Collection.extend({
 	},
 
 	searcher: function (qb, query) {
+		var count = 0;
+		['userid'].forEach(function (k) {
+			if (k in query) {
+				count++;
+				qb.where(k, query[k]);
+			}
+		});
 		['description'].forEach(function (k) {
 			if (k in query) {
+				count++;
 				qb.where(k, 'like', '%' + query[k] + '%');
 			}
 		});
+		if (count < 1) query['limit'] = 0;
 	}
 });

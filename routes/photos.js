@@ -28,6 +28,7 @@ module.exports = function (app) {
 	/**
 	 * GET /api/photos/search
 	 * @method 相片搜索
+	 * @param {Number} [userid] 用户ID
 	 * @param {String} [description] 相片描述
 	 * @return {JSON}
 	 */

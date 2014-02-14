@@ -233,9 +233,9 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 				query['orders'].forEach(function (order) {
 					qb.orderBy(order[0], order[1]);
 				});
-			}).query('offset', query['offset'])
-			.query('limit', query['limit'])
-			.fetch({
+				qb.offset(query['offset']);
+				qb.limit(query['limit'])
+			}).fetch({
 				withRelated: related
 			});
 	}

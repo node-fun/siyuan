@@ -148,7 +148,10 @@ Activities = Activity.Set = syBookshelf.Collection.extend({
 	fetch: function () {
 		return Activities.__super__.fetch.apply(this, arguments)
 			.then(function (collection) {
-				return collection.invokeThen('fetch');
+				return collection.invokeThen('fetch')
+					.then(function(){
+						return collection;
+					});
 			});
 	}
 });

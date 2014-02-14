@@ -31,5 +31,15 @@ UserActivity = module.exports = syBookshelf.Model.extend({
 });
 
 UserActivitys = UserActivity.Set = syBookshelf.Collection.extend({
-	model: UserActivity
+	model: UserActivity,
+
+	fetch: function () {
+		return UserActivitys.__super__.fetch.apply(this, arguments)
+			.then(function (collection) {
+				return collection.invokeThen('fetch')
+					.then(function(){
+						return collection;
+					});
+			});
+	}
 });

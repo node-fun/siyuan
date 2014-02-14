@@ -24,7 +24,10 @@ StarshipSet = Starship.Set = syBookshelf.Collection.extend({
 	fetch: function () {
 		return StarshipSet.__super__.fetch.apply(this, arguments)
 			.then(function (collection) {
-				return collection.invokeThen('fetch');
+				return collection.invokeThen('fetch')
+					.then(function(){
+						return collection;
+					});
 			});
 	}
 }, {

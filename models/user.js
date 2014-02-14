@@ -261,7 +261,10 @@ Users = User.Set = syBookshelf.Collection.extend({
 	fetch: function () {
 		return Users.__super__.fetch.apply(this, arguments)
 			.then(function (collection) {
-				return collection.invokeThen('fetch');
+				return collection.invokeThen('fetch')
+					.then(function(){
+						return collection;
+					});
 			});
 	}
 }, {

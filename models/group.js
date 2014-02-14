@@ -58,7 +58,7 @@ Group = module.exports = syBookshelf.Model.extend({
 				return group.countMembership();
 			});
 	}
-},{
+}, {
 
 });
 
@@ -68,7 +68,10 @@ Groups = Group.Set = syBookshelf.Collection.extend({
 	fetch: function () {
 		return Groups.__super__.fetch.apply(this, arguments)
 			.then(function (collection) {
-				return collection.invokeThen('fetch');
+				return collection.invokeThen('fetch')
+					.then(function(){
+						return collection;
+					});
 			});
 	}
 });

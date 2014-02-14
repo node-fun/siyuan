@@ -513,11 +513,10 @@ module.exports = function (app) {
 		Activity.forge({ id: req.body['id'] }).fetch()
 			.then(function (activity) {
 				console.log(file['path']);
-				activity.updateAvatar(file['path'])
+				activity.updateAsset('avatar', file['path'])
 					.then(function () {
 						next({ msg: 'avatar updated' });
 					}).catch(next);
 			});
 	});
 };
-

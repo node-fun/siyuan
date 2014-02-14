@@ -9,8 +9,6 @@ var fs = require('fs'),
 	UserActivity = require('./user-activity'),
 	UserActivities = UserActivity.Set,
 	config = require('../config'),
-	avatarDir = config.activityAvatarDir,
-	avatarExt = config.avatarExt,
 	fkActivity = 'activityid',
 	fkOwner = 'ownerid',
 	fkStatus = 'statusid',
@@ -24,6 +22,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 		'regdeadline'
 	],
 	withRelated: ['user.profile', 'status'],
+	fieldToAssets: { avatar: 'activities' },
 
 	defaults: function () {
 		return {
@@ -32,11 +31,14 @@ Activity = module.exports = syBookshelf.Model.extend({
 	},
 
 	toJSON: function () {
-		var ret = Activity.__super__.toJSON.apply(this, arguments);
-		// to avatar uri fi exists
-		if (this.get('avatar')) {
-			ret['avatar'] = Activity.getAvatarURI(this.id) + '?t=' + ret['avatar'];
-		}
+		var self = this, Model = this.constructor,
+			ret = Model.__super__.toJSON.apply(this, arguments);
+		_.each(this.fieldToAssets, function (type, field) {
+			if (self.get(field) != null) {
+				var file = Model.getAssetPath(type, self.id);
+				ret[field] = config.toStaticURI(file) + '?t=' + ret[field];
+			}
+		});
 		return ret;
 	},
 
@@ -71,31 +73,6 @@ Activity = module.exports = syBookshelf.Model.extend({
 	},
 	user: function () {
 		return this.belongsTo(require('./user'), fkOwner);
-	},
-
-	updateAvatar: function (tmp) {
-		var file = Activity.getAvatarPath(this.id),
-			self = this;
-		return new Promise(
-			function (resolve, reject) {
-				fs.readFile(tmp, function (err, data) {
-					if (err) return reject(errors[30000]);
-					fs.writeFile(file, data, function (err) {
-						if (err) return reject(errors[30001]);
-						resolve(self);
-					});
-				});
-			}).then(function () {
-				return self.set('avatar', Date.now()).save()
-					.then(function () {
-						return self;
-					});
-			}).catch(function (err) {
-				return self.set('avatar', null).save()
-					.then(function () {
-						return Promise.rejected(err);
-					})
-			})
 	}
 }, {
 	randomForge: function () {
@@ -162,16 +139,6 @@ Activity = module.exports = syBookshelf.Model.extend({
 			}).query('offset', query['offset'])
 			.query('limit', count ? query['limit'] : 0)
 			.fetch();
-	},
-
-	getAvatarName: function (id) {
-		return id + avatarExt;
-	},
-	getAvatarPath: function (id) {
-		return path.join(avatarDir, Activity.getAvatarName(id));
-	},
-	getAvatarURI: function (id) {
-		return '/activities/' + Activity.getAvatarName(id);
 	}
 });
 

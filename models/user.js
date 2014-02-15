@@ -59,10 +59,10 @@ User = module.exports = syBookshelf.Model.extend({
 		return this.hasOne(UserProfile, 'userid');
 	},
 	following: function () {
-		return this.hasMany(require('./followship'), 'userid');
+		return this.hasMany(Followship, 'userid');
 	},
 	followers: function () {
-		return this.hasMany(require('./followship'), 'followid');
+		return this.hasMany(Followship, 'followid');
 	},
 	groups: function () {
 		return this.belongsToMany(Group, 'group_membership', 'userid', 'groupid');

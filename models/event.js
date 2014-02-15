@@ -3,6 +3,8 @@
  */
 var _ = require('underscore'),
 	syBookshelf = require('./base'),
+	requireFn = require('../lib/requireFn'),
+	User = requireFn('./user'),
 	Event, Events;
 
 Event = module.exports = syBookshelf.Model.extend({
@@ -13,7 +15,7 @@ Event = module.exports = syBookshelf.Model.extend({
 	withRelated: ['user.profile'],
 
 	user: function () {
-		return this.belongsTo(require('./user'), 'userid');
+		return this.belongsTo(User(), 'userid');
 	}
 }, {
 

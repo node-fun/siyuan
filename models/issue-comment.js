@@ -2,7 +2,9 @@
  * Created by fritz on 1/11/14.
  */
 var chance = new (require('chance'))(),
+	requireFn = require('../lib/requireFn'),
 	syBookshelf = require('./base'),
+	User = requireFn('./user'),
 	IssueComment, IssueComments;
 
 IssueComment = module.exports = syBookshelf.Model.extend({
@@ -18,7 +20,7 @@ IssueComment = module.exports = syBookshelf.Model.extend({
 		};
 	},
 	user: function () {
-		return this.belongsTo(require('./user'), 'userid');
+		return this.belongsTo(User(), 'userid');
 	}
 }, {
 	randomForge: function () {

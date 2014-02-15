@@ -1,8 +1,10 @@
 var Promise = require('bluebird'),
 	chance = new (require('chance'))(),
 	errors = require('../lib/errors'),
+	requireFn = require('../lib/requireFn'),
 	syBookshelf = require('./base'),
 	IssueComment = require('./issue-comment'),
+	User = requireFn('./user'),
 	IssueComments = IssueComment.Set,
 	Issue, Issues;
 
@@ -31,7 +33,7 @@ Issue = module.exports = syBookshelf.Model.extend({
 	},
 
 	user: function () {
-		return this.belongsTo(require('./user'), 'userid');
+		return this.belongsTo(User(), 'userid');
 	},
 	comments: function () {
 		return this.hasMany(IssueComment, 'issueid');

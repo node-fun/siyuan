@@ -3,6 +3,8 @@ var path = require('path'),
 	chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
 	errors = require('../lib/errors'),
+	requireFn = require('../lib/requireFn'),
+	User = requireFn('./user'),
 	config = require('../config'),
 	Photo, Photos;
 
@@ -22,7 +24,7 @@ Photo = module.exports = syBookshelf.Model.extend({
 		};
 	},
 	user: function () {
-		return this.belongsTo(require('./user'), 'userid');
+		return this.belongsTo(User(), 'userid');
 	},
 
 	created: function () {

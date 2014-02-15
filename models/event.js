@@ -5,6 +5,7 @@ var _ = require('underscore'),
 	syBookshelf = require('./base'),
 	requireFn = require('../lib/requireFn'),
 	User = requireFn('./user'),
+	Entity = require('../lib/entity'),
 	Event, Events;
 
 Event = module.exports = syBookshelf.Model.extend({
@@ -13,6 +14,26 @@ Event = module.exports = syBookshelf.Model.extend({
 		'id', 'userid', 'groupid', 'itemtype', 'itemid', 'message'
 	],
 	withRelated: ['user.profile'],
+
+	fetch: function () {
+		return Event.__super__.fetch.apply(this, arguments)
+			.then(function (event) {
+				if (!event) return event;
+				var itemtype = event.get('itemtype'),
+					itemid = event.get('itemid');
+				return Entity
+					.forge(itemtype, { id: itemid })
+					.then(function (model) {
+						if (!model) return model;
+						return model.fetch();
+					}).then(function (entity) {
+						return event.set({
+							typename: Entity.getModelName(itemtype),
+							item: entity
+						});
+					});
+			});
+	},
 
 	user: function () {
 		return this.belongsTo(User(), 'userid');
@@ -34,28 +55,16 @@ Events = Event.Set = syBookshelf.Collection.extend({
 			});
 	}
 }, {
-	finder: function (qb, query) {
-		['id', 'userid', 'groupid', 'itemtype', 'itemid'].forEach(function (k) {
-			if (k in query) {
-				qb.where(k, query[k]);
-			}
-		});
-	},
+	lister: function (qb, query) {
 
-	searcher: function (qb, query) {
-		var count = 0;
-		['userid', 'groupid', 'itemtype', 'itemid'].forEach(function (k) {
-			if (k in query) {
-				count++;
-				qb.where(k, query[k]);
-			}
-		});
-		['message'].forEach(function (k) {
-			if (k in query) {
-				count++;
-				qb.where(k, 'like', '%' + query[k] + '%');
-			}
-		});
-		if (count < 1) query['limit'] = 0;
+		console.log(this)
+
+		this.qbWhere(qb, query, ['userid', 'groupid', 'itemtype', 'itemid']);
+		if (query['search']) {
+			this.qbWhereLike(qb, query, ['message']);
+		} else {
+			this.qbWhere(qb, query, ['id']);
+		}
+		if (query['search'] && query.applied.length < 1) query['limit'] = 0;
 	}
 });

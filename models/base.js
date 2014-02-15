@@ -223,11 +223,16 @@ syModel = syBookshelf.Model = syModel.extend({
 syBookshelf.Collection = syModel.Set = syCollection.extend({
 	model: syModel,
 
-	list: function (query, looker) {
-		var Model = this.model,
+	list: function (query) {	// query, [, looker1, looker2, ..]
+		var lookers = _.toArray(arguments).slice(1),
+			Collection = this.constructor,
+			Model = this.model,
 			related = Model.prototype.withRelated.concat();	// `concat` is necessary
-		return this.query(function (qb) {
-				if (looker) looker(qb, query, related);
+		return this
+			.query(function (qb) {
+				lookers.forEach(function (looker) {
+					looker.call(Collection, qb, query, related);
+				});
 			}).query(function (qb) {
 				query['orders'].forEach(function (order) {
 					qb.orderBy(order[0], order[1]);
@@ -239,7 +244,27 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 			});
 	}
 }, {
-	list: function (query, looker) {
-		return this.forge().list(query, looker);
+	list: function () {
+		var collection = this.forge();
+		return collection.list.apply(collection, arguments);
+	},
+
+	qbWhere: function (qb, query, keys) {
+		keys.forEach(function (k) {
+			if (k in query) {
+				qb.where(k, query[k]);
+				query['applied'].push(k);
+			}
+		});
+		return this;
+	},
+	qbWhereLike: function (qb, query, keys) {
+		keys.forEach(function (k) {
+			if (k in query) {
+				qb.where(k, 'like', '%' + query[k] + '%');
+				query['applied'].push(k);
+			}
+		});
+		return this;
 	}
 });

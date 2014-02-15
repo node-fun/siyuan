@@ -574,7 +574,7 @@ module.exports = function (app) {
 					cooperations.mapThen(function (cooperation) {
 						cooperation.countUsership();
 						cooperation.countComments();
-						return cooperation.load(['user', 'user.profile']);
+						return cooperation.load(['user', 'user.profile', 'status']);
 					}).then(function (cooperations) {
 							next({ cooperations: cooperations });
 						})

@@ -1,4 +1,6 @@
 var syBookshelf = require('./base'),
+	requireFn = require('../lib/requireFn'),
+	User = requireFn('./user'),
 	Followship, FollowshipSet;
 
 Followship = module.exports = syBookshelf.Model.extend({
@@ -9,10 +11,10 @@ Followship = module.exports = syBookshelf.Model.extend({
 	omitInJSON: ['id', 'userid', 'followid'],
 
 	user: function () {
-		return this.belongsTo(require('./user'), 'userid');
+		return this.belongsTo(User(), 'userid');
 	},
 	followee: function () {
-		return this.belongsTo(require('./user'), 'followid');
+		return this.belongsTo(User(), 'followid');
 	}
 }, {
 

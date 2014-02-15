@@ -238,10 +238,6 @@ function addUserActivitys() {
 			isaccepted: chance.bool()
 		}));
 	});
-	/*return useractivitys.invokeThen('save')
-		.then(function () {
-			console.log('%d useractivitys added', numUserActivitys);
-		});*/
 	return useractivitys
 		.mapThen(function (useractivity) {
 			return useractivity.save()

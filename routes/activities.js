@@ -462,6 +462,79 @@ module.exports = function (app) {
 	});
 
 	/**
+	 * GET /api/activities/my
+	 * 含我加入的、我创建的活动列表。<br>
+	 * 支持page、limit、orders
+	 * @method 我的活动列表
+	 * @return {JSON}
+	 * {
+		  "activities": [
+			{
+			  "id": 21,
+			  "ownerid": 23,
+			  "groupid": 7,
+			  "content": "Pow falgubmog koto ipi dolfa ejeszu denbobsu ",
+			  "maxnum": 23,
+			  "createtime": 1357238824000,
+			  "starttime": 1382140926000,
+			  "duration": 8,
+			  "statusid": 1,
+			  "avatar": "/activities/21.jpg?t=/activities/21.jpg?t=1392382972587",
+			  "money": 1020,
+			  "name": "pu",
+			  "site": "vejeora",
+			  "regdeadline": 1367694216000,
+			  "user": {
+				"id": 23,
+				"username": "ohoc_486",
+				"regtime": 1370380697000,
+				"isonline": 1,
+				"avatar": "/avatars/23.jpg?t=1392382969116",
+				"cover": "/covers/23.jpg?t=1392382969500",
+				"profile": {
+				  "email": "op@veam.org",
+			 "name": "Jaiden Gardner",
+			 "gender": "m",
+			 "age": 56,
+			 "grade": 1973,
+			 "university": "Weavuga University",
+			 "major": "Wa",
+			 "summary": "Mebliho cuutras re tiehoma gin hopagiz ku uvo ume ho hogehin wuwode lis obouj eravu zecu jepuwrow nocse.",
+			 "tag": "mupep,bar,uvfekat"
+			 }
+			 },
+			 "_pivot_userid": 3,
+			 "_pivot_activityid": 21,
+			 "numUsership": 4
+			 }
+	 	  ]
+	 	}
+	 */
+
+	app.get('/api/activities/my', function (req, res, next) {
+		var user = req.user;
+
+		if (!user) next(errors[21301]);
+			user.related('activities')
+				.query(function (qb) {
+					req.query['orders'].forEach(function (order) {
+						qb.orderBy(order[0], order[1]);
+					});
+				}).query('offset', req.query['offset'])
+				.query('limit', req.query['limit'])
+				.fetch()
+				.then(function (activities) {
+					activities.mapThen(function (activity) {
+						activity.countUsership();
+						return activity.load(['user', 'user.profile']);
+					}).then(function (activities) {
+							next({ activities: activities });
+						})
+				}).catch(next);
+		});
+
+
+	/**
 	 * POST /api/activities/avatar/update
 	 * @method 更新活动图片
 	 * @param {Number} id 活动ID

@@ -152,7 +152,7 @@ module.exports = function (app) {
 
 		if (!user) next(errors[21301]);
 		if (!req.body['id']) next(errors[10008]);
-		Cooperation.forge(req.body)
+		Cooperation.forge({ id: req.body['id'] })
 			.fetch().
 			then(function (cooperation) {
 
@@ -386,20 +386,18 @@ module.exports = function (app) {
 				ownerid: user.id
 			}, req.body)).save()
 			.then(function (cooperation) {
-				UserCooperation.forge({
-					'userid': user.id,
-					'cooperatonid': cooperation.id,
+				return UserCooperation.forge({
+					userid: user.id,
+					cooperationid: cooperation.get('id'),
 					isaccepted: true
-				}).save();
-				return cooperation;
-			})
-			.then(function (cooperation) {
-				next({
-					msg: 'create success',
-					id: cooperation.get('id'),
-					isprivate: cooperation.get('isprivate')
+				}).save().then(function (usercooperation) {
+					next({
+						msg: 'create success',
+						id: cooperation.get('id'),
+						isprivate: cooperation.get('isprivate')
+					});
 				});
-			});
+			})
 	});
 
 	/**

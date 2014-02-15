@@ -18,7 +18,7 @@ describe('cooperations', function () {
 	})
 
 	var cooperationid;
-	var cooID = 3;
+	var cooID = 20;
 	var usershipid;
 
 	it('create cooperation', function (done) {
@@ -47,6 +47,7 @@ describe('cooperations', function () {
 			}
 		}, function (err, res, data) {
 			assert.ok(usership = data['id']);
+			assert.ok(data['msg']);
 			done();
 		})
 	})

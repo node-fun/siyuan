@@ -49,17 +49,15 @@ Events = Event.Set = syBookshelf.Collection.extend({
 		return Events.__super__.fetch.apply(this, arguments)
 			.then(function (collection) {
 				return collection.invokeThen('fetch')
-					.then(function(){
+					.then(function () {
 						return collection;
 					});
 			});
 	}
 }, {
 	lister: function (qb, query) {
-
-		console.log(this)
-
-		this.qbWhere(qb, query, ['userid', 'groupid', 'itemtype', 'itemid']);
+		this.allowNull(query, ['groupid'])
+			.qbWhere(qb, query, ['userid', 'groupid', 'itemtype', 'itemid']);
 		if (query['search']) {
 			this.qbWhereLike(qb, query, ['message']);
 		} else {

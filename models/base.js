@@ -238,7 +238,7 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 					qb.orderBy(order[0], order[1]);
 				});
 				qb.offset(query['offset']);
-				qb.limit(query['limit'])
+				qb.limit(query['limit']);
 			}).fetch({
 				withRelated: related
 			});
@@ -247,6 +247,13 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 	list: function () {
 		var collection = this.forge();
 		return collection.list.apply(collection, arguments);
+	},
+
+	allowNull: function(query, keys){
+		keys.forEach(function (k) {
+			if (query[k] == '') query[k] = null;
+		});
+		return this;
 	},
 
 	qbWhere: function (qb, query, keys) {
@@ -261,6 +268,7 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 	qbWhereLike: function (qb, query, keys) {
 		keys.forEach(function (k) {
 			if (k in query) {
+				if (query[k] == null) query[k] = '';
 				qb.where(k, 'like', '%' + query[k] + '%');
 				query['applied'].push(k);
 			}

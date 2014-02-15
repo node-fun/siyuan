@@ -17,6 +17,8 @@ var _ = require('underscore'),
 	Events = Event.Set,
 	config = require('../config'),
 	Group = require('./group'),
+	Activity = require('./activity'),
+	Cooperation = require('./cooperation'),
 	tbUser = 'users',
 	tbProfile = UserProfile.prototype.tableName,
 	User, Users;
@@ -76,6 +78,12 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 	events: function () {
 		return this.hasMany(Event, 'userid');
+	},
+	activities: function () {
+		return this.belongsToMany(Activity, 'user_activity', 'userid', 'activityid');
+	},
+	cooperations: function () {
+		return this.belongsToMany(Cooperation, 'user_cooperation', 'userid', 'cooperationid');
 	},
 
 	created: function () {

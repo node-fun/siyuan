@@ -75,7 +75,7 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 		return this.belongsTo(CoStatus, fkStatus);
 	},
 	user: function () {
-		return this.belongsTo(User, fkOwner);
+		return this.belongsTo(require('./user'), fkOwner);
 	},
 
 	cocomments: function () {

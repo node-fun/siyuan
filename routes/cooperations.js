@@ -514,6 +514,75 @@ module.exports = function (app) {
 			});
 	});
 
+
+	/**
+	 * GET /api/cooperations/my
+	 * 含我加入的、我创建的合作列表。<br>
+	 * 支持page、limit、orders
+	 * @method 我的合作列表
+	 * @return {JSON}
+	 * {
+		  "cooperations": [
+			{
+			  "id": 17,
+			  "name": "gama",
+			  "ownerid": 6,
+			  "description": "Ikosod tueb enrone ap pujupewuz ikufuet defoz",
+			  "company": "jopwi",
+			  "avatar": "/cooperations/17.jpg?t=/cooperations/17.jpg?t=1392382983891",
+			  "statusid": 1,
+			  "isprivate": 0,
+			  "regdeadline": 1365911718000,
+			  "user": {
+				"id": 6,
+				"username": "cergefzot_796",
+				"regtime": 1365303171000,
+				"isonline": 1,
+				"avatar": "/avatars/6.jpg?t=1392382969093",
+				"cover": "/covers/6.jpg?t=1392382969232",
+				"profile": {
+				  "email": "rogda@ebka.edu",
+			 "name": "Ezekiel Carroll",
+			 "gender": "f",
+			 "age": 52,
+			 "grade": 1980,
+			 "university": "Ijukubo University",
+			 "major": "Monwuza",
+			 "summary": "Wiwumbeg tu kav rizoel zawrem ipbanib rem fa osiko consah gadano uhomak ta agugupdif ulirehgo gorcamu etfeup.",
+			 "tag": "bafferul,zoz,liletose"
+			 }
+			 },
+			 "_pivot_userid": 3,
+			 "_pivot_cooperationid": 17,
+			 "numUsership": 4,
+			 "numComments": 6
+			 }
+	 	  ]
+	 	}
+	 */
+	app.get('/api/cooperations/my', function (req, res, next) {
+		var user = req.user;
+
+		if (!user) next(errors[21301]);
+			user.related('cooperations')
+				.query(function (qb) {
+					req.query['orders'].forEach(function (order) {
+						qb.orderBy(order[0], order[1]);
+					});
+				}).query('offset', req.query['offset'])
+				.query('limit', req.query['limit'])
+				.fetch()
+				.then(function (cooperations) {
+					cooperations.mapThen(function (cooperation) {
+						cooperation.countUsership();
+						cooperation.countComments();
+						return cooperation.load(['user', 'user.profile']);
+					}).then(function (cooperations) {
+							next({ cooperations: cooperations });
+						})
+				}).catch(next);
+		});
+
 	/**
 	 * @method 评论列表
 	 * @param {Number} [id] 评论ID

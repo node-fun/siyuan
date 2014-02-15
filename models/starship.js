@@ -25,7 +25,7 @@ Starship = module.exports = syBookshelf.Model.extend({
 						return model.fetch();
 					}).then(function (entity) {
 						return starship.set({
-							typename: Entity.names[itemtype],
+							typename: Entity.getModelName(itemtype),
 							item: entity
 						});
 					});
@@ -36,7 +36,7 @@ Starship = module.exports = syBookshelf.Model.extend({
 		return this.belongsTo(require('./user'), 'userid');
 	}
 }, {
-
+	typesAllowed: [2, 3, 4]
 });
 
 StarshipSet = Starship.Set = syBookshelf.Collection.extend({

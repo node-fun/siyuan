@@ -38,6 +38,10 @@ module.exports = function (app) {
 		var user = req.user;
 		if (!user) return next(errors[21301]);
 		req.body['userid'] = user.id;
+		// type limitation in starship
+		if (!~Starship.typesAllowed.indexOf(1 * req.body['itemtype'])) {
+			return next(errors[20701]);
+		}
 		Entity
 			.forge(req.body['itemtype'], {
 				id: req.body['itemid']

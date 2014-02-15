@@ -313,7 +313,7 @@ function addStarship() {
 	_.times(numStarship, function () {
 		var starship = Starship.forge({
 			userid: _.random(1, numUsers),
-			itemtype: _.random(1, entities.length),
+			itemtype: _.sample(Starship.typesAllowed),
 			itemid: _.random(1, 20),
 			remark: chance.word()
 		});

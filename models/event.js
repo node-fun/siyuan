@@ -63,6 +63,5 @@ Events = Event.Set = syBookshelf.Collection.extend({
 		} else {
 			this.qbWhere(qb, query, ['id']);
 		}
-		if (query['search'] && query.applied.length < 1) query['limit'] = 0;
 	}
 });

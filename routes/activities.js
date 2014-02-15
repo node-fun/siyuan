@@ -147,7 +147,7 @@ module.exports = function (app) {
 	 * 		id: 6  
 	 * }</pre>
 	 */
-	app.get('/api/activities/join', function (req, res, next) {
+	app.post('/api/activities/join', function (req, res, next) {
 		var user = req.user;
 
 		if (!user) next(errors[21301]);

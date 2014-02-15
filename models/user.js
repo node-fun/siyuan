@@ -190,7 +190,7 @@ User = module.exports = syBookshelf.Model.extend({
 		if (!this.data('profile')) {
 			this.data('profile', this.get('profile') || {});
 		}
-		this.attributes = this.pick(['username', 'password', 'regtime']);
+		this.attributes = this.pick(['username', 'password', 'regtime', 'isonline']);
 		var self = this;
 		return self.save()
 			.catch(function (err) {

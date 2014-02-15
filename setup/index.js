@@ -104,7 +104,18 @@ execsql.config(connConfig)
 
 function addUsers() {
 	var users = Users.forge();
-	_.times(numUsers, function () {
+	// add a stable user for test
+	users.add(User.randomForge().set({
+		username: 'test',
+		password: 'test',
+		profile: {
+			name: 'Jayin Ton',
+			email: 'jayin@fuck.shit',
+			summary: 'I am a boy!'
+		},
+		isonline: 1	// make it online
+	}));
+	_.times(numUsers - users.length, function () {
 		users.add(User.randomForge());
 	});
 	return users.invokeThen('register')
@@ -120,7 +131,7 @@ function addUsers() {
 					})
 					.then(function () {
 						// login or not
-						return chance.bool() ? user : user.login(true);
+						return user.get('isonline') || chance.bool() ? user.login(true) : user;
 					});
 			});
 		}).then(function () {

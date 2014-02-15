@@ -147,7 +147,7 @@ module.exports = function (app) {
 	 * 		id: 6  
 	 * }</pre>
 	 */
-	app.get('/api/activities/join', function (req, res, next) {
+	app.post('/api/activities/join', function (req, res, next) {
 		var user = req.user;
 
 		if (!user) next(errors[21301]);
@@ -515,22 +515,22 @@ module.exports = function (app) {
 		var user = req.user;
 
 		if (!user) next(errors[21301]);
-			user.related('activities')
-				.query(function (qb) {
-					req.query['orders'].forEach(function (order) {
-						qb.orderBy(order[0], order[1]);
-					});
-				}).query('offset', req.query['offset'])
-				.query('limit', req.query['limit'])
-				.fetch()
-				.then(function (activities) {
-					activities.mapThen(function (activity) {
-						activity.countUsership();
-						return activity.load(['user', 'user.profile']);
-					}).then(function (activities) {
-							next({ activities: activities });
-						})
-				}).catch(next);
+		user.related('activities')
+			.query(function (qb) {
+				req.query['orders'].forEach(function (order) {
+					qb.orderBy(order[0], order[1]);
+				});
+			}).query('offset', req.query['offset'])
+			.query('limit', req.query['limit'])
+			.fetch()
+			.then(function (activities) {
+				activities.mapThen(function (activity) {
+					activity.countUsership();
+					return activity.load(['user', 'user.profile', 'status']);
+				}).then(function (activities) {
+						next({ activities: activities });
+					})
+			}).catch(next);
 		});
 
 

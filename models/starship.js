@@ -42,17 +42,7 @@ Starship = module.exports = syBookshelf.Model.extend({
 });
 
 StarshipSet = Starship.Set = syBookshelf.Collection.extend({
-	model: Starship,
-
-	fetch: function () {
-		return StarshipSet.__super__.fetch.apply(this, arguments)
-			.then(function (collection) {
-				return collection.invokeThen('fetch')
-					.then(function () {
-						return collection;
-					});
-			});
-	}
+	model: Starship
 }, {
 	finder: function (qb, query) {
 		['id', 'userid', 'itemtype', 'itemid'].forEach(function (k) {

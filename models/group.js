@@ -63,15 +63,5 @@ Group = module.exports = syBookshelf.Model.extend({
 });
 
 Groups = Group.Set = syBookshelf.Collection.extend({
-	model: Group,
-
-	fetch: function () {
-		return Groups.__super__.fetch.apply(this, arguments)
-			.then(function (collection) {
-				return collection.invokeThen('fetch')
-					.then(function(){
-						return collection;
-					});
-			});
-	}
+	model: Group
 });

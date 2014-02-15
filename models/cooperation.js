@@ -124,17 +124,7 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 });
 
 Cooperations = Cooperation.Set = syBookshelf.Collection.extend({
-	model: Cooperation,
-
-	fetch: function () {
-		return Cooperations.__super__.fetch.apply(this, arguments)
-			.then(function (collection) {
-				return collection.invokeThen('fetch')
-					.then(function () {
-						return collection;
-					});
-			});
-	}
+	model: Cooperation
 }, {
 	finder: function (qb, query) {
 		['id', 'name', 'company', 'statusid'].forEach(function (k) {

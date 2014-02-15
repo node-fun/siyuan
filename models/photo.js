@@ -56,17 +56,7 @@ Photo = module.exports = syBookshelf.Model.extend({
 });
 
 Photos = Photo.Set = syBookshelf.Collection.extend({
-	model: Photo,
-
-	fetch: function () {
-		return Photos.__super__.fetch.apply(this, arguments)
-			.then(function (collection) {
-				return collection.invokeThen('fetch')
-					.then(function () {
-						return collection;
-					});
-			});
-	}
+	model: Photo
 }, {
 	finder: function (qb, query) {
 		['id', 'userid'].forEach(function (k) {

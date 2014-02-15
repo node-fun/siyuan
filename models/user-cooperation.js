@@ -31,15 +31,5 @@ UserCooperation = module.exports = syBookshelf.Model.extend({
 });
 
 UserCooperations = UserCooperation.Set = syBookshelf.Collection.extend({
-	model: UserCooperation,
-
-	fetch: function () {
-		return UserCooperations.__super__.fetch.apply(this, arguments)
-			.then(function (collection) {
-				return collection.invokeThen('fetch')
-					.then(function(){
-						return collection;
-					});
-			});
-	}
+	model: UserCooperation
 });

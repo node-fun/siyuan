@@ -43,17 +43,7 @@ Event = module.exports = syBookshelf.Model.extend({
 });
 
 Events = Event.Set = syBookshelf.Collection.extend({
-	model: Event,
-
-	fetch: function () {
-		return Events.__super__.fetch.apply(this, arguments)
-			.then(function (collection) {
-				return collection.invokeThen('fetch')
-					.then(function () {
-						return collection;
-					});
-			});
-	}
+	model: Event
 }, {
 	lister: function (qb, query) {
 		this.allowNull(query, ['groupid'])

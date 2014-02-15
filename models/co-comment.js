@@ -50,15 +50,5 @@ CoComment = module.exports = syBookshelf.Model.extend({
 });
 
 CoComments = CoComment.Set = syBookshelf.Collection.extend({
-	model: CoComment,
-
-	fetch: function () {
-		return CoComments.__super__.fetch.apply(this, arguments)
-			.then(function (collection) {
-				return collection.invokeThen('fetch')
-					.then(function(){
-						return collection;
-					});
-			})
-	}
+	model: CoComment
 });

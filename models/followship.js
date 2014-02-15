@@ -21,17 +21,7 @@ Followship = module.exports = syBookshelf.Model.extend({
 });
 
 FollowshipSet = Followship.Set = syBookshelf.Collection.extend({
-	model: Followship,
-
-	fetch: function () {
-		return FollowshipSet.__super__.fetch.apply(this, arguments)
-			.then(function (collection) {
-				return collection.invokeThen('fetch')
-					.then(function(){
-						return collection;
-					});
-			});
-	}
+	model: Followship
 }, {
 	finderFollowing: function (qb, query, related) {
 		['userid'].forEach(function (k) {

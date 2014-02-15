@@ -99,17 +99,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 });
 
 Activities = Activity.Set = syBookshelf.Collection.extend({
-	model: Activity,
-
-	fetch: function () {
-		return Activities.__super__.fetch.apply(this, arguments)
-			.then(function (collection) {
-				return collection.invokeThen('fetch')
-					.then(function () {
-						return collection;
-					});
-			});
-	}
+	model: Activity
 }, {
 	finder: function (qb, query) {
 		['id', 'ownerid', 'groupid', 'content', 'statusid', 'name'].forEach(function (k) {

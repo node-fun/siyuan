@@ -261,20 +261,7 @@ User = module.exports = syBookshelf.Model.extend({
 });
 
 Users = User.Set = syBookshelf.Collection.extend({
-	model: User,
-
-	// ATTENTION:
-	// this overwriting can not be left out in each Collection
-	// DO NOT use `this` here, it is not the Collection
-	fetch: function () {
-		return Users.__super__.fetch.apply(this, arguments)
-			.then(function (collection) {
-				return collection.invokeThen('fetch')
-					.then(function(){
-						return collection;
-					});
-			});
-	}
+	model: User
 }, {
 	finder: function (qb, query) {
 		query['profile'] = query['profile'] || {};

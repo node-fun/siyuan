@@ -75,17 +75,7 @@ Issue = module.exports = syBookshelf.Model.extend({
 });
 
 Issues = Issue.Set = syBookshelf.Collection.extend({
-	model: Issue,
-
-	fetch: function () {
-		return Issues.__super__.fetch.apply(this, arguments)
-			.then(function (collection) {
-				return collection.invokeThen('fetch')
-					.then(function(){
-						return collection;
-					});
-			});
-	}
+	model: Issue
 }, {
 	finder: function (qb, query) {
 		var k = 'groupid';

@@ -223,6 +223,16 @@ syModel = syBookshelf.Model = syModel.extend({
 syBookshelf.Collection = syModel.Set = syCollection.extend({
 	model: syModel,
 
+	fetch: function () {
+		return syCollection.__super__.fetch.apply(this, arguments)
+			.then(function (collection) {
+				return collection.invokeThen('fetch')
+					.then(function(){
+						return collection;
+					});
+			});
+	},
+
 	list: function (query) {	// query, [, looker1, looker2, ..]
 		var lookers = _.toArray(arguments).slice(1),
 			Collection = this.constructor,

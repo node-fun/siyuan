@@ -10,7 +10,7 @@ var chance = new (require('chance'))(),
 IssueComment = module.exports = syBookshelf.Model.extend({
 	tableName: 'issue_comments',
 	fields: ['id', 'issueid', 'userid', 'body', 'posttime'],
-	omitInJSON: ['id', 'userid', 'issueid'],
+	omitInJSON: ['userid', 'issueid'],
 	withRelated: ['user.profile'],
 
 	defaults: function () {
@@ -32,15 +32,5 @@ IssueComment = module.exports = syBookshelf.Model.extend({
 });
 
 IssueComments = IssueComment.Set = syBookshelf.Collection.extend({
-	model: IssueComment,
-
-	fetch: function () {
-		return IssueComments.__super__.fetch.apply(this, arguments)
-			.then(function (collection) {
-				return collection.invokeThen('fetch')
-					.then(function(){
-						return collection;
-					});
-			});
-	}
+	model: IssueComment
 });

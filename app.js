@@ -5,25 +5,22 @@ var _ = require('underscore'),
 	User = require('./models/user'),
 	Admin = require('./models/admin'),
 	config = require('./config'),
-	env = config.env,
-	port = config.port,
-	secret = config.secret,
-	app = express(),
-	methodKey = '_method';
+	app = express();
 
 app.set('views', config.adminDir);
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
-if (env != 'production') {
-	// query as body
-	app.use(function (req, res, next) {
-		_.defaults(req.body, req.query);
-		next();
-	});
-}
-app.use(express.methodOverride(methodKey));
-app.use(express.cookieParser(secret));
+app.use(function (req, res, next) {
+	// enable `methodKey` on GET
+	var methodKey = config.methodKey;
+	if (methodKey in req.query) {
+		req.body[methodKey] = req.query[methodKey];
+	}
+	next();
+});
+app.use(express.methodOverride(config.methodKey));
+app.use(express.cookieParser(config.secret));
 app.use(express.session());
 
 // middlewares
@@ -70,11 +67,9 @@ app.use(config.adStaticPath, express.static(config.adDir));
 app.use(config.indexStaticPath, express.static(config.indexPath));
 
 // listen on port
-app.listen(port, function () {
+app.listen(config.port, function () {
 	console.log([
-		'',
-		'server started',
-		'port: %d, pid: %d',
-		''
-	].join('\n'), port, process.pid);
+		'', 'server started',
+		'port: %d, pid: %d', ''
+	].join('\n'), config.port, process.pid);
 });

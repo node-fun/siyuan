@@ -13,9 +13,8 @@ app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(function (req, res, next) {
 	// enable `methodKey` on GET
-	var methodKey = config.methodKey;
-	if (methodKey in req.query) {
-		req.body[methodKey] = req.query[methodKey];
+	if (config.methodKey in req.query) {
+		_.defaults(req.body, req.query);
 	}
 	next();
 });

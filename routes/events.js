@@ -15,7 +15,6 @@ module.exports = function (app) {
 	 * @param {Number} [groupid] 圈子ID
 	 * @param {Number} [itemtype] 类别ID
 	 * @param {Number} [itemid] 资源ID
-	 * @param {Number} [search] 是否采用搜索
 	 * @return {JSON}
 	 */
 	app.get('/api/events/list', function (req, res, next) {
@@ -32,14 +31,14 @@ module.exports = function (app) {
 	 * @param {Number} [groupid] 圈子ID
 	 * @param {Number} [itemtype] 类别ID
 	 * @param {Number} [itemid] 资源ID
-	 * @param {Number} [search] 是否采用搜索
 	 * @return {JSON}
 	 */
 	app.get('/api/events/my', function (req, res, next) {
 		var user = req.user;
 		if (!user) return next(errors[21301]);
-		req.query['userid'] = user.id;
-		return Events.list(req.query, Events.lister)
+		return Events.list(req.query, function (qb) {
+			qb.where('userid', user.id);
+		}, Events.lister)
 			.then(function (events) {
 				next({ events: events });
 			}).catch(next);
@@ -52,7 +51,6 @@ module.exports = function (app) {
 	 * @param {Number} [groupid] 圈子ID
 	 * @param {Number} [itemtype] 类别ID
 	 * @param {Number} [itemid] 资源ID
-	 * @param {Number} [search] 是否采用搜索
 	 * @return {JSON}
 	 */
 	app.get('/api/events/following', function (req, res, next) {
@@ -63,12 +61,11 @@ module.exports = function (app) {
 				var followids = following.models.map(function (followship) {
 					return followship.get('followid');
 				});
-				return Events
-					.list(req.query,function (qb) {
-						qb.whereIn('userid', followids);
-					}, Events.lister).then(function (events) {
-						next({ events: events });
-					}).catch(next);
-			});
+				return Events.list(req.query, function (qb) {
+					qb.whereIn('userid', followids);
+				}, Events.lister);
+			}).then(function (events) {
+				next({ events: events });
+			}).catch(next);
 	});
 };

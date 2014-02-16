@@ -39,6 +39,8 @@ app.use(function (req, res, next) {
 				next();
 			});
 	}
+});
+app.use(function (req, res, next) {
 	// admin session
 	var adminid = req.session['adminid'];
 	if (!adminid) {
@@ -48,7 +50,7 @@ app.use(function (req, res, next) {
 			.then(function (admin) {
 				req.admin = admin;
 				next();
-			})
+			});
 	}
 });
 app.use('/api', require('./lib/api/parser'));

@@ -468,6 +468,28 @@ CREATE TABLE IF NOT EXISTS `client_versions` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `feedback`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `feedback` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `userid` INT NOT NULL,
+  `type` VARCHAR(45) NULL,
+  `title` VARCHAR(45) NULL,
+  `body` VARCHAR(500) NULL,
+  `versioncode` VARCHAR(45) NULL,
+  `device` VARCHAR(45) NULL,
+  `posttime` TIMESTAMP NULL,
+  PRIMARY KEY (`id`),
+  INDEX `userid_idx` (`userid` ASC),
+  CONSTRAINT `userid_idx`
+    FOREIGN KEY (`userid`)
+    REFERENCES `users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
@@ -504,5 +526,4 @@ INSERT INTO `resource_types` (`id`, `name`) VALUES (3, 'activity');
 INSERT INTO `resource_types` (`id`, `name`) VALUES (4, 'cooperation');
 
 COMMIT;
-
 

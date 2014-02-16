@@ -29,7 +29,7 @@ module.exports = function (app) {
 
 	/**
 	 * GET /api/starship/my
-	 * @method 收藏列表
+	 * @method 自己的收藏列表
 	 * @param {Number} [id] 收藏ID
 	 * @param {Number} [userid] 用户ID
 	 * @param {Number} [itemtype] 类别ID

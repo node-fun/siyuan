@@ -15,7 +15,7 @@ module.exports = function (app) {
 	 * @param {Number} [groupid] 圈子ID
 	 * @param {Number} [itemtype] 类别ID
 	 * @param {Number} [itemid] 资源ID
-	 * @param {Number} [search] 是否采用搜索
+	 * @param {String} [message] 动态描述(仅限搜索)
 	 * @return {JSON}
 	 */
 	app.get('/api/events/list', function (req, res, next) {
@@ -32,14 +32,14 @@ module.exports = function (app) {
 	 * @param {Number} [groupid] 圈子ID
 	 * @param {Number} [itemtype] 类别ID
 	 * @param {Number} [itemid] 资源ID
-	 * @param {Number} [search] 是否采用搜索
+	 * @param {String} [message] 动态描述(仅限搜索)
 	 * @return {JSON}
 	 */
 	app.get('/api/events/my', function (req, res, next) {
-		var user = req.user;
-		if (!user) return next(errors[21301]);
-		req.query['userid'] = user.id;
-		return Events.list(req.query, Events.lister)
+		if (!req.user) return next(errors[21301]);
+		return Events.list(req.query, function (qb) {
+			qb.where('userid', req.user.id);
+		}, Events.lister)
 			.then(function (events) {
 				next({ events: events });
 			}).catch(next);
@@ -52,23 +52,19 @@ module.exports = function (app) {
 	 * @param {Number} [groupid] 圈子ID
 	 * @param {Number} [itemtype] 类别ID
 	 * @param {Number} [itemid] 资源ID
-	 * @param {Number} [search] 是否采用搜索
+	 * @param {String} [message] 动态描述(仅限搜索)
 	 * @return {JSON}
 	 */
 	app.get('/api/events/following', function (req, res, next) {
-		var user = req.user;
-		if (!user) return next(errors[21301]);
-		user.following().fetch()
+		if (!req.user) return next(errors[21301]);
+		req.user.following().fetch()
 			.then(function (following) {
-				var followids = following.models.map(function (followship) {
+				req.query['userid'] = following.models.map(function (followship) {
 					return followship.get('followid');
 				});
-				return Events
-					.list(req.query,function (qb) {
-						qb.whereIn('userid', followids);
-					}, Events.lister).then(function (events) {
-						next({ events: events });
-					}).catch(next);
-			});
+				return Events.list(req.query, Events.lister);
+			}).then(function (events) {
+				next({ events: events });
+			}).catch(next);
 	});
 };

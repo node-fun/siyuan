@@ -3,26 +3,23 @@ process.title = 'siyuan';
 var _ = require('underscore'),
 	express = require('express'),
 	User = require('./models/user'),
+	Admin = require('./models/admin'),
 	config = require('./config'),
-	env = config.env,
-	port = config.port,
-	secret = config.secret,
-	app = express(),
-	methodKey = '_method';
+	app = express();
 
 app.set('views', config.adminDir);
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
-if (env != 'production') {
-	// query as body
-	app.use(function (req, res, next) {
+app.use(function (req, res, next) {
+	// enable `methodKey` on GET
+	if (config.methodKey in req.query) {
 		_.defaults(req.body, req.query);
-		next();
-	});
-}
-app.use(express.methodOverride(methodKey));
-app.use(express.cookieParser(secret));
+	}
+	next();
+});
+app.use(express.methodOverride(config.methodKey));
+app.use(express.cookieParser(config.secret));
 app.use(express.session());
 
 // middlewares
@@ -35,6 +32,19 @@ app.use(function (req, res, next) {
 		User.forge({ id: userid }).fetch()
 			.then(function (user) {
 				req.user = user;
+				next();
+			});
+	}
+});
+app.use(function (req, res, next) {
+	// admin session
+	var adminid = req.session['adminid'];
+	if (!adminid) {
+		next();
+	} else {
+		Admin.forge({ id: adminid }).fetch()
+			.then(function (admin) {
+				req.admin = admin;
 				next();
 			});
 	}
@@ -56,11 +66,9 @@ app.use(config.adStaticPath, express.static(config.adDir));
 app.use(config.indexStaticPath, express.static(config.indexPath));
 
 // listen on port
-app.listen(port, function () {
+app.listen(config.port, function () {
 	console.log([
-		'',
-		'server started',
-		'port: %d, pid: %d',
-		''
-	].join('\n'), port, process.pid);
+		'', 'server started',
+		'port: %d, pid: %d', ''
+	].join('\n'), config.port, process.pid);
 });

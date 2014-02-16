@@ -83,7 +83,7 @@ module.exports = function (app) {
 		Activities.list(req.query, Activities.searcher)
 			.then(function (activities) {
 				next({ activities: activities });
-			});
+			}).catch(next);
 	});
 
 	/**
@@ -126,7 +126,7 @@ module.exports = function (app) {
 	app.get('/api/activities/history', function (req, res, next) {
 		UserActivity.find(req.query)
 			.then(function (useractivitys) {
-				useractivitys.mapThen(function (useractivity) {
+				return useractivitys.mapThen(function (useractivity) {
 					return useractivity.load(['user']);
 				})
 					.then(function (useractivitys) {
@@ -150,34 +150,33 @@ module.exports = function (app) {
 	app.post('/api/activities/join', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) next(errors[21301]);
-		if (!req.body['id'])
-			next(errors[10008]);
+		if (!user) return next(errors[21301]);
+		if (!req.body['id']) return next(errors[10008]);
 
 		Activity.forge({ id: req.body['id'] })
 			.fetch()
 			.then(function (activity) {
 				var statusid = activity.get('statusid');
 
-				if (statusid == 2) next(errors[40012]);
-				if (statusid == 3) next(errors[40013]);
-				if (statusid == 4) next(errors[40014]);
+				if (statusid == 2) return Promise.rejected(errors[40012]);
+				if (statusid == 3) return Promise.rejected(errors[40013]);
+				if (statusid == 4) return Promise.rejected(errors[40014]);
 
-				UserActivity.forge({
+				return UserActivity.forge({
 					'userid': user.id,
 					'activityid': activity.get('id'),
 					'isaccepted': false
 				}).save()
-				.then(function () {
-					next({ msg: 'join activity success' });
-				}).catch(function (err) {
+					.then(function () {
+						next({ msg: 'join activity success' });
+					}).catch(function (err) {
 						if (/^ER_DUP_ENTRY/.test(err.message)) {
-							next(errors[20506]);
+							return Promise.rejected(errors[20506]);
 						} else {
-							next(err);
+							return Promise.rejected(err);
 						}
 					})
-			});
+			}).catch(next);
 	});
 
 	/**
@@ -192,9 +191,8 @@ module.exports = function (app) {
 	app.post('/api/activities/cancel', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) next(errors[21301]);
-		if (!req.body['id'])
-			next(errors[10008]);
+		if (!user) return next(errors[21301]);
+		if (!req.body['id']) return next(errors[10008]);
 
 		Activity.forge(req.body)
 			.fetch()
@@ -216,7 +214,7 @@ module.exports = function (app) {
 							'activityid': self.get('id')
 						}).fetch().then(function (usership) {
 								if (usership.get('isaccepted') == 1)
-									next(errors[40016]);
+									return Promise.rejected(errors[40016]);
 								return usership.destroy();
 							}).then(function () {
 								next({
@@ -224,10 +222,10 @@ module.exports = function (app) {
 								});
 							});
 					} else {
-						next(errors[20603]);
+						return Promise.rejected(errors[20603]);
 					}
 				});
-			});
+			}).catch(next);
 	});
 
 	/**
@@ -242,19 +240,18 @@ module.exports = function (app) {
 	app.post('/api/activities/end', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) next(errors[21301]);
-		if (!req.body['id'])
-			next(errors[10008]);
+		if (!user) return next(errors[21301]);
+		if (!req.body['id']) return next(errors[10008]);
 		Activity.forge(req.body)
 			.fetch()
 			.then(function (activity) {
 				var self = activity,
 					groupid = self.get('groupid');
-				self.load(['usership']).then(function (activity) {
+				return self.load(['usership']).then(function (activity) {
 					if (!(self.get('ownerid') == user.id)) {
-						next(errors[20102]);
+						return Promise.rejected(errors[20102]);
 					}
-					self.set({
+					return self.set({
 						'statusid': 4
 					}).save()
 						.then(function () {
@@ -263,7 +260,7 @@ module.exports = function (app) {
 							});
 						});
 				});
-			});
+			}).catch(next);
 	});
 
 	/**
@@ -288,23 +285,23 @@ module.exports = function (app) {
 	app.post('/api/activities/update', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) next(errors[21301]);
+		if (!user) return next(errors[21301]);
 		if (!req.body['id'] || !req.body['content'] || !req.body['starttime'] || !req.body['duration'] || !req.body['statusid'] || !req.body['money'] || !req.body['name'] || !req.body['site'] || !req.body['regdeadline'] || !req.body['maxnum'])
-			next(errors[10008]);
+			return next(errors[10008]);
 		Activity.forge({ 'id': req.body['id'] }).fetch()
 			.then(function (activity) {
 				var ownerid = activity.get('ownerid');
 				if (user.id != ownerid) {
-					next(errors[20102]);
+					return Promise.rejected(errors[20102]);
 				}
-				activity.set(req.body).save()
+				return activity.set(req.body).save()
 					.then(function (activity) {
 						next({
 							msg: 'update success',
 							id: activity.get('id')
 						});
 					});
-			});
+			}).catch(next);
 	});
 
 	/**
@@ -329,31 +326,27 @@ module.exports = function (app) {
 	app.post('/api/activities/create', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) next(errors[21301]);
-		if (!req.body['groupid'] || !req.body['content'] ||
-			!req.body['starttime'] || !req.body['duration'] ||
-			!req.body['statusid'] || !req.body['money'] ||
-			!req.body['name'] || !req.body['site'] ||
-			!req.body['regdeadline'] || !req.body['maxnum'])
-			next(errors[10008]);
+		if (!user) return next(errors[21301]);
+		if (!req.body['groupid'] || !req.body['content'] || !req.body['starttime'] || !req.body['duration'] || !req.body['statusid'] || !req.body['money'] || !req.body['name'] || !req.body['site'] || !req.body['regdeadline'] || !req.body['maxnum'])
+			return next(errors[10008]);
 
 		//check the dude belong to group
 		GroupMembers.forge({
 			'groupid': req.body['groupid'],
 			'userid': user.id
 		}).fetch().then(function (groupmember) {
-				if (groupmember == null) next(errors[40001]);
-				Activity.forge({ name: req.body['name'] })
+				if (groupmember == null) return Promise.rejected(errors[40001]);
+				return Activity.forge({ name: req.body['name'] })
 					.fetch()
 					.then(function (activity) {
 						if (activity) {
-							next(errors[20506]);
+							return Promise.rejected(errors[20506]);
 						}
 						return Activity.forge(_.extend({
 							ownerid: user.id
 						}, req.body)).save();
 					}).then(function (activity) {
-						UserActivity.forge({
+						return UserActivity.forge({
 							'userid': user.id,
 							'activityid': activity.id,
 							'isaccepted': 1
@@ -365,7 +358,7 @@ module.exports = function (app) {
 								});
 							});
 					})
-			});
+			}).catch(next);
 	});
 
 	/**
@@ -395,13 +388,13 @@ module.exports = function (app) {
 	app.post('/api/activities/userslist', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) next(errors[21301]);
+		if (!user) return next(errors[21301]);
 		if (!req.body['id'])
-			next(errors[10008]);
+			return next(errors[10008]);
 
 		Activity.forge({ 'id': req.body['id'] }).fetch()
 			.then(function (activity) {
-				if (!activity) next(errors[20603]);
+				if (!activity) return Promise.rejected(errors[20603]);
 
 				var self = activity;
 
@@ -421,9 +414,9 @@ module.exports = function (app) {
 							return userships;
 						});
 				}).then(function (users) {
-						next({ userships: users });
-					});
-			});
+					next({ userships: users });
+				});
+			}).catch(next);
 	});
 
 	/**
@@ -439,26 +432,26 @@ module.exports = function (app) {
 	app.post('/api/activities/accept', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) next(errors[21301]);
+		if (!user) return next(errors[21301]);
 		if (!req.body['id'] || !req.body['activityid'])
-			next(errors[10008]);
+			return next(errors[10008]);
 
 		Activity.forge({ 'id': req.body['activityid'] })
 			.fetch()
 			.then(function (activity) {
-				if (!activity) next(errors[20603]);
+				if (!activity) return Promise.rejected(errors[20603]);
 				var self = activity,
 					ownerid = self.get('ownerid');
-				if (user.id != ownerid) next(errors[20102]);
+				if (user.id != ownerid) return Promise.rejected(errors[20102]);
 				return UserActivity.forge({ 'id': req.body['id'] }).fetch()
 					.then(function (usership) {
-						if (!usership) next(errors[20603]);
+						if (!usership) return Promise.rejected(errors[20603]);
 						return usership.set({ 'isaccepted': true }).save()
 							.then(function (activity) {
 								next({ msg: 'accept success' });
 							});
 					});
-			});
+			}).catch(next);
 	});
 
 	/**
@@ -493,28 +486,28 @@ module.exports = function (app) {
 				"cover": "/covers/23.jpg?t=1392382969500",
 				"profile": {
 				  "email": "op@veam.org",
-			 "name": "Jaiden Gardner",
-			 "gender": "m",
-			 "age": 56,
-			 "grade": 1973,
-			 "university": "Weavuga University",
-			 "major": "Wa",
-			 "summary": "Mebliho cuutras re tiehoma gin hopagiz ku uvo ume ho hogehin wuwode lis obouj eravu zecu jepuwrow nocse.",
-			 "tag": "mupep,bar,uvfekat"
-			 }
-			 },
-			 "_pivot_userid": 3,
-			 "_pivot_activityid": 21,
-			 "numUsership": 4
-			 }
-	 	  ]
-	 	}
+	 "name": "Jaiden Gardner",
+	 "gender": "m",
+	 "age": 56,
+	 "grade": 1973,
+	 "university": "Weavuga University",
+	 "major": "Wa",
+	 "summary": "Mebliho cuutras re tiehoma gin hopagiz ku uvo ume ho hogehin wuwode lis obouj eravu zecu jepuwrow nocse.",
+	 "tag": "mupep,bar,uvfekat"
+	 }
+	 },
+	 "_pivot_userid": 3,
+	 "_pivot_activityid": 21,
+	 "numUsership": 4
+	 }
+	 ]
+	 }
 	 */
 
 	app.get('/api/activities/my', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) next(errors[21301]);
+		if (!user) return next(errors[21301]);
 		user.related('activities')
 			.query(function (qb) {
 				req.query['orders'].forEach(function (order) {
@@ -524,14 +517,14 @@ module.exports = function (app) {
 			.query('limit', req.query['limit'])
 			.fetch()
 			.then(function (activities) {
-				activities.mapThen(function (activity) {
+				return activities.mapThen(function (activity) {
 					activity.countUsership();
 					return activity.load(['user', 'user.profile', 'status']);
 				}).then(function (activities) {
 						next({ activities: activities });
 					})
 			}).catch(next);
-		});
+	});
 
 
 	/**
@@ -545,19 +538,19 @@ module.exports = function (app) {
 	 * }</pre>
 	 */
 	app.post('/api/activities/avatar/update', function (req, res, next) {
-		if (!req.files['avatar']) next(errors[20007]);
+		if (!req.files['avatar']) return next(errors[20007]);
 		var user = req.user,
 			file = req.files['avatar'];
-		if (!user) next(errors[21301]);
-		if (!req.body['id']) next(errors[10008]);
-		if (file['type'] != 'image/jpeg') next(errors[20005]);
-		if (file['size'] > imageLimit) next(errors[20006]);
+		if (!user) return next(errors[21301]);
+		if (!req.body['id']) return next(errors[10008]);
+		if (file['type'] != 'image/jpeg') return next(errors[20005]);
+		if (file['size'] > imageLimit) return next(errors[20006]);
 		Activity.forge({ id: req.body['id'] }).fetch()
 			.then(function (activity) {
-				activity.updateAsset('avatar', file['path'])
+				return activity.updateAsset('avatar', file['path'])
 					.then(function () {
 						next({ msg: 'avatar updated' });
-					}).catch(next);
-			});
+					});
+			}).catch(next);
 	});
 };

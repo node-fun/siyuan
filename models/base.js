@@ -22,16 +22,13 @@ syModel = syBookshelf.Model = syModel.extend({
 	initialize: function () {
 		syModel.__super__.initialize.apply(this, arguments);
 		this._data = {};
-		this.on('creating', this.creating, this);
-		this.on('created', this.created, this);
-		this.on('updating', this.updating, this);
-		this.on('updated', this.updated, this);
-		this.on('saving', this.saving, this);
-		this.on('saved', this.saved, this);
-		this.on('fetching', this.fetching, this);
-		this.on('fetched', this.fetched, this);
-		this.on('destroying', this.destroying, this);
-		this.on('destroyed', this.destroyed, this);
+		var self = this;
+		[
+			'creating', 'created', 'updating', 'updated', 'saving', 'saved',
+			'fetching', 'fetched', 'destroying', 'destroyed'
+		].forEach(function (k) {
+				self.on(k, self[k], self);
+			});
 	},
 
 	creating: function () {
@@ -94,11 +91,7 @@ syModel = syBookshelf.Model = syModel.extend({
 				if (!model) return model;
 				// withRelated
 				if (!options) options = {};
-				var relation = options.withRelated || [];
-				model.withRelated.forEach(function (k) {
-					if (!~relation.indexOf(k)) relation.unshift(k);
-				});
-				options.withRelated = relation;
+				options.withRelated = model.withRelated.concat(options.withRelated || []);
 				// `this` in model.prototype.fetch is gonna be true self
 				return syModel.__super__.fetch.call(self, options);
 			});
@@ -187,11 +180,9 @@ syModel = syBookshelf.Model = syModel.extend({
 					});
 				});
 			}).then(function () {
-				return self.set(field, Date.now()).save()
-					.then(function () {
-						return self;
-					});
+				return self.set(field, Date.now()).save();
 			}).catch(function (err) {
+				// rollback to null if fail
 				return self.set(field, null).save()
 					.then(function () {
 						return Promise.reject(err);
@@ -227,7 +218,7 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 		return syCollection.__super__.fetch.apply(this, arguments)
 			.then(function (collection) {
 				return collection.invokeThen('fetch')
-					.then(function(){
+					.then(function () {
 						return collection;
 					});
 			});
@@ -262,7 +253,7 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 		return collection.list.apply(collection, arguments);
 	},
 
-	allowNull: function(query, keys){
+	allowNull: function (query, keys) {
 		keys.forEach(function (k) {
 			if (query[k] == '') query[k] = null;
 		});

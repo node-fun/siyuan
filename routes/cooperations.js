@@ -171,7 +171,7 @@ module.exports = function (app) {
 					'cooperationid': id
 				}).fetch()
 					.then(function (usercooperation) {
-						if (usercooperation != null) return Promise.rejected(next(errors[40002]));
+						if (usercooperation != null) return Promise.rejected(errors[40002]);
 						if (!isprivate) {
 							UserCooperation.forge({
 								'userid': user.id,
@@ -204,7 +204,7 @@ module.exports = function (app) {
 												}
 											});
 									}).then(function (groupmembers) {
-											if (!isfounded) return Promise.rejected(next(errors[21301]));
+											if (!isfounded) return Promise.rejected(errors[21301]);
 											return UserCooperation.forge({
 												'userid': user.id,
 												'cooperationid': id,
@@ -259,7 +259,7 @@ module.exports = function (app) {
 						}).fetch()
 							.then(function (usership) {
 								if (usership.get('isaccepted') == 1)
-									return Promise.rejected(next(errors[40016]));
+									return Promise.rejected(errors[40016]);
 								return usership.destroy()
 									.then(function () {
 										next({
@@ -268,7 +268,7 @@ module.exports = function (app) {
 									});
 							})
 					else
-						return Promise.rejected(next(errors[20605]));
+						return Promise.rejected(errors[20605]);
 				});
 			}).catch(next);
 	});
@@ -293,12 +293,12 @@ module.exports = function (app) {
 			.fetch()
 			.then(function (cooperation) {
 				if (cooperation == null) {
-					return Promise.rejected(next(errors[20603]));
+					return Promise.rejected(errors[20603]);
 				}
 				var self = cooperation;
 				return self.load(['usership']).then(function () {
 					if (!(self.get('ownerid') == user.id)) {
-						return Promise.rejected(next(errors[20102]));
+						return Promise.rejected(errors[20102]);
 					}
 					return self.set({
 						'statusid': 2
@@ -340,7 +340,7 @@ module.exports = function (app) {
 				var self = cooperation;
 				var ownerid = cooperation.get('ownerid');
 				if (user.id != ownerid) {
-					return Promise.rejected(next(errors[20102]));
+					return Promise.rejected(errors[20102]);
 				}
 				self.set(req.body).save()
 					.then(function (cooperation) {
@@ -495,7 +495,7 @@ module.exports = function (app) {
 			.then(function (cooperation) {
 				var self = cooperation,
 					ownerid = self.get('ownerid');
-				if (user.id != ownerid) return Promise.rejected(next(errors[20102]));
+				if (user.id != ownerid) return Promise.rejected(errors[20102]);
 				return UserCooperation.forge({ 'id': req.body['id'] }).fetch()
 					.then(function (usership) {
 						return usership.set({ 'isaccepted': true }).save();

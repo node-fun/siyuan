@@ -158,9 +158,9 @@ module.exports = function (app) {
 			.then(function (activity) {
 				var statusid = activity.get('statusid');
 
-				if (statusid == 2) return Promise.rejected(next(errors[40012]));
-				if (statusid == 3) return Promise.rejected(next(errors[40013]));
-				if (statusid == 4) return Promise.rejected(next(errors[40014]));
+				if (statusid == 2) return Promise.rejected(errors[40012]);
+				if (statusid == 3) return Promise.rejected(errors[40013]);
+				if (statusid == 4) return Promise.rejected(errors[40014]);
 
 				return UserActivity.forge({
 					'userid': user.id,
@@ -171,9 +171,9 @@ module.exports = function (app) {
 						next({ msg: 'join activity success' });
 					}).catch(function (err) {
 						if (/^ER_DUP_ENTRY/.test(err.message)) {
-							return Promise.rejected(next(errors[20506]));
+							return Promise.rejected(errors[20506]);
 						} else {
-							return Promise.rejected(next(err));
+							return Promise.rejected(err);
 						}
 					})
 			}).catch(next);
@@ -214,7 +214,7 @@ module.exports = function (app) {
 							'activityid': self.get('id')
 						}).fetch().then(function (usership) {
 								if (usership.get('isaccepted') == 1)
-									return Promise.rejected(next(errors[40016]));
+									return Promise.rejected(errors[40016]);
 								return usership.destroy();
 							}).then(function () {
 								next({
@@ -222,7 +222,7 @@ module.exports = function (app) {
 								});
 							});
 					} else {
-						return Promise.rejected(next(errors[20603]));
+						return Promise.rejected(errors[20603]);
 					}
 				});
 			}).catch(next);
@@ -249,7 +249,7 @@ module.exports = function (app) {
 					groupid = self.get('groupid');
 				return self.load(['usership']).then(function (activity) {
 					if (!(self.get('ownerid') == user.id)) {
-						return Promise.rejected(next(errors[20102]));
+						return Promise.rejected(errors[20102]);
 					}
 					return self.set({
 						'statusid': 4
@@ -292,7 +292,7 @@ module.exports = function (app) {
 			.then(function (activity) {
 				var ownerid = activity.get('ownerid');
 				if (user.id != ownerid) {
-					return Promise.rejected(next(errors[20102]));
+					return Promise.rejected(errors[20102]);
 				}
 				return activity.set(req.body).save()
 					.then(function (activity) {
@@ -335,12 +335,12 @@ module.exports = function (app) {
 			'groupid': req.body['groupid'],
 			'userid': user.id
 		}).fetch().then(function (groupmember) {
-				if (groupmember == null) return Promise.rejected(next(errors[40001]));
+				if (groupmember == null) return Promise.rejected(errors[40001]);
 				return Activity.forge({ name: req.body['name'] })
 					.fetch()
 					.then(function (activity) {
 						if (activity) {
-							return Promise.rejected(next(errors[20506]));
+							return Promise.rejected(errors[20506]);
 						}
 						return Activity.forge(_.extend({
 							ownerid: user.id
@@ -394,7 +394,7 @@ module.exports = function (app) {
 
 		Activity.forge({ 'id': req.body['id'] }).fetch()
 			.then(function (activity) {
-				if (!activity) return Promise.rejected(next(errors[20603]));
+				if (!activity) return Promise.rejected(errors[20603]);
 
 				var self = activity;
 
@@ -439,13 +439,13 @@ module.exports = function (app) {
 		Activity.forge({ 'id': req.body['activityid'] })
 			.fetch()
 			.then(function (activity) {
-				if (!activity) return Promise.rejected(next(errors[20603]));
+				if (!activity) return Promise.rejected(errors[20603]);
 				var self = activity,
 					ownerid = self.get('ownerid');
-				if (user.id != ownerid) return Promise.rejected(next(errors[20102]));
+				if (user.id != ownerid) return Promise.rejected(errors[20102]);
 				return UserActivity.forge({ 'id': req.body['id'] }).fetch()
 					.then(function (usership) {
-						if (!usership) return Promise.rejected(next(errors[20603]));
+						if (!usership) return Promise.rejected(errors[20603]);
 						return usership.set({ 'isaccepted': true }).save()
 							.then(function (activity) {
 								next({ msg: 'accept success' });

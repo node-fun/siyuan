@@ -3,6 +3,7 @@ process.title = 'siyuan';
 var _ = require('underscore'),
 	express = require('express'),
 	User = require('./models/user'),
+	Admin = require('./models/admin'),
 	config = require('./config'),
 	env = config.env,
 	port = config.port,
@@ -37,6 +38,17 @@ app.use(function (req, res, next) {
 				req.user = user;
 				next();
 			});
+	}
+	// admin session
+	var adminid = req.session['adminid'];
+	if (!admin) {
+		next();
+	} else {
+		Admin.forge({ id: adminid }).fetch()
+			.then(function (admin) {
+				req.admin = admin;
+				next();
+			})
 	}
 });
 app.use('/api', require('./lib/api/parser'));

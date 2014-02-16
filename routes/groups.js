@@ -39,10 +39,13 @@ module.exports = function (app) {
 			.query('limit', req.query['limit'])
 			.fetch()
 			.then(function (groups) {
-				groups.mapThen(function (group) {
-					group.countMembership();
-					group.countActivities();
-					return group.load(['owner', 'owner.profile']);
+				return groups.mapThen(function (group) {
+					return group.countMembership()
+						.then(function () {
+							return group.countActivities();
+						}).then(function () {
+							return group.load(['owner', 'owner.profile']);
+						});
 				}).then(function (groups) {
 						next({
 							groups: groups
@@ -123,7 +126,7 @@ module.exports = function (app) {
 			}, req.body))
 			.save()
 			.then(function (group) {
-				GroupMember.forge({
+				return GroupMember.forge({
 					userid: user.id,
 					groupid: group.id,
 					isowner: 1
@@ -155,7 +158,7 @@ module.exports = function (app) {
 	app.post('/api/groups/join', function (req, res, next) {
 		var user = req.user;
 		if (!user) return next(errors[21301]);
-		return join([user.id], req.body['groupid'], next);
+		join([user.id], req.body['groupid'], next);
 	});
 
 	/**
@@ -169,7 +172,7 @@ module.exports = function (app) {
 	app.post('/api/groups/quit', function (req, res, next) {
 		var user = req.user;
 		if (!user) return next(errors[21301]);
-		return quit(user.id, req.body['groupid'], next);
+		quit(user.id, req.body['groupid'], next);
 	});
 
 	/**
@@ -223,10 +226,13 @@ module.exports = function (app) {
 			.query('limit', req.query['limit'])
 			.fetch()
 			.then(function (groups) {
-				groups.mapThen(function (group) {
-					group.countMembership();
-					group.countActivities();
-					return group.load(['owner', 'owner.profile']);
+				return groups.mapThen(function (group) {
+					return group.countMembership()
+						.then(function () {
+							return group.countActivities();
+						}).then(function () {
+							return group.load(['owner', 'owner.profile']);
+						});
 				}).then(function (groups) {
 						next({groups: groups});
 					});
@@ -246,7 +252,7 @@ module.exports = function (app) {
 	app.post('/api/groups/setadmin', function (req, res, next) {
 		var user = req.user;
 		if (!user) {
-			next(errors[21301]);
+			return next(errors[21301]);
 		}
 		GroupMember.forge({
 			userid: user.id,
@@ -287,7 +293,7 @@ module.exports = function (app) {
 	app.post('/api/groups/canceladmin', function (req, res, next) {
 		var user = req.user;
 		if (!user) {
-			next(errors[21301]);
+			return next(errors[21301]);
 		}
 		GroupMember.forge({
 			userid: user.id,
@@ -330,7 +336,7 @@ module.exports = function (app) {
 	app.post('/api/groups/pull', function (req, res, next) {
 		var user = req.user;
 		if (!user) {
-			next(errors[21301]);
+			return next(errors[21301]);
 		}
 		GroupMember.forge({
 			userid: user.id,

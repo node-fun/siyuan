@@ -432,7 +432,7 @@ module.exports = function (app) {
 				Group.forge({id: req.body['groupid']})
 					.fetch()
 					.then(function (group) {
-						group.updateAvatar(file['path'])
+						group.updateAsset('avatar', file['path'])
 							.then(function () {
 								next({msg: 'Avatar updated'});
 							}).catch(next);

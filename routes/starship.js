@@ -31,16 +31,14 @@ module.exports = function (app) {
 	 * GET /api/starship/my
 	 * @method 自己的收藏列表
 	 * @param {Number} [id] 收藏ID
-	 * @param {Number} [userid] 用户ID
 	 * @param {Number} [itemtype] 类别ID
 	 * @param {Number} [itemid] 资源ID
 	 * @return {JSON}
 	 */
 	app.get('/api/starship/my', function (req, res, next) {
 		if (!req.user) return next(errors[21301]);
-		return StarshipSet.list(req.query, function (qb) {
-			qb.where('userid', req.user.id);
-		}, StarshipSet.lister)
+		req.query['userid'] = req.user.id;
+		return StarshipSet.list(req.query, StarshipSet.lister)
 			.then(function (starshipSet) {
 				next({ starring: starshipSet });
 			}).catch(next);
@@ -55,9 +53,8 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.post('/api/starship/star', function (req, res, next) {
-		var user = req.user;
-		if (!user) return next(errors[21301]);
-		req.body['userid'] = user.id;
+		if (!req.user) return next(errors[21301]);
+		req.body['userid'] = req.user.id;
 		// type limitation in starship
 		if (!~Starship.typesAllowed.indexOf(1 * req.body['itemtype'])) {
 			return next(errors[20701]);
@@ -90,14 +87,13 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.post('/api/starship/unstar', function (req, res, next) {
-		var user = req.user;
-		if (!user) return next(errors[21301]);
+		if (!req.user) return next(errors[21301]);
 		Starship.forge(
 				_.pick(req.body, 'id')
 			).fetch()
 			.then(function (starship) {
 				if (!starship) return Promise.reject(errors[20603]);
-				if (starship.get('userid') != user.id) {
+				if (starship.get('userid') != req.user.id) {
 					return Promise.reject(errors[20102]);
 				}
 				return starship.destroy();
@@ -114,14 +110,13 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.post('/api/starship/remark', function (req, res, next) {
-		var user = req.user;
-		if (!user) return next(errors[21301]);
+		if (!req.user) return next(errors[21301]);
 		Starship.forge(
 				_.pick(req.body, 'id')
 			).fetch()
 			.then(function (starship) {
 				if (!starship) return Promise.reject(errors[20603]);
-				if (starship.get('userid') != user.id) {
+				if (starship.get('userid') != req.user.id) {
 					return Promise.reject(errors[20102]);
 				}
 				return starship.set(

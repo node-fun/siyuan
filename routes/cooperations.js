@@ -565,9 +565,12 @@ module.exports = function (app) {
 			.fetch()
 			.then(function (cooperations) {
 				cooperations.mapThen(function (cooperation) {
-					cooperation.countUsership();
-					cooperation.countComments();
-					return cooperation.load(['user', 'user.profile', 'status']);
+					return cooperation.countUsership()
+						.then(function () {
+							return cooperation.countComments();
+						}).then(function () {
+							return cooperation.load(['user', 'user.profile', 'status']);
+						})
 				}).then(function (cooperations) {
 						next({ cooperations: cooperations });
 					})

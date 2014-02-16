@@ -58,6 +58,7 @@ var config = module.exports = {
 	port: ('PORT' in process.env) ? process.env['PORT'] :
 		env == 'test' ? 8099 : 8088,
 	secret: 'bad',
+	methodKey: '_method',
 	db: {
 		client: 'mysql',
 		connection: {

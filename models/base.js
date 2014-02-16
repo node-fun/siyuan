@@ -182,23 +182,12 @@ syModel = syBookshelf.Model = syModel.extend({
 			}).then(function () {
 				return self.set(field, Date.now()).save();
 			}).catch(function (err) {
-				// rollback to null if fail
+				// rollback to null
 				return self.set(field, null).save()
 					.then(function () {
 						return Promise.reject(err);
 					});
 			});
-	},
-	deleteAsset: function (field) {
-		var type = this.fieldToAssets[field],
-			file = this.getAssetPath(type),
-			self = this;
-		return new Promise(function (resolve, reject) {
-			fs.unlink(file, function (err) {
-				if (err) return reject(errors[30002]);
-				resolve(self);
-			});
-		});
 	},
 
 	getAssetName: function (type) {

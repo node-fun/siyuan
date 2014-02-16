@@ -47,11 +47,9 @@ Events = Event.Set = syBookshelf.Collection.extend({
 }, {
 	lister: function (qb, query) {
 		this.allowNull(query, ['groupid'])
-			.qbWhere(qb, query, ['userid', 'groupid', 'itemtype', 'itemid']);
+			.qbWhere(qb, query, ['id', 'userid', 'groupid', 'itemtype', 'itemid']);
 		if (query['search']) {
 			this.qbWhereLike(qb, query, ['message']);
-		} else {
-			this.qbWhere(qb, query, ['id']);
 		}
 	}
 });

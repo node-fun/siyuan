@@ -44,11 +44,6 @@ StarshipSet = Starship.Set = syBookshelf.Collection.extend({
 	model: Starship
 }, {
 	lister: function (qb, query) {
-		this.qbWhere(qb, query, ['userid', 'itemtype', 'itemid']);
-		if (query['search']) {
-			// ignoring
-		} else {
-			this.qbWhere(qb, query, ['id']);
-		}
+		this.qbWhere(qb, query, ['id', 'userid', 'itemtype', 'itemid']);
 	}
 });

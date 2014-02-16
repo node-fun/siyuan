@@ -150,8 +150,8 @@ module.exports = function (app) {
 	app.post('/api/cooperations/join', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) next(errors[21301]);
-		if (!req.body['id']) next(errors[10008]);
+		if (!user) return next(errors[21301]);
+		if (!req.body['id']) return next(errors[10008]);
 		Cooperation.forge({ id: req.body['id'] })
 			.fetch().
 			then(function (cooperation) {
@@ -171,7 +171,7 @@ module.exports = function (app) {
 					'cooperationid': id
 				}).fetch()
 					.then(function (usercooperation) {
-						if (usercooperation != null) next(errors[40002]);
+						if (usercooperation != null) return Promise.rejected(next(errors[40002]));
 						if (!isprivate) {
 							UserCooperation.forge({
 								'userid': user.id,
@@ -204,7 +204,7 @@ module.exports = function (app) {
 												}
 											});
 									}).then(function (groupmembers) {
-											if (!isfounded) return next(errors[21301]);
+											if (!isfounded) return Promise.rejected(next(errors[21301]));
 											return UserCooperation.forge({
 												'userid': user.id,
 												'cooperationid': id,
@@ -220,7 +220,7 @@ module.exports = function (app) {
 								});
 						}
 					});
-			});
+			}).catch(next);
 	});
 
 	/**
@@ -237,8 +237,8 @@ module.exports = function (app) {
 	app.post('/api/cooperations/cancel', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) next(errors[21301]);
-		if (!req.body['id']) next(errors[10008]);
+		if (!user) return next(errors[21301]);
+		if (!req.body['id']) return next(errors[10008]);
 		Cooperation.forge({ 'id': req.body['id'] })
 			.fetch()
 			.then(function (cooperation) {
@@ -259,7 +259,7 @@ module.exports = function (app) {
 						}).fetch()
 							.then(function (usership) {
 								if (usership.get('isaccepted') == 1)
-									next(errors[40016]);
+									return Promise.rejected(next(errors[40016]));
 								return usership.destroy()
 									.then(function () {
 										next({
@@ -268,9 +268,9 @@ module.exports = function (app) {
 									});
 							})
 					else
-						next(errors[20605]);
+						return Promise.rejected(next(errors[20605]));
 				});
-			});
+			}).catch(next);
 	});
 
 	/**
@@ -287,29 +287,29 @@ module.exports = function (app) {
 	app.post('/api/cooperations/end', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) next(errors[21301]);
-		if (!req.body['id']) next(errors[10008]);
+		if (!user) return next(errors[21301]);
+		if (!req.body['id']) return next(errors[10008]);
 		Cooperation.forge({ 'id': req.body['id'] })
 			.fetch()
 			.then(function (cooperation) {
 				if (cooperation == null) {
-					next(errors[20603]);
+					return Promise.rejected(next(errors[20603]));
 				}
 				var self = cooperation;
 				return self.load(['usership']).then(function () {
 					if (!(self.get('ownerid') == user.id)) {
-						return next(errors[20102]);
+						return Promise.rejected(next(errors[20102]));
 					}
 					return self.set({
 						'statusid': 2
 					}).save()
-					.then(function () {
-						next({
-							msg: 'end success'
+						.then(function () {
+							next({
+								msg: 'end success'
+							});
 						});
-					});
 				});
-			});
+			}).catch(next);
 	});
 
 	/**
@@ -332,28 +332,24 @@ module.exports = function (app) {
 	app.post('/api/cooperations/update', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) next(errors[21301]);
-		if (!req.body['id'] || !req.body['name'] ||
-			!req.body['description'] || !req.body['company'] ||
-			!req.body['statusid'] || !req.body['isprivate'] ||
-			!req.body['regdeadline'])
-			next(errors[10008]);
+		if (!user) return next(errors[21301]);
+		if (!req.body['id'] || !req.body['name'] || !req.body['description'] || !req.body['company'] || !req.body['statusid'] || !req.body['isprivate'] || !req.body['regdeadline'])
+			return next(errors[10008]);
 		Cooperation.forge({ 'id': req.body['id'] }).fetch()
 			.then(function (cooperation) {
 				var self = cooperation;
 				var ownerid = cooperation.get('ownerid');
 				if (user.id != ownerid) {
-					next(errors[20102]);
+					return Promise.rejected(next(errors[20102]));
 				}
 				self.set(req.body).save()
 					.then(function (cooperation) {
-					next({
-						msg: 'update success',
-						id: cooperation.get('id')
+						next({
+							msg: 'update success',
+							id: cooperation.get('id')
+						});
 					});
-				});
-			});
-
+			}).catch(next);
 	});
 
 	/**
@@ -376,11 +372,9 @@ module.exports = function (app) {
 	app.post('/api/cooperations/create', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) next(errors[21301]);
-		if (!req.body['name'] || !req.body['description'] ||
-			!req.body['company'] || !req.body['statusid'] ||
-			!req.body['isprivate'] || !req.body['regdeadline'])
-			next(errors[10008]);
+		if (!user) return next(errors[21301]);
+		if (!req.body['name'] || !req.body['description'] || !req.body['company'] || !req.body['statusid'] || !req.body['isprivate'] || !req.body['regdeadline'])
+			return next(errors[10008]);
 
 		Cooperation.forge(_.extend({
 				ownerid: user.id
@@ -391,13 +385,13 @@ module.exports = function (app) {
 					cooperationid: cooperation.get('id'),
 					isaccepted: true
 				}).save().then(function (usercooperation) {
-					next({
-						msg: 'create success',
-						id: cooperation.get('id'),
-						isprivate: cooperation.get('isprivate')
+						next({
+							msg: 'create success',
+							id: cooperation.get('id'),
+							isprivate: cooperation.get('isprivate')
+						});
 					});
-				});
-			})
+			}).catch(next);
 	});
 
 	/**
@@ -448,9 +442,9 @@ module.exports = function (app) {
 	app.post('/api/cooperations/userslist', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) next(errors[21301]);
+		if (!user) return next(errors[21301]);
 		if (!req.body['id'])
-			next(errors[10008]);
+			return next(errors[10008]);
 		Cooperation.forge({ 'id': req.body['id'] }).fetch()
 			.then(function (cooperation) {
 
@@ -475,7 +469,7 @@ module.exports = function (app) {
 				}).then(function (users) {
 						next({ userships: users });
 					});
-			});
+			}).catch(next);
 	});
 
 	/**
@@ -493,23 +487,22 @@ module.exports = function (app) {
 	app.post('/api/cooperations/accept', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) next(errors[21301]);
+		if (!user) return next(errors[21301]);
 		if (!req.body['id'] || !req.body['cooperationid'])
-			next(errors[10008]);
+			return next(errors[10008]);
 		Cooperation.forge({ 'id': req.body['cooperationid'] })
 			.fetch()
 			.then(function (cooperation) {
-
 				var self = cooperation,
 					ownerid = self.get('ownerid');
-				if (user.id != ownerid) next(errors[20102]);
+				if (user.id != ownerid) return Promise.rejected(next(errors[20102]));
 				return UserCooperation.forge({ 'id': req.body['id'] }).fetch()
 					.then(function (usership) {
 						return usership.set({ 'isaccepted': true }).save();
 					}).then(function () {
 						next({ msg: 'accept success' });
 					});
-			});
+			}).catch(next);
 	});
 
 
@@ -540,46 +533,46 @@ module.exports = function (app) {
 				"cover": "/covers/6.jpg?t=1392382969232",
 				"profile": {
 				  "email": "rogda@ebka.edu",
-			 "name": "Ezekiel Carroll",
-			 "gender": "f",
-			 "age": 52,
-			 "grade": 1980,
-			 "university": "Ijukubo University",
-			 "major": "Monwuza",
-			 "summary": "Wiwumbeg tu kav rizoel zawrem ipbanib rem fa osiko consah gadano uhomak ta agugupdif ulirehgo gorcamu etfeup.",
-			 "tag": "bafferul,zoz,liletose"
-			 }
-			 },
-			 "_pivot_userid": 3,
-			 "_pivot_cooperationid": 17,
-			 "numUsership": 4,
-			 "numComments": 6
-			 }
-	 	  ]
-	 	}
+	 "name": "Ezekiel Carroll",
+	 "gender": "f",
+	 "age": 52,
+	 "grade": 1980,
+	 "university": "Ijukubo University",
+	 "major": "Monwuza",
+	 "summary": "Wiwumbeg tu kav rizoel zawrem ipbanib rem fa osiko consah gadano uhomak ta agugupdif ulirehgo gorcamu etfeup.",
+	 "tag": "bafferul,zoz,liletose"
+	 }
+	 },
+	 "_pivot_userid": 3,
+	 "_pivot_cooperationid": 17,
+	 "numUsership": 4,
+	 "numComments": 6
+	 }
+	 ]
+	 }
 	 */
 	app.get('/api/cooperations/my', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) next(errors[21301]);
-			user.related('cooperations')
-				.query(function (qb) {
-					req.query['orders'].forEach(function (order) {
-						qb.orderBy(order[0], order[1]);
-					});
-				}).query('offset', req.query['offset'])
-				.query('limit', req.query['limit'])
-				.fetch()
-				.then(function (cooperations) {
-					cooperations.mapThen(function (cooperation) {
-						cooperation.countUsership();
-						cooperation.countComments();
-						return cooperation.load(['user', 'user.profile', 'status']);
-					}).then(function (cooperations) {
-							next({ cooperations: cooperations });
-						})
-				}).catch(next);
-		});
+		if (!user) return next(errors[21301]);
+		user.related('cooperations')
+			.query(function (qb) {
+				req.query['orders'].forEach(function (order) {
+					qb.orderBy(order[0], order[1]);
+				});
+			}).query('offset', req.query['offset'])
+			.query('limit', req.query['limit'])
+			.fetch()
+			.then(function (cooperations) {
+				cooperations.mapThen(function (cooperation) {
+					cooperation.countUsership();
+					cooperation.countComments();
+					return cooperation.load(['user', 'user.profile', 'status']);
+				}).then(function (cooperations) {
+						next({ cooperations: cooperations });
+					})
+			}).catch(next);
+	});
 
 	/**
 	 * @method 评论列表
@@ -699,13 +692,13 @@ module.exports = function (app) {
 	 * </pre>
 	 */
 	app.post('/api/cooperations/avatar/update', function (req, res, next) {
-		if (!req.files['avatar']) next(errors[20007]);
+		if (!req.files['avatar']) return next(errors[20007]);
 		var user = req.user,
 			file = req.files['avatar'];
-		if (!user) next(errors[21301]);
-		if (!req.body['id']) next(errors[10008]);
-		if (file['type'] != 'image/jpeg') next(errors[20005]);
-		if (file['size'] > imageLimit) next(errors[20006]);
+		if (!user) return next(errors[21301]);
+		if (!req.body['id']) return next(errors[10008]);
+		if (file['type'] != 'image/jpeg') return next(errors[20005]);
+		if (file['size'] > imageLimit) return next(errors[20006]);
 		Cooperation.forge({ id: req.body['id'] }).fetch()
 			.then(function (cooperation) {
 				cooperation.updateAsset('avatar', file['path'])

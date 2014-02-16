@@ -7,33 +7,34 @@ var _ = require('underscore'),
 	Photo = require('../models/photo'),
 	Photos = Photo.Set,
 	errors = require('../lib/errors'),
-	config = require('../config'),
-	imageLitmit = config.imageLitmit;
+	config = require('../config');
 
 module.exports = function (app) {
 	/**
-	 * GET /api/photos/find
+	 * GET /api/photos/list
 	 * @method 相片列表
 	 * @param {Number} [id] 相片ID
 	 * @param {Number} [userid] 用户ID
+	 * @param {String} [description] 相片描述(仅限搜索)
 	 * @return {JSON}
 	 */
-	app.get('/api/photos/find', function (req, res, next) {
-		Photos.list(req.query, Photos.finder)
+	app.get('/api/photos/list', function (req, res, next) {
+		Photos.list(req.query, Photos.lister)
 			.then(function (photos) {
 				next({ photos: photos });
 			}).catch(next);
 	});
 
 	/**
-	 * GET /api/photos/search
-	 * @method 相片搜索
-	 * @param {Number} [userid] 用户ID
-	 * @param {String} [description] 相片描述
+	 * GET /api/photos/my
+	 * @method 自己的相片列表
+	 * @param {String} [description] 相片描述(仅限搜索)
 	 * @return {JSON}
 	 */
-	app.get('/api/photos/search', function (req, res, next) {
-		Photos.list(req.query, Photos.searcher)
+	app.get('/api/photos/my', function (req, res, next) {
+		delete req.query['id'];
+		req.query['userid'] = req.user.id;
+		Photos.list(req.query, Photos.lister)
 			.then(function (photos) {
 				next({ photos: photos });
 			}).catch(next);
@@ -52,7 +53,7 @@ module.exports = function (app) {
 		if (!req.files['image']) return next(errors[20007]);
 		var file = req.files['image'];
 		if (file['type'] != 'image/jpeg') return next(errors[20005]);
-		if (file['size'] > imageLitmit) return next(errors[20006]);
+		if (file['size'] > config.imageLimit) return next(errors[20006]);
 		delete req.body['id'];
 		req.body['userid'] = user.id;
 		Photo.forge(req.body).data('image', file['path']).save()
@@ -78,9 +79,9 @@ module.exports = function (app) {
 		delete req.body['id'];
 		Photo.forge({ id: id }).fetch()
 			.then(function (photo) {
-				if (!photo) return Promise.rejected(errors[20603]);
+				if (!photo) return Promise.reject(errors[20603]);
 				if (photo.get('userid') != user.id) {
-					return Promise.rejected(errors[20102]);
+					return Promise.reject(errors[20102]);
 				}
 				return photo.set(req.body).save();
 			}).then(function () {
@@ -99,9 +100,9 @@ module.exports = function (app) {
 		if (!user) return next(errors[21301]);
 		Photo.forge({ id: req.body['id'] }).fetch()
 			.then(function (photo) {
-				if (!photo) return Promise.rejected(errors[20603]);
+				if (!photo) return Promise.reject(errors[20603]);
 				if (photo.get('userid') != user.id) {
-					return Promise.rejected(errors[20102]);
+					return Promise.reject(errors[20102]);
 				}
 				return photo.destroy();
 			}).then(function () {

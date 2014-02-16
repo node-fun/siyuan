@@ -40,8 +40,8 @@ describe('photos', function () {
 		});
 	});
 
-	it('finds', function (done) {
-		var url = apiHost + '/find';
+	it('lists', function (done) {
+		var url = apiHost + '/list';
 		request(url, function (err, res, data) {
 			assert.ok(data['photos'].length);
 			done();

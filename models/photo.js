@@ -58,28 +58,10 @@ Photo = module.exports = syBookshelf.Model.extend({
 Photos = Photo.Set = syBookshelf.Collection.extend({
 	model: Photo
 }, {
-	finder: function (qb, query) {
-		['id', 'userid'].forEach(function (k) {
-			if (k in query) {
-				qb.where(k, query[k]);
-			}
-		});
-	},
-
-	searcher: function (qb, query) {
-		var count = 0;
-		['userid'].forEach(function (k) {
-			if (k in query) {
-				count++;
-				qb.where(k, query[k]);
-			}
-		});
-		['description'].forEach(function (k) {
-			if (k in query) {
-				count++;
-				qb.where(k, 'like', '%' + query[k] + '%');
-			}
-		});
-		if (count < 1) query['limit'] = 0;
+	lister: function (qb, query) {
+		this.qbWhere(qb, query, ['id', 'userid']);
+		if (query['search']) {
+			this.qbWhereLike(qb, query, ['description']);
+		}
 	}
 });

@@ -228,7 +228,6 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 		var lookers = _.toArray(arguments).slice(1),
 			Collection = this.constructor,
 			Model = this.model,
-			limit = query['limit'],
 			related = Model.prototype.withRelated.concat();	// `concat` is necessary
 		return this
 			.query(function (qb) {
@@ -236,13 +235,15 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 					looker.call(Collection, qb, query, related);
 				});
 				// list nothing when none of the inputs applied
-				if (query['search'] && query['applied'].length < 1) limit = 0;
+				if (query['search'] && query['applied'].length < 1) {
+					query['limit'] = 0;
+				}
 			}).query(function (qb) {
 				query['orders'].forEach(function (order) {
 					qb.orderBy(order[0], order[1]);
 				});
 				qb.offset(query['offset']);
-				qb.limit(limit);
+				qb.limit(query['limit']);
 			}).fetch({
 				withRelated: related
 			});
@@ -264,7 +265,11 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 		keys.forEach(function (k) {
 			if (k in query) {
 				if (_.isArray(query[k])) {
-					if (query[k].length > 0) qb.whereIn(k, query[k]);
+					if (query[k].length < 1) {
+						query['limit'] = 0;
+					} else {
+						qb.whereIn(k, query[k]);
+					}
 				} else {
 					qb.where(k, query[k]);
 				}

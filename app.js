@@ -41,7 +41,7 @@ app.use(function (req, res, next) {
 	}
 	// admin session
 	var adminid = req.session['adminid'];
-	if (!admin) {
+	if (!adminid) {
 		next();
 	} else {
 		Admin.forge({ id: adminid }).fetch()

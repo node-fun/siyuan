@@ -34,10 +34,9 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.get('/api/events/my', function (req, res, next) {
-		var user = req.user;
-		if (!user) return next(errors[21301]);
+		if (!req.user) return next(errors[21301]);
 		return Events.list(req.query, function (qb) {
-			qb.where('userid', user.id);
+			qb.where('userid', req.user.id);
 		}, Events.lister)
 			.then(function (events) {
 				next({ events: events });
@@ -54,9 +53,8 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.get('/api/events/following', function (req, res, next) {
-		var user = req.user;
-		if (!user) return next(errors[21301]);
-		user.following().fetch()
+		if (!req.user) return next(errors[21301]);
+		req.user.following().fetch()
 			.then(function (following) {
 				var followids = following.models.map(function (followship) {
 					return followship.get('followid');

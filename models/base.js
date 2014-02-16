@@ -189,6 +189,17 @@ syModel = syBookshelf.Model = syModel.extend({
 					});
 			});
 	},
+	deleteAsset: function (field) {
+		var type = this.fieldToAssets[field],
+			file = this.getAssetPath(type),
+			self = this;
+		return new Promise(function (resolve, reject) {
+			fs.unlink(file, function (err) {
+				if (err) return reject(errors[30002]);
+				resolve(self);
+			});
+		});
+	},
 
 	getAssetName: function (type) {
 		return this.id + config.assets[type].ext;

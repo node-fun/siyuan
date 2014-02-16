@@ -28,7 +28,6 @@ module.exports = function (app) {
 	/**
 	 * GET /api/events/my
 	 * @method 自己的动态列表
-	 * @param {Number} [id] 动态ID
 	 * @param {Number} [groupid] 圈子ID
 	 * @param {Number} [itemtype] 类别ID
 	 * @param {Number} [itemid] 资源ID
@@ -37,6 +36,7 @@ module.exports = function (app) {
 	 */
 	app.get('/api/events/my', function (req, res, next) {
 		if (!req.user) return next(errors[21301]);
+		delete req.query['id'];
 		req.query['userid'] = req.user.id;
 		return Events.list(req.query, Events.lister)
 			.then(function (events) {
@@ -47,8 +47,6 @@ module.exports = function (app) {
 	/**
 	 * GET /api/events/following
 	 * @method 所关注的用户相关的动态列表
-	 * @param {Number} [id] 动态ID
-	 * @param {Number} [userid] 用户ID
 	 * @param {Number} [groupid] 圈子ID
 	 * @param {Number} [itemtype] 类别ID
 	 * @param {Number} [itemid] 资源ID
@@ -57,14 +55,13 @@ module.exports = function (app) {
 	 */
 	app.get('/api/events/following', function (req, res, next) {
 		if (!req.user) return next(errors[21301]);
+		delete req.query['id'];
 		req.user.following().fetch()
 			.then(function (following) {
-				return Events.list(req.query, function (qb) {
-					var followids = following.models.map(function (followship) {
-						return followship.get('followid');
-					});
-					qb.whereIn('userid', followids);
-				}, Events.lister);
+				req.query['userid'] = following.models.map(function (followship) {
+					return followship.get('followid');
+				});
+				return Events.list(req.query, Events.lister);
 			}).then(function (events) {
 				next({ events: events });
 			}).catch(next);

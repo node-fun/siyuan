@@ -30,13 +30,13 @@ module.exports = function (app) {
 	/**
 	 * GET /api/starship/my
 	 * @method 自己的收藏列表
-	 * @param {Number} [id] 收藏ID
 	 * @param {Number} [itemtype] 类别ID
 	 * @param {Number} [itemid] 资源ID
 	 * @return {JSON}
 	 */
 	app.get('/api/starship/my', function (req, res, next) {
 		if (!req.user) return next(errors[21301]);
+		delete req.query['id'];
 		req.query['userid'] = req.user.id;
 		return StarshipSet.list(req.query, StarshipSet.lister)
 			.then(function (starshipSet) {

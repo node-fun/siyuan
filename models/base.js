@@ -264,7 +264,7 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 		keys.forEach(function (k) {
 			if (k in query) {
 				if (_.isArray(query[k])) {
-					qb.whereIn(k, query[k]);
+					if (query[k].length > 0) qb.whereIn(k, query[k]);
 				} else {
 					qb.where(k, query[k]);
 				}

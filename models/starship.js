@@ -12,7 +12,6 @@ Starship = module.exports = syBookshelf.Model.extend({
 	fields: [
 		'id', 'userid', 'itemtype', 'itemid', 'remark'
 	],
-	omitInJSON: ['userid'],
 
 	fetch: function () {
 		return Starship.__super__.fetch.apply(this, arguments)
@@ -44,11 +43,12 @@ Starship = module.exports = syBookshelf.Model.extend({
 StarshipSet = Starship.Set = syBookshelf.Collection.extend({
 	model: Starship
 }, {
-	finder: function (qb, query) {
-		['id', 'userid', 'itemtype', 'itemid'].forEach(function (k) {
-			if (k in query) {
-				qb.where(k, query[k]);
-			}
-		});
+	lister: function (qb, query) {
+		this.qbWhere(qb, query, ['userid', 'itemtype', 'itemid']);
+		if (query['search']) {
+			// ignoring
+		} else {
+			this.qbWhere(qb, query, ['id']);
+		}
 	}
 });

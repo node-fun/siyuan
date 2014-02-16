@@ -11,16 +11,36 @@ var _ = require('underscore'),
 
 module.exports = function (app) {
 	/**
-	 * GET /api/starship/find
+	 * GET /api/starship/list
 	 * @method 收藏列表
 	 * @param {Number} [id] 收藏ID
 	 * @param {Number} [userid] 用户ID
-	 * @param {Number} [itemtype] 类别ID - `1`话题, `2`活动, `3`商务合作
+	 * @param {Number} [itemtype] 类别ID
 	 * @param {Number} [itemid] 资源ID
 	 * @return {JSON}
 	 */
-	app.get('/api/starship/find', function (req, res, next) {
-		StarshipSet.list(req.query, StarshipSet.finder)
+	app.get('/api/starship/list', function (req, res, next) {
+		if (!req.admin) return next(errors[21301]);
+		StarshipSet.list(req.query, StarshipSet.lister)
+			.then(function (starshipSet) {
+				next({ starring: starshipSet });
+			}).catch(next);
+	});
+
+	/**
+	 * GET /api/starship/my
+	 * @method 收藏列表
+	 * @param {Number} [id] 收藏ID
+	 * @param {Number} [userid] 用户ID
+	 * @param {Number} [itemtype] 类别ID
+	 * @param {Number} [itemid] 资源ID
+	 * @return {JSON}
+	 */
+	app.get('/api/starship/my', function (req, res, next) {
+		if (!req.user) return next(errors[21301]);
+		return StarshipSet.list(req.query, function (qb) {
+			qb.where('userid', req.user.id);
+		}, StarshipSet.lister)
 			.then(function (starshipSet) {
 				next({ starring: starshipSet });
 			}).catch(next);

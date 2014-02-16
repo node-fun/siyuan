@@ -32,6 +32,7 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.get('/api/photos/my', function (req, res, next) {
+		if (!req.user) return next(errors[21301]);
 		delete req.query['id'];
 		req.query['userid'] = req.user.id;
 		Photos.list(req.query, Photos.lister)
@@ -48,14 +49,13 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.post('/api/photos/post', function (req, res, next) {
-		var user = req.user;
-		if (!user) return next(errors[21301]);
+		if (!req.user) return next(errors[21301]);
 		if (!req.files['image']) return next(errors[20007]);
 		var file = req.files['image'];
 		if (file['type'] != 'image/jpeg') return next(errors[20005]);
 		if (file['size'] > config.imageLimit) return next(errors[20006]);
 		delete req.body['id'];
-		req.body['userid'] = user.id;
+		req.body['userid'] = req.user.id;
 		Photo.forge(req.body).data('image', file['path']).save()
 			.then(function (photo) {
 				next({
@@ -73,14 +73,13 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.post('/api/photos/update', function (req, res, next) {
-		var user = req.user;
-		if (!user) return next(errors[21301]);
+		if (!req.user) return next(errors[21301]);
 		var id = req.body['id'];
 		delete req.body['id'];
 		Photo.forge({ id: id }).fetch()
 			.then(function (photo) {
 				if (!photo) return Promise.reject(errors[20603]);
-				if (photo.get('userid') != user.id) {
+				if (photo.get('userid') != req.user.id) {
 					return Promise.reject(errors[20102]);
 				}
 				return photo.set(req.body).save();

@@ -72,7 +72,7 @@ module.exports = function (app) {
 					.query('limit', req.query['limit'])
 					.fetch({withRelated: ['user', 'user.profile']});
 			}).then(function (m) {
-				next({"memberships":m});
+				next({"memberships": m});
 			}).catch(next);
 	})
 
@@ -97,7 +97,7 @@ module.exports = function (app) {
 					.query('limit', req.query['limit'])
 					.fetch({withRelated: ['user', 'user.profile']});
 			}).then(function (m) {
-				next({"activities":m});
+				next({"activities": m});
 			}).catch(next);
 	})
 
@@ -119,8 +119,8 @@ module.exports = function (app) {
 			return next(errors[10008]);
 		}
 		Group.forge(_.extend({
-					ownerid: user.id
-				}, req.body))
+				ownerid: user.id
+			}, req.body))
 			.save()
 			.then(function (group) {
 				GroupMember.forge({
@@ -135,10 +135,10 @@ module.exports = function (app) {
 						});
 					});
 			})
-			.catch(function(err){
-				if (/^ER_DUP_ENTRY/.test(err.message)){
+			.catch(function (err) {
+				if (/^ER_DUP_ENTRY/.test(err.message)) {
 					next(errors[20506]);
-				}else{
+				} else {
 					next(err);
 				}
 			});
@@ -154,7 +154,7 @@ module.exports = function (app) {
 	 */
 	app.post('/api/groups/join', function (req, res, next) {
 		var user = req.user;
-		if(!user) return next(errors[21301]);
+		if (!user) return next(errors[21301]);
 		return join([user.id], req.body['groupid'], next);
 	});
 
@@ -178,7 +178,7 @@ module.exports = function (app) {
 	 * 支持page、limit、orders
 	 * @method 我的圈子列表
 	 * @return {JSON}
-	{
+	 {
 		"groups": [
 		{
 			"id": 8,
@@ -223,14 +223,14 @@ module.exports = function (app) {
 			.query('limit', req.query['limit'])
 			.fetch()
 			.then(function (groups) {
-			groups.mapThen(function (group) {
-				group.countMembership();
-				group.countActivities();
-				return group.load(['owner', 'owner.profile']);
-			}).then(function (groups) {
-					next({groups: groups});
-				});
-		}).catch(next);
+				groups.mapThen(function (group) {
+					group.countMembership();
+					group.countActivities();
+					return group.load(['owner', 'owner.profile']);
+				}).then(function (groups) {
+						next({groups: groups});
+					});
+			}).catch(next);
 	});
 
 	/**
@@ -435,9 +435,9 @@ module.exports = function (app) {
 	});
 };
 
-function join(userid, groupid, next){
+function join(userid, groupid, next) {
 	var members = GroupMember.Set.forge();
-	for(var i=0; i<userid.length; i++){
+	for (var i = 0; i < userid.length; i++) {
 		members.add(GroupMember.forge({
 			'userid': userid[i],
 			'groupid': groupid
@@ -445,12 +445,12 @@ function join(userid, groupid, next){
 	}
 	//不能重复加入，在数据库里控制
 	return members.invokeThen('save')
-		.then(function(){
+		.then(function () {
 			next({msg: 'join group success'});
-		}).catch(function(err){
-			if (/^ER_DUP_ENTRY/.test(err.message)){
+		}).catch(function (err) {
+			if (/^ER_DUP_ENTRY/.test(err.message)) {
 				next(errors[20506]);
-			}else{
+			} else {
 				next(err);
 			}
 		});

@@ -18,7 +18,7 @@ module.exports = function (app) {
 	 */
 	app.get('/api/clients/find', function (req, res, next) {
 		ClientVersions.forge()
-			.query(function(qb){
+			.query(function (qb) {
 				qb.orderBy('id', 'desc');
 			})
 			.fetch().then(
@@ -36,7 +36,7 @@ module.exports = function (app) {
 	 */
 	app.get('/api/clients/latest', function (req, res, next) {
 		ClientVersion.forge()
-			.query(function(qb){
+			.query(function (qb) {
 				qb.orderBy('id', 'desc');
 				qb.limit(1);
 			})
@@ -55,18 +55,18 @@ module.exports = function (app) {
 	 */
 	app.get('/api/clients/download', function (req, res, next) {
 		ClientVersion.forge()
-			.query(function(qb){
+			.query(function (qb) {
 				qb.orderBy('id', 'desc');
 				qb.limit(1);
 			})
 			.fetch().then(
 			function (client) {
-				var path = config.contentDir+'/clients/siyuan'+client.get('versioncode')+'.apk';
+				var path = config.contentDir + '/clients/siyuan' + client.get('versioncode') + '.apk';
 				res.download(path, 'siyuan.apk');
 			}
 		);
 	});
-	
+
 	/**
 	 * post /api/clients/add
 	 * @method 添加新版本
@@ -82,9 +82,9 @@ module.exports = function (app) {
 		if (!req.session.adminid) {
 			return next(errors[21301]);
 		}
-		
+
 		var file = req.files['file'],
-			newPath = config.contentDir+'/clients/siyuan'+req.body['versioncode']+'.apk';
+			newPath = config.contentDir + '/clients/siyuan' + req.body['versioncode'] + '.apk';
 		if (!file) return next(errors[20007]);
 		fs.readFile(file['path'], function (err, data) {
 			if (err) return next(errors[30000]);

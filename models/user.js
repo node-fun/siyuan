@@ -239,10 +239,8 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 	updateProfile: function (data) {
 		var self = this;
-		return this.profile().fetch()
-			.then(function (profile) {
-				return profile.set(data).save();
-			}).then(function () {
+		return this.related('profile').set(data).save()
+			.then(function () {
 				return self;
 			});
 	}

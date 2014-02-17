@@ -6,6 +6,7 @@ var _ = require('underscore'),
 	requireFn = require('../lib/requireFn'),
 	User = requireFn('./user'),
 	Entity = require('../lib/entity'),
+	entities = require('../config').entities,
 	Event, Events;
 
 Event = module.exports = syBookshelf.Model.extend({
@@ -34,12 +35,21 @@ Event = module.exports = syBookshelf.Model.extend({
 					});
 			});
 	},
-
+	
 	user: function () {
 		return this.belongsTo(User(), 'userid');
 	}
 }, {
-
+	//产生新动态可以用这个函数
+	add: function(userid, groupid, itemname, itemid, message){
+		Event.forge({
+			'userid': userid,
+			'groupid': groupid,
+			'itemtype': entities.indexOf(itemname) + 1,
+			'itemid': itemid,
+			'message': message
+		}).save();
+	}
 });
 
 Events = Event.Set = syBookshelf.Collection.extend({

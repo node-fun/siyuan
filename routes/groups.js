@@ -5,9 +5,11 @@
 var _ = require('underscore'),
 	Group = require('../models/group'),
 	GroupMember = require('../models/group-membership'),
+	Event = require('../models/event'),
 	errors = require('../lib/errors'),
 	config = require('../config'),
 	imageLimit = config.imageLimit,
+	User = require('../models/user'),
 	Groups = Group.Set;
 
 module.exports = function (app) {
@@ -126,6 +128,7 @@ module.exports = function (app) {
 			}, req.body))
 			.save()
 			.then(function (group) {
+				Event.add(user.id, null, 'group', group.id, user.get('username') + '创建了圈子' + group.get('name'));
 				return GroupMember.forge({
 					userid: user.id,
 					groupid: group.id,
@@ -158,7 +161,7 @@ module.exports = function (app) {
 	app.post('/api/groups/join', function (req, res, next) {
 		var user = req.user;
 		if (!user) return next(errors[21301]);
-		join([user.id], req.body['groupid'], next);
+		join(user, [user.id], req.body['groupid'], next);
 	});
 
 	/**
@@ -172,7 +175,7 @@ module.exports = function (app) {
 	app.post('/api/groups/quit', function (req, res, next) {
 		var user = req.user;
 		if (!user) return next(errors[21301]);
-		quit(user.id, req.body['groupid'], next);
+		quit(user, req.body['groupid'], next);
 	});
 
 	/**
@@ -240,7 +243,8 @@ module.exports = function (app) {
 	});
 
 	/**
-	 * POST /api/groups/setadmin
+	 * POST /api/groups/setadmin <br/>
+	 * 注意：只有圈主可以设置管理员
 	 * @method 设置管理员
 	 * @param {Number} userid 成员的id
 	 * @param {Number} groupid 圈子id
@@ -259,7 +263,7 @@ module.exports = function (app) {
 			groupid: req.body['groupid']
 		}).fetch()
 			.then(function (m) {
-				if (!m.get('isadmin')) {
+				if (!m.get('isowner')) {
 					next(errors[21301]);
 				} else {
 					GroupMember.forge({
@@ -274,6 +278,12 @@ module.exports = function (app) {
 									next({
 										msg: "set admin success"
 									});
+									//产生动态，但要先获取一下用户名
+									User.forge({id: req.body['userid']}).fetch()
+										.then(function(u){
+											Event.add(user.id, m.get('groupid'), 'group', m.get('groupid'),
+												u.get('username')+ '成为圈子管理员');
+										});
 								});
 						});
 				}
@@ -281,7 +291,8 @@ module.exports = function (app) {
 	});
 
 	/**
-	 * POST /api/groups/canceladmin
+	 * POST /api/groups/canceladmin <br/>
+	 * 注意：只有圈主可以撤销管理员
 	 * @method 撤销管理员
 	 * @param {Number} userid 成员的id
 	 * @param {Number} groupid 圈子id
@@ -300,7 +311,7 @@ module.exports = function (app) {
 			groupid: req.body['groupid']
 		}).fetch()
 			.then(function (m) {
-				if (!m.get('isadmin')) {
+				if (!m.get('isowner')) {
 					next(errors[21301]);
 				} else {
 					GroupMember.forge({
@@ -315,6 +326,12 @@ module.exports = function (app) {
 									next({
 										msg: "cancel admin success"
 									});
+									//产生动态，但要先获取一下用户名
+									User.forge({id: req.body['userid']}).fetch()
+										.then(function(u){
+											Event.add(user.id, m.get('groupid'), 'group', m.get('groupid'),
+												u.get('username')+ '被撤销圈子管理员职位');
+										});
 								});
 						});
 				}
@@ -346,7 +363,11 @@ module.exports = function (app) {
 				if (!m.get('isadmin') && !m.get('isowner')) {
 					next(errors[21301]);
 				} else {
-					return join(req.body['userid'], req.body['groupid'], next);
+					var userid = req.body['userid'];
+					if(!_.isArray(userid)){
+						userid = [userid];
+					}
+					return join(user, userid, req.body['groupid'], next);
 				}
 			});
 	});
@@ -374,15 +395,19 @@ module.exports = function (app) {
 				if (!m.get('isadmin') && !m.get('isowner')) {
 					next(errors[21301]);
 				} else {
-					return quit(req.body['userid'], req.body['groupid'], next);
+					User.forge({id: req.body['userid']}).fetch()
+						.then(function(u){
+							quit(u, req.body['groupid'], next);
+						});
 				}
 			});
 	});
 
 	/**
-	 * POST /api/groups/update
+	 * POST /api/groups/update <br/>
+	 * 圈主可操作
 	 * @method 更新圈子信息
-	 * @param {Number} id 圈子id
+	 * @param {Number} groupid 圈子id
 	 * @param {String} name
 	 * @param {String} description
 	 * @return {JSON}
@@ -390,11 +415,10 @@ module.exports = function (app) {
 	 */
 	app.post('/api/groups/update', function (req, res, next) {
 		var user = req.user;
-		if (!user) {
-			next(errors[21301]);
-		}
+		if (!user) return next(errors[21301]);
+		if (!req.body['groupid']) return next(errors[10008]);
 		Group.forge({
-			id: req.body['id']
+			id: req.body['groupid']
 		}).fetch()
 			.then(function (g) {
 				if (g.get('ownerid') != user.id) {
@@ -404,13 +428,16 @@ module.exports = function (app) {
 						.save()
 						.then(function () {
 							next({ msg: 'group profile updated' });
+							//产生动态
+							Event.add(user.id, g.get('id'), 'group', g.get('id'), '圈主更新了圈子信息');
 						});
 				}
-			});
+			}).catch(next);
 	});
 
 	/**
-	 * POST /api/groups/avatar/update
+	 * POST /api/groups/avatar/update <br/>
+	 * 圈主和管理员课操作
 	 * @method 更新圈子头像
 	 * @param {Number} groupid
 	 * @param {File} avatar
@@ -431,17 +458,27 @@ module.exports = function (app) {
 				if (file['size'] > imageLimit) return next(errors[20006]);
 				Group.forge({id: req.body['groupid']})
 					.fetch()
-					.then(function (group) {
-						group.updateAsset('avatar', file['path'])
+					.then(function (g) {
+						g.updateAsset('avatar', file['path'])
 							.then(function () {
 								next({msg: 'Avatar updated'});
+								//产生动态
+								Event.add(user.id, g.get('id'), 'group', g.get('id'), '圈主更新了圈子头像');
 							}).catch(next);
 					});
 			});
 	});
 };
 
-function join(userid, groupid, next) {
+/**
+ * join 加入圈子
+ * @param user 发起动作的人
+ * @param userid 要加入圈子的用户id，数组
+ * @param groupid
+ * @param next
+ * @returns {*}
+ */
+function join(user, userid, groupid, next) {
 	var members = GroupMember.Set.forge();
 	for (var i = 0; i < userid.length; i++) {
 		members.add(GroupMember.forge({
@@ -453,6 +490,7 @@ function join(userid, groupid, next) {
 	return members.invokeThen('save')
 		.then(function () {
 			next({msg: 'join group success'});
+			Event.add(user.id, groupid, 'group', groupid, '圈子里来了新成员');
 		}).catch(function (err) {
 			if (/^ER_DUP_ENTRY/.test(err.message)) {
 				next(errors[20506]);
@@ -462,9 +500,9 @@ function join(userid, groupid, next) {
 		});
 }
 
-function quit(userid, groupid, next) {
+function quit(user, groupid, next) {
 	return GroupMember.forge({
-		'userid': userid,
+		'userid': user.id,
 		'groupid': groupid
 	}).fetch()
 		.then(function (groupMember) {
@@ -476,6 +514,7 @@ function quit(userid, groupid, next) {
 					next({
 						msg: 'quit group success'
 					});
+					Event.add(user.id, groupid, 'group', groupid, user.get('username') + '退出了圈子');
 				});
 		});
 }

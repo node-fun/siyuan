@@ -60,7 +60,7 @@ Photos = Photo.Set = syBookshelf.Collection.extend({
 }, {
 	lister: function (qb, query) {
 		this.qbWhere(qb, query, ['id', 'userid']);
-		if (query['search']) {
+		if (query['fuzzy']) {
 			this.qbWhereLike(qb, query, ['description']);
 		}
 	}

@@ -48,7 +48,7 @@ Events = Event.Set = syBookshelf.Collection.extend({
 	lister: function (qb, query) {
 		this.allowNull(query, ['groupid'])
 			.qbWhere(qb, query, ['id', 'userid', 'groupid', 'itemtype', 'itemid']);
-		if (query['search']) {
+		if (query['fuzzy']) {
 			this.qbWhereLike(qb, query, ['message']);
 		}
 	}

@@ -39,7 +39,7 @@ syModel = syBookshelf.Model = syModel.extend({
 		})) {
 			return Promise.reject(errors[10008]);
 		}
-		var err;
+		var err = null;
 		if (_.some(this.validators, function (validator, k) {
 			return err = validator.call(self, self.get(k));
 		})) {
@@ -52,7 +52,7 @@ syModel = syBookshelf.Model = syModel.extend({
 	},
 	updating: function () {
 		var self = this;
-		var err;
+		var err = null;
 		if (_.some(this.validators, function (validator, k) {
 			if (self.get(k) == null) return false;
 			return err = validator.call(self, self.get(k));
@@ -228,10 +228,11 @@ syModel = syBookshelf.Model = syModel.extend({
 syBookshelf.Collection = syModel.Set = syCollection.extend({
 	model: syModel,
 
-	fetch: function () {
-		return syCollection.__super__.fetch.apply(this, arguments)
+	fetch: function (options) {
+		options = options || {};
+		return syCollection.__super__.fetch.call(this, options)
 			.then(function (collection) {
-				return collection.invokeThen('fetch')
+				return collection.invokeThen('fetch', options['each'])
 					.then(function () {
 						return collection;
 					});
@@ -247,7 +248,7 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 					looker.call(Collection, qb, query);
 				});
 				// list nothing when none of the inputs applied
-				if (query['search'] && query['applied'].length < 1) {
+				if (query['fuzzy'] && query['applied'].length < 1) {
 					query['limit'] = 0;
 				}
 			}).query(function (qb) {

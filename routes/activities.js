@@ -8,6 +8,7 @@ var _ = require('underscore'),
 	UserActivity = require('../models/user-activity'),
 	GroupMembers = require('../models/group-membership'),
 	Group = require('../models/group'),
+	Event = require('../models/event'),
 	errors = require('../lib/errors'),
 	config = require('../config'),
 	imageLimit = config.imageLimit;
@@ -251,6 +252,7 @@ module.exports = function (app) {
 					if (!(self.get('ownerid') == user.id)) {
 						return Promise.rejected(errors[20102]);
 					}
+					Event.add(user.id, activity.get('groupid'), 'activity', activity.get('id'), user.get('username') + '结束了活动' + activity.get('name'));
 					return self.set({
 						'statusid': 4
 					}).save()
@@ -294,6 +296,7 @@ module.exports = function (app) {
 				if (user.id != ownerid) {
 					return Promise.rejected(errors[20102]);
 				}
+				Event.add(user.id, activity.get('groupid'), 'activity', activity.get('id'), user.get('username') + '更新了活动' + activity.get('name'));
 				return activity.set(req.body).save()
 					.then(function (activity) {
 						next({
@@ -346,6 +349,7 @@ module.exports = function (app) {
 							ownerid: user.id
 						}, req.body)).save();
 					}).then(function (activity) {
+						Event.add(user.id, activity.get('groupid'), 'activity', activity.get('id'), user.get('username') + '创建了活动' + activity.get('name'));
 						return UserActivity.forge({
 							'userid': user.id,
 							'activityid': activity.id,
@@ -547,6 +551,7 @@ module.exports = function (app) {
 		if (file['size'] > imageLimit) return next(errors[20006]);
 		Activity.forge({ id: req.body['id'] }).fetch()
 			.then(function (activity) {
+				Event.add(user.id, activity.get('groupid'), 'activity', activity.get('id'), user.get('username') + '更新了活动' + activity.get('name'));
 				return activity.updateAsset('avatar', file['path'])
 					.then(function () {
 						next({ msg: 'avatar updated' });

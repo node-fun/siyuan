@@ -118,6 +118,7 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 
 	fetch: function (options) {
+		options = options || {};
 		return User.__super__.fetch.call(this, options)
 			.then(function (user) {
 				if (!user) return user;
@@ -130,6 +131,8 @@ User = module.exports = syBookshelf.Model.extend({
 						return user.countStarship();
 					}).then(function () {
 						return user.countEvents();
+					}).then(function () {
+						return user.detectFollowed(options.req);
 					});
 			});
 	},
@@ -144,7 +147,7 @@ User = module.exports = syBookshelf.Model.extend({
 			}).then(function () {
 				return FollowshipSet.forge().query()
 					.where('followid', '=', self.id)
-					.count('id')
+					.count('id');
 			}).then(function (d) {
 				return self.data('numFollowers', d[0]["count(`id`)"]);
 			});
@@ -183,6 +186,20 @@ User = module.exports = syBookshelf.Model.extend({
 			.count('id')
 			.then(function (d) {
 				return self.data('numEvents', d[0]["count(`id`)"]);
+			});
+	},
+	detectFollowed: function (req) {
+		if (!req || !req.user) {
+			return Promise.resolve(this.data('isfollowed', 0));
+		}
+		var self = this;
+		return this.followers().fetch()
+			.then(function (followers) {
+				var followerids = followers.map(function (followship) {
+					return followship.get('userid');
+				});
+				self.data('isfollowed', _.contains(followerids, req.user.id));
+				return self;
 			});
 	},
 
@@ -261,55 +278,47 @@ User = module.exports = syBookshelf.Model.extend({
 Users = User.Set = syBookshelf.Collection.extend({
 	model: User
 }, {
-	finder: function (qb, query) {
+	lister: function (qb, query) {
 		query['profile'] = query['profile'] || {};
-		qb.join(tbProfile, tbProfile + '.userid', '=', tbUser + '.id');
-		// find for user
-		['id', 'username', 'isonline'].forEach(function (k) {
-			if (k in query) {
-				qb.where(tbUser + '.' + k, '=', query[k]);
-			}
-		});
-		// find for profile
-		['name', 'gender'].forEach(function (k) {
-			if (k in query['profile']) {
-				qb.where(tbProfile + '.' + k, '=', query['profile'][k]);
-			}
-		});
-	},
-
-	searcher: function (qb, query) {
-		query['profile'] = query['profile'] || {};
-		var count = 0;
 		qb.join(tbProfile, tbProfile + '.userid', '=', tbUser + '.id');
 		// find for user
 		['isonline'].forEach(function (k) {
 			if (k in query) {
-				count++;
 				qb.where(tbUser + '.' + k, '=', query[k]);
 			}
 		});
 		// find for profile
 		['gender'].forEach(function (k) {
 			if (k in query['profile']) {
-				count++;
 				qb.where(tbProfile + '.' + k, '=', query['profile'][k]);
 			}
 		});
-		// search for user
-		['username'].forEach(function (k) {
-			if (k in query) {
-				count++;
-				qb.where(tbUser + '.' + k, 'like', '%' + query[k] + '%');
-			}
-		});
-		// search for profile
-		['name', 'university', 'major', 'summary'].forEach(function (k) {
-			if (k in query['profile']) {
-				count++;
-				qb.where(tbProfile + '.' + k, 'like', '%' + query['profile'][k] + '%');
-			}
-		});
-		if (count < 1) query['limit'] = 0;
+		if (query['fuzzy']) {
+			// search for user
+			['username'].forEach(function (k) {
+				if (k in query) {
+					qb.where(tbUser + '.' + k, 'like', '%' + query[k] + '%');
+				}
+			});
+			// search for profile
+			['name', 'university', 'major', 'summary', 'tag'].forEach(function (k) {
+				if (k in query['profile']) {
+					qb.where(tbProfile + '.' + k, 'like', '%' + query['profile'][k] + '%');
+				}
+			});
+		} else {
+			// find for user
+			['id', 'username'].forEach(function (k) {
+				if (k in query) {
+					qb.where(tbUser + '.' + k, '=', query[k]);
+				}
+			});
+			// find for profile
+			['name'].forEach(function (k) {
+				if (k in query['profile']) {
+					qb.where(tbProfile + '.' + k, '=', query['profile'][k]);
+				}
+			});
+		}
 	}
 });

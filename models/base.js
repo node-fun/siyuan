@@ -89,7 +89,6 @@ syModel = syBookshelf.Model = syModel.extend({
 		return syModel.__super__.fetch.call(this, options)
 			.then(function (model) {
 				if (!model) return model;
-
 				// appended
 				var p = model;
 				model.appended.forEach(function (k, i) {
@@ -106,7 +105,6 @@ syModel = syBookshelf.Model = syModel.extend({
 							});
 					});
 				});
-
 				return p;
 			});
 	},
@@ -135,7 +133,6 @@ syModel = syBookshelf.Model = syModel.extend({
 		});
 		return ret;
 	},
-
 	forTimestamp: function (attrs) {
 		_.each(attrs, function (val, key, list) {
 			if (_.isDate(val)) {
@@ -152,7 +149,6 @@ syModel = syBookshelf.Model = syModel.extend({
 		});
 		return attrs;
 	},
-
 	fixLowerCase: function (keys) {
 		var attrs = this.attributes;
 		_.each(keys, function (k) {
@@ -217,9 +213,21 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 
 	fetch: function (options) {
 		options = options || {};
+		options['each'] = options['each'] || null;
+		var req = options['req'] = options['req'] || null,
+			forModel = _.defaults({}, options['each'], _.pick(options, ['req']));
+		if (req) {
+			this.query(function (qb) {
+				req.query['orders'].forEach(function (order) {
+					qb.orderBy(order[0], order[1]);
+				});
+				qb.offset(req.query['offset']);
+				qb.limit(req.query['limit']);
+			});
+		}
 		return syCollection.__super__.fetch.call(this, options)
 			.then(function (collection) {
-				return collection.invokeThen('fetch', options['each'])
+				return collection.invokeThen('fetch', forModel)
 					.then(function () {
 						return collection;
 					});
@@ -301,7 +309,5 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 			delete this._data[key];
 			return this;
 		}
-	}, {
-
 	});
 });

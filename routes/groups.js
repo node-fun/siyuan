@@ -128,7 +128,7 @@ module.exports = function (app) {
 			}, req.body))
 			.save()
 			.then(function (group) {
-				Event.add(user.id, null, 'group', group.id, user.get('username') + '创建了圈子' + group.get('name'));
+				Event.add(user.id, null, 'group', group.id, user.get('username') + ' 创建了圈子' + group.get('name'));
 				return GroupMember.forge({
 					userid: user.id,
 					groupid: group.id,
@@ -282,7 +282,7 @@ module.exports = function (app) {
 									User.forge({id: req.body['userid']}).fetch()
 										.then(function(u){
 											Event.add(user.id, m.get('groupid'), 'group', m.get('groupid'),
-												u.get('username')+ '成为圈子管理员');
+												u.get('username')+ ' 成为圈子管理员');
 										});
 								});
 						});
@@ -330,7 +330,7 @@ module.exports = function (app) {
 									User.forge({id: req.body['userid']}).fetch()
 										.then(function(u){
 											Event.add(user.id, m.get('groupid'), 'group', m.get('groupid'),
-												u.get('username')+ '被撤销圈子管理员职位');
+												u.get('username')+ ' 被撤销圈子管理员职位');
 										});
 								});
 						});
@@ -429,7 +429,7 @@ module.exports = function (app) {
 						.then(function () {
 							next({ msg: 'group profile updated' });
 							//产生动态
-							Event.add(user.id, g.get('id'), 'group', g.get('id'), '圈主更新了圈子信息');
+							Event.add(user.id, g.get('id'), 'group', g.get('id'), ' 圈主更新了圈子信息');
 						});
 				}
 			}).catch(next);
@@ -463,7 +463,7 @@ module.exports = function (app) {
 							.then(function () {
 								next({msg: 'Avatar updated'});
 								//产生动态
-								Event.add(user.id, g.get('id'), 'group', g.get('id'), '圈主更新了圈子头像');
+								Event.add(user.id, g.get('id'), 'group', g.get('id'), ' 圈主更新了圈子头像');
 							}).catch(next);
 					});
 			});
@@ -514,7 +514,7 @@ function quit(user, groupid, next) {
 					next({
 						msg: 'quit group success'
 					});
-					Event.add(user.id, groupid, 'group', groupid, user.get('username') + '退出了圈子');
+					Event.add(user.id, groupid, 'group', groupid, user.get('username') + ' 退出了圈子');
 				});
 		});
 }

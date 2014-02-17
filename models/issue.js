@@ -11,7 +11,7 @@ var Promise = require('bluebird'),
 Issue = module.exports = syBookshelf.Model.extend({
 	tableName: 'issues',
 	fields: [
-		'id', 'userid', 'groupid', 'title', 'body', 'posttime'
+		'id', 'userid', 'groupid', 'activityid', 'title', 'body', 'posttime'
 	],
 	omitInJSON: ['userid'],
 	appended: ['user'],
@@ -78,8 +78,9 @@ Issues = Issue.Set = syBookshelf.Collection.extend({
 	model: Issue
 }, {
 	finder: function (qb, query) {
-		var k = 'groupid';
-		query[k] ? qb.where(k, query[k]) : qb.whereNull(k);//如果groupid没有传值，就要给他取null
+		['groupid', 'activityid'].forEach(function(k){
+			query[k] ? qb.where(k, query[k]) : qb.whereNull(k);//如果没有传值，就要给他取null
+		});
 		['id', 'userid', 'title'].forEach(function (k) {
 			if (k in query) {
 				qb.where(k, query[k]);
@@ -89,8 +90,9 @@ Issues = Issue.Set = syBookshelf.Collection.extend({
 
 	searcher: function (qb, query) {
 		var count = 0;
-		var k = 'groupid';
-		query[k] ? qb.where(k, query[k]) : qb.whereNull(k);//如果groupid没有传值，就要给他取null
+		['groupid', 'activityid'].forEach(function(k){
+			query[k] ? qb.where(k, query[k]) : qb.whereNull(k);//如果没有传值，就要给他取null
+		});
 		['userid'].forEach(function (k) {
 			if (k in query) {
 				count++;

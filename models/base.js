@@ -95,14 +95,14 @@ syModel = syBookshelf.Model = syModel.extend({
 				model.appended.forEach(function (k, i) {
 					if (i == 0) {
 						return p = p.related(k).fetch()
-							.then(function (o) {
-								return model.set(k, o);
+							.then(function () {
+								return model;
 							});
 					}
 					p = p.then(function () {
 						return model.related(k).fetch()
-							.then(function (o) {
-								return model.set(k, o);
+							.then(function () {
+								return model;
 							});
 					});
 				});

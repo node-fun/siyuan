@@ -10,6 +10,7 @@ var _ = require('underscore'),
 	GroupMember = require('../models/group-membership'),
 	GroupMembers = GroupMember.Set,
 	CoComment = require('../models/co-comment'),
+	Event = require('../models/event'),
 	errors = require('../lib/errors'),
 	config = require('../config'),
 	imageLimit = config.imageLimit;
@@ -296,10 +297,11 @@ module.exports = function (app) {
 					return Promise.rejected(errors[20603]);
 				}
 				var self = cooperation;
-				return self.load(['usership']).then(function () {
+				return self.load(['usership']).then(function (cooperation) {
 					if (!(self.get('ownerid') == user.id)) {
 						return Promise.rejected(errors[20102]);
 					}
+					Event.add(user.id, null, 'cooperation', cooperation.get('id'), user.get('username') + '结束了合作' + cooperation.get('name'));
 					return self.set({
 						'statusid': 2
 					}).save()
@@ -320,6 +322,7 @@ module.exports = function (app) {
 	 * @param {String} description 合作简介
 	 * @param {String} company 公司或组织
 	 * @param {Number} statusid 1发布 2结束
+	 * @param {Boolean} isprivate
 	 * @param {DATETIME} [regdeadline] 合作截止时间
 	 * @return {Array}
 	 * <pre>
@@ -342,6 +345,7 @@ module.exports = function (app) {
 				if (user.id != ownerid) {
 					return Promise.rejected(errors[20102]);
 				}
+				Event.add(user.id, null, 'cooperation', cooperation.get('id'), user.get('username') + '更新了商务合作' + cooperation.get('name'));
 				self.set(req.body).save()
 					.then(function (cooperation) {
 						next({
@@ -380,6 +384,7 @@ module.exports = function (app) {
 				ownerid: user.id
 			}, req.body)).save()
 			.then(function (cooperation) {
+				Event.add(user.id, null, 'cooperation', cooperation.get('id'), user.get('username') + '创建了商务合作' + cooperation.get('name'));
 				return UserCooperation.forge({
 					userid: user.id,
 					cooperationid: cooperation.get('id'),
@@ -704,6 +709,7 @@ module.exports = function (app) {
 		if (file['size'] > imageLimit) return next(errors[20006]);
 		Cooperation.forge({ id: req.body['id'] }).fetch()
 			.then(function (cooperation) {
+				Event.add(user.id, null, 'cooperation', cooperation.get('id'), user.get('username') + '更新了商务合作' + cooperation.get('name'));
 				cooperation.updateAsset('avatar', file['path'])
 					.then(function () {
 						next({ msg: 'avatar updated' });

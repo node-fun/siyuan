@@ -136,24 +136,6 @@ syModel = syBookshelf.Model = syModel.extend({
 		return ret;
 	},
 
-	// like jQuery's .data API
-	data: function (key, value) {
-		if (arguments.length === 1) {
-			return this._data[key];
-		}
-		this._data[key] = value;
-		return this;
-	},
-	removeData: function (key) {
-		delete this._data[key];
-		return this;
-	},
-	removeAttr: function (key) {
-		delete this.attributes[key];
-		return this;
-	},
-
-	// Jayin needs Timestamp as Datetime
 	forTimestamp: function (attrs) {
 		_.each(attrs, function (val, key, list) {
 			if (_.isDate(val)) {
@@ -228,6 +210,11 @@ syModel = syBookshelf.Model = syModel.extend({
 syBookshelf.Collection = syModel.Set = syCollection.extend({
 	model: syModel,
 
+	initialize: function () {
+		syCollection.__super__.initialize.apply(this, arguments);
+		this._data = {};
+	},
+
 	fetch: function (options) {
 		options = options || {};
 		return syCollection.__super__.fetch.call(this, options)
@@ -299,4 +286,22 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 		});
 		return this;
 	}
+});
+
+[syModel, syCollection].forEach(function (s) {
+	s.include({
+		data: function (key, value) {
+			if (arguments.length === 1) {
+				return this._data[key];
+			}
+			this._data[key] = value;
+			return this;
+		},
+		removeData: function (key) {
+			delete this._data[key];
+			return this;
+		}
+	}, {
+
+	});
 });

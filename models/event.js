@@ -13,7 +13,7 @@ Event = module.exports = syBookshelf.Model.extend({
 	fields: [
 		'id', 'userid', 'groupid', 'itemtype', 'itemid', 'message'
 	],
-	withRelated: ['user.profile'],
+	appended: ['user'],
 
 	fetch: function () {
 		return Event.__super__.fetch.apply(this, arguments)

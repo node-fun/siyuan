@@ -30,7 +30,7 @@ User = module.exports = syBookshelf.Model.extend({
 		'isonline', 'avatar', 'cover'
 	],
 	omitInJSON: ['password'],
-	withRelated: ['profile'],
+	appended: ['profile'],
 	required: ['username', 'password'],
 	validators: {
 		/*username: function (v) {

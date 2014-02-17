@@ -11,7 +11,7 @@ IssueComment = module.exports = syBookshelf.Model.extend({
 	tableName: 'issue_comments',
 	fields: ['id', 'issueid', 'userid', 'body', 'posttime'],
 	omitInJSON: ['userid', 'issueid'],
-	withRelated: ['user.profile'],
+	appended: ['user'],
 
 	defaults: function () {
 		return {

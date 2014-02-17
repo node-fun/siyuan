@@ -21,7 +21,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 		'starttime', 'duration', 'statusid', 'avatar', 'money', 'name', 'site',
 		'regdeadline'
 	],
-	withRelated: ['user.profile', 'status'],
+	appended: ['user', 'status'],
 	fieldToAssets: { avatar: 'activities' },
 
 	defaults: function () {

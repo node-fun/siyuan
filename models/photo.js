@@ -14,7 +14,7 @@ Photo = module.exports = syBookshelf.Model.extend({
 		'id', 'userid', 'description', 'posttime'
 	],
 	omitInJSON: ['userid'],
-	withRelated: ['user.profile'],
+	appended: ['user'],
 	fieldToAssets: { image: 'photos' },
 
 	defaults: function () {

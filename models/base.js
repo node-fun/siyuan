@@ -14,9 +14,8 @@ syModel = syBookshelf.Model = syModel.extend({
 	tableName: '',
 	fields: [],
 	omitInJSON: [],
-	withRelated: [],
-
 	appended: [],
+
 	required: [],
 	validators: {},
 	fieldToAssets: {},
@@ -87,10 +86,6 @@ syModel = syBookshelf.Model = syModel.extend({
 	},
 
 	fetch: function (options) {
-		options = options || {};
-		// withRelated
-		options.withRelated = this.withRelated.concat(options.withRelated || []);
-
 		return syModel.__super__.fetch.call(this, options)
 			.then(function (model) {
 				if (!model) return model;

@@ -215,12 +215,14 @@ CREATE TABLE IF NOT EXISTS `issues` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `userid` INT NOT NULL,
   `groupid` INT NULL,
+  `activityid` INT NULL,
   `title` VARCHAR(64) NULL,
   `body` VARCHAR(512) NULL,
   `posttime` DATETIME NULL,
   PRIMARY KEY (`id`),
   INDEX `_idx` (`userid` ASC),
   INDEX `fk_groupid_idx` (`groupid` ASC),
+  INDEX `fk_activityid_idx` (`activityid` ASC),
   CONSTRAINT `fk_issues_1`
     FOREIGN KEY (`userid`)
     REFERENCES `users` (`id`)
@@ -230,7 +232,12 @@ CREATE TABLE IF NOT EXISTS `issues` (
     FOREIGN KEY (`groupid`)
     REFERENCES `groups` (`id`)
     ON DELETE CASCADE
-    ON UPDATE RESTRICT)
+    ON UPDATE RESTRICT,
+  CONSTRAINT `fk_activityid`
+    FOREIGN KEY (`activityid`)
+    REFERENCES `activities` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -366,16 +373,6 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `resource_types`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `resource_types` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(45) NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `starship`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `starship` (
@@ -386,16 +383,10 @@ CREATE TABLE IF NOT EXISTS `starship` (
   `remark` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_starship_users1_idx` (`userid` ASC),
-  INDEX `fk_starship_source_types1_idx` (`itemtype` ASC),
   UNIQUE INDEX `uq_starship_1_idx` (`userid` ASC, `itemtype` ASC, `itemid` ASC),
   CONSTRAINT `fk_starship_users1`
     FOREIGN KEY (`userid`)
     REFERENCES `users` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_starship_resource_types1`
-    FOREIGN KEY (`itemtype`)
-    REFERENCES `resource_types` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
@@ -413,16 +404,10 @@ CREATE TABLE IF NOT EXISTS `events` (
   `message` VARCHAR(280) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_events_users1_idx` (`userid` ASC),
-  INDEX `fk_events_source_types1_idx` (`itemtype` ASC),
   INDEX `fk_events_groups1_idx` (`groupid` ASC),
   CONSTRAINT `fk_events_users1`
     FOREIGN KEY (`userid`)
     REFERENCES `users` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_events_resource_types1`
-    FOREIGN KEY (`itemtype`)
-    REFERENCES `resource_types` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_events_groups1`
@@ -512,18 +497,6 @@ COMMIT;
 START TRANSACTION;
 INSERT INTO `co_status` (`id`, `name`) VALUES (1, '发布');
 INSERT INTO `co_status` (`id`, `name`) VALUES (2, '结束');
-
-COMMIT;
-
-
--- -----------------------------------------------------
--- Data for table `resource_types`
--- -----------------------------------------------------
-START TRANSACTION;
-INSERT INTO `resource_types` (`id`, `name`) VALUES (1, 'user');
-INSERT INTO `resource_types` (`id`, `name`) VALUES (2, 'issue');
-INSERT INTO `resource_types` (`id`, `name`) VALUES (3, 'activity');
-INSERT INTO `resource_types` (`id`, `name`) VALUES (4, 'cooperation');
 
 COMMIT;
 

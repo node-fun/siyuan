@@ -10,7 +10,7 @@ CoComment = module.exports = syBookshelf.Model.extend({
 	tableName: 'co_comments',
 	fields: ['id', 'cooperationid', 'userid', 'body', 'posttime'],
 	omitInJSON: ['id', 'userid', 'issueid'],
-	withRelated: ['user.profile'],
+	appended: ['user'],
 
 	defaults: function () {
 		return {

@@ -29,7 +29,7 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 		'id', 'name', 'description', 'company', 'avatar', 'statusid', 'ownerid', 'isprivate', 'regdeadline'
 	],
 
-	withRelated: ['user.profile', 'status'],
+	appended: ['user', 'status'],
 	fieldToAssets: { avatar: 'cooperations' },
 
 	toJSON: function () {

@@ -14,7 +14,8 @@ syModel = syBookshelf.Model = syModel.extend({
 	tableName: '',
 	fields: [],
 	omitInJSON: [],
-	withRelated: [],
+	appended: [],
+
 	required: [],
 	validators: {},
 	fieldToAssets: {},
@@ -38,7 +39,7 @@ syModel = syBookshelf.Model = syModel.extend({
 		})) {
 			return Promise.reject(errors[10008]);
 		}
-		var err;
+		var err = null;
 		if (_.some(this.validators, function (validator, k) {
 			return err = validator.call(self, self.get(k));
 		})) {
@@ -51,7 +52,7 @@ syModel = syBookshelf.Model = syModel.extend({
 	},
 	updating: function () {
 		var self = this;
-		var err;
+		var err = null;
 		if (_.some(this.validators, function (validator, k) {
 			if (self.get(k) == null) return false;
 			return err = validator.call(self, self.get(k));
@@ -85,15 +86,28 @@ syModel = syBookshelf.Model = syModel.extend({
 	},
 
 	fetch: function (options) {
-		var self = this;
 		return syModel.__super__.fetch.call(this, options)
 			.then(function (model) {
 				if (!model) return model;
-				// withRelated
-				if (!options) options = {};
-				options.withRelated = model.withRelated.concat(options.withRelated || []);
-				// `this` in model.prototype.fetch is gonna be true self
-				return syModel.__super__.fetch.call(self, options);
+
+				// appended
+				var p = model;
+				model.appended.forEach(function (k, i) {
+					if (i == 0) {
+						return p = p.related(k).fetch()
+							.then(function () {
+								return model;
+							});
+					}
+					p = p.then(function () {
+						return model.related(k).fetch()
+							.then(function () {
+								return model;
+							});
+					});
+				});
+
+				return p;
 			});
 	},
 
@@ -214,10 +228,11 @@ syModel = syBookshelf.Model = syModel.extend({
 syBookshelf.Collection = syModel.Set = syCollection.extend({
 	model: syModel,
 
-	fetch: function () {
-		return syCollection.__super__.fetch.apply(this, arguments)
+	fetch: function (options) {
+		options = options || {};
+		return syCollection.__super__.fetch.call(this, options)
 			.then(function (collection) {
-				return collection.invokeThen('fetch')
+				return collection.invokeThen('fetch', options['each'])
 					.then(function () {
 						return collection;
 					});
@@ -226,16 +241,14 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 
 	list: function (query) {	// query, [, looker1, looker2, ..]
 		var lookers = _.toArray(arguments).slice(1),
-			Collection = this.constructor,
-			Model = this.model,
-			related = Model.prototype.withRelated.concat();	// `concat` is necessary
+			Collection = this.constructor;
 		return this
 			.query(function (qb) {
 				lookers.forEach(function (looker) {
-					looker.call(Collection, qb, query, related);
+					looker.call(Collection, qb, query);
 				});
 				// list nothing when none of the inputs applied
-				if (query['search'] && query['applied'].length < 1) {
+				if (query['fuzzy'] && query['applied'].length < 1) {
 					query['limit'] = 0;
 				}
 			}).query(function (qb) {
@@ -244,9 +257,7 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 				});
 				qb.offset(query['offset']);
 				qb.limit(query['limit']);
-			}).fetch({
-				withRelated: related
-			});
+			}).fetch();
 	}
 }, {
 	list: function () {

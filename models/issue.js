@@ -14,7 +14,7 @@ Issue = module.exports = syBookshelf.Model.extend({
 		'id', 'userid', 'groupid', 'title', 'body', 'posttime'
 	],
 	omitInJSON: ['userid'],
-	withRelated: ['user.profile'],
+	appended: ['user'],
 
 	defaults: function () {
 		return {

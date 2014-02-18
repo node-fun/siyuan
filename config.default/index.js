@@ -77,6 +77,15 @@ var config = module.exports = {
 	],
 	avatarExt: imageExt,
 	imageLimit: 4 * 1024 * 1024,
+	smtp: {
+		host: "smtp.163.com",
+		secureConnection: true,
+		port: 465,
+		auth: {
+			user: 'siyuan@163.com',
+			pass: '123456'
+		}
+	},
 	admins: [
 		{
 			username: 'admin1',

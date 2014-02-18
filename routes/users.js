@@ -5,6 +5,7 @@ var _ = require('underscore'),
 	User = require('../models/user'),
 	Users = User.Set,
 	errors = require('../lib/errors'),
+	mail = require('../lib/mail'),
 	config = require('../config'),
 	imageLimit = config.imageLimit;
 
@@ -88,6 +89,18 @@ module.exports = function (app) {
 	app.post('/api/users/register', function (req, res, next) {
 		User.forge(req.body).register()
 			.then(function (user) {
+				var profile = user.related('profile');
+				mail({
+					to: profile.get('email'),
+					subject: '思源群 欢迎您的加入',
+					html: [
+						'Hi~ ' + profile.get('name') + ',',
+						'您已成功注册 思源群!',
+						'用户名: ' + user.get('username'),
+						'-------',
+						'详情: <a href="http://61.174.8.62/">http://61.174.8.62/</a>'
+					].join('<br>')
+				});
 				next({
 					msg: 'User registered',
 					id: user.id

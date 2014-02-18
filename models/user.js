@@ -92,15 +92,15 @@ User = module.exports = syBookshelf.Model.extend({
 			.then(function () {
 				var profileData = self.data('profile'),
 					profile = UserProfile.forge(profileData);
-				return profile.set('userid', self.id).save();
+				return profile.set('userid', self.id).save()
+					.catch(function (err) {
+						return self.destroy() // rollback
+							.then(function () {
+								return Promise.reject(err);
+							});
+					});
 			}).then(function () {
 				return self;
-			}, function (err) {
-				// rollback
-				return self.destroy()
-					.then(function () {
-						return Promise.reject(err);
-					});
 			});
 	},
 	saving: function () {

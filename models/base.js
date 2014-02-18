@@ -217,6 +217,10 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 					qb.orderBy(order[0], order[1]);
 				});
 				qb.offset(req.query['offset']);
+				// empty list for empty fuzzy query
+				if (req.query['fuzzy'] && req.query['applied'] < 1) {
+					req.query['limit'] = 0;
+				}
 				qb.limit(req.query['limit']);
 			});
 		}
@@ -237,10 +241,7 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 				lookers.forEach(function (looker) {
 					looker.call(Collection, qb, query);
 				});
-				// list nothing when none of the inputs applied
-				if (query['fuzzy'] && query['applied'] < 1) {
-					query['limit'] = 0;
-				}
+
 			}).query(function (qb) {
 				query['orders'].forEach(function (order) {
 					qb.orderBy(order[0], order[1]);

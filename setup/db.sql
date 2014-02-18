@@ -475,6 +475,35 @@ CREATE TABLE IF NOT EXISTS `feedback` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `message`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `message` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `sender` INT NULL COMMENT 'Sender can be null, that means system message.',
+  `receiver` INT NOT NULL,
+  `title` VARCHAR(45) NULL,
+  `body` VARCHAR(500) NULL,
+  `isread` TINYINT(1) NULL DEFAULT 0,
+  `isreplied` TINYINT(1) NULL DEFAULT 0,
+  `sourceid` INT NULL COMMENT 'The id of the source message.\nThat means this message is the reply of the source message.',
+  `sendtime` TIMESTAMP NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_sender_idx` (`sender` ASC),
+  INDEX `fk_receiver_idx` (`receiver` ASC),
+  CONSTRAINT `fk_sender`
+    FOREIGN KEY (`sender`)
+    REFERENCES `users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_receiver`
+    FOREIGN KEY (`receiver`)
+    REFERENCES `users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

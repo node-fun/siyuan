@@ -6,6 +6,7 @@ var _ = require('underscore'),
 	Activity = require('../models/activity'),
 	Activities = Activity.Set,
 	UserActivity = require('../models/user-activity'),
+	UserActivitys = UserActivity.Set,
 	GroupMembers = require('../models/group-membership'),
 	Group = require('../models/group'),
 	Event = require('../models/event'),
@@ -15,73 +16,69 @@ var _ = require('underscore'),
 
 module.exports = function (app) {
 	/**
-	 * GET /api/activities/find
+	 * GET /api/activities/list
 	 * @method 活动列表
 	 * @param {Number} [id] 活动id
 	 * @param {String} [name] 活动名称
+	 * @param {String} [content] 活动内容 (仅限搜索)
+	 * @param {String} [site] 活动地点
 	 * @return {Array}
-	 * // GET /api/activities/find?id=45
+	 * // GET /api/activities/list?id=45
 	 * <pre>{
-  "activities": [
-    {
-      "id": 1,
-      "ownerid": 6,
-      "groupid": 4,
-      "content": "Lemkazvu fegubezu gow venneg vec vukonmic gac",
-      "maxnum": 34,
-      "createtime": 1358884697000,
-      "starttime": 1367641060000,
-      "duration": 10,
-      "statusid": 3,
-      "avatar": "avecu",
-      "money": 813,
-      "name": "wojomsa",
-      "site": "jabe",
-      "user": {
-        "id": 6,
-        "username": "be_689",
-        "regtime": 1377558747000,
-        "isonline": 1,
-        "profile": {
-          "email": "lakzaki@te.co.uk",
-	 "nickname": "Xander Schneider",
-	 "name": "Alexandria Carlson",
-	 "gender": "f",
-	 "age": 26,
-	 "grade": 2006,
-	 "university": "Donhegra University",
-	 "major": "Vormiwi"
-	 },
-	 "avatar": "/avatars/6.jpg"
-	 },
-	 "status": {
-        "id": 3,
-        "name": "????"
-      },
-	 "numUsership": 2
+	  "activities": [
+		{
+		  "id": 21,
+		  "ownerid": 17,
+		  "groupid": 7,
+		  "content": "To cica zakbufo got hakem wobe rusel zokel de",
+		  "maxnum": 40,
+		  "createtime": 1357600439000,
+		  "starttime": 1388279716000,
+		  "duration": 4,
+		  "statusid": 1,
+		  "avatar": "/activities/21.jpg?t=/activities/21.jpg?t=1392704568094",
+		  "money": 1090,
+		  "name": "gamzusiki",
+		  "site": "mew",
+		  "regdeadline": 1385758936000,
+		  "user": {
+			"id": 17,
+			"username": "tem_627",
+			"regtime": 1363391664000,
+			"isonline": 1,
+			"avatar": "/avatars/17.jpg?t=1392704564142",
+			"cover": "/covers/17.jpg?t=1392704564505",
+			"profile": {
+			  "email": "hik@bi.net",
+		 "name": "Andre Woods",
+		 "gender": "m",
+		 "age": 27,
+		 "grade": 2002,
+		 "university": "Ihodage University",
+		 "major": "Hatef",
+		 "summary": "Guzal modige nolege pisiko bej nuzew newcig nimehi siwla in kerlosud vatzoc bipedse do nusle pe kemcoful lasozsa.",
+		 "tag": "heh,gagef,abnipar"
+		 },
+		 "numFollowing": 3,
+		 "numFollowers": 3,
+		 "numIssues": 4,
+		 "numPhotos": 4,
+		 "numStarring": 2,
+		 "numEvents": 4,
+		 "isfollowed": 0
+		 },
+		 "status": {
+			"id": 1,
+			"name": "????"
+		  },
+		 "numUsership": 2
+		 }
+		 ]
 	 }
-	 ]
-	 }</pre>
+	 </pre>
 	 */
-	app.get('/api/activities/find', function (req, res, next) {
-		Activities.list(req.query, Activities.finder)
-			.then(function (activities) {
-				next({
-					activities: activities
-				});
-			}).catch(next);
-	});
-
-	/**
-	 * GET /api/activities/search
-	 * @method 活动搜索
-	 * @param {Number} [ownerid] 作者ID
-	 * @param {String} [name] 标题关键字
-	 * @param {String} [content] 内容关键字
-	 * @return {JSON}
-	 */
-	app.get('/api/activities/search', function (req, res, next) {
-		Activities.list(req.query, Activities.searcher)
+	app.get('/api/activities/list', function (req, res, next) {
+		Activities.forge().fetch({ req: req })
 			.then(function (activities) {
 				next({ activities: activities });
 			}).catch(next);
@@ -125,7 +122,7 @@ module.exports = function (app) {
     ]</pre>
 	*/
 	app.get('/api/activities/history', function (req, res, next) {
-		UserActivity.find(req.query)
+		UserActivitys.forge().fetch({ req:req })
 			.then(function (useractivitys) {
 				return useractivitys.mapThen(function (useractivity) {
 					return useractivity.load(['user']);

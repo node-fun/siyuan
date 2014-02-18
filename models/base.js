@@ -211,8 +211,9 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 		var req = options['req'] = options['req'] || null,
 			forModel = _.defaults({}, options['each'], _.pick(options, ['req']));
 		if (req) {
+			var self = this;
 			this.query(function (qb) {
-				if (this.lister) this.lister(req, qb);
+				if (self.lister) self.lister(req, qb);
 				req.query['orders'].forEach(function (order) {
 					qb.orderBy(order[0], order[1]);
 				});

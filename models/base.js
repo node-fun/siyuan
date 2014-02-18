@@ -207,23 +207,30 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 
 	fetch: function (options) {
 		options = options || {};
-		options['each'] = options['each'] || null;
 		var req = options['req'] = options['req'] || null,
 			forModel = _.defaults({}, options['each'], _.pick(options, ['req']));
 		if (req) {
 			var self = this;
 			this.query(function (qb) {
-				if (self.lister) self.lister(req, qb);
-				req.query['orders'].forEach(function (order) {
-					qb.orderBy(order[0], order[1]);
-				});
-				qb.offset(req.query['offset']);
-				// empty list for empty fuzzy query
-				if (req.query['fuzzy'] && req.query['applied'] < 1) {
-					req.query['limit'] = 0;
+				if (options['self']) {
+					if (self.models.length < 1) {
+						req.query['limit'] = 0;
+					} else {
+						qb.whereIn('id', _.pluck(self.models, 'id'));
+					}
 				}
-				qb.limit(req.query['limit']);
-			});
+				if (self.lister) self.lister(req, qb);
+			}).query(function (qb) {
+					req.query['orders'].forEach(function (order) {
+						qb.orderBy(order[0], order[1]);
+					});
+					qb.offset(req.query['offset']);
+					// empty list for empty fuzzy query
+					if (req.query['fuzzy'] && req.query['applied'] < 1) {
+						req.query['limit'] = 0;
+					}
+					qb.limit(req.query['limit']);
+				});
 		}
 		return syCollection.__super__.fetch.call(this, options)
 			.then(function (collection) {

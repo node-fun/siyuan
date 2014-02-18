@@ -5,10 +5,47 @@ var _ = require('underscore'),
 	Promise = require('bluebird'),
 	User = require('../models/user'),
 	Followship = require('../models/followship'),
-	FollowshipSet = Followship.Set,
+	Followships = Followship.Set,
 	errors = require('../lib/errors');
 
 module.exports = function (app) {
+	/**
+	 * POST /api/followship/following
+	 * @method 用户的关注列表
+	 * @param {Number} followid 被关注者ID
+	 * @return {JSON}
+	 */
+	app.get('/api/followship/following', function (req, res, next) {
+		if (!req.user) return next(errors[21301]);
+		req.query = _.omit(req.query, ['userid']);
+		req.user.following().fetch()
+			.then(function (collection) {
+				// relations fetching not enough
+				return Followships.forge().set(collection.models)
+					.fetch({ req: req, self: true });
+			}).then(function (following) {
+				next({ following: following });
+			}).catch(next);
+	});
+
+	/**
+	 * POST /api/followship/followers
+	 * @method 用户的粉丝列表
+	 * @param {Number} userid 关注者ID
+	 * @return {JSON}
+	 */
+	app.get('/api/followship/followers', function (req, res, next) {
+		if (!req.user) return next(errors[21301]);
+		req.query = _.omit(req.query, ['followid']);
+		req.user.followers().fetch()
+			.then(function (collection) {
+				return Followships.forge().set(collection.models)
+					.fetch({ req: req, self: true });
+			}).then(function (followers) {
+				next({ followers: followers });
+			}).catch(next);
+	});
+
 	/**
 	 * POST /api/followship/follow
 	 * @method 关注用户
@@ -79,32 +116,6 @@ module.exports = function (app) {
 				).save();
 			}).then(function () {
 				next({ msg: 'Followee remarked' });
-			}).catch(next);
-	});
-
-	/**
-	 * POST /api/followship/following
-	 * @method 用户的关注列表
-	 * @param {Number} userid 关注者ID
-	 * @return {JSON}
-	 */
-	app.get('/api/followship/following', function (req, res, next) {
-		FollowshipSet.list(req.query, FollowshipSet.finderFollowing)
-			.then(function (followshipSet) {
-				next({ following: followshipSet });
-			}).catch(next);
-	});
-
-	/**
-	 * POST /api/followship/followers
-	 * @method 用户的粉丝列表
-	 * @param {Number} followid 被关注者ID
-	 * @return {JSON}
-	 */
-	app.get('/api/followship/followers', function (req, res, next) {
-		FollowshipSet.list(req.query, FollowshipSet.finderFollowers)
-			.then(function (followshipSet) {
-				next({ followers: followshipSet });
 			}).catch(next);
 	});
 };

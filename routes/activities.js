@@ -366,7 +366,7 @@ module.exports = function (app) {
 	});
 
 	/**
-	 * POST /api/activities/userslist
+	 * GET /api/activities/userslist
 	 * @method 获取活动人员名单
 	 * @param {Number} id 活动id
 	 * @return {Array}
@@ -389,37 +389,28 @@ module.exports = function (app) {
 		  ]  
 		}</pre>
 	 */
-	app.post('/api/activities/userslist', function (req, res, next) {
+	app.get('/api/activities/userslist', function (req, res, next) {
 		var user = req.user;
 
 		if (!user) return next(errors[21301]);
-		if (!req.body['id'])
+		if (!req.query['id'])
 			return next(errors[10008]);
 
-		Activity.forge({ 'id': req.body['id'] }).fetch()
+		Activity.forge({ id: req.query['id'] }).fetch()
 			.then(function (activity) {
 				if (!activity) return Promise.rejected(errors[20603]);
 
-				var self = activity;
-
-				return self.load(['usership']).then(function (activity) {
-					var userships = activity.related('usership');
-					return userships.mapThen(function (usership) {
-						return User.forge({ 'id': usership.get('userid') })
-							.fetch()
-							.then(function (user) {
-								return user.load(['profile']).then(function (user) {
-									return usership.set({
-										'user': user
-									});
-								});
-							});
-					}).then(function (userships) {
-							return userships;
+				return activity
+					.related('usership')
+					.query(function (qb) {
+						req.query['orders'].forEach(function (order) {
+							qb.orderBy(order[0], order[1]);
 						});
-				}).then(function (users) {
-					next({ userships: users });
-				});
+					}).query('offset', req.query['offset'])
+					.query('limit', req.query['limit'])
+					.fetch({withRelated: ['user', 'user.profile']})
+			}).then(function (userships) {
+				next({ userships: userships });
 			}).catch(next);
 	});
 

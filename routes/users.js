@@ -94,9 +94,9 @@ module.exports = function (app) {
 					to: profile.get('email'),
 					subject: '思源群 欢迎您的加入',
 					html: [
-						'Hi~ ' + profile.get('name') + ',',
+						'您好 ' + profile.get('name') + ',',
 						'您已成功注册 思源群!',
-						'用户名: ' + user.get('username'),
+						'用户名: @' + user.get('username'),
 						'-------',
 						'详情: <a href="http://61.174.8.62/">http://61.174.8.62/</a>'
 					].join('<br>')

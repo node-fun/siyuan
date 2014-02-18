@@ -7,38 +7,23 @@ var _ = require('underscore'),
 	Issue = require('../models/issue'),
 	Issues = Issue.Set,
 	IssueComment = require('../models/issue-comment'),
+	mail = require('../lib/mail'),
 	errors = require('../lib/errors');
 
 module.exports = function (app) {
 	/**
-	 * GET /api/issues/find
+	 * GET /api/issues/list
 	 * @method 话题列表
 	 * @param {Number} [id] 话题ID
 	 * @param {Number} [userid] 作者ID
 	 * @param {String} [title] 标题
+	 * @param {String} [body] 内容 (仅限搜索)
 	 * @param {String} [groupid] 圈子id，不传值表示校友交流，传值表示圈内分享
 	 * @param {String} [activityid] 活动id，不传值表示校友交流，传值表示活动分享
 	 * @return {JSON}
 	 */
-	app.get('/api/issues/find', function (req, res, next) {
-		Issues.list(req.query, Issues.finder)
-			.then(function (issues) {
-				next({ issues: issues });
-			}).catch(next);
-	});
-
-	/**
-	 * GET /api/issues/search
-	 * @method 话题搜索
-	 * @param {Number} [userid] 作者ID
-	 * @param {String} [title] 标题关键字
-	 * @param {String} [body] 内容关键字
-	 * @param {String} [groupid] 圈子id，不传值表示校友交流，传值表示圈内分享
-	 * @param {String} [activityid] 活动id，不传值表示校友交流，传值表示活动分享
-	 * @return {JSON}
-	 */
-	app.get('/api/issues/search', function (req, res, next) {
-		Issues.list(req.query, Issues.searcher)
+	app.get('/api/issues/list', function (req, res, next) {
+		Issues.forge().fetch({ req: req })
 			.then(function (issues) {
 				next({ issues: issues });
 			}).catch(next);
@@ -140,12 +125,22 @@ module.exports = function (app) {
 			.then(function (issue) {
 				if (!issue) return Promise.rejected(errors[20603]);
 				req.body['userid'] = user.id;
-				return IssueComment.forge(req.body).save();
-			}).then(function (comment) {
-				next({
-					msg: 'Comment posted',
-					id: comment.id
-				});
+				return IssueComment.forge(req.body).save()
+					.then(function (comment) {
+						var author = issue.related('user');
+						mail({
+							to: author.related('profile').get('email'),
+							subject: '您的话题被评论了',
+							text: [
+								'您发布的话题 <' + issue.get('title') + '>',
+								'得到了 @' + user.related('profile').get('name') + ' 的评论!'
+							].join('\n')
+						});
+						next({
+							msg: 'Comment posted',
+							id: comment.id
+						});
+					});
 			}).catch(next);
 	});
 

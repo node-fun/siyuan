@@ -3,8 +3,6 @@
  */
 var syBookshelf = require('./base'),
 	Entity = require('../lib/entity'),
-	requireFn = require('../lib/requireFn'),
-	User = requireFn('./user'),
 	Starship, StarshipSet;
 
 Starship = module.exports = syBookshelf.Model.extend({
@@ -13,19 +11,16 @@ Starship = module.exports = syBookshelf.Model.extend({
 		'id', 'userid', 'itemtype', 'itemid', 'remark'
 	],
 
-	fetch: function () {
-		return Starship.__super__.fetch.apply(this, arguments)
-			.then(function (starship) {
-				if (!starship) return starship;
-				var itemtype = starship.get('itemtype'),
-					itemid = starship.get('itemid');
-				return Entity
-					.forge(itemtype, { id: itemid })
-					.then(function (model) {
-						if (!model) return model;
-						return model.fetch();
+	fetched: function (model) {
+		return Starship.__super__.fetched.apply(this, arguments)
+			.then(function () {
+				var itemtype = model.get('itemtype'),
+					itemid = model.get('itemid');
+				return Entity.forge(itemtype, { id: itemid })
+					.then(function (entity) {
+						return !entity ? null : entity.fetch();
 					}).then(function (entity) {
-						return starship.set({
+						return model.set({
 							typename: Entity.getModelName(itemtype),
 							item: entity
 						});
@@ -34,16 +29,16 @@ Starship = module.exports = syBookshelf.Model.extend({
 	},
 
 	user: function () {
-		return this.belongsTo(User(), 'userid');
+		return this.belongsTo(require('./user'), 'userid');
 	}
 }, {
-	typesAllowed: [2, 3, 4]
+	typesAllowed: ['issue', 'activity', 'cooperation']
 });
 
 StarshipSet = Starship.Set = syBookshelf.Collection.extend({
-	model: Starship
-}, {
-	lister: function (qb, query) {
-		this.qbWhere(qb, query, ['id', 'userid', 'itemtype', 'itemid']);
+	model: Starship,
+
+	lister: function (req, qb) {
+		this.qbWhere(qb, req, req.query, ['id', 'userid', 'itemtype', 'itemid']);
 	}
 });

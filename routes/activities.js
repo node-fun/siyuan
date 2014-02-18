@@ -8,6 +8,7 @@ var _ = require('underscore'),
 	UserActivity = require('../models/user-activity'),
 	GroupMembers = require('../models/group-membership'),
 	Group = require('../models/group'),
+	Event = require('../models/event'),
 	errors = require('../lib/errors'),
 	config = require('../config'),
 	imageLimit = config.imageLimit;
@@ -251,6 +252,7 @@ module.exports = function (app) {
 					if (!(self.get('ownerid') == user.id)) {
 						return Promise.rejected(errors[20102]);
 					}
+					Event.add(user.id, activity.get('groupid'), 'activity', activity.get('id'), user.get('username') + '结束了活动' + activity.get('name'));
 					return self.set({
 						'statusid': 4
 					}).save()
@@ -294,6 +296,7 @@ module.exports = function (app) {
 				if (user.id != ownerid) {
 					return Promise.rejected(errors[20102]);
 				}
+				Event.add(user.id, activity.get('groupid'), 'activity', activity.get('id'), user.get('username') + '更新了活动' + activity.get('name'));
 				return activity.set(req.body).save()
 					.then(function (activity) {
 						next({
@@ -346,6 +349,7 @@ module.exports = function (app) {
 							ownerid: user.id
 						}, req.body)).save();
 					}).then(function (activity) {
+						Event.add(user.id, activity.get('groupid'), 'activity', activity.get('id'), user.get('username') + '创建了活动' + activity.get('name'));
 						return UserActivity.forge({
 							'userid': user.id,
 							'activityid': activity.id,
@@ -362,7 +366,7 @@ module.exports = function (app) {
 	});
 
 	/**
-	 * POST /api/activities/userslist
+	 * GET /api/activities/userslist
 	 * @method 获取活动人员名单
 	 * @param {Number} id 活动id
 	 * @return {Array}
@@ -385,37 +389,28 @@ module.exports = function (app) {
 		  ]  
 		}</pre>
 	 */
-	app.post('/api/activities/userslist', function (req, res, next) {
+	app.get('/api/activities/userslist', function (req, res, next) {
 		var user = req.user;
 
 		if (!user) return next(errors[21301]);
-		if (!req.body['id'])
+		if (!req.query['id'])
 			return next(errors[10008]);
 
-		Activity.forge({ 'id': req.body['id'] }).fetch()
+		Activity.forge({ id: req.query['id'] }).fetch()
 			.then(function (activity) {
 				if (!activity) return Promise.rejected(errors[20603]);
 
-				var self = activity;
-
-				return self.load(['usership']).then(function (activity) {
-					var userships = activity.related('usership');
-					return userships.mapThen(function (usership) {
-						return User.forge({ 'id': usership.get('userid') })
-							.fetch()
-							.then(function (user) {
-								return user.load(['profile']).then(function (user) {
-									return usership.set({
-										'user': user
-									});
-								});
-							});
-					}).then(function (userships) {
-							return userships;
+				return activity
+					.related('usership')
+					.query(function (qb) {
+						req.query['orders'].forEach(function (order) {
+							qb.orderBy(order[0], order[1]);
 						});
-				}).then(function (users) {
-					next({ userships: users });
-				});
+					}).query('offset', req.query['offset'])
+					.query('limit', req.query['limit'])
+					.fetch({withRelated: ['user', 'user.profile']})
+			}).then(function (userships) {
+				next({ userships: userships });
 			}).catch(next);
 	});
 
@@ -547,6 +542,7 @@ module.exports = function (app) {
 		if (file['size'] > imageLimit) return next(errors[20006]);
 		Activity.forge({ id: req.body['id'] }).fetch()
 			.then(function (activity) {
+				Event.add(user.id, activity.get('groupid'), 'activity', activity.get('id'), user.get('username') + '更新了活动' + activity.get('name'));
 				return activity.updateAsset('avatar', file['path'])
 					.then(function () {
 						next({ msg: 'avatar updated' });

@@ -3,8 +3,6 @@ var path = require('path'),
 	chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
 	errors = require('../lib/errors'),
-	requireFn = require('../lib/requireFn'),
-	User = requireFn('./user'),
 	config = require('../config'),
 	Photo, Photos;
 
@@ -24,7 +22,7 @@ Photo = module.exports = syBookshelf.Model.extend({
 		};
 	},
 	user: function () {
-		return this.belongsTo(User(), 'userid');
+		return this.belongsTo(require('./user'), 'userid');
 	},
 
 	created: function () {
@@ -56,12 +54,12 @@ Photo = module.exports = syBookshelf.Model.extend({
 });
 
 Photos = Photo.Set = syBookshelf.Collection.extend({
-	model: Photo
-}, {
-	lister: function (qb, query) {
-		this.qbWhere(qb, query, ['id', 'userid']);
-		if (query['fuzzy']) {
-			this.qbWhereLike(qb, query, ['description']);
+	model: Photo,
+
+	lister: function (req, qb) {
+		this.qbWhere(qb, req, req.query, ['id', 'userid']);
+		if (req.query['fuzzy']) {
+			this.qbWhereLike(qb, req, req.query, ['description']);
 		}
 	}
 });

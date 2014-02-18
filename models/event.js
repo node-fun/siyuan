@@ -3,8 +3,6 @@
  */
 var _ = require('underscore'),
 	syBookshelf = require('./base'),
-	requireFn = require('../lib/requireFn'),
-	User = requireFn('./user'),
 	Entity = require('../lib/entity'),
 	entities = require('../config').entities,
 	Event, Events;
@@ -14,21 +12,19 @@ Event = module.exports = syBookshelf.Model.extend({
 	fields: [
 		'id', 'userid', 'groupid', 'itemtype', 'itemid', 'message'
 	],
+	omitInJSON: ['userid'],
 	appended: ['user'],
 
-	fetch: function () {
-		return Event.__super__.fetch.apply(this, arguments)
-			.then(function (event) {
-				if (!event) return event;
-				var itemtype = event.get('itemtype'),
-					itemid = event.get('itemid');
-				return Entity
-					.forge(itemtype, { id: itemid })
-					.then(function (model) {
-						if (!model) return model;
-						return model.fetch();
+	fetched: function (model) {
+		return Event.__super__.fetched.apply(this, arguments)
+			.then(function () {
+				var itemtype = model.get('itemtype'),
+					itemid = model.get('itemid');
+				return Entity.forge(itemtype, { id: itemid })
+					.then(function (entity) {
+						return !entity ? null : entity.fetch();
 					}).then(function (entity) {
-						return event.set({
+						return model.set({
 							typename: Entity.getModelName(itemtype),
 							item: entity
 						});
@@ -37,7 +33,7 @@ Event = module.exports = syBookshelf.Model.extend({
 	},
 	
 	user: function () {
-		return this.belongsTo(User(), 'userid');
+		return this.belongsTo(require('./user'), 'userid');
 	}
 }, {
 	//产生新动态可以用这个函数
@@ -53,13 +49,13 @@ Event = module.exports = syBookshelf.Model.extend({
 });
 
 Events = Event.Set = syBookshelf.Collection.extend({
-	model: Event
-}, {
-	lister: function (qb, query) {
-		this.allowNull(query, ['groupid'])
-			.qbWhere(qb, query, ['id', 'userid', 'groupid', 'itemtype', 'itemid']);
-		if (query['fuzzy']) {
-			this.qbWhereLike(qb, query, ['message']);
+	model: Event,
+
+	lister: function (req, qb) {
+		this.allowNull(req.query, ['groupid'])
+			.qbWhere(qb, req, req.query, ['id', 'userid', 'groupid', 'itemtype', 'itemid']);
+		if (req.query['fuzzy']) {
+			this.qbWhereLike(qb, req, req.query, ['message']);
 		}
 	}
 });

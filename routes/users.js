@@ -5,19 +5,23 @@ var _ = require('underscore'),
 	User = require('../models/user'),
 	Users = User.Set,
 	errors = require('../lib/errors'),
+	mail = require('../lib/mail'),
 	config = require('../config'),
 	imageLimit = config.imageLimit;
 
 module.exports = function (app) {
 	/**
-	 * GET /api/users/find
+	 * GET /api/users/list
 	 * @method 会员列表
 	 * @param {Number} [id] 用户ID
 	 * @param {String} [username] 用户名
 	 * @param {Number} [isonline] 是否在线 - `1`在线, `0`不在线
-	 * @param {String} [profile.email] 邮箱
 	 * @param {String} [profile.name] 姓名
 	 * @param {String} [profile.gender] 性别 - `m`男, `f`女
+	 * @param {String} [profile.university] 院校 (仅限搜索)
+	 * @param {String} [profile.major] 专业 (仅限搜索)
+	 * @param {String} [profile.summary] 个性签名 (仅限搜索)
+	 * @param {String} [profile.tag] 标签 (仅限搜索)
 	 * @return {JSON}
 	 * <pre>
 	 {
@@ -44,34 +48,16 @@ module.exports = function (app) {
 	 "numIssues": 0,
 	 "numPhotos": 5,
 	 "numStarring": 0,
-	 "numEvents": 0
+	 "numEvents": 0,
+	 "isfollowed": 1,
 	 },
 	 ...
 	 ]
 	 }
 	 * </pre>
 	 */
-	app.get('/api/users/find', function (req, res, next) {
-		Users.list(req.query, Users.finder)
-			.then(function (users) {
-				next({ users: users });
-			}).catch(next);
-	});
-
-	/**
-	 * GET /api/users/search
-	 * @method 模糊搜索用户
-	 * @param {String} [username] 用户名
-	 * @param {Number} [isonline] 是否在线
-	 * @param {String} [profile.name] 姓名
-	 * @param {String} [profile.gender] 性别
-	 * @param {String} [profile.university] 学校
-	 * @param {String} [profile.major] 专业
-	 * @param {String} [profile.summary] 个性签名
-	 * @return {JSON}
-	 */
-	app.get('/api/users/search', function (req, res, next) {
-		Users.list(req.query, Users.searcher)
+	app.get('/api/users/list', function (req, res, next) {
+		Users.forge().fetch({ req: req })
 			.then(function (users) {
 				next({ users: users });
 			}).catch(next);
@@ -103,6 +89,18 @@ module.exports = function (app) {
 	app.post('/api/users/register', function (req, res, next) {
 		User.forge(req.body).register()
 			.then(function (user) {
+				var profile = user.related('profile');
+				mail({
+					to: profile.get('email'),
+					subject: '思源群 欢迎您的加入',
+					html: [
+						'您好 ' + profile.get('name') + ',',
+						'您已成功注册 思源群!',
+						'用户名: @' + user.get('username'),
+						'-------',
+						'详情: <a href="http://61.174.8.62/">http://61.174.8.62/</a>'
+					].join('<br>')
+				});
 				next({
 					msg: 'User registered',
 					id: user.id

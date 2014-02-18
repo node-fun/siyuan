@@ -19,7 +19,7 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.get('/api/photos/list', function (req, res, next) {
-		Photos.list(req.query, Photos.lister)
+		Photos.forge().fetch({ req: req })
 			.then(function (photos) {
 				next({ photos: photos });
 			}).catch(next);
@@ -33,9 +33,9 @@ module.exports = function (app) {
 	 */
 	app.get('/api/photos/my', function (req, res, next) {
 		if (!req.user) return next(errors[21301]);
-		delete req.query['id'];
+		req.query = _.omit(req.query, ['id']);
 		req.query['userid'] = req.user.id;
-		Photos.list(req.query, Photos.lister)
+		Photos.forge().fetch({ req: req })
 			.then(function (photos) {
 				next({ photos: photos });
 			}).catch(next);

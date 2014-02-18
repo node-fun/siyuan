@@ -1,7 +1,7 @@
 {
 	"name": "siyuan",
 	"description": "An SNS backend framework, with Node and MySQL",
-	"version": "0.0.10",
+	"version": "0.0.11",
 	"private": true,
 	"main": "./app.js",
 	"dependencies": {
@@ -11,7 +11,8 @@
 		"chance": "0.5.3",
 		"mysql": "2.0.0-rc2",
 		"bluebird": "0.11.6-0",
-		"bookshelf": "0.6.1",
+		"bookshelf": "0.6.4",
+		"nodemailer": "0.6.0",
 		"execsql": "0.0.3"
 	},
 	"devDependencies": {

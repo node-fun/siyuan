@@ -6,27 +6,11 @@ var _ = require('underscore'),
 	Promise = require('bluebird'),
 	Starship = require('../models/starship'),
 	StarshipSet = Starship.Set,
+	config = require('../config'),
 	errors = require('../lib/errors'),
 	Entity = require('../lib/entity');
 
 module.exports = function (app) {
-	/**
-	 * GET /api/starship/list
-	 * @method 收藏列表
-	 * @param {Number} [id] 收藏ID
-	 * @param {Number} [userid] 用户ID
-	 * @param {Number} [itemtype] 类别ID
-	 * @param {Number} [itemid] 资源ID
-	 * @return {JSON}
-	 */
-	app.get('/api/starship/list', function (req, res, next) {
-		if (!req.admin) return next(errors[21301]);
-		StarshipSet.list(req.query, StarshipSet.lister)
-			.then(function (starshipSet) {
-				next({ starring: starshipSet });
-			}).catch(next);
-	});
-
 	/**
 	 * GET /api/starship/my
 	 * @method 自己的收藏列表
@@ -36,11 +20,11 @@ module.exports = function (app) {
 	 */
 	app.get('/api/starship/my', function (req, res, next) {
 		if (!req.user) return next(errors[21301]);
-		delete req.query['id'];
+		req.query = _.omit(req.query, ['id']);
 		req.query['userid'] = req.user.id;
-		return StarshipSet.list(req.query, StarshipSet.lister)
-			.then(function (starshipSet) {
-				next({ starring: starshipSet });
+		return StarshipSet.forge().fetch({ req: req })
+			.then(function (starring) {
+				next({ starring: starring });
 			}).catch(next);
 	});
 
@@ -56,7 +40,9 @@ module.exports = function (app) {
 		if (!req.user) return next(errors[21301]);
 		req.body['userid'] = req.user.id;
 		// type limitation in starship
-		if (!~Starship.typesAllowed.indexOf(+req.body['itemtype'])) {
+		if (!~Starship.typesAllowed.map(function (name) {
+			return config.entities.indexOf(name) + 1;
+		}).indexOf(+req.body['itemtype'])) {
 			return next(errors[20701]);
 		}
 		Entity

@@ -1,10 +1,8 @@
 var Promise = require('bluebird'),
 	chance = new (require('chance'))(),
 	errors = require('../lib/errors'),
-	requireFn = require('../lib/requireFn'),
 	syBookshelf = require('./base'),
 	IssueComment = require('./issue-comment'),
-	User = requireFn('./user'),
 	IssueComments = IssueComment.Set,
 	Issue, Issues;
 
@@ -24,16 +22,15 @@ Issue = module.exports = syBookshelf.Model.extend({
 		};
 	},
 
-	fetch: function () {
-		return Issue.__super__.fetch.apply(this, arguments)
-			.then(function (issue) {
-				if (!issue) return issue;
-				return issue.countComments();
+	fetched: function (model) {
+		return Issue.__super__.fetched.apply(this, arguments)
+			.then(function () {
+				return model.countComments();
 			});
 	},
 
 	user: function () {
-		return this.belongsTo(User(), 'userid');
+		return this.belongsTo(require('./user'), 'userid');
 	},
 	comments: function () {
 		return this.hasMany(IssueComment, 'issueid');
@@ -75,36 +72,15 @@ Issue = module.exports = syBookshelf.Model.extend({
 });
 
 Issues = Issue.Set = syBookshelf.Collection.extend({
-	model: Issue
-}, {
-	finder: function (qb, query) {
-		['groupid', 'activityid'].forEach(function(k){
-			query[k] ? qb.where(k, query[k]) : qb.whereNull(k);//如果没有传值，就要给他取null
-		});
-		['id', 'userid', 'title'].forEach(function (k) {
-			if (k in query) {
-				qb.where(k, query[k]);
-			}
-		});
-	},
+	model: Issue,
 
-	searcher: function (qb, query) {
-		var count = 0;
-		['groupid', 'activityid'].forEach(function(k){
-			query[k] ? qb.where(k, query[k]) : qb.whereNull(k);//如果没有传值，就要给他取null
-		});
-		['userid'].forEach(function (k) {
-			if (k in query) {
-				count++;
-				qb.where(k, query[k]);
-			}
-		});
-		['title', 'body'].forEach(function (k) {
-			if (k in query) {
-				count++;
-				qb.where(k, 'like', '%' + query[k] + '%');
-			}
-		});
-		if (count < 1) query['limit'] = 0;
+	lister: function (req, qb) {
+		this.allowNull(req.query, ['groupid', 'activityid']) //如果没有传值，就要给他取null
+			.qbWhere(qb, req, req.query, ['id', 'userid']);
+		if (!req.query['fuzzy']) {
+			this.qbWhere(qb, req, req.query, ['title']);
+		} else {
+			this.qbWhereLike(qb, req, req.query, ['title', 'body']);
+		}
 	}
 });

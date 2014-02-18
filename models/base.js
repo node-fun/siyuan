@@ -45,70 +45,62 @@ syModel = syBookshelf.Model = syModel.extend({
 		})) {
 			return Promise.reject(err);
 		}
-		return Promise.resolve(this);
+		return Promise.resolve();
 	},
 	created: function () {
-		return Promise.resolve(this);
+		return Promise.resolve();
 	},
 	updating: function () {
-		var self = this;
-		var err = null;
+		var self = this, err = null;
 		if (_.some(this.validators, function (validator, k) {
 			if (self.get(k) == null) return false;
 			return err = validator.call(self, self.get(k));
 		})) {
 			return Promise.reject(err);
 		}
-		return Promise.resolve(this);
+		return Promise.resolve();
 	},
 	updated: function () {
-		return Promise.resolve(this);
+		return Promise.resolve();
 	},
 	saving: function () {
 		// pick attributes
 		this.attributes = this.pick(this.fields);
-		return Promise.resolve(this);
+		return Promise.resolve();
 	},
 	saved: function () {
-		return Promise.resolve(this);
-	},
-	fetching: function () {
-		return Promise.resolve(this);
-	},
-	fetched: function () {
-		return Promise.resolve(this);
+		return Promise.resolve();
 	},
 	destroying: function () {
-		return Promise.resolve(this);
+		return Promise.resolve();
 	},
 	destroyed: function () {
-		return Promise.resolve(this);
+		return Promise.resolve();
 	},
-
-	fetch: function (options) {
-		return syModel.__super__.fetch.call(this, options)
-			.then(function (model) {
-				if (!model) return model;
-
-				// appended
-				var p = model;
-				model.appended.forEach(function (k, i) {
-					if (i == 0) {
-						return p = p.related(k).fetch()
-							.then(function () {
-								return model;
-							});
-					}
-					p = p.then(function () {
-						return model.related(k).fetch()
-							.then(function () {
-								return model;
-							});
+	fetching: function () {
+		return Promise.resolve();
+	},
+	fetched: function (model) {
+		// appended
+		if (model.appended.length < 1) {
+			return Promise.resolve();
+		}
+		var p = model;
+		model.appended.forEach(function (k, i) {
+			if (i == 0) {
+				return p = p.related(k).fetch()
+					.then(function () {
+						return model;
 					});
-				});
-
-				return p;
+			}
+			p = p.then(function () {
+				return model.related(k).fetch()
+					.then(function () {
+						return model;
+					});
 			});
+		});
+		return p;
 	},
 
 	toJSON: function () {
@@ -135,25 +127,6 @@ syModel = syBookshelf.Model = syModel.extend({
 		});
 		return ret;
 	},
-
-	// like jQuery's .data API
-	data: function (key, value) {
-		if (arguments.length === 1) {
-			return this._data[key];
-		}
-		this._data[key] = value;
-		return this;
-	},
-	removeData: function (key) {
-		delete this._data[key];
-		return this;
-	},
-	removeAttr: function (key) {
-		delete this.attributes[key];
-		return this;
-	},
-
-	// Jayin needs Timestamp as Datetime
 	forTimestamp: function (attrs) {
 		_.each(attrs, function (val, key, list) {
 			if (_.isDate(val)) {
@@ -170,7 +143,6 @@ syModel = syBookshelf.Model = syModel.extend({
 		});
 		return attrs;
 	},
-
 	fixLowerCase: function (keys) {
 		var attrs = this.attributes;
 		_.each(keys, function (k) {
@@ -228,11 +200,34 @@ syModel = syBookshelf.Model = syModel.extend({
 syBookshelf.Collection = syModel.Set = syCollection.extend({
 	model: syModel,
 
+	initialize: function () {
+		syCollection.__super__.initialize.apply(this, arguments);
+		this._data = {};
+	},
+
 	fetch: function (options) {
 		options = options || {};
+		options['each'] = options['each'] || null;
+		var req = options['req'] = options['req'] || null,
+			forModel = _.defaults({}, options['each'], _.pick(options, ['req']));
+		if (req) {
+			var self = this;
+			this.query(function (qb) {
+				if (self.lister) self.lister(req, qb);
+				req.query['orders'].forEach(function (order) {
+					qb.orderBy(order[0], order[1]);
+				});
+				qb.offset(req.query['offset']);
+				// empty list for empty fuzzy query
+				if (req.query['fuzzy'] && req.query['applied'] < 1) {
+					req.query['limit'] = 0;
+				}
+				qb.limit(req.query['limit']);
+			});
+		}
 		return syCollection.__super__.fetch.call(this, options)
 			.then(function (collection) {
-				return collection.invokeThen('fetch', options['each'])
+				return collection.invokeThen('fetch', forModel)
 					.then(function () {
 						return collection;
 					});
@@ -247,10 +242,7 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 				lookers.forEach(function (looker) {
 					looker.call(Collection, qb, query);
 				});
-				// list nothing when none of the inputs applied
-				if (query['fuzzy'] && query['applied'].length < 1) {
-					query['limit'] = 0;
-				}
+
 			}).query(function (qb) {
 				query['orders'].forEach(function (order) {
 					qb.orderBy(order[0], order[1]);
@@ -258,45 +250,67 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 				qb.offset(query['offset']);
 				qb.limit(query['limit']);
 			}).fetch();
-	}
-}, {
-	list: function () {
-		var collection = this.forge();
-		return collection.list.apply(collection, arguments);
 	},
 
+	lister: null,
 	allowNull: function (query, keys) {
 		keys.forEach(function (k) {
 			if (query[k] == '') query[k] = null;
 		});
 		return this;
 	},
-
-	qbWhere: function (qb, query, keys) {
+	qbWhere: function (qb, req, query, keys, tbname) {
+		var prefix = !tbname ? '' : tbname + '.';
 		keys.forEach(function (k) {
 			if (k in query) {
+				var column = prefix + k;
 				if (_.isArray(query[k])) {
 					if (query[k].length < 1) {
-						query['limit'] = 0;
+						req.query['limit'] = 0;
 					} else {
-						qb.whereIn(k, query[k]);
+						qb.whereIn(column, query[k]);
 					}
 				} else {
-					qb.where(k, query[k]);
+					qb.where(column, query[k]);
 				}
-				query['applied'].push(k);
+				req.query['applied']++;
 			}
 		});
 		return this;
 	},
-	qbWhereLike: function (qb, query, keys) {
+	qbWhereLike: function (qb, req, query, keys, tbname) {
+		var prefix = !tbname ? '' : tbname + '.';
 		keys.forEach(function (k) {
 			if (k in query) {
+				var column = prefix + k;
 				if (query[k] == null) query[k] = '';
-				qb.where(k, 'like', '%' + query[k] + '%');
-				query['applied'].push(k);
+				qb.where(column, 'like', '%' + query[k] + '%');
+				req.query['applied']++;
 			}
 		});
 		return this;
 	}
+}, {
+	list: function () {
+		var collection = this.forge();
+		return collection.list.apply(collection, arguments);
+	}
+});
+
+// common
+[syModel, syCollection].forEach(function (s) {
+	s.include({
+		// like jQuery .data api
+		data: function (key, value) {
+			if (arguments.length === 1) {
+				return this._data[key];
+			}
+			this._data[key] = value;
+			return this;
+		},
+		removeData: function (key) {
+			delete this._data[key];
+			return this;
+		}
+	});
 });

@@ -8,7 +8,7 @@ var assert = require('assert'),
 
 describe('users', function () {
 	it('finds', function (done) {
-		request(apiHost + '/find', {
+		request(apiHost + '/list', {
 			qs: {
 				page: 1,
 				limit: 7
@@ -20,8 +20,9 @@ describe('users', function () {
 		});
 	});
 	it('searches', function (done) {
-		request(apiHost + '/search', {
+		request(apiHost + '/list', {
 			qs: {
+				fuzzy: 1,
 				profile: {
 					name: ' '
 				},

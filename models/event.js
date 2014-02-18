@@ -3,8 +3,6 @@
  */
 var _ = require('underscore'),
 	syBookshelf = require('./base'),
-	requireFn = require('../lib/requireFn'),
-	User = requireFn('./user'),
 	Entity = require('../lib/entity'),
 	entities = require('../config').entities,
 	Event, Events;
@@ -35,7 +33,7 @@ Event = module.exports = syBookshelf.Model.extend({
 	},
 	
 	user: function () {
-		return this.belongsTo(User(), 'userid');
+		return this.belongsTo(require('./user'), 'userid');
 	}
 }, {
 	//产生新动态可以用这个函数

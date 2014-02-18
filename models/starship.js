@@ -3,8 +3,6 @@
  */
 var syBookshelf = require('./base'),
 	Entity = require('../lib/entity'),
-	requireFn = require('../lib/requireFn'),
-	User = requireFn('./user'),
 	Starship, StarshipSet;
 
 Starship = module.exports = syBookshelf.Model.extend({
@@ -31,7 +29,7 @@ Starship = module.exports = syBookshelf.Model.extend({
 	},
 
 	user: function () {
-		return this.belongsTo(User(), 'userid');
+		return this.belongsTo(require('./user'), 'userid');
 	}
 }, {
 	typesAllowed: [2, 3, 4]

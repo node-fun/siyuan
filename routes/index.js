@@ -16,6 +16,7 @@ module.exports = function (app) {
 	require('./ads')(app);
 	require('./clients')(app);
 	require('./feedbacks')(app);
+	require('./messages')(app);
 
 	app.use('/api', function (data, req, res, next) {
 		if (data instanceof Error) return next(data);

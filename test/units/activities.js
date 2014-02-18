@@ -6,8 +6,8 @@ var assert = require('assert'),
 	apiHost = 'http://localhost:' + config.port + '/api/activities';
 
 describe('activities', function () {
-	it('finds', function (done) {
-		request(apiHost + '/find', {
+	it('lists', function (done) {
+		request(apiHost + '/list', {
 			qs: {
 				page: 1,
 				limit: 3

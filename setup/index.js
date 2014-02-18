@@ -11,7 +11,7 @@ var fs = require('fs-extra'),
 	User = require('../models/user'),
 	Users = User.Set,
 	Followship = require('../models/followship'),
-	FollowshipSet = Followship.Set,
+	Followships = Followship.Set,
 	Admin = require('../models/admin'),
 	Admins = Admin.Set,
 	Group = require('../models/group'),
@@ -139,22 +139,22 @@ function addUsers() {
 		}).catch(done);
 }
 function addFollowship() {
-	var followshipSet = FollowshipSet.forge();
+	var followships = Followships.forge();
 	_.times(numFollowship, function () {
 		var followship = Followship.forge({
 			userid: _.random(1, numUsers),
 			followid: _.random(1, numUsers),
 			remark: chance.word()
 		});
-		followshipSet.add(followship);
+		followships.add(followship);
 	});
-	return followshipSet
+	return followships
 		.mapThen(function (followship) {
 			return followship.save().catch(function () {
-				followshipSet.remove(followship);
+				followships.remove(followship);
 			});
 		}).then(function () {
-			console.log('%d followship added', numFollowship = followshipSet.length);
+			console.log('%d followship added', numFollowship = followships.length);
 		});
 }
 

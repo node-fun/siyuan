@@ -12,10 +12,11 @@ var fs = require('fs'),
 	fkActivity = 'activityid',
 	fkOwner = 'ownerid',
 	fkStatus = 'statusid',
+	tbActivity = 'activities',
 	Activity, Activities;
 
 Activity = module.exports = syBookshelf.Model.extend({
-	tableName: 'activities',
+	tableName: tbActivity,
 	fields: [
 		'id', 'ownerid', 'groupid', 'content', 'maxnum', 'createtime',
 		'starttime', 'duration', 'statusid', 'avatar', 'money', 'name', 'site',
@@ -99,30 +100,15 @@ Activity = module.exports = syBookshelf.Model.extend({
 });
 
 Activities = Activity.Set = syBookshelf.Collection.extend({
-	model: Activity
-}, {
-	finder: function (qb, query) {
-		['id', 'ownerid', 'groupid', 'content', 'statusid', 'name'].forEach(function (k) {
-			if (k in query) {
-				qb.where(k, query[k]);
-			}
-		});
-	},
+	model: Activity,
 
-	searcher: function (qb, query) {
-		var count = 0;
-		['ownerid', 'statusid', 'groupid'].forEach(function (k) {
-			if (k in query) {
-				count++;
-				qb.where(k, query[k]);
-			}
-		});
-		['name', 'content', 'site'].forEach(function (k) {
-			if (k in query) {
-				count++;
-				qb.where(k, 'like', '%' + query[k] + '%');
-			}
-		});
-		if (count < 1) query['limit'] = 0;
+	lister: function (req, qb) {
+		var query = req.query;
+		this.qbWhere(qb, req, query, ['id', 'ownerid', 'statusid'], tbActivity)
+		if (!req.query['fuzzy']) {
+			this.qbWhereLike(qb, req, query, ['name', 'site'], tbActivity);
+		} else {
+			this.qbWhereLike(qb, req, query, ['name', 'content', 'site'], tbActivity);
+		}
 	}
 });

@@ -6,7 +6,7 @@ var _ = require('underscore'),
 	syBookshelf = require('./base'),
 	UserProfile = require('./user-profile'),
 	Followship = require('./followship'),
-	FollowshipSet = Followship.Set,
+	Followships = Followship.Set,
 	Issue = require('./issue'),
 	Issues = Issue.Set,
 	Photo = require('./photo'),
@@ -136,13 +136,13 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 	countFollowship: function () {
 		var self = this;
-		return FollowshipSet.forge().query()
+		return Followships.forge().query()
 			.where('userid', '=', self.id)
 			.count('id')
 			.then(function (d) {
 				self.data('numFollowing', d[0]["count(`id`)"]);
 			}).then(function () {
-				return FollowshipSet.forge().query()
+				return Followships.forge().query()
 					.where('followid', '=', self.id)
 					.count('id');
 			}).then(function (d) {

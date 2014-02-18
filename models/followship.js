@@ -1,5 +1,5 @@
 var syBookshelf = require('./base'),
-	Followship, FollowshipSet;
+	Followship, Followships;
 
 Followship = module.exports = syBookshelf.Model.extend({
 	tableName: 'followship',
@@ -15,25 +15,12 @@ Followship = module.exports = syBookshelf.Model.extend({
 	followee: function () {
 		return this.belongsTo(require('./user'), 'followid');
 	}
-}, {
-
 });
 
-FollowshipSet = Followship.Set = syBookshelf.Collection.extend({
-	model: Followship
-}, {
-	finderFollowing: function (qb, query) {
-		['userid'].forEach(function (k) {
-			if (k in query) {
-				qb.where(k, query[k]);
-			}
-		});
-	},
-	finderFollowers: function (qb, query) {
-		['followid'].forEach(function (k) {
-			if (k in query) {
-				qb.where(k, query[k]);
-			}
-		});
+Followships = Followship.Set = syBookshelf.Collection.extend({
+	model: Followship,
+
+	lister: function (req, qb) {
+		this.qbWhere(qb, req, req.query, ['id', 'userid', 'followid']);
 	}
 });

@@ -6,6 +6,7 @@ var _ = require('underscore'),
 	Promise = require('bluebird'),
 	Starship = require('../models/starship'),
 	StarshipSet = Starship.Set,
+	config = require('../config'),
 	errors = require('../lib/errors'),
 	Entity = require('../lib/entity');
 
@@ -39,7 +40,9 @@ module.exports = function (app) {
 		if (!req.user) return next(errors[21301]);
 		req.body['userid'] = req.user.id;
 		// type limitation in starship
-		if (!~Starship.typesAllowed.indexOf(+req.body['itemtype'])) {
+		if (!~Starship.typesAllowed.map(function (name) {
+			return config.entities.indexOf(name) + 1;
+		}).indexOf(+req.body['itemtype'])) {
 			return next(errors[20701]);
 		}
 		Entity

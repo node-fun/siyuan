@@ -32,7 +32,7 @@ Starship = module.exports = syBookshelf.Model.extend({
 		return this.belongsTo(require('./user'), 'userid');
 	}
 }, {
-	typesAllowed: [2, 3, 4]
+	typesAllowed: ['issue', 'activity', 'cooperation']
 });
 
 StarshipSet = Starship.Set = syBookshelf.Collection.extend({

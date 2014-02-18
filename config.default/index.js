@@ -82,9 +82,10 @@ var config = module.exports = {
 		secureConnection: true,
 		port: 465,
 		auth: {
-			user: 'siyuan@163.com',
+			user: 'siyuanqun@163.com',
 			pass: '123456'
-		}
+		},
+		from: '思源群 <siyuanqun@163.com>'
 	},
 	admins: [
 		{

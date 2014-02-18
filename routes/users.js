@@ -56,10 +56,7 @@ module.exports = function (app) {
 	 * </pre>
 	 */
 	app.get('/api/users/list', function (req, res, next) {
-		Users.forge()
-			.query(function (qb) {
-				Users.lister(qb, req.query);
-			}).fetch({ req: req })
+		Users.forge().fetch({ req: req })
 			.then(function (users) {
 				next({ users: users });
 			}).catch(next);

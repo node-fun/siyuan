@@ -45,68 +45,41 @@ syModel = syBookshelf.Model = syModel.extend({
 		})) {
 			return Promise.reject(err);
 		}
-		return Promise.resolve(this);
-	},
-	created: function () {
-		return Promise.resolve(this);
+		return Promise.resolve();
 	},
 	updating: function () {
-		var self = this;
-		var err = null;
+		var self = this, err = null;
 		if (_.some(this.validators, function (validator, k) {
 			if (self.get(k) == null) return false;
 			return err = validator.call(self, self.get(k));
 		})) {
 			return Promise.reject(err);
 		}
-		return Promise.resolve(this);
-	},
-	updated: function () {
-		return Promise.resolve(this);
+		return Promise.resolve();
 	},
 	saving: function () {
 		// pick attributes
 		this.attributes = this.pick(this.fields);
-		return Promise.resolve(this);
+		return Promise.resolve();
 	},
-	saved: function () {
-		return Promise.resolve(this);
-	},
-	fetching: function () {
-		return Promise.resolve(this);
-	},
-	fetched: function () {
-		return Promise.resolve(this);
-	},
-	destroying: function () {
-		return Promise.resolve(this);
-	},
-	destroyed: function () {
-		return Promise.resolve(this);
-	},
-
-	fetch: function (options) {
-		return syModel.__super__.fetch.call(this, options)
-			.then(function (model) {
-				if (!model) return model;
-				// appended
-				var p = model;
-				model.appended.forEach(function (k, i) {
-					if (i == 0) {
-						return p = p.related(k).fetch()
-							.then(function () {
-								return model;
-							});
-					}
-					p = p.then(function () {
-						return model.related(k).fetch()
-							.then(function () {
-								return model;
-							});
+	fetched: function (model) {
+		// appended
+		var p = model;
+		model.appended.forEach(function (k, i) {
+			if (i == 0) {
+				return p = p.related(k).fetch()
+					.then(function () {
+						return model;
 					});
-				});
-				return p;
+			}
+			p = p.then(function () {
+				return model.related(k).fetch()
+					.then(function () {
+						return model;
+					});
 			});
+		});
+		return p;
 	},
 
 	toJSON: function () {
@@ -209,6 +182,22 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 	initialize: function () {
 		syCollection.__super__.initialize.apply(this, arguments);
 		this._data = {};
+		var self = this;
+		[
+			'creating', 'created', 'updating', 'updated', 'saving', 'saved',
+			'fetching', 'fetched', 'destroying', 'destroyed'
+		].forEach(function (k) {
+				self.on(k, self[k], self);
+			});
+	},
+
+	saving: function () {
+		return Promise.resolve();
+	},
+	fetching: function (model, columns, options) {
+		if (options.req && this.lister) {
+			this.lister(options.req, options.query);
+		}
 	},
 
 	fetch: function (options) {
@@ -253,7 +242,9 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 				qb.offset(query['offset']);
 				qb.limit(query['limit']);
 			}).fetch();
-	}
+	},
+
+	lister: null
 }, {
 	list: function () {
 		var collection = this.forge();
@@ -296,8 +287,30 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 	}
 });
 
+// common
 [syModel, syCollection].forEach(function (s) {
 	s.include({
+		// pad missing event handlers
+		created: function () {
+			return Promise.resolve();
+		},
+		updated: function () {
+			return Promise.resolve();
+		},
+		saved: function () {
+			return Promise.resolve();
+		},
+		fetching: function () {
+			return Promise.resolve();
+		},
+		destroying: function () {
+			return Promise.resolve();
+		},
+		destroyed: function () {
+			return Promise.resolve();
+		},
+
+		// like jQuery .data api
 		data: function (key, value) {
 			if (arguments.length === 1) {
 				return this._data[key];

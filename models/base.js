@@ -47,6 +47,9 @@ syModel = syBookshelf.Model = syModel.extend({
 		}
 		return Promise.resolve();
 	},
+	created: function () {
+		return Promise.resolve();
+	},
 	updating: function () {
 		var self = this, err = null;
 		if (_.some(this.validators, function (validator, k) {
@@ -57,9 +60,24 @@ syModel = syBookshelf.Model = syModel.extend({
 		}
 		return Promise.resolve();
 	},
+	updated: function () {
+		return Promise.resolve();
+	},
 	saving: function () {
 		// pick attributes
 		this.attributes = this.pick(this.fields);
+		return Promise.resolve();
+	},
+	saved: function () {
+		return Promise.resolve();
+	},
+	destroying: function () {
+		return Promise.resolve();
+	},
+	destroyed: function () {
+		return Promise.resolve();
+	},
+	fetching: function () {
 		return Promise.resolve();
 	},
 	fetched: function (model) {
@@ -185,22 +203,6 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 	initialize: function () {
 		syCollection.__super__.initialize.apply(this, arguments);
 		this._data = {};
-		var self = this;
-		[
-			'creating', 'created', 'updating', 'updated', 'saving', 'saved',
-			'fetching', 'fetched', 'destroying', 'destroyed'
-		].forEach(function (k) {
-				self.on(k, self[k], self);
-			});
-	},
-
-	saving: function () {
-		return Promise.resolve();
-	},
-	fetching: function (model, columns, options) {
-		if (options.req && this.lister) {
-			this.lister(options.req, options.query);
-		}
 	},
 
 	fetch: function (options) {
@@ -210,6 +212,7 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 			forModel = _.defaults({}, options['each'], _.pick(options, ['req']));
 		if (req) {
 			this.query(function (qb) {
+				if (this.lister) this.lister(req, qb);
 				req.query['orders'].forEach(function (order) {
 					qb.orderBy(order[0], order[1]);
 				});
@@ -295,26 +298,6 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 // common
 [syModel, syCollection].forEach(function (s) {
 	s.include({
-		// pad missing event handlers
-		created: function () {
-			return Promise.resolve();
-		},
-		updated: function () {
-			return Promise.resolve();
-		},
-		saved: function () {
-			return Promise.resolve();
-		},
-		fetching: function () {
-			return Promise.resolve();
-		},
-		destroying: function () {
-			return Promise.resolve();
-		},
-		destroyed: function () {
-			return Promise.resolve();
-		},
-
 		// like jQuery .data api
 		data: function (key, value) {
 			if (arguments.length === 1) {

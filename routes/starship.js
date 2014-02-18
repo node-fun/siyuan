@@ -11,23 +11,6 @@ var _ = require('underscore'),
 
 module.exports = function (app) {
 	/**
-	 * GET /api/starship/list
-	 * @method 收藏列表
-	 * @param {Number} [id] 收藏ID
-	 * @param {Number} [userid] 用户ID
-	 * @param {Number} [itemtype] 类别ID
-	 * @param {Number} [itemid] 资源ID
-	 * @return {JSON}
-	 */
-	app.get('/api/starship/list', function (req, res, next) {
-		if (!req.admin) return next(errors[21301]);
-		StarshipSet.list(req.query, StarshipSet.lister)
-			.then(function (starshipSet) {
-				next({ starring: starshipSet });
-			}).catch(next);
-	});
-
-	/**
 	 * GET /api/starship/my
 	 * @method 自己的收藏列表
 	 * @param {Number} [itemtype] 类别ID
@@ -36,11 +19,11 @@ module.exports = function (app) {
 	 */
 	app.get('/api/starship/my', function (req, res, next) {
 		if (!req.user) return next(errors[21301]);
-		delete req.query['id'];
+		req.query = _.omit(req.query, ['id']);
 		req.query['userid'] = req.user.id;
-		return StarshipSet.list(req.query, StarshipSet.lister)
-			.then(function (starshipSet) {
-				next({ starring: starshipSet });
+		return StarshipSet.forge().fetch({ req: req })
+			.then(function (starring) {
+				next({ starring: starring });
 			}).catch(next);
 	});
 

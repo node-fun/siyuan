@@ -56,12 +56,12 @@ Photo = module.exports = syBookshelf.Model.extend({
 });
 
 Photos = Photo.Set = syBookshelf.Collection.extend({
-	model: Photo
-}, {
-	lister: function (qb, query) {
-		this.qbWhere(qb, query, ['id', 'userid']);
-		if (query['fuzzy']) {
-			this.qbWhereLike(qb, query, ['description']);
+	model: Photo,
+
+	lister: function (req, qb) {
+		this.qbWhere(qb, req, req.query, ['id', 'userid']);
+		if (req.query['fuzzy']) {
+			this.qbWhereLike(qb, req, req.query, ['description']);
 		}
 	}
 });

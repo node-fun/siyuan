@@ -276,40 +276,18 @@ Users = User.Set = syBookshelf.Collection.extend({
 	model: User,
 
 	lister: function (req, qb) {
+		var query = req.query,
+			profile = query['profile'] || {};
 		qb.join(tbProfile, tbProfile + '.userid', '=', tbUser + '.id');
-		req.query['profile'] = req.query['profile'] || {};
-		['id', 'isonline'].forEach(function (k) {
-			if (k in req.query) {
-				qb.where(tbUser + '.' + k, '=', req.query[k]);
-			}
-		});
-		['gender'].forEach(function (k) {
-			if (k in req.query['profile']) {
-				qb.where(tbProfile + '.' + k, '=', req.query['profile'][k]);
-			}
-		});
-		if (req.query['fuzzy']) {
-			['username'].forEach(function (k) {
-				if (k in req.query) {
-					qb.where(tbUser + '.' + k, 'like', '%' + req.query[k] + '%');
-				}
-			});
-			['name', 'university', 'major', 'summary', 'tag'].forEach(function (k) {
-				if (k in req.query['profile']) {
-					qb.where(tbProfile + '.' + k, 'like', '%' + req.query['profile'][k] + '%');
-				}
-			});
+		this.qbWhere(qb, req, query, ['id', 'isonline'], tbUser)
+			.qbWhere(qb, req, profile, ['gender'], tbProfile);
+		if (!req.query['fuzzy']) {
+			this.qbWhere(qb, req, query, ['username'], tbUser)
+				.qbWhere(qb, req, profile, ['name'], tbProfile);
 		} else {
-			['username'].forEach(function (k) {
-				if (k in req.query) {
-					qb.where(tbUser + '.' + k, '=', req.query[k]);
-				}
-			});
-			['name'].forEach(function (k) {
-				if (k in req.query['profile']) {
-					qb.where(tbProfile + '.' + k, '=', req.query['profile'][k]);
-				}
-			});
+			this.qbWhereLike(qb, req, query, ['username'], tbUser)
+				.qbWhereLike(qb, req, profile,
+					['name', 'university', 'major', 'summary', 'tag'], tbProfile);
 		}
 	}
 });

@@ -2,7 +2,8 @@
  * Created by fritz on 1/21/14.
  * @class 动态
  */
-var errors = require('../lib/errors'),
+var _ = require('underscore'),
+	errors = require('../lib/errors'),
 	Event = require('../models/event'),
 	Events = Event.Set;
 
@@ -19,7 +20,7 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.get('/api/events/list', function (req, res, next) {
-		Events.list(req.query, Events.lister)
+		Events.forge().fetch({ req: req })
 			.then(function (events) {
 				next({ events: events });
 			}).catch(next);
@@ -36,9 +37,9 @@ module.exports = function (app) {
 	 */
 	app.get('/api/events/my', function (req, res, next) {
 		if (!req.user) return next(errors[21301]);
-		delete req.query['id'];
+		req.query = _.omit(req.query, ['id']);
 		req.query['userid'] = req.user.id;
-		return Events.list(req.query, Events.lister)
+		Events.forge().fetch({ req: req })
 			.then(function (events) {
 				next({ events: events });
 			}).catch(next);
@@ -55,13 +56,13 @@ module.exports = function (app) {
 	 */
 	app.get('/api/events/following', function (req, res, next) {
 		if (!req.user) return next(errors[21301]);
-		delete req.query['id'];
+		req.query = _.omit(req.query, ['id']);
 		req.user.following().fetch()
 			.then(function (following) {
-				req.query['userid'] = following.models.map(function (followship) {
+				req.query['userid'] = following.map(function (followship) {
 					return followship.get('followid');
 				});
-				return Events.list(req.query, Events.lister);
+				return Events.forge().fetch({ req: req });
 			}).then(function (events) {
 				next({ events: events });
 			}).catch(next);

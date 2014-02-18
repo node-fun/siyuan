@@ -64,6 +64,9 @@ syModel = syBookshelf.Model = syModel.extend({
 	},
 	fetched: function (model) {
 		// appended
+		if (model.appended.length < 1) {
+			return Promise.resolve();
+		}
 		var p = model;
 		model.appended.forEach(function (k, i) {
 			if (i == 0) {
@@ -232,7 +235,7 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 					looker.call(Collection, qb, query);
 				});
 				// list nothing when none of the inputs applied
-				if (query['fuzzy'] && query['applied'].length < 1) {
+				if (query['fuzzy'] && query['applied'] < 1) {
 					query['limit'] = 0;
 				}
 			}).query(function (qb) {
@@ -244,46 +247,48 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 			}).fetch();
 	},
 
-	lister: null
-}, {
-	list: function () {
-		var collection = this.forge();
-		return collection.list.apply(collection, arguments);
-	},
-
+	lister: null,
 	allowNull: function (query, keys) {
 		keys.forEach(function (k) {
 			if (query[k] == '') query[k] = null;
 		});
 		return this;
 	},
-
-	qbWhere: function (qb, query, keys) {
+	qbWhere: function (qb, req, query, keys, tbname) {
+		var prefix = !tbname ? '' : tbname + '.';
 		keys.forEach(function (k) {
 			if (k in query) {
+				var column = prefix + k;
 				if (_.isArray(query[k])) {
 					if (query[k].length < 1) {
-						query['limit'] = 0;
+						req.query['limit'] = 0;
 					} else {
-						qb.whereIn(k, query[k]);
+						qb.whereIn(column, query[k]);
 					}
 				} else {
-					qb.where(k, query[k]);
+					qb.where(column, query[k]);
 				}
-				query['applied'].push(k);
+				req.query['applied']++;
 			}
 		});
 		return this;
 	},
-	qbWhereLike: function (qb, query, keys) {
+	qbWhereLike: function (qb, req, query, keys, tbname) {
+		var prefix = !tbname ? '' : tbname + '.';
 		keys.forEach(function (k) {
 			if (k in query) {
+				var column = prefix + k;
 				if (query[k] == null) query[k] = '';
-				qb.where(k, 'like', '%' + query[k] + '%');
-				query['applied'].push(k);
+				qb.where(column, 'like', '%' + query[k] + '%');
+				req.query['applied']++;
 			}
 		});
 		return this;
+	}
+}, {
+	list: function () {
+		var collection = this.forge();
+		return collection.list.apply(collection, arguments);
 	}
 });
 

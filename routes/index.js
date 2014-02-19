@@ -27,6 +27,7 @@ module.exports = function (app) {
 	 * @param {Number} [limit] 每页记录数上限 - 默认`10`
 	 * @param {Number} [offset] 起点偏移量 - 默认`0`
 	 * @param {Number} [page] 页数 - 当`offset`指定时无效, 默认`1`
+	 * @param {Array} [orders] 排序字段 - 如`?orders=groupid&orders=-userid`, 尾部自带`-id`
 	 * @param {Number} [fuzzy] 是否采用模糊搜索 - `0`否 `1`是, 默认`0`
 	 * @return {JSON}
 	 */

@@ -240,6 +240,7 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 			.then(function (collection) {
 				return collection.invokeThen('fetch', forModel)
 					.then(function () {
+						if (options['view']) return collection.at(0) || null;
 						return collection;
 					});
 			});

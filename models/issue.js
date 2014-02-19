@@ -45,7 +45,7 @@ Issue = module.exports = syBookshelf.Model.extend({
 				if (!options['more']) return Promise.resolve(model);
 				return model.related('comments')
 					.query(function (qb) {
-						qb.orderBy('posttime', 'desc');
+						qb.orderBy('id', 'desc');
 					}).fetch()
 					.then(function (collection) {
 						// relation fetching not enough

@@ -30,6 +30,26 @@ module.exports = function (app) {
 	});
 
 	/**
+	 * GET /api/issues/my
+	 * @method 话题列表
+	 * @param {Number} [id] 话题ID
+	 * @param {String} [title] 标题
+	 * @param {String} [body] 内容 (仅限搜索)
+	 * @param {String} [groupid] 圈子id，不传值表示校友交流，传值表示圈内分享
+	 * @param {String} [activityid] 活动id，不传值表示校友交流，传值表示活动分享
+	 * @return {JSON}
+	 */
+	app.get('/api/issues/my', function (req, res, next) {
+		if (!req.user) return next(errors[21301]);
+		req.query = _.omit(req.query, ['id']);
+		req.query['userid'] = req.user.id;
+		Issues.forge().fetch({ req: req })
+			.then(function (issues) {
+				next({ issues: issues });
+			}).catch(next);
+	});
+
+	/**
 	 * GET /api/issues/view
 	 * @method 话题详情
 	 * @param {Number} id 话题ID

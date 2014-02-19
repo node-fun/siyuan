@@ -94,11 +94,9 @@ module.exports = function (app) {
 	 * </pre>
 	 */
 	app.get('/api/users/view', function (req, res, next) {
-		Users.forge().fetch({
-			req: req,
-			each: { more: true }
-		}).then(function (users) {
-				next({ users: users });
+		Users.forge().fetch({ req: req, view: true })
+			.then(function (user) {
+				next({ user: user });
 			}).catch(next);
 	});
 
@@ -111,11 +109,9 @@ module.exports = function (app) {
 		if (!req.user) return next(errors[21301]);
 		req.query = _.omit(req.query, ['id']);
 		req.query['id'] = req.user.id;
-		Users.forge().fetch({
-			req: req,
-			each: { more: true }
-		}).then(function (users) {
-				next({ user: users.at(0) || null });
+		Users.forge().fetch({ req: req, view: true })
+			.then(function (user) {
+				next({ user: user });
 			}).catch(next);
 	});
 

@@ -208,7 +208,11 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 	fetch: function (options) {
 		options = options || {};
 		var req = options['req'] = options['req'] || null,
-			forModel = _.defaults({}, options['each'], _.pick(options, ['req']));
+			forModel = options['each'] = _.defaults(options['each'] || {}, _.pick(options, ['req']));
+		if (options['view']) {
+			forModel['more'] = true;
+			req.query['limit'] = 1;
+		}
 		if (req) {
 			var self = this;
 			this.query(function (qb) {

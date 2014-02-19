@@ -31,16 +31,26 @@ Issue = module.exports = syBookshelf.Model.extend({
 			.then(function () {
 				return self.user().fetch()
 					.then(function (user) {
-						var message = user.related('profile').get('name') + ' 发表了话题 <'+ self.get('title') +'>';
+						var message = user.related('profile').get('name') + ' 发表了话题 <' + self.get('title') + '>';
 						Event.add(user.id, self.get('groupid'), 'issue', self.id, message);
 						return self;
 					});
 			});
 	},
-	fetched: function (model) {
+	fetched: function (model, attrs, options) {
 		return Issue.__super__.fetched.apply(this, arguments)
 			.then(function () {
 				return model.countComments();
+			}).then(function () {
+				if (!options['more']) return Promise.resolve(model);
+				return model.related('comments')
+					.query(function (qb) {
+						qb.orderBy('posttime', 'desc');
+					}).fetch()
+					.then(function (collection) {
+						// relation fetching not enough
+						return collection.invokeThen('fetch');
+					});
 			});
 	},
 
@@ -67,22 +77,6 @@ Issue = module.exports = syBookshelf.Model.extend({
 			body: chance.paragraph(),
 			posttime: chance.date({ year: 2013 })
 		});
-	},
-
-	view: function (query) {
-		return Issue.forge({ id: query['id'] })
-			.fetch({
-				withRelated: ['user.profile']
-			}).then(function (issue) {
-				if (!issue) return Promise.rejected(errors[20603]);
-				return IssueComments.forge()
-					.query(function (qb) {
-						qb.where('issueid', '=', issue.id);
-						qb.orderBy('posttime', 'desc');
-					}).fetch().then(function (comments) {
-						return issue.set('comments', comments);
-					});
-			});
 	}
 });
 

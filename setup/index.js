@@ -373,6 +373,7 @@ function addAd() {
 	var ads = Ads.forge(),
 		numAds = 3;
 	_.times(numAds, function (i) {
+		i += 1;
 		ads.add( Ad.forge({
 			title: '公告' + i,
 			content: '公告' + i + '内容，' +

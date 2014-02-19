@@ -123,7 +123,7 @@ User = module.exports = syBookshelf.Model.extend({
 			.then(function () {
 				return model.detectFollowed(options.req);
 			}).then(function () {
-				if (!options['more']) return Promise.resolve(model);
+				if (!options['detailed']) return Promise.resolve(model);
 				return model.countFollowship()
 					.then(function () {
 						return model.countIssues();

@@ -208,17 +208,14 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 	fetch: function (options) {
 		options = options || {};
 		var req = options['req'] = options['req'] || null,
-			forModel = options['each'] = _.defaults(options['each'] || {}, _.pick(options, ['req']));
-		if (options['view']) {
-			forModel['more'] = true;
-			req.query['limit'] = 1;
-		}
+			limit = null;
 		if (req) {
+			limit = req.query['limit'];
 			var self = this;
 			this.query(function (qb) {
 				if (options['self']) {
 					if (self.models.length < 1) {
-						req.query['limit'] = 0;
+						limit = 0;
 					} else {
 						qb.whereIn('id', _.pluck(self.models, 'id'));
 					}
@@ -230,17 +227,16 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 					});
 					qb.offset(req.query['offset']);
 					// empty list for empty fuzzy query
-					if (req.query['fuzzy'] && req.query['applied'] < 1) {
-						req.query['limit'] = 0;
-					}
-					qb.limit(req.query['limit']);
+					if (req.query['fuzzy'] && req.query['applied'] < 1) limit = 0;
 				});
 		}
+		if (options['single']) limit = 1;
+		if (limit != null) this.query().limit(limit);
 		return syCollection.__super__.fetch.call(this, options)
 			.then(function (collection) {
-				return collection.invokeThen('fetch', forModel)
+				return collection.invokeThen('fetch', options)
 					.then(function () {
-						if (options['view']) return collection.at(0) || null;
+						if (options['single']) return collection.at(0) || null;
 						return collection;
 					});
 			});

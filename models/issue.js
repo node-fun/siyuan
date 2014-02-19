@@ -42,7 +42,7 @@ Issue = module.exports = syBookshelf.Model.extend({
 			.then(function () {
 				return model.countComments();
 			}).then(function () {
-				if (!options['more']) return Promise.resolve(model);
+				if (!options['detailed']) return Promise.resolve(model);
 				return model.related('comments')
 					.query(function (qb) {
 						qb.orderBy('id', 'desc');

@@ -31,7 +31,7 @@ module.exports = function (app) {
 
 	/**
 	 * GET /api/issues/my
-	 * @method 话题列表
+	 * @method 获得我的话题列表
 	 * @param {Number} [id] 话题ID
 	 * @param {String} [title] 标题
 	 * @param {String} [body] 内容 (仅限搜索)

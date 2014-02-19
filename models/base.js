@@ -227,10 +227,11 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 					});
 					qb.offset(req.query['offset']);
 					// empty list for empty fuzzy query
-					if (req.query['fuzzy'] && req.query['applied'] < 1) limit = 0;
+					if (req.query['applied'] < 1
+						&& (req.query['fuzzy'] || options['single'])) limit = 0;
 				});
 		}
-		if (options['single']) limit = 1;
+		if (options['single']) limit = Math.min(1, limit || 0);
 		if (limit != null) this.query().limit(limit);
 		return syCollection.__super__.fetch.call(this, options)
 			.then(function (collection) {

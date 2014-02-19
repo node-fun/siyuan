@@ -150,7 +150,7 @@ module.exports = function (app) {
 					to: profile.get('email'),
 					subject: '思源群欢迎您的加入',
 					html: [
-						'您好 @' + profile.get('name') + ',',
+						'您好 ' + profile.get('name') + ',',
 						'您已成功注册思源群!',
 						'用户名: ' + user.get('username'),
 						'-------',

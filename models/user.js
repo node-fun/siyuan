@@ -99,7 +99,7 @@ User = module.exports = syBookshelf.Model.extend({
 								return Promise.reject(err);
 							});
 					}).then(function () {
-						Event.add(self.id, null, 'user', self.id, '欢迎 @' + profileData['name'] + ' 加入思源群!');
+						Event.add(self.id, null, 'user', self.id, '欢迎 ' + profileData['name'] + ' 加入思源群!');
 						return self;
 					});
 			});

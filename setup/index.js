@@ -34,6 +34,7 @@ var fs = require('fs-extra'),
 	UserCooperation = require('../models/user-cooperation'),
 	UserCooperations = UserCooperation.Set,
 	Ad = require('../models/ad'),
+	Ads = Ad.Set,
 	Starship = require('../models/starship'),
 	Starships = Starship.Set,
 	numUsers = 35,
@@ -66,8 +67,8 @@ try {
 // create database for test
 execsql.config(connConfig)
 	.exec([
-	'DROP SCHEMA IF EXISTS ' + dbName + ' character set utf8',
-	'CREATE SCHEMA ' + dbName,
+	'DROP SCHEMA IF EXISTS ' + dbName,
+	'CREATE SCHEMA ' + dbName + ' character set utf8',
 	'USE ' + dbName
 ].join('; '), function (err) {
 		if (err) throw err;
@@ -89,11 +90,14 @@ execsql.config(connConfig)
 					.then(addUserCooperations)
 					.then(addCoComments)
 					.then(addStarship)
+					.then(addAd())
 					.then(done)
 					.catch(done);
-				addAd();
 			} else {
-				done();
+				addAd()
+					.then(addAdmins)
+					.then(done)
+					.catch(done);
 			}
 		});
 	});
@@ -366,15 +370,21 @@ function addCoComments() {
 }
 
 function addAd() {
-	for (var i = 1; i <= 3; i++) {
-		Ad.forge({
+	var ads = Ads.forge(),
+		numAds = 3;
+	_.times(numAds, function (i) {
+		ads.add( Ad.forge({
 			title: '公告' + i,
 			content: '公告' + i + '内容，' +
 				'<p>此内容仅供测试</p>' +
 				'<p>正式上线请在后台删除此条公告</p>',
 			picture: '/ad/img/' + i + '.png'
-		}).save();
-	}
+		}) );
+	});
+	return ads.invokeThen('save')
+		.then(function () {
+			console.log('%d Ad added', numAds);
+		});
 }
 
 function done(err) {

@@ -91,14 +91,6 @@ var config = module.exports = {
 		{
 			username: 'admin1',
 			password: '123'
-		},
-		{
-			username: 'admin2',
-			password: '123'
-		},
-		{
-			username: 'admin3',
-			password: '123'
 		}
 	]
 };

@@ -4,7 +4,7 @@ var assert = require('assert'),
 	apiHost = 'http://localhost:' + config.port + '/api/admin';
 
 describe('admin', function () {
-	//there are 3 default admins
+	//there is 1 default admin
 	it('finds', function (done) {
 		request(apiHost + '/find', {
 			qs: {
@@ -13,7 +13,7 @@ describe('admin', function () {
 			}
 		}, function (err, res, data) {
 			var admins = data['admins'];
-			assert.equal(admins.length, 3);
+			assert.equal(admins.length, 1);
 			done();
 		});
 	});
@@ -29,7 +29,7 @@ describe('admin', function () {
 		});
 	});
 	it('views', function (done) {
-		var id = 2;
+		var id = 1;
 		request(apiHost + '/view', {
 			qs: {
 				id: id

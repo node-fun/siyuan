@@ -64,7 +64,7 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 
 	countUsership: function () {
 		var self = this;
-		UserCooperations.forge().query()
+		return UserCooperations.forge().query()
 			.where(fkCooperation, '=', self.id)
 			.count('id')
 			.then(function (d) {

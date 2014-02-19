@@ -5,7 +5,7 @@
 var _ = require('underscore'),
 	Promise = require('bluebird'),
 	Starship = require('../models/starship'),
-	StarshipSet = Starship.Set,
+	Starships = Starship.Set,
 	config = require('../config'),
 	errors = require('../lib/errors'),
 	Entity = require('../lib/entity');
@@ -22,7 +22,7 @@ module.exports = function (app) {
 		if (!req.user) return next(errors[21301]);
 		req.query = _.omit(req.query, ['id']);
 		req.query['userid'] = req.user.id;
-		return StarshipSet.forge().fetch({ req: req })
+		return Starships.forge().fetch({ req: req })
 			.then(function (starring) {
 				next({ starring: starring });
 			}).catch(next);

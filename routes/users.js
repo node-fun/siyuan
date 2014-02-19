@@ -148,11 +148,11 @@ module.exports = function (app) {
 				var profile = user.related('profile');
 				mail({
 					to: profile.get('email'),
-					subject: '思源群 欢迎您的加入',
+					subject: '思源群欢迎您的加入',
 					html: [
 						'您好 ' + profile.get('name') + ',',
-						'您已成功注册 思源群!',
-						'用户名: @' + user.get('username'),
+						'您已成功注册思源群!',
+						'用户名: ' + user.get('username'),
 						'-------',
 						'详情: <a href="http://61.174.8.62/">http://61.174.8.62/</a>'
 					].join('<br>')

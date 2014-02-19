@@ -3,7 +3,7 @@
  */
 var syBookshelf = require('./base'),
 	Entity = require('../lib/entity'),
-	Starship, StarshipSet;
+	Starship, Starships;
 
 Starship = module.exports = syBookshelf.Model.extend({
 	tableName: 'starship',
@@ -35,7 +35,7 @@ Starship = module.exports = syBookshelf.Model.extend({
 	typesAllowed: ['issue', 'activity', 'cooperation']
 });
 
-StarshipSet = Starship.Set = syBookshelf.Collection.extend({
+Starships = Starship.Set = syBookshelf.Collection.extend({
 	model: Starship,
 
 	lister: function (req, qb) {

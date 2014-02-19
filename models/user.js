@@ -12,7 +12,7 @@ var _ = require('underscore'),
 	Photo = require('./photo'),
 	Photos = Photo.Set,
 	Starship = require('./starship'),
-	StarshipSet = Starship.Set,
+	Starships = Starship.Set,
 	Event = require('./event'),
 	Events = Event.Set,
 	config = require('../config'),
@@ -98,9 +98,10 @@ User = module.exports = syBookshelf.Model.extend({
 							.then(function () {
 								return Promise.reject(err);
 							});
+					}).then(function () {
+						Event.add(self.id, null, 'user', self.id, '欢迎 ' + profileData['name'] + ' 加入思源群!');
+						return self;
 					});
-			}).then(function () {
-				return self;
 			});
 	},
 	saving: function () {
@@ -170,7 +171,7 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 	countStarship: function () {
 		var self = this;
-		return StarshipSet.forge().query()
+		return Starships.forge().query()
 			.where('userid', '=', self.id)
 			.count('id')
 			.then(function (d) {

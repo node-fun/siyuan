@@ -7,7 +7,6 @@ var fs = require('fs-extra'),
 	env = config.env,
 	connConfig = config.db.connection,
 	dbName = connConfig.database,
-	entities = config.entities,
 	User = require('../models/user'),
 	Users = User.Set,
 	Followship = require('../models/followship'),
@@ -36,9 +35,7 @@ var fs = require('fs-extra'),
 	UserCooperations = UserCooperation.Set,
 	Ad = require('../models/ad'),
 	Starship = require('../models/starship'),
-	StarshipSet = Starship.Set,
-	Event = require('../models/event'),
-	Events = Event.Set,
+	Starships = Starship.Set,
 	numUsers = 35,
 	numFollowship = numUsers * 3,
 	numGroups = ~~(numUsers / 5),
@@ -92,7 +89,6 @@ execsql.config(connConfig)
 					.then(addUserCooperations)
 					.then(addCoComments)
 					.then(addStarship)
-					.then(addEvents)
 					.then(done)
 					.catch(done);
 				addAd();
@@ -316,7 +312,7 @@ function addPhotos() {
 }
 
 function addStarship() {
-	var starshipSet = StarshipSet.forge();
+	var starships = Starships.forge();
 	_.times(numStarship, function () {
 		var starship = Starship.forge({
 			userid: _.random(1, numUsers),
@@ -324,50 +320,15 @@ function addStarship() {
 			itemid: _.random(1, 20),
 			remark: chance.word()
 		});
-		starshipSet.add(starship);
+		starships.add(starship);
 	});
-	return starshipSet
+	return starships
 		.mapThen(function (starship) {
 			return starship.save().catch(function () {
-				starshipSet.remove(starship);
+				starships.remove(starship);
 			});
 		}).then(function () {
-			console.log('%d starship added', numStarship = starshipSet.length);
-		});
-}
-
-function addEvents() {
-	var events = Events.forge();
-	_.times(numEvents, function () {
-		var oEvent = {
-			userid: _.random(1, numUsers),
-			groupid: chance.bool() ? null : _.random(1, numGroups),
-			itemid: _.random(1, 20)
-		};
-		_.extend(oEvent, _.sample([
-			{
-				itemtype: entities.indexOf('user') + 1,
-				message: chance.name() + ' ' + _.sample(['拉黑', '玩弄']) + '了用户 ' + chance.name()
-			},
-			{
-				itemtype: entities.indexOf('issue') + 1,
-				message: chance.name() + ' ' + _.sample(['发表', '评论']) + '了话题 ' + chance.sentence()
-			},
-			{
-				itemtype: entities.indexOf('activity') + 1,
-				message: chance.name() + ' ' + _.sample(['发布', '参与']) + '了活动 ' + chance.sentence()
-			},
-			{
-				itemtype: entities.indexOf('cooperation') + 1,
-				message: chance.name() + ' ' + _.sample(['发布', '参与']) + '了商务合作 ' + chance.sentence()
-			}
-		]));
-		var event = Event.forge(oEvent);
-		events.add(event);
-	});
-	return events.invokeThen('save')
-		.then(function () {
-			console.log('%d events added', numEvents = events.length);
+			console.log('%d starship added', numStarship = starships.length);
 		});
 }
 

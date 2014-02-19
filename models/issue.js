@@ -2,6 +2,7 @@ var Promise = require('bluebird'),
 	chance = new (require('chance'))(),
 	errors = require('../lib/errors'),
 	syBookshelf = require('./base'),
+	Event = require('./event'),
 	IssueComment = require('./issue-comment'),
 	IssueComments = IssueComment.Set,
 	Issue, Issues;
@@ -18,10 +19,24 @@ Issue = module.exports = syBookshelf.Model.extend({
 		return {
 			title: '',
 			body: '',
+			groupid: null,
+			activityid: null,
 			posttime: new Date()
 		};
 	},
 
+	created: function () {
+		var self = this;
+		return Issue.__super__.created.apply(this, arguments)
+			.then(function () {
+				return self.user().fetch()
+					.then(function (user) {
+						var message = user.related('profile').get('name') + ' 发表了话题 <'+ self.get('title') +'>';
+						Event.add(user.id, self.get('groupid'), 'issue', self.id, message);
+						return self;
+					});
+			});
+	},
 	fetched: function (model) {
 		return Issue.__super__.fetched.apply(this, arguments)
 			.then(function () {

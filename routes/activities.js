@@ -126,8 +126,7 @@ module.exports = function (app) {
 			.then(function (useractivitys) {
 				return useractivitys.mapThen(function (useractivity) {
 					return useractivity.load(['user']);
-				})
-					.then(function (useractivitys) {
+				}).then(function (useractivitys) {
 						next({
 							usership: useractivitys
 						});

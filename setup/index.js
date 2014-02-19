@@ -66,7 +66,7 @@ try {
 // create database for test
 execsql.config(connConfig)
 	.exec([
-	'DROP SCHEMA IF EXISTS ' + dbName,
+	'DROP SCHEMA IF EXISTS ' + dbName + ' character set utf8',
 	'CREATE SCHEMA ' + dbName,
 	'USE ' + dbName
 ].join('; '), function (err) {

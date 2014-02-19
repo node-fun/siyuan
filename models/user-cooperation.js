@@ -2,10 +2,11 @@ var _ = require('underscore'),
 	chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
 	UserCooperation, UserCooperations,
+	tbUserCooperation = 'user_cooperation',
 	fkUser = 'userid';
 
 UserCooperation = module.exports = syBookshelf.Model.extend({
-	tableName: 'user_cooperation',
+	tableName: tbUserCooperation,
 	fields: [
 		'id', 'userid', 'cooperationid', 'isaccepted'
 	],
@@ -31,5 +32,10 @@ UserCooperation = module.exports = syBookshelf.Model.extend({
 });
 
 UserCooperations = UserCooperation.Set = syBookshelf.Collection.extend({
-	model: UserCooperation
+	model: UserCooperation,
+
+	lister: function (req, qb) {
+		var query = req.query;
+		this.qbWhere(qb, req, query, ['id', 'userid', 'cooperationid', 'isaccepted'], tbUserCooperation);
+	}
 });

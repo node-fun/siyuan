@@ -19,12 +19,13 @@ var fs = require('fs'),
 	CoComments = CoComment.Set,
 	Cooperation, Cooperations,
 	config = require('../config'),
+	tbCooperation = 'cooperations',
 	fkStatus = 'statusid',
 	fkCooperation = 'cooperationid',
 	fkOwner = 'ownerid';
 
 Cooperation = module.exports = syBookshelf.Model.extend({
-	tableName: 'cooperations',
+	tableName: tbCooperation,
 	fields: [
 		'id', 'name', 'description', 'company', 'avatar', 'statusid', 'ownerid', 'isprivate', 'regdeadline'
 	],
@@ -124,30 +125,15 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 });
 
 Cooperations = Cooperation.Set = syBookshelf.Collection.extend({
-	model: Cooperation
-}, {
-	finder: function (qb, query) {
-		['id', 'name', 'company', 'statusid'].forEach(function (k) {
-			if (k in query) {
-				qb.where(k, query[k]);
-			}
-		});
-	},
+	model: Cooperation,
 
-	searcher: function (qb, query) {
-		var count = 0;
-		['ownerid', 'statusid'].forEach(function (k) {
-			if (k in query) {
-				count++;
-				qb.where(k, query[k]);
-			}
-		});
-		['name', 'company', 'description'].forEach(function (k) {
-			if (k in query) {
-				count++;
-				qb.where(k, 'like', '%' + query[k] + '%');
-			}
-		});
-		if (count < 1) query['limit'] = 0;
+	lister: function (req, qb) {
+		var query = req.query;
+		this.qbWhere(qb, req, query, ['id', 'statusid', 'ownerid', 'isprivate'], tbCooperation);
+		if (!req.query['fuzzy']) {
+			this.qbWhereLike(qb, req, query, ['name', 'company'], tbCooperation);
+		} else {
+			this.qbWhereLike(qb, req, query, ['name', 'description', 'company'], tbCooperation);
+		}
 	}
 });

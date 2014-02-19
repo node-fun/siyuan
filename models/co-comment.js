@@ -4,10 +4,11 @@
 var _ = require('underscore'),
 	chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
+	tbCoComment = 'co_comments',
 	CoComment, CoComments;
 
 CoComment = module.exports = syBookshelf.Model.extend({
-	tableName: 'co_comments',
+	tableName: tbCoComment,
 	fields: ['id', 'cooperationid', 'userid', 'body', 'posttime'],
 	omitInJSON: ['id', 'userid', 'issueid'],
 	appended: ['user'],
@@ -50,5 +51,10 @@ CoComment = module.exports = syBookshelf.Model.extend({
 });
 
 CoComments = CoComment.Set = syBookshelf.Collection.extend({
-	model: CoComment
+	model: CoComment,
+
+	lister: function (req, qb) {
+		var query = req.query;
+		this.qbWhere(qb, req, query, ['id', 'cooperationid', 'userid', 'posttime'], tbCoComment)
+	}
 });

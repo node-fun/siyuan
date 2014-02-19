@@ -7,9 +7,11 @@ var _ = require('underscore'),
 	Cooperation = require('../models/cooperation'),
 	Cooperations = Cooperation.Set,
 	UserCooperation = require('../models/user-cooperation'),
+	UserCooperations = UserCooperation.Set;
 	GroupMember = require('../models/group-membership'),
 	GroupMembers = GroupMember.Set,
 	CoComment = require('../models/co-comment'),
+	CoComments = CoComment.Set,
 	Event = require('../models/event'),
 	errors = require('../lib/errors'),
 	config = require('../config'),
@@ -17,12 +19,16 @@ var _ = require('underscore'),
 
 module.exports = function (app) {
 	/**
-	 * GET /api/cooperations/find
+	 * GET /api/cooperations/list
 	 * @method 合作列表
 	 * @param {Number} [id] 合作ID
 	 * @param {String} [name] 合作名称
+	 * @param {String} [description] 合作描述 (仅限搜索)
+	 * @param {String} [company] 合作组织
+	 * @param {Nunmber} [ownerid] 作者ID
+	 * @param {Boolean} [isprivate] 是否私有
 	 * @return {Array}
-	 * // GET /api/cooperations/find?id=20
+	 * // GET /api/cooperations/list?id=20
 	 *
 	 * <pre>{
 	 * "cooperations": [
@@ -60,27 +66,10 @@ module.exports = function (app) {
 	 ]
 	 }</pre>
 	 */
-	app.get('/api/cooperations/find', function (req, res, next) {
-		Cooperations.list(req.query, Cooperations.finder)
+	app.get('/api/cooperations/list', function (req, res, next) {
+		Cooperations.forge().fetch({ req: req })
 			.then(function (cooperations) {
-				next({
-					cooperations: cooperations
-				});
-			}).catch(next);
-	});
-
-	/**
-	 * GET /api/cooperations/search
-	 * @method 合作搜索
-	 * @param {Number} [ownerid] 作者ID
-	 * @param {String} [name] 标题关键字
-	 * @param {String} [description] 内容关键字
-	 * @return {JSON}
-	 */
-	app.get('/api/cooperations/search', function (req, res, next) {
-		Cooperations.list(req.query, Cooperations.searcher)
-			.then(function (cooperations) {
-				next({ cooperations: cooperations });
+				next({ cooperations: cooperations })
 			}).catch(next);
 	});
 
@@ -123,15 +112,14 @@ module.exports = function (app) {
 		}</pre>
 	 */
 	app.get('/api/cooperations/history', function (req, res, next) {
-		UserCooperation.find(req.query)
+		UserCooperations.forge().fetch({ req: req })
 			.then(function (usercooperations) {
-				usercooperations.mapThen(function (usercooperation) {
+				return usercooperations.mapThen(function (usercooperation) {
 					return usercooperation.load(['user']);
-				})
-					.then(function (usercooperations) {
+				}).then(function (usercooperations) {
 						next({
 							usership: usercooperations
-						});
+						})
 					})
 			}).catch(next);
 	});
@@ -583,6 +571,7 @@ module.exports = function (app) {
 	});
 
 	/**
+	 * GET /api/cooperations/comments/list
 	 * @method 评论列表
 	 * @param {Number} [id] 评论ID
 	 * @param {Number} [cooperationid] 合作ID
@@ -592,12 +581,10 @@ module.exports = function (app) {
 	 * 		cocomments: []
 	 * }
 	 */
-	app.get('/api/cooperations/comments/find', function (req, res, next) {
-		CoComment.find(req.query)
+	app.get('/api/cooperations/comments/list', function (req, res, next) {
+		CoComments.forge().fetch({ req: req })
 			.then(function (cocomments) {
-				next({
-					cocomments: cocomments
-				});
+				next({ cocomments: cocomments });
 			}).catch(next);
 	})
 

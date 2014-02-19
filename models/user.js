@@ -120,6 +120,9 @@ User = module.exports = syBookshelf.Model.extend({
 	fetched: function (model, attrs, options) {
 		return User.__super__.fetched.apply(this, arguments)
 			.then(function () {
+				return model.detectFollowed(options.req);
+			}).then(function () {
+				if (!options['more']) return Promise.resolve(model);
 				return model.countFollowship()
 					.then(function () {
 						return model.countIssues();
@@ -129,8 +132,6 @@ User = module.exports = syBookshelf.Model.extend({
 						return model.countStarship();
 					}).then(function () {
 						return model.countEvents();
-					}).then(function () {
-						return model.detectFollowed(options.req);
 					});
 			});
 	},

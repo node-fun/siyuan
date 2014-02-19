@@ -2,11 +2,11 @@ var _ = require('underscore'),
 	chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
 	UserActivity, UserActivitys,
-	tvUserActivity = 'user_activity',
+	tbUserActivity = 'user_activity',
 	fkUser = 'userid';
 
 UserActivity = module.exports = syBookshelf.Model.extend({
-	tableName: tvUserActivity,
+	tableName: tbUserActivity,
 	fields: [
 		'id', 'userid', 'activityid', 'isaccepted'
 	],
@@ -20,6 +20,6 @@ UserActivitys = UserActivity.Set = syBookshelf.Collection.extend({
 
 	lister: function (req, qb) {
 		var query = req.query;
-		this.qbWhere(qb, req, query, ['id', 'userid', 'activityid', 'isaccepted']);
+		this.qbWhere(qb, req, query, ['id', 'userid', 'activityid', 'isaccepted'], tbUserActivity);
 	}
 });

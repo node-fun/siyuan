@@ -34,23 +34,17 @@ module.exports = function (app) {
 				"avatar": "/avatars/1.jpg",
 				"cover": null,
 				"profile": {
-					"email": "he@gec.net",
-	 "name": "Nicolas Bailey",
-	 "gender": "f",
-	 "age": 45,
-	 "grade": 1988,
-	 "university": "Rizuuh University",
-	 "major": "Asecoeb",
-	 "summary": "Lubudzot ujumipji bu elahumi ze puezawuh acu bi ajbez pirwivu movatra ulazujtob bapbape."
-	 },
-	 "numFollowing": 0,
-	 "numFollowers": 5,
-	 "numIssues": 0,
-	 "numPhotos": 5,
-	 "numStarring": 0,
-	 "numEvents": 0,
-	 "isfollowed": 1,
-	 },
+					 "email": "he@gec.net",
+					 "name": "Nicolas Bailey",
+					 "gender": "f",
+					 "age": 45,
+					 "grade": 1988,
+					 "university": "Rizuuh University",
+					 "major": "Asecoeb",
+					 "summary": "Lubudzot ujumipji bu elahumi ze puezawuh acu bi ajbez pirwivu movatra ulazujtob bapbape."
+				 },
+				 "isfollowed": 1,
+	 		},
 	 ...
 	 ]
 	 }
@@ -60,6 +54,68 @@ module.exports = function (app) {
 		Users.forge().fetch({ req: req })
 			.then(function (users) {
 				next({ users: users });
+			}).catch(next);
+	});
+
+	/**
+	 * GET /api/users/view
+	 * @method 用户详情
+	 * @param {Number} [id] 用户ID
+	 * @return {JSON}
+	 * <pre>
+	 {
+	  "user": {
+		"id": 1,
+		"username": "test",
+		"regtime": 1360639970000,
+		"isonline": 1,
+		"avatar": "/avatars/1.jpg?t=1392728340875",
+		"cover": "/covers/1.jpg?t=1392728340928",
+		"profile": {
+			 "email": "jizrehce@heowo.edu",
+			 "name": "Ana Hunter",
+			 "gender": "m",
+			 "age": 45,
+			 "grade": 1987,
+			 "university": "Rurijuf University",
+			 "major": "Agakalot",
+			 "summary": "Zul ute juhjuwot bec wuwu bojnemob uszejow memolu fubipi omodicguv nisitucec heri.",
+			 "tag": "ma,hajo,ze"
+		 },
+		 "isfollowed": 0,
+		 "numFollowing": 4,
+		 "numFollowers": 6,
+		 "numIssues": 1,
+		 "numPhotos": 2,
+		 "numStarring": 3,
+		 "numEvents": 2
+		}
+	 }
+	 * </pre>
+	 */
+	app.get('/api/users/view', function (req, res, next) {
+		Users.forge().fetch({
+			req: req,
+			each: { more: true }
+		}).then(function (users) {
+				next({ users: users });
+			}).catch(next);
+	});
+
+	/**
+	 * GET /api/users/i
+	 * @method 自己的用户详情
+	 * @return {JSON}
+	 */
+	app.get('/api/users/i', function (req, res, next) {
+		if (!req.user) return next(errors[21301]);
+		req.query = _.omit(req.query, ['id']);
+		req.query['id'] = req.user.id;
+		Users.forge().fetch({
+			req: req,
+			each: { more: true }
+		}).then(function (users) {
+				next({ user: users.at(0) || null });
 			}).catch(next);
 	});
 

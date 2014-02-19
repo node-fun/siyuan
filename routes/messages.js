@@ -1,5 +1,6 @@
 /**
  * Created by Cam on 14-2-18.
+ * @class 消息
  */
 var Message = require('../models/message'),
 	Messages = Message.Set,

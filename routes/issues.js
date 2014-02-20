@@ -56,7 +56,8 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.get('/api/issues/view', function (req, res, next) {
-		Issues.forge().fetch({ req: req, detailed: true, single: true })
+		Issue.forge({ id: req.query['id'] })
+			.fetch({ req: req, detailed: true })
 			.then(function (issue) {
 				next({ issue: issue });
 			}).catch(next);

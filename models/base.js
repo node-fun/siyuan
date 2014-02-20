@@ -207,11 +207,9 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 
 	fetch: function (options) {
 		options = options || {};
-		var req = options['req'] = options['req'] || null,
-			limit = null;
+		var req = options['req'];
 		if (req) {
-			limit = req.query['limit'];
-			var self = this;
+			var limit = req.query['limit'], self = this;
 			this.query(function (qb) {
 				if (options['self']) {
 					if (self.models.length < 1) {
@@ -227,38 +225,17 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 					});
 					qb.offset(req.query['offset']);
 					// empty list for empty fuzzy query
-					if (req.query['applied'] < 1
-						&& (req.query['fuzzy'] || options['single'])) limit = 0;
+					if (req.query['fuzzy'] && req.query['applied'] < 1) limit = 0;
+					qb.limit(limit);
 				});
 		}
-		if (options['single']) limit = Math.min(1, limit || 0);
-		if (limit != null) this.query().limit(limit);
 		return syCollection.__super__.fetch.call(this, options)
 			.then(function (collection) {
 				return collection.invokeThen('fetch', options)
 					.then(function () {
-						if (options['single']) return collection.at(0) || null;
 						return collection;
 					});
 			});
-	},
-
-	list: function (query) {	// query, [, looker1, looker2, ..]
-		var lookers = _.toArray(arguments).slice(1),
-			Collection = this.constructor;
-		return this
-			.query(function (qb) {
-				lookers.forEach(function (looker) {
-					looker.call(Collection, qb, query);
-				});
-
-			}).query(function (qb) {
-				query['orders'].forEach(function (order) {
-					qb.orderBy(order[0], order[1]);
-				});
-				qb.offset(query['offset']);
-				qb.limit(query['limit']);
-			}).fetch();
 	},
 
 	lister: null,
@@ -298,11 +275,6 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 			}
 		});
 		return this;
-	}
-}, {
-	list: function () {
-		var collection = this.forge();
-		return collection.list.apply(collection, arguments);
 	}
 });
 

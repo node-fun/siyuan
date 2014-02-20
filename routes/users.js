@@ -94,7 +94,8 @@ module.exports = function (app) {
 	 * </pre>
 	 */
 	app.get('/api/users/view', function (req, res, next) {
-		Users.forge().fetch({ req: req, detailed: true, single: true })
+		User.forge({ id: req.query['id'] })
+			.fetch({ req: req, detailed: true })
 			.then(function (user) {
 				next({ user: user });
 			}).catch(next);

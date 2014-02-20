@@ -78,9 +78,9 @@ module.exports = function (app) {
 		delete req.body['id'];
 		Photo.forge({ id: id }).fetch()
 			.then(function (photo) {
-				if (!photo) return Promise.reject(errors[20603]);
+				if (!photo) throw errors[20603];
 				if (photo.get('userid') != req.user.id) {
-					return Promise.reject(errors[20102]);
+					throw errors[20102];
 				}
 				return photo.set(req.body).save();
 			}).then(function () {
@@ -99,9 +99,9 @@ module.exports = function (app) {
 		if (!user) return next(errors[21301]);
 		Photo.forge({ id: req.body['id'] }).fetch()
 			.then(function (photo) {
-				if (!photo) return Promise.reject(errors[20603]);
+				if (!photo) throw errors[20603];
 				if (photo.get('userid') != user.id) {
-					return Promise.reject(errors[20102]);
+					throw errors[20102];
 				}
 				return photo.destroy();
 			}).then(function () {

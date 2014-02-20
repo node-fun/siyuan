@@ -61,13 +61,13 @@ module.exports = function (app) {
 			id: req.body['followid']
 		}).fetch()
 			.then(function (user) {
-				if (!user) return Promise.rejected(errors[20003]);
+				if (!user) return Promise.reject(errors[20003]);
 			}).then(function () {
 				return Followship.forge(
 						_.pick(req.body, ['userid', 'followid', 'remark'])
 					).save()
 					.catch(function () {
-						return Promise.rejected(errors[20506]);
+						return Promise.reject(errors[20506]);
 					});
 			}).then(function () {
 				next({ msg: 'Followee followed' });
@@ -88,7 +88,7 @@ module.exports = function (app) {
 				_.pick(req.body, ['userid', 'followid'])
 			).fetch()
 			.then(function (followship) {
-				if (!followship) return Promise.rejected(errors[20603]);
+				if (!followship) return Promise.reject(errors[20603]);
 				return followship.destroy();
 			}).then(function () {
 				next({ msg: 'Followee unfollowed' });
@@ -110,7 +110,7 @@ module.exports = function (app) {
 				_.pick(req.body, ['userid', 'followid'])
 			).fetch()
 			.then(function (followship) {
-				if (!followship) return Promise.rejected(errors[20603]);
+				if (!followship) return Promise.reject(errors[20603]);
 				return followship.set(
 					_.pick(req.body, 'remark')
 				).save();

@@ -1,5 +1,4 @@
 var path = require('path'),
-	Promise = require('bluebird'),
 	chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
 	errors = require('../lib/errors'),

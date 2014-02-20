@@ -87,17 +87,9 @@ syModel = syBookshelf.Model = syModel.extend({
 		}
 		var p = model;
 		model.appended.forEach(function (k, i) {
-			if (i == 0) {
-				return p = p.related(k).fetch()
-					.then(function () {
-						return model;
-					});
-			}
+			if (i == 0) return p = p.related(k).fetch();
 			p = p.then(function () {
-				return model.related(k).fetch()
-					.then(function () {
-						return model;
-					});
+				return model.related(k).fetch();
 			});
 		});
 		return p;
@@ -169,10 +161,7 @@ syModel = syBookshelf.Model = syModel.extend({
 				return self.set(field, Date.now()).save();
 			}).catch(function (err) {
 				// rollback to null
-				return self.set(field, null).save()
-					.then(function () {
-						return Promise.reject(err);
-					});
+				return self.set(field, null).save().throw(err);
 			});
 	},
 	deleteAsset: function (field) {
@@ -232,9 +221,7 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 		return syCollection.__super__.fetch.call(this, options)
 			.then(function (collection) {
 				return collection.invokeThen('fetch', options)
-					.then(function () {
-						return collection;
-					});
+					.return(collection);
 			});
 	},
 

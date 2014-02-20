@@ -31,7 +31,7 @@ Issue = module.exports = syBookshelf.Model.extend({
 			.then(function () {
 				return self.user().fetch()
 					.then(function (user) {
-						var message = user.related('profile').get('name') + ' 发表了话题 <' + self.get('title') + '>';
+						var message = user.related('profile').get('name') + ' 发布了话题 <' + self.get('title') + '>';
 						Event.add(user.id, self.get('groupid'), 'issue', self.id, message);
 						return self;
 					});

@@ -94,10 +94,7 @@ User = module.exports = syBookshelf.Model.extend({
 					profile = UserProfile.forge(profileData);
 				return profile.set('userid', self.id).save()
 					.catch(function (err) {
-						return self.destroy() // rollback
-							.then(function () {
-								return Promise.reject(err);
-							});
+						return self.destroy().throw(err);	// rollback
 					}).then(function () {
 						Event.add(self.id, null, 'user', self.id, '欢迎 ' + profileData['name'] + ' 加入思源群!');
 						return self;
@@ -254,11 +251,8 @@ User = module.exports = syBookshelf.Model.extend({
 		});
 	},
 	updateProfile: function (data) {
-		var self = this;
-		return this.related('profile').set(data).save()
-			.then(function () {
-				return self;
-			});
+		return this.related('profile')
+			.set(data).save().return(this);
 	}
 }, {
 	randomForge: function () {

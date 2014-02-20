@@ -117,20 +117,15 @@ User = module.exports = syBookshelf.Model.extend({
 
 	fetched: function (model, attrs, options) {
 		return User.__super__.fetched.apply(this, arguments)
+			.return(model).call('detectFollowed', options.req)
 			.then(function () {
-				return model.detectFollowed(options.req);
-			}).then(function () {
-				if (!options['detailed']) return Promise.resolve(model);
-				return model.countFollowship()
-					.then(function () {
-						return model.countIssues();
-					}).then(function () {
-						return model.countPhotos();
-					}).then(function () {
-						return model.countStarship();
-					}).then(function () {
-						return model.countEvents();
-					});
+				if (!options['detailed']) return;
+				return Promise.cast(model)	// for detail
+					.call('countFollowship')
+					.call('countIssues')
+					.call('countPhotos')
+					.call('countStarship')
+					.call('countEvents');
 			});
 	},
 	countFollowship: function () {
@@ -208,9 +203,9 @@ User = module.exports = syBookshelf.Model.extend({
 		return self.save()
 			.catch(function (err) {
 				if (/^ER_DUP_ENTRY/.test(err.message)) {
-					return Promise.reject(errors[20506]);
+					throw errors[20506];
 				}
-				return Promise.reject(err);
+				throw err;
 			}).then(function () {
 				return self.fetch();
 			});
@@ -229,7 +224,7 @@ User = module.exports = syBookshelf.Model.extend({
 		}
 		return User.forge(loginData).fetch()
 			.then(function (user) {
-				if (!user) return Promise.reject(errors[21302]);
+				if (!user) throw errors[21302];
 				return user.set('isonline', 1).save();
 			});
 	},
@@ -245,7 +240,7 @@ User = module.exports = syBookshelf.Model.extend({
 			self = this;
 		return this.fetch().then(function () {
 			if (encrypt(oldPassword) != self.get('password')) {
-				return Promise.reject(errors[21301])
+				throw errors[21301];
 			}
 			return self.set('password', newPassword).save();
 		});

@@ -39,18 +39,14 @@ Issue = module.exports = syBookshelf.Model.extend({
 	},
 	fetched: function (model, attrs, options) {
 		return Issue.__super__.fetched.apply(this, arguments)
+			.return(model).call('countComments')
 			.then(function () {
-				return model.countComments();
-			}).then(function () {
-				if (!options['detailed']) return Promise.resolve(model);
-				return model.related('comments')
+				if (!options['detailed']) return;
+				return model.related('comments')	// for detail
 					.query(function (qb) {
 						qb.orderBy('id', 'desc');
 					}).fetch()
-					.then(function (collection) {
-						// relation fetching not enough
-						return collection.invokeThen('fetch');
-					});
+					.call('invokeThen', 'fetch');
 			});
 	},
 

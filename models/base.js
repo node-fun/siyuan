@@ -45,10 +45,10 @@ syModel = syBookshelf.Model = syModel.extend({
 		})) {
 			return Promise.reject(err);
 		}
-		return Promise.resolve();
+		return Promise.cast();
 	},
 	created: function () {
-		return Promise.resolve();
+		return Promise.cast();
 	},
 	updating: function () {
 		var self = this, err = null;
@@ -58,36 +58,35 @@ syModel = syBookshelf.Model = syModel.extend({
 		})) {
 			return Promise.reject(err);
 		}
-		return Promise.resolve();
+		return Promise.cast();
 	},
 	updated: function () {
-		return Promise.resolve();
+		return Promise.cast();
 	},
 	saving: function () {
 		// pick attributes
 		this.attributes = this.pick(this.fields);
-		return Promise.resolve();
+		return Promise.cast();
 	},
 	saved: function () {
-		return Promise.resolve();
+		return Promise.cast();
 	},
 	destroying: function () {
-		return Promise.resolve();
+		return Promise.cast();
 	},
 	destroyed: function () {
-		return Promise.resolve();
+		return Promise.cast();
 	},
 	fetching: function () {
-		return Promise.resolve();
+		return Promise.cast();
 	},
 	fetched: function (model) {
 		// appended
 		if (model.appended.length < 1) {
-			return Promise.resolve();
+			return Promise.cast();
 		}
-		var p = model;
-		model.appended.forEach(function (k, i) {
-			if (i == 0) return p = p.related(k).fetch();
+		var p = Promise.cast();
+		model.appended.forEach(function (k) {
 			p = p.then(function () {
 				return model.related(k).fetch();
 			});

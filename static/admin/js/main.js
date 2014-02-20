@@ -1,7 +1,7 @@
 URL={};
 URL.root = 'http://' + location.host + '/';
 function loadUserTable(page, func){
-	var url = URL.root+'api/users/find?limit=7';
+	var url = URL.root+'api/users/list?limit=7';
 	if(page){
 		url += '&page='+page;
 	}

@@ -14,7 +14,7 @@ var _ = require('underscore'),
 
 module.exports = function (app) {
 	/**
-	 * get /api/groups/find <br>
+	 * get /api/groups/list <br>
 	 * 支持page、limit、orders
 	 * @method 圈子列表
 	 * @param {Number} [id]
@@ -23,7 +23,7 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 * 含owner,numMembers
 	 */
-	app.get('/api/groups/find', function (req, res, next) {
+	app.get('/api/groups/list', function (req, res, next) {
 		var query = req.query,
 			accepts = ['id', 'ownerid', 'name'];
 		Groups.forge().query(function (qb) {

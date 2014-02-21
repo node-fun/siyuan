@@ -10,7 +10,7 @@ var _ = require('underscore'),
 
 module.exports = function (app) {
 	/**
-	 * POST /api/followship/following
+	 * GET /api/followship/following
 	 * @method 用户的关注列表
 	 * @param {Number} followid 被关注者ID
 	 * @return {JSON}
@@ -29,7 +29,7 @@ module.exports = function (app) {
 	});
 
 	/**
-	 * POST /api/followship/followers
+	 * GET /api/followship/followers
 	 * @method 用户的粉丝列表
 	 * @param {Number} userid 关注者ID
 	 * @return {JSON}

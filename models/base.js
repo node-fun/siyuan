@@ -10,7 +10,7 @@ var fs = require('fs-extra'),
 	syModel = syBookshelf.Model,
 	syCollection = syBookshelf.Collection;
 
-syModel = syBookshelf.Model = syModel.extend({
+syModel = syBookshelf.Model = syModel.include({
 	tableName: '',
 	fields: [],
 	omitInJSON: [],
@@ -181,11 +181,9 @@ syModel = syBookshelf.Model = syModel.extend({
 	getAssetPath: function (type) {
 		return path.join(config.assets[type].dir, this.getAssetName(type));
 	}
-}, {
-
 });
 
-syBookshelf.Collection = syModel.Set = syCollection.extend({
+syBookshelf.Collection = syModel.Set = syCollection.include({
 	model: syModel,
 
 	initialize: function () {

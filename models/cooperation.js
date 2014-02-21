@@ -64,8 +64,7 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 				return model.related('cocomments')
 					.query(function (qb) {
 						qb.orderBy('id', 'desc');
-					}).fetch()
-					.call('invokeThen', 'fetch');
+					}).fetch();
 			})
 	},
 

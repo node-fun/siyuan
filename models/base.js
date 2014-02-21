@@ -10,7 +10,7 @@ var fs = require('fs-extra'),
 	syModel = syBookshelf.Model,
 	syCollection = syBookshelf.Collection;
 
-syModel = syBookshelf.Model = syModel.include({
+syModel.include({
 	tableName: '',
 	fields: [],
 	omitInJSON: [],
@@ -183,7 +183,7 @@ syModel = syBookshelf.Model = syModel.include({
 	}
 });
 
-syBookshelf.Collection = syModel.Set = syCollection.include({
+syModel.Set = syCollection.include({
 	model: syModel,
 
 	initialize: function () {

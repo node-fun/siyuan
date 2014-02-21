@@ -80,10 +80,11 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.get('/api/cooperations/view', function (req, res, next) {
-		Cooperation.view(req.query)
+		Cooperation.forge({ id: req.query['id'] })
+			.fetch({ req: req, detailed: true })
 			.then(function (cooperation) {
-				next({ cooperation: cooperation});
-			}).catch(next);
+				next({ cooperation: cooperation });
+			})
 	});
 
 	/**

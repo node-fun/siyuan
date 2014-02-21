@@ -54,22 +54,28 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 		return this.hasMany(UserCooperations, fkCooperation);
 	},
 
-	fetch: function () {
-		return Cooperation.__super__.fetch.apply(this, arguments)
-			.then(function (cooperation) {
-				if (!cooperation) return cooperation;
-				return cooperation.countComments();
-			});
+	fetched: function (model, attrs, options) {
+		return Cooperation.__super__.fetched.apply(this, arguments)
+			.return(model)
+			.call('countComments')
+			.call('countUsership')
+			.then(function () {
+				if (!options['detailed']) return;
+				return model.related('cocomments')
+					.query(function (qb) {
+						qb.orderBy('id', 'desc');
+					}).fetch()
+					.call('invokeThen', 'fetch');
+			})
 	},
 
 	countUsership: function () {
 		var self = this;
-		return UserCooperations.forge().query()
-			.where(fkCooperation, '=', self.id)
-			.count('id')
-			.then(function (d) {
-				return self.data('numUsership', d[0]["count(`id`)"]);
-			});
+		return this.usership().fetch()
+			.then(function (userships) {
+				var numUserships = userships.length;
+				return self.data('numUserships', numUserships);
+			})
 	},
 
 	status: function () {
@@ -107,20 +113,6 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 			'isprivate': chance.bool(),
 			'regdeadline': chance.date({ year: 2013 })
 		});
-	},
-
-	view: function (query) {
-		return Cooperation.forge({ id: query['id'] })
-			.fetch().then(function (cooperation) {
-				if (!cooperation) return Promise.rejected(errors[20603]);
-				//return cooperation.load(['cocomments', 'user', 'user.profile']);
-				return CoComments.forge()
-					.query('where', 'cooperationid', '=', cooperation.get('id'))
-					.query('orderBy', 'id', 'desc')
-					.fetch().then(function (cocomments) {
-						return cooperation.set('cocomments', cocomments);
-					})
-			});
 	}
 });
 

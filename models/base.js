@@ -217,8 +217,11 @@ syModel.Set = syCollection.include({
 		}
 		return syCollection.__super__.fetch.call(this, options)
 			.then(function (collection) {
-				return collection.invokeThen('fetch', options)
-					.return(collection);
+				return Promise.cast(collection.models)
+					.map(function (model) {
+						return model.triggerThen('fetched',
+							model, model.attributes, options);
+					}).return(collection);
 			});
 	},
 

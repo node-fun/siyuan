@@ -10,7 +10,7 @@ var fs = require('fs-extra'),
 	syModel = syBookshelf.Model,
 	syCollection = syBookshelf.Collection;
 
-syModel = syBookshelf.Model = syModel.extend({
+syModel.include({
 	tableName: '',
 	fields: [],
 	omitInJSON: [],
@@ -181,11 +181,9 @@ syModel = syBookshelf.Model = syModel.extend({
 	getAssetPath: function (type) {
 		return path.join(config.assets[type].dir, this.getAssetName(type));
 	}
-}, {
-
 });
 
-syBookshelf.Collection = syModel.Set = syCollection.extend({
+syModel.Set = syCollection.include({
 	model: syModel,
 
 	initialize: function () {
@@ -219,8 +217,11 @@ syBookshelf.Collection = syModel.Set = syCollection.extend({
 		}
 		return syCollection.__super__.fetch.call(this, options)
 			.then(function (collection) {
-				return collection.invokeThen('fetch', options)
-					.return(collection);
+				return Promise.cast(collection.models)
+					.map(function (model) {
+						return model.triggerThen('fetched',
+							model, model.attributes, options);
+					}).return(collection);
 			});
 	},
 

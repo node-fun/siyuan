@@ -10,10 +10,15 @@ var _ = require('underscore'),
 Event = module.exports = syBookshelf.Model.extend({
 	tableName: 'events',
 	fields: [
-		'id', 'userid', 'groupid', 'itemtype', 'itemid', 'message'
+		'id', 'userid', 'groupid', 'itemtype', 'itemid', 'message', 'createtime'
 	],
 	omitInJSON: ['userid'],
 	appended: ['user'],
+	defaults: function () {
+		return {
+			createtime: new Date()
+		};
+	},
 
 	fetched: function (model) {
 		return Event.__super__.fetched.apply(this, arguments)

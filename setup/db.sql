@@ -402,6 +402,7 @@ CREATE TABLE IF NOT EXISTS `events` (
   `itemtype` INT NULL,
   `itemid` INT NULL,
   `message` VARCHAR(280) NULL,
+  `createtime` TIMESTAMP NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_events_users1_idx` (`userid` ASC),
   INDEX `fk_events_groups1_idx` (`groupid` ASC),
@@ -446,7 +447,7 @@ CREATE TABLE IF NOT EXISTS `client_versions` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `versioncode` VARCHAR(45) NULL,
   `versionname` VARCHAR(45) NULL,
-  `description` VARCHAR(45) NULL,
+  `description` VARCHAR(500) NULL,
   `comment` VARCHAR(45) NULL,
   `posttime` DATETIME NULL,
   PRIMARY KEY (`id`))

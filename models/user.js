@@ -29,7 +29,7 @@ User = module.exports = syBookshelf.Model.extend({
 		'id', 'username', 'password', 'regtime',
 		'isonline', 'avatar', 'cover'
 	],
-	omitInJSON: ['password'],
+	omitInJSON: ['password', 'regtime'],
 	appended: ['profile'],
 	required: ['username', 'password'],
 	validators: {
@@ -112,7 +112,7 @@ User = module.exports = syBookshelf.Model.extend({
 	},
 	fetched: function (model, resp, options) {
 		return User.__super__.fetched.apply(this, arguments)
-			.return(model).call('detectFollowed', options.req)
+			.return(model).call('detectFollowed', options['followingids'])
 			.then(function () {
 				if (!options['detailed']) return;
 				return Promise.cast(model)	// for detail
@@ -175,19 +175,9 @@ User = module.exports = syBookshelf.Model.extend({
 				return self.data('numEvents', d[0]["count(`id`)"]);
 			});
 	},
-	detectFollowed: function (req) {
-		if (!req || !req.user) {
-			return Promise.resolve(this.data('isfollowed', 0));
-		}
-		var self = this;
-		return this.followers().fetch()
-			.then(function (followers) {
-				var followerids = followers.map(function (followship) {
-					return followship.get('userid');
-				});
-				self.data('isfollowed', _.contains(followerids, req.user.id));
-				return self;
-			});
+	detectFollowed: function (followingids) {
+		this.data('isfollowed', _.contains(followingids, this.id));
+		return Promise.resolve(this);
 	},
 
 	register: function () {
@@ -225,9 +215,7 @@ User = module.exports = syBookshelf.Model.extend({
 			});
 	},
 	logout: function () {
-		return this.fetch().then(function (user) {
-			return user.set('isonline', 0).save();
-		});
+		return this.set('isonline', 0).save();
 	},
 
 	resetPassword: function (data) {
@@ -242,8 +230,7 @@ User = module.exports = syBookshelf.Model.extend({
 		});
 	},
 	updateProfile: function (data) {
-		return this.related('profile')
-			.set(data).save().return(this);
+		return this.related('profile').set(data).save();
 	}
 }, {
 	randomForge: function () {
@@ -261,6 +248,20 @@ User = module.exports = syBookshelf.Model.extend({
 
 Users = User.Set = syBookshelf.Collection.extend({
 	model: User,
+
+	fetching: function (obj, columns, options) {
+		return Users.__super__.fetching.apply(this, arguments)
+			.then(function () {
+				if (options.req && options.req.user) {
+					return options.req.user.following().fetch()
+						.then(function (following) {
+							options['followingids'] = following.map(function (followship) {
+								return followship.get('followid');
+							});
+						});
+				}
+			});
+	},
 
 	lister: function (req, qb) {
 		var query = req.query,

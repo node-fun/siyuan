@@ -57,7 +57,12 @@
         </tr><tr>
             <td><input type="text" onblur="$('#key6').attr({name: this.value});"/></td>
             <td><input type="file" id="key6"/></td>
-        </tr><tr>
+        </tr>
+        <tr>
+            <td><button type="button" class="submitbutton" onclick="submitTest()">ajax提交</button></td>
+            <td><input type="submit" class="submitbutton" onclick="beforeSubmit()" value="带文件提交"/></td>
+        </tr>
+        <tr>
             <td><input type="text" onblur="$('#key11').attr({name: this.value});"/></td>
             <td><input type="text" id="key11"/></td>
         </tr><tr>
@@ -86,8 +91,6 @@
             <td><input type="text" id="key23"/></td>
         </tr>
     </table>
-    <button type="button" class="submitbutton" onclick="submitTest()">ajax提交</button>
-    <input type="submit" class="submitbutton" onclick="beforeSubmit()" value="带文件提交"/>
 </form>
 </div>
 <div id="right" class="fl">

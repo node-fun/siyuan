@@ -38,12 +38,12 @@ module.exports = function (app) {
 	app.use('/api', function (err, req, res, next) {
 		if (!err['code']) {
 			console.error(err.stack ? err.stack : err);
-			err = errors[10001];
+			err = errors(10001);
 		}
 		res.sendErr(err);
 	});
 	app.use('/api', function (req, res) {
-		res.sendErr(errors[10020]);
+		res.sendErr(errors(10020));
 	});
 	app.use('/admin', function (req, res, next) {
 		if (!req.session.adminid) {

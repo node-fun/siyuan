@@ -35,7 +35,7 @@ Admin = module.exports = syBookshelf.Model.extend({
 		if (!_.all(keys, function (key) {
 			return loginData[key];
 		})) {
-			return Promise.rejected(errors[10008]);
+			return Promise.reject(errors(10008));
 		}
 		if (!encrypted) {
 			// encrypt password
@@ -43,7 +43,7 @@ Admin = module.exports = syBookshelf.Model.extend({
 		}
 		return Admin.forge(loginData).fetch()
 			.then(function (admin) {
-				if (!admin) return Promise.rejected(errors[21302]);
+				if (!admin) throw errors(21302);
 				return admin.set({
 					'lastip': chance.ip(),
 					'lasttime': new Date()
@@ -60,7 +60,7 @@ Admin = module.exports = syBookshelf.Model.extend({
 			self = this;
 		return this.fetch().then(function () {
 			if (encrypt(oldPassword) != self.get('password')) {
-				return Promise.rejected(errors[21301]);
+				throw errors(21301);
 			}
 			return self.set('password', newPassword).save();
 		});

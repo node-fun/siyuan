@@ -1,6 +1,4 @@
-var _ = require('underscore'),
-	chance = new (require('chance'))(),
-	syBookshelf = require('./base'),
+var syBookshelf = require('./base'),
 	UserActivity, UserActivitys,
 	tbUserActivity = 'user_activity',
 	fkUser = 'userid';

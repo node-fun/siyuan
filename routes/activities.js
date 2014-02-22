@@ -8,7 +8,6 @@ var _ = require('underscore'),
 	UserActivity = require('../models/user-activity'),
 	UserActivitys = UserActivity.Set,
 	GroupMembers = require('../models/group-membership'),
-	Group = require('../models/group'),
 	Event = require('../models/event'),
 	errors = require('../lib/errors'),
 	config = require('../config'),
@@ -147,17 +146,17 @@ module.exports = function (app) {
 	app.post('/api/activities/join', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) return next(errors[21301]);
-		if (!req.body['id']) return next(errors[10008]);
+		if (!user) return next(errors(21301));
+		if (!req.body['id']) return next(errors(10008));
 
 		Activity.forge({ id: req.body['id'] })
 			.fetch()
 			.then(function (activity) {
 				var statusid = activity.get('statusid');
 
-				if (statusid == 2) return Promise.rejected(errors[40012]);
-				if (statusid == 3) return Promise.rejected(errors[40013]);
-				if (statusid == 4) return Promise.rejected(errors[40014]);
+				if (statusid == 2) throw errors(40012);
+				if (statusid == 3) throw errors(40013);
+				if (statusid == 4) throw errors(40014);
 
 				return UserActivity.forge({
 					'userid': user.id,
@@ -168,9 +167,9 @@ module.exports = function (app) {
 						next({ msg: 'join activity success' });
 					}).catch(function (err) {
 						if (/^ER_DUP_ENTRY/.test(err.message)) {
-							return Promise.rejected(errors[20506]);
+							throw errors(20506);
 						} else {
-							return Promise.rejected(err);
+							throw err;
 						}
 					})
 			}).catch(next);
@@ -188,8 +187,8 @@ module.exports = function (app) {
 	app.post('/api/activities/cancel', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) return next(errors[21301]);
-		if (!req.body['id']) return next(errors[10008]);
+		if (!user) return next(errors(21301));
+		if (!req.body['id']) return next(errors(10008));
 
 		Activity.forge(req.body)
 			.fetch()
@@ -211,7 +210,7 @@ module.exports = function (app) {
 							'activityid': self.get('id')
 						}).fetch().then(function (usership) {
 								if (usership.get('isaccepted') == 1)
-									return Promise.rejected(errors[40016]);
+									throw errors(40016);
 								return usership.destroy();
 							}).then(function () {
 								next({
@@ -219,7 +218,7 @@ module.exports = function (app) {
 								});
 							});
 					} else {
-						return Promise.rejected(errors[20603]);
+						throw errors(20603);
 					}
 				});
 			}).catch(next);
@@ -237,8 +236,8 @@ module.exports = function (app) {
 	app.post('/api/activities/end', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) return next(errors[21301]);
-		if (!req.body['id']) return next(errors[10008]);
+		if (!user) return next(errors(21301));
+		if (!req.body['id']) return next(errors(10008));
 		Activity.forge(req.body)
 			.fetch()
 			.then(function (activity) {
@@ -246,7 +245,7 @@ module.exports = function (app) {
 					groupid = self.get('groupid');
 				return self.load(['usership']).then(function (activity) {
 					if (!(self.get('ownerid') == user.id)) {
-						return Promise.rejected(errors[20102]);
+						throw errors(20102);
 					}
 					Event.add(user.id, activity.get('groupid'), 'activity', activity.get('id'), user.get('username') + '结束了活动' + activity.get('name'));
 					return self.set({
@@ -283,14 +282,14 @@ module.exports = function (app) {
 	app.post('/api/activities/update', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) return next(errors[21301]);
+		if (!user) return next(errors(21301));
 		if (!req.body['id'] || !req.body['content'] || !req.body['starttime'] || !req.body['duration'] || !req.body['statusid'] || !req.body['money'] || !req.body['name'] || !req.body['site'] || !req.body['regdeadline'] || !req.body['maxnum'])
-			return next(errors[10008]);
+			return next(errors(10008));
 		Activity.forge({ 'id': req.body['id'] }).fetch()
 			.then(function (activity) {
 				var ownerid = activity.get('ownerid');
 				if (user.id != ownerid) {
-					return Promise.rejected(errors[20102]);
+					throw errors(20102);
 				}
 				Event.add(user.id, activity.get('groupid'), 'activity', activity.get('id'), user.get('username') + '更新了活动' + activity.get('name'));
 				return activity.set(req.body).save()
@@ -325,21 +324,21 @@ module.exports = function (app) {
 	app.post('/api/activities/create', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) return next(errors[21301]);
+		if (!user) return next(errors(21301));
 		if (!req.body['groupid'] || !req.body['content'] || !req.body['starttime'] || !req.body['duration'] || !req.body['statusid'] || !req.body['money'] || !req.body['name'] || !req.body['site'] || !req.body['regdeadline'] || !req.body['maxnum'])
-			return next(errors[10008]);
+			return next(errors(10008));
 
 		//check the dude belong to group
 		GroupMembers.forge({
 			'groupid': req.body['groupid'],
 			'userid': user.id
 		}).fetch().then(function (groupmember) {
-				if (groupmember == null) return Promise.rejected(errors[40001]);
+				if (groupmember == null) throw errors(40001);
 				return Activity.forge({ name: req.body['name'] })
 					.fetch()
 					.then(function (activity) {
 						if (activity) {
-							return Promise.rejected(errors[20506]);
+							throw errors(20506);
 						}
 						return Activity.forge(_.extend({
 							ownerid: user.id
@@ -388,13 +387,13 @@ module.exports = function (app) {
 	app.get('/api/activities/userslist', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) return next(errors[21301]);
+		if (!user) return next(errors(21301));
 		if (!req.query['id'])
-			return next(errors[10008]);
+			return next(errors(10008));
 
 		Activity.forge({ id: req.query['id'] }).fetch()
 			.then(function (activity) {
-				if (!activity) return Promise.rejected(errors[20603]);
+				if (!activity) throw errors(20603);
 
 				return activity
 					.related('usership')
@@ -423,20 +422,20 @@ module.exports = function (app) {
 	app.post('/api/activities/accept', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) return next(errors[21301]);
+		if (!user) return next(errors(21301));
 		if (!req.body['id'] || !req.body['activityid'])
-			return next(errors[10008]);
+			return next(errors(10008));
 
 		Activity.forge({ 'id': req.body['activityid'] })
 			.fetch()
 			.then(function (activity) {
-				if (!activity) return Promise.rejected(errors[20603]);
+				if (!activity) throw errors(20603);
 				var self = activity,
 					ownerid = self.get('ownerid');
-				if (user.id != ownerid) return Promise.rejected(errors[20102]);
+				if (user.id != ownerid) throw errors(20102);
 				return UserActivity.forge({ 'id': req.body['id'] }).fetch()
 					.then(function (usership) {
-						if (!usership) return Promise.rejected(errors[20603]);
+						if (!usership) throw errors(20603);
 						return usership.set({ 'isaccepted': true }).save()
 							.then(function (activity) {
 								next({ msg: 'accept success' });
@@ -498,7 +497,7 @@ module.exports = function (app) {
 	app.get('/api/activities/my', function (req, res, next) {
 		var user = req.user;
 
-		if (!user) return next(errors[21301]);
+		if (!user) return next(errors(21301));
 		user.related('activities')
 			.query(function (qb) {
 				req.query['orders'].forEach(function (order) {
@@ -529,13 +528,13 @@ module.exports = function (app) {
 	 * }</pre>
 	 */
 	app.post('/api/activities/avatar/update', function (req, res, next) {
-		if (!req.files['avatar']) return next(errors[20007]);
+		if (!req.files['avatar']) return next(errors(20007));
 		var user = req.user,
 			file = req.files['avatar'];
-		if (!user) return next(errors[21301]);
-		if (!req.body['id']) return next(errors[10008]);
-		if (file['type'] != 'image/jpeg') return next(errors[20005]);
-		if (file['size'] > imageLimit) return next(errors[20006]);
+		if (!user) return next(errors(21301));
+		if (!req.body['id']) return next(errors(10008));
+		if (file['type'] != 'image/jpeg') return next(errors(20005));
+		if (file['size'] > imageLimit) return next(errors(20006));
 		Activity.forge({ id: req.body['id'] }).fetch()
 			.then(function (activity) {
 				Event.add(user.id, activity.get('groupid'), 'activity', activity.get('id'), user.get('username') + '更新了活动' + activity.get('name'));

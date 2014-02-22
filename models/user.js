@@ -35,13 +35,13 @@ User = module.exports = syBookshelf.Model.extend({
 	validators: {
 		/*username: function (v) {
 		 if (!/^[a-z][a-z0-9_\-\.]{2,16}[a-z0-9]$/i.test(v)) {
-		 return errors[21310];
+		 return errors(21310);
 		 }
 		 },
 		 password: function (v) {
 		 if (!this.hasChanged('password')) return;
 		 if (!/^\w{6,18}$/i.test(v)) {
-		 return errors[21311];
+		 return errors(21311);
 		 }
 		 }*/
 	},
@@ -199,7 +199,7 @@ User = module.exports = syBookshelf.Model.extend({
 		return self.save()
 			.catch(function (err) {
 				if (/^ER_DUP_ENTRY/.test(err.message)) {
-					throw errors[20506];
+					throw errors(20506);
 				}
 				throw err;
 			}).then(function () {
@@ -212,7 +212,7 @@ User = module.exports = syBookshelf.Model.extend({
 		if (!_.all(keys, function (key) {
 			return loginData[key];
 		})) {
-			return Promise.reject(errors[10008]);
+			return Promise.reject(errors(10008));
 		}
 		if (!encrypted) {
 			// encrypt password
@@ -220,7 +220,7 @@ User = module.exports = syBookshelf.Model.extend({
 		}
 		return User.forge(loginData).fetch()
 			.then(function (user) {
-				if (!user) throw errors[21302];
+				if (!user) throw errors(21302);
 				return user.set('isonline', 1).save();
 			});
 	},
@@ -236,7 +236,7 @@ User = module.exports = syBookshelf.Model.extend({
 			self = this;
 		return this.fetch().then(function () {
 			if (encrypt(oldPassword) != self.get('password')) {
-				throw errors[21301];
+				throw errors(21301);
 			}
 			return self.set('password', newPassword).save();
 		});

@@ -1,6 +1,4 @@
-var Promise = require('bluebird'),
-	chance = new (require('chance'))(),
-	errors = require('../lib/errors'),
+var chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
 	Event = require('./event'),
 	IssueComment = require('./issue-comment'),

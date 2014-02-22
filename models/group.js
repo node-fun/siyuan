@@ -4,9 +4,6 @@
 var syBookshelf = require('./base'),
 	GroupMember = require('./group-membership'),
 	Activity = require('./activity'),
-	_ = require('underscore'),
-	chance = new (require('chance'))(),
-	Promise = require('bluebird'),
 	path = require('path'),
 	fkGroup = 'groupid',
 	Group, Groups;
@@ -58,8 +55,6 @@ Group = module.exports = syBookshelf.Model.extend({
 				return group.countMembership();
 			});
 	}
-}, {
-
 });
 
 Groups = Group.Set = syBookshelf.Collection.extend({

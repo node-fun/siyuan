@@ -1,8 +1,7 @@
 /**
  * @class 管理员
  */
-var _ = require('underscore'),
-	Admin = require('../models/admin');
+var Admin = require('../models/admin');
 
 module.exports = function (app) {
 	/**

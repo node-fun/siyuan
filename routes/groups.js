@@ -119,9 +119,9 @@ module.exports = function (app) {
 	 */
 	app.post('/api/groups/create', function (req, res, next) {
 		var user = req.user;
-		if (!user) return next(errors[21301]);
+		if (!user) return next(errors(21301));
 		if (!req.body['name'] || !req.body['description']) {
-			return next(errors[10008]);
+			return next(errors(10008));
 		}
 		Group.forge(_.extend({
 				ownerid: user.id
@@ -143,7 +143,7 @@ module.exports = function (app) {
 			})
 			.catch(function (err) {
 				if (/^ER_DUP_ENTRY/.test(err.message)) {
-					next(errors[20506]);
+					next(errors(20506));
 				} else {
 					next(err);
 				}
@@ -160,7 +160,7 @@ module.exports = function (app) {
 	 */
 	app.post('/api/groups/join', function (req, res, next) {
 		var user = req.user;
-		if (!user) return next(errors[21301]);
+		if (!user) return next(errors(21301));
 		join(user, [user.id], req.body['groupid'], next);
 	});
 
@@ -174,7 +174,7 @@ module.exports = function (app) {
 	 */
 	app.post('/api/groups/quit', function (req, res, next) {
 		var user = req.user;
-		if (!user) return next(errors[21301]);
+		if (!user) return next(errors(21301));
 		quit(user, req.body['groupid'], next);
 	});
 
@@ -218,7 +218,7 @@ module.exports = function (app) {
 	}
 	 */
 	app.get('/api/groups/my', function (req, res, next) {
-		if (!req.user) return next(errors[21301]);
+		if (!req.user) return next(errors(21301));
 		req.user
 			.related('groups')
 			.query(function (qb) {
@@ -256,7 +256,7 @@ module.exports = function (app) {
 	app.post('/api/groups/setadmin', function (req, res, next) {
 		var user = req.user;
 		if (!user) {
-			return next(errors[21301]);
+			return next(errors(21301));
 		}
 		GroupMember.forge({
 			userid: user.id,
@@ -264,7 +264,7 @@ module.exports = function (app) {
 		}).fetch()
 			.then(function (m) {
 				if (!m.get('isowner')) {
-					next(errors[21301]);
+					next(errors(21301));
 				} else {
 					GroupMember.forge({
 						userid: req.body['userid'],
@@ -304,7 +304,7 @@ module.exports = function (app) {
 	app.post('/api/groups/canceladmin', function (req, res, next) {
 		var user = req.user;
 		if (!user) {
-			return next(errors[21301]);
+			return next(errors(21301));
 		}
 		GroupMember.forge({
 			userid: user.id,
@@ -312,7 +312,7 @@ module.exports = function (app) {
 		}).fetch()
 			.then(function (m) {
 				if (!m.get('isowner')) {
-					next(errors[21301]);
+					next(errors(21301));
 				} else {
 					GroupMember.forge({
 						userid: req.body['userid'],
@@ -353,7 +353,7 @@ module.exports = function (app) {
 	app.post('/api/groups/pull', function (req, res, next) {
 		var user = req.user;
 		if (!user) {
-			return next(errors[21301]);
+			return next(errors(21301));
 		}
 		GroupMember.forge({
 			userid: user.id,
@@ -361,7 +361,7 @@ module.exports = function (app) {
 		}).fetch()
 			.then(function (m) {
 				if (!m.get('isadmin') && !m.get('isowner')) {
-					next(errors[21301]);
+					next(errors(21301));
 				} else {
 					var userid = req.body['userid'];
 					if(!_.isArray(userid)){
@@ -385,7 +385,7 @@ module.exports = function (app) {
 	app.post('/api/groups/remove', function (req, res, next) {
 		var user = req.user;
 		if (!user) {
-			next(errors[21301]);
+			next(errors(21301));
 		}
 		GroupMember.forge({
 			userid: user.id,
@@ -393,7 +393,7 @@ module.exports = function (app) {
 		}).fetch()
 			.then(function (m) {
 				if (!m.get('isadmin') && !m.get('isowner')) {
-					next(errors[21301]);
+					next(errors(21301));
 				} else {
 					User.forge({id: req.body['userid']}).fetch()
 						.then(function(u){
@@ -415,14 +415,14 @@ module.exports = function (app) {
 	 */
 	app.post('/api/groups/update', function (req, res, next) {
 		var user = req.user;
-		if (!user) return next(errors[21301]);
-		if (!req.body['groupid']) return next(errors[10008]);
+		if (!user) return next(errors(21301));
+		if (!req.body['groupid']) return next(errors(10008));
 		Group.forge({
 			id: req.body['groupid']
 		}).fetch()
 			.then(function (g) {
 				if (g.get('ownerid') != user.id) {
-					next(errors[20102]);//not your own
+					next(errors(20102));//not your own
 				} else {
 					g.set(req.body)
 						.save()
@@ -446,16 +446,16 @@ module.exports = function (app) {
 	app.post('/api/groups/avatar/update', function (req, res, next) {
 		var user = req.user,
 			file = req.files['avatar'];
-		if (!user) return next(errors[21301]);
-		if (!file) return next(errors[20007]);
+		if (!user) return next(errors(21301));
+		if (!file) return next(errors(20007));
 		GroupMember.forge({userid: user.id, groupid: req.body['groupid']})
 			.fetch()
 			.then(function (groupMember) {
 				if (!groupMember.get('isowner') && !groupMember.get('isadmin')) {
-					return next(errors[21301]);
+					return next(errors(21301));
 				}
-				if (file['type'] != 'image/jpeg') return next(errors[20005]);
-				if (file['size'] > imageLimit) return next(errors[20006]);
+				if (file['type'] != 'image/jpeg') return next(errors(20005));
+				if (file['size'] > imageLimit) return next(errors(20006));
 				Group.forge({id: req.body['groupid']})
 					.fetch()
 					.then(function (g) {
@@ -493,7 +493,7 @@ function join(user, userid, groupid, next) {
 			Event.add(user.id, groupid, 'group', groupid, '圈子里来了新成员');
 		}).catch(function (err) {
 			if (/^ER_DUP_ENTRY/.test(err.message)) {
-				next(errors[20506]);
+				next(errors(20506));
 			} else {
 				next(err);
 			}
@@ -507,7 +507,7 @@ function quit(user, groupid, next) {
 	}).fetch()
 		.then(function (groupMember) {
 			if (!groupMember) {
-				return next(errors[40001]);
+				return next(errors(40001));
 			}
 			return groupMember.destroy()
 				.then(function () {

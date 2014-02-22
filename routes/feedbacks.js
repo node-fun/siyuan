@@ -31,9 +31,9 @@ module.exports = function (app) {
 	 */
 	app.post('/api/feedbacks/post', function (req, res, next) {
 		var user = req.user;
-		if(!user) return next(errors[21301]);
+		if(!user) return next(errors(21301));
 		if(!req.body['body'] || !req.body['type'] || !req.body['versioncode'])
-			return next(errors[10008]);
+			return next(errors(10008));
 		delete req.body['id'];
 		Feedback.forge(_.extend(req.body, {userid: user.id}))
 			.save()

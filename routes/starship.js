@@ -3,7 +3,6 @@
  * @class 收藏
  */
 var _ = require('underscore'),
-	Promise = require('bluebird'),
 	Starship = require('../models/starship'),
 	Starships = Starship.Set,
 	config = require('../config'),
@@ -19,7 +18,7 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.get('/api/starship/my', function (req, res, next) {
-		if (!req.user) return next(errors[21301]);
+		if (!req.user) return next(errors(21301));
 		req.query = _.omit(req.query, ['id']);
 		req.query['userid'] = req.user.id;
 		return Starships.forge().fetch({ req: req })
@@ -37,13 +36,13 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.post('/api/starship/star', function (req, res, next) {
-		if (!req.user) return next(errors[21301]);
+		if (!req.user) return next(errors(21301));
 		req.body['userid'] = req.user.id;
 		// type limitation in starship
 		if (!~Starship.typesAllowed.map(function (name) {
 			return config.entities.indexOf(name) + 1;
 		}).indexOf(+req.body['itemtype'])) {
-			return next(errors[20701]);
+			return next(errors(20701));
 		}
 		Entity
 			.forge(req.body['itemtype'], {
@@ -51,13 +50,13 @@ module.exports = function (app) {
 			}).then(function (model) {
 				return model.fetch();
 			}).then(function (entity) {
-				if (!entity) throw errors[20605];
+				if (!entity) throw errors(20605);
 				return Starship.forge(
 						_.pick(req.body, ['userid', 'itemtype', 'itemid', 'remark'])
 					).save()
 					.catch(function (err) {
 						if (/^ER_DUP_ENTRY/.test(err.message)) {
-							throw errors[20506];
+							throw errors(20506);
 						}
 						throw err;
 					});
@@ -73,14 +72,14 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.post('/api/starship/unstar', function (req, res, next) {
-		if (!req.user) return next(errors[21301]);
+		if (!req.user) return next(errors(21301));
 		Starship.forge(
 				_.pick(req.body, 'id')
 			).fetch()
 			.then(function (starship) {
-				if (!starship) throw errors[20603];
+				if (!starship) throw errors(20603);
 				if (starship.get('userid') != req.user.id) {
-					throw errors[20102];
+					throw errors(20102);
 				}
 				return starship.destroy();
 			}).then(function () {
@@ -96,14 +95,14 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.post('/api/starship/remark', function (req, res, next) {
-		if (!req.user) return next(errors[21301]);
+		if (!req.user) return next(errors(21301));
 		Starship.forge(
 				_.pick(req.body, 'id')
 			).fetch()
 			.then(function (starship) {
-				if (!starship) throw errors[20603];
+				if (!starship) throw errors(20603);
 				if (starship.get('userid') != req.user.id) {
-					throw errors[20102];
+					throw errors(20102);
 				}
 				return starship.set(
 					_.pick(req.body, 'remark')

@@ -36,7 +36,7 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.get('/api/events/my', function (req, res, next) {
-		if (!req.user) return next(errors[21301]);
+		if (!req.user) return next(errors(21301));
 		req.query = _.omit(req.query, ['id']);
 		req.query['userid'] = req.user.id;
 		Events.forge().fetch({ req: req })
@@ -55,7 +55,7 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.get('/api/events/following', function (req, res, next) {
-		if (!req.user) return next(errors[21301]);
+		if (!req.user) return next(errors(21301));
 		req.query = _.omit(req.query, ['id']);
 		req.user.following().fetch()
 			.then(function (following) {

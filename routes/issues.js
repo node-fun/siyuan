@@ -3,7 +3,6 @@
  * @class 话题
  */
 var _ = require('underscore'),
-	Promise = require('bluebird'),
 	Issue = require('../models/issue'),
 	Issues = Issue.Set,
 	IssueComment = require('../models/issue-comment'),
@@ -40,7 +39,7 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.get('/api/issues/my', function (req, res, next) {
-		if (!req.user) return next(errors[21301]);
+		if (!req.user) return next(errors(21301));
 		req.query = _.omit(req.query, ['id']);
 		req.query['userid'] = req.user.id;
 		Issues.forge().fetch({ req: req })
@@ -75,7 +74,7 @@ module.exports = function (app) {
 	 */
 	app.post('/api/issues/post', function (req, res, next) {
 		var user = req.user;
-		if (!user) return next(errors[21301]);
+		if (!user) return next(errors(21301));
 		delete req.body['id'];
 		Issue.forge(_.extend(req.body, { userid: user.id })).save()
 			.then(function (issue) {
@@ -96,14 +95,14 @@ module.exports = function (app) {
 	 */
 	app.post('/api/issues/update', function (req, res, next) {
 		var user = req.user;
-		if (!user) return next(errors[21301]);
+		if (!user) return next(errors(21301));
 		var id = req.body['id'];
 		delete req.body['id'];
 		Issue.forge({ id: id }).fetch()
 			.then(function (issue) {
-				if (!issue) throw errors[20603];
+				if (!issue) throw errors(20603);
 				if (issue.get('userid') != user.id) {
-					throw errors[20102];
+					throw errors(20102);
 				}
 				return issue.set(req.body).save();
 			}).then(function () {
@@ -119,12 +118,12 @@ module.exports = function (app) {
 	 */
 	app.post('/api/issues/delete', function (req, res, next) {
 		var user = req.user;
-		if (!user) return next(errors[21301]);
+		if (!user) return next(errors(21301));
 		Issue.forge({ id: req.body['id'] }).fetch()
 			.then(function (issue) {
-				if (!issue) throw errors[20603];
+				if (!issue) throw errors(20603);
 				if (issue.get('userid') != user.id) {
-					throw errors[20102];
+					throw errors(20102);
 				}
 				return issue.destroy();
 			}).then(function () {
@@ -141,10 +140,10 @@ module.exports = function (app) {
 	 */
 	app.post('/api/issues/comments/post', function (req, res, next) {
 		var user = req.user;
-		if (!user) return next(errors[21301]);
+		if (!user) return next(errors(21301));
 		Issue.forge({ id: req.body['issueid'] }).fetch()
 			.then(function (issue) {
-				if (!issue) throw errors[20603];
+				if (!issue) throw errors(20603);
 				req.body['userid'] = user.id;
 				return IssueComment.forge(req.body).save()
 					.then(function (comment) {
@@ -174,14 +173,14 @@ module.exports = function (app) {
 	 */
 	app.post('/api/issues/comments/update', function (req, res, next) {
 		var user = req.user;
-		if (!user) return next(errors[21301]);
+		if (!user) return next(errors(21301));
 		var id = req.body['id'];
 		delete req.body['id'];
 		IssueComment.forge({ id: id }).fetch()
 			.then(function (comment) {
-				if (!comment) throw errors[20603];
+				if (!comment) throw errors(20603);
 				if (comment.get('userid') != user.id) {
-					throw errors[20102];
+					throw errors(20102);
 				}
 				return comment.set(req.body).save();
 			}).then(function () {
@@ -197,12 +196,12 @@ module.exports = function (app) {
 	 */
 	app.post('/api/issues/comments/delete', function (req, res, next) {
 		var user = req.user;
-		if (!user) return next(errors[21301]);
+		if (!user) return next(errors(21301));
 		IssueComment.forge({ id: req.body['id'] }).fetch()
 			.then(function (comment) {
-				if (!comment) throw errors[20603];
+				if (!comment) throw errors(20603);
 				if (comment.get('userid') != user.id) {
-					throw errors[20102];
+					throw errors(20102);
 				}
 				return comment.destroy();
 			}).then(function () {

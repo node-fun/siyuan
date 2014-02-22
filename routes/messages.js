@@ -28,6 +28,26 @@ module.exports = function (app) {
 				next({ messages: messages});
 			}).catch(next);
 	});
+	
+	/**
+	 * GET /api/messages/unreadcount <br/>
+	 * 需登录
+	 * @method 未读消息数量
+	 * @return {JSON} 
+		{
+		  "count": 1
+		}
+	 */
+	app.get('/api/messages/unreadcount', function (req, res, next) {
+		var user = req.user;
+		if(!user) return next(errors[21301]);
+		Messages.forge().query()
+			.where({'receiver': user.id, 'isread': 0})
+			.count('id')
+			.then(function(m){
+				next({count: m[0]["count(`id`)"]});
+			}).catch(next);
+	});
 
 	/**
 	 * POST /api/messages/send

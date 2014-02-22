@@ -20,8 +20,6 @@ GroupMembership = module.exports = syBookshelf.Model.extend({
 	user: function () {
 		return this.belongsTo(require('./user'), 'userid');
 	}
-}, {
-
 });
 
 GroupMembershipSet = GroupMembership.Set = syBookshelf.Collection.extend({

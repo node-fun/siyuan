@@ -4,19 +4,14 @@
 /**
  * Created by cin on 1/18/14.
  */
-var fs = require('fs'),
-	path = require('path'),
-	_ = require('underscore'),
+var _ = require('underscore'),
 	chance = new (require('chance'))(),
-	Promise = require('bluebird'),
-	errors = require('../lib/errors'),
 	syBookshelf = require('./base'),
 	User = require('./user'),
 	CoStatus = require('./co-status'),
 	UserCooperation = require('./user-cooperation'),
 	UserCooperations = UserCooperation.Set,
 	CoComment = require('./co-comment'),
-	CoComments = CoComment.Set,
 	Cooperation, Cooperations,
 	config = require('../config'),
 	tbCooperation = 'cooperations',

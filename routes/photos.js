@@ -3,7 +3,6 @@
  * @class 相片
  */
 var _ = require('underscore'),
-	Promise = require('bluebird'),
 	Photo = require('../models/photo'),
 	Photos = Photo.Set,
 	errors = require('../lib/errors'),
@@ -32,7 +31,7 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.get('/api/photos/my', function (req, res, next) {
-		if (!req.user) return next(errors[21301]);
+		if (!req.user) return next(errors(21301));
 		req.query = _.omit(req.query, ['id']);
 		req.query['userid'] = req.user.id;
 		Photos.forge().fetch({ req: req })
@@ -49,11 +48,11 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.post('/api/photos/post', function (req, res, next) {
-		if (!req.user) return next(errors[21301]);
-		if (!req.files['image']) return next(errors[20007]);
+		if (!req.user) return next(errors(21301));
+		if (!req.files['image']) return next(errors(20007));
 		var file = req.files['image'];
-		if (file['type'] != 'image/jpeg') return next(errors[20005]);
-		if (file['size'] > config.imageLimit) return next(errors[20006]);
+		if (file['type'] != 'image/jpeg') return next(errors(20005));
+		if (file['size'] > config.imageLimit) return next(errors(20006));
 		delete req.body['id'];
 		req.body['userid'] = req.user.id;
 		Photo.forge(req.body).data('image', file['path']).save()
@@ -73,14 +72,14 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.post('/api/photos/update', function (req, res, next) {
-		if (!req.user) return next(errors[21301]);
+		if (!req.user) return next(errors(21301));
 		var id = req.body['id'];
 		delete req.body['id'];
 		Photo.forge({ id: id }).fetch()
 			.then(function (photo) {
-				if (!photo) throw errors[20603];
+				if (!photo) throw errors(20603);
 				if (photo.get('userid') != req.user.id) {
-					throw errors[20102];
+					throw errors(20102);
 				}
 				return photo.set(req.body).save();
 			}).then(function () {
@@ -96,12 +95,12 @@ module.exports = function (app) {
 	 */
 	app.post('/api/photos/delete', function (req, res, next) {
 		var user = req.user;
-		if (!user) return next(errors[21301]);
+		if (!user) return next(errors(21301));
 		Photo.forge({ id: req.body['id'] }).fetch()
 			.then(function (photo) {
-				if (!photo) throw errors[20603];
+				if (!photo) throw errors(20603);
 				if (photo.get('userid') != user.id) {
-					throw errors[20102];
+					throw errors(20102);
 				}
 				return photo.destroy();
 			}).then(function () {

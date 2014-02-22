@@ -80,16 +80,16 @@ module.exports = function (app) {
 	 */
 	app.post('/api/clients/add', function (req, res, next) {
 		if (!req.session.adminid) {
-			return next(errors[21301]);
+			return next(errors(21301));
 		}
 
 		var file = req.files['file'],
 			newPath = config.contentDir + '/clients/siyuan' + req.body['versioncode'] + '.apk';
-		if (!file) return next(errors[20007]);
+		if (!file) return next(errors(20007));
 		fs.readFile(file['path'], function (err, data) {
-			if (err) return next(errors[30000]);
+			if (err) return next(errors(30000));
 			fs.writeFile(newPath, data, function (err) {
-				if (err) return next(errors[30001]);
+				if (err) return next(errors(30001));
 				ClientVersion.forge(req.body)
 					.save()
 					.then(function () {

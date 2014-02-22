@@ -1,8 +1,7 @@
 /**
  * Created by fritz on 1/21/14.
  */
-var _ = require('underscore'),
-	syBookshelf = require('./base'),
+var syBookshelf = require('./base'),
 	Entity = require('../lib/entity'),
 	entities = require('../config').entities,
 	Event, Events;

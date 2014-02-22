@@ -1,5 +1,4 @@
 var _ = require('underscore'),
-	chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
 	UserCooperation, UserCooperations,
 	tbUserCooperation = 'user_cooperation',

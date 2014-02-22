@@ -1,6 +1,4 @@
-var _ = require('underscore'),
-	chance = new (require('chance'))(),
-	errors = require('../lib/errors'),
+var chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
 	ActivityStatus, ActivityStatuses;
 

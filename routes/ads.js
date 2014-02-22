@@ -71,7 +71,7 @@ module.exports = function (app) {
 	 */
 	app.post('/api/ads/add', function (req, res, next) {
 		if (!req.session.adminid) {
-			return next(errors[21301]);
+			return next(errors(21301));
 		}
 		Ad.forge(req.body)
 			.set({adminid: req.session.adminid})
@@ -90,7 +90,7 @@ module.exports = function (app) {
 	 */
 	app.post('/api/ads/del', function (req, res, next) {
 		if (!req.session.adminid) {
-			return next(errors[21301]);
+			return next(errors(21301));
 		}
 		Ad.forge({id: req.body['id']})
 			.fetch()
@@ -110,7 +110,7 @@ module.exports = function (app) {
 	 */
 	app.get('/api/ads/imgs', function (req, res, next) {
 		if (!req.session.adminid) {
-			return next(errors[21301]);
+			return next(errors(21301));
 		}
 		fs.readdir('./static/ad/img', function (err, files) {
 			if (err) {
@@ -129,15 +129,15 @@ module.exports = function (app) {
 	 */
 	app.post('/api/ads/imgs/upload', function (req, res, next) {
 		if (!req.session.adminid) {
-			return next(errors[21301]);
+			return next(errors(21301));
 		}
 		var file = req.files['picture'],
 			newPath = './static/ad/img/' + new Date().getTime();
-		if (!file) return next(errors[20007]);
+		if (!file) return next(errors(20007));
 		fs.readFile(file['path'], function (err, data) {
-			if (err) return next(errors[30000]);
+			if (err) return next(errors(30000));
 			fs.writeFile(newPath, data, function (err) {
-				if (err) return next(errors[30001]);
+				if (err) return next(errors(30001));
 				res.writeHead(200, {'Content-Type': 'text/html', 'charset': 'utf-8'});
 				res.end('上传成功！<script>history.back();</script>');
 			});
@@ -153,9 +153,9 @@ module.exports = function (app) {
 	 */
 	app.get('/api/ads/imgs/del', function (req, res, next) {
 		if (!req.session.adminid) {
-			return next(errors[21301]);
+			return next(errors(21301));
 		}
-		if (!req.body['name']) return next(errors[20007]);
+		if (!req.body['name']) return next(errors(20007));
 		var file = './static/ad/img/' + req.body['name'];
 		fs.unlink(file, function (err) {
 			if (err) return next(err);

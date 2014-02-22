@@ -17,7 +17,7 @@ module.exports = function (app) {
 	 */
 	app.get('/api/messages/list', function (req, res, next) {
 		var user = req.user;
-		if(!user) return next(errors[21301]);
+		if(!user) return next(errors(21301));
 		if(req.query['type']=='send'){
 			req.query['sender'] = user.id;
 		}else{
@@ -42,9 +42,9 @@ module.exports = function (app) {
 		}
 	 */
 	app.post('/api/messages/send', function (req, res, next) {
-		if(!req.user) return next(errors[21301]);
+		if(!req.user) return next(errors(21301));
 		var q = req.query;
-		if(!q['receiver'] || !q['title'] || !q['body']) return next(errors[10008]);
+		if(!q['receiver'] || !q['title'] || !q['body']) return next(errors(10008));
 		q['sender'] = req.user.id;
 		q['sourceid'] = null;//发消息，不需要此参数
 		Message.forge(q)
@@ -70,12 +70,12 @@ module.exports = function (app) {
 		}
 	 */
 	app.post('/api/messages/reply', function (req, res, next) {
-		if(!req.user) return next(errors[21301]);
+		if(!req.user) return next(errors(21301));
 		req.query['sender'] = req.user.id;
 		Message.forge({id: req.query['sourceid']})
 			.fetch()
 			.then(function(sourceMessage){
-				if(!sourceMessage) return next(errors[20603]);
+				if(!sourceMessage) return next(errors(20603));
 				req.query['receiver'] = sourceMessage.get('sender');
 				return Message.forge(req.query)
 					.send()
@@ -101,13 +101,13 @@ module.exports = function (app) {
 		}
 	 */
 	app.post('/api/messages/markread', function (req, res, next) {
-		if(!req.user) return next(errors[21301]);
-		if(!req.query['id']) return next(errors[10008]);
+		if(!req.user) return next(errors(21301));
+		if(!req.query['id']) return next(errors(10008));
 		Message.forge(_.pick(req.query, 'id'))
 			.fetch()
 			.then(function(message) {
 				if(message.get('receiver') != req.user.id)
-					return next(errors[20102]);
+					return next(errors(20102));
 				return message.set({isread: 1})
 					.save()
 					.then(function(m){

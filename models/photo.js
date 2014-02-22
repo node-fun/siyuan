@@ -1,7 +1,6 @@
 var path = require('path'),
 	chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
-	errors = require('../lib/errors'),
 	config = require('../config'),
 	Photo, Photos;
 

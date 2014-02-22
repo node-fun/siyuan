@@ -16,6 +16,4 @@ Feedback = module.exports = syBookshelf.Model.extend({
 
 Feedbacks = Feedback.Set = syBookshelf.Collection.extend({
 	model: Feedback
-}, {
-	
 });

@@ -2,7 +2,6 @@
  * @class 关注
  */
 var _ = require('underscore'),
-	Promise = require('bluebird'),
 	User = require('../models/user'),
 	Followship = require('../models/followship'),
 	Followships = Followship.Set,
@@ -16,7 +15,7 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.get('/api/followship/following', function (req, res, next) {
-		if (!req.user) return next(errors[21301]);
+		if (!req.user) return next(errors(21301));
 		req.query = _.omit(req.query, ['userid']);
 		req.user.following().fetch()
 			.then(function (collection) {
@@ -35,7 +34,7 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.get('/api/followship/followers', function (req, res, next) {
-		if (!req.user) return next(errors[21301]);
+		if (!req.user) return next(errors(21301));
 		req.query = _.omit(req.query, ['followid']);
 		req.user.followers().fetch()
 			.then(function (collection) {
@@ -55,18 +54,18 @@ module.exports = function (app) {
 	 */
 	app.post('/api/followship/follow', function (req, res, next) {
 		var user = req.user;
-		if (!user) return next(errors[21301]);
+		if (!user) return next(errors(21301));
 		req.body['userid'] = user.id;
 		User.forge({
 			id: req.body['followid']
 		}).fetch()
 			.then(function (user) {
-				if (!user) throw errors[20003];
+				if (!user) throw errors(20003);
 				return Followship.forge(
 						_.pick(req.body, ['userid', 'followid', 'remark'])
 					).save()
 					.catch(function () {
-						throw errors[20506];
+						throw errors(20506);
 					});
 			}).then(function () {
 				next({ msg: 'Followee followed' });
@@ -81,13 +80,13 @@ module.exports = function (app) {
 	 */
 	app.post('/api/followship/unfollow', function (req, res, next) {
 		var user = req.user;
-		if (!user) return next(errors[21301]);
+		if (!user) return next(errors(21301));
 		req.body['userid'] = user.id;
 		Followship.forge(
 				_.pick(req.body, ['userid', 'followid'])
 			).fetch()
 			.then(function (followship) {
-				if (!followship) throw errors[20603];
+				if (!followship) throw errors(20603);
 				return followship.destroy();
 			}).then(function () {
 				next({ msg: 'Followee unfollowed' });
@@ -103,13 +102,13 @@ module.exports = function (app) {
 	 */
 	app.post('/api/followship/remark', function (req, res, next) {
 		var user = req.user;
-		if (!user) return next(errors[21301]);
+		if (!user) return next(errors(21301));
 		req.body['userid'] = user.id;
 		Followship.forge(
 				_.pick(req.body, ['userid', 'followid'])
 			).fetch()
 			.then(function (followship) {
-				if (!followship) throw errors[20603];
+				if (!followship) throw errors(20603);
 				return followship.set(
 					_.pick(req.body, 'remark')
 				).save();

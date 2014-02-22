@@ -481,8 +481,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `message` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `sender` INT NULL COMMENT 'Sender can be null, that means system message.',
-  `receiver` INT NOT NULL,
+  `senderid` INT NULL COMMENT 'Sender can be null, that means system message.',
+  `receiverid` INT NOT NULL,
   `title` VARCHAR(45) NULL,
   `body` VARCHAR(500) NULL,
   `isread` TINYINT(1) NULL DEFAULT 0,
@@ -490,15 +490,15 @@ CREATE TABLE IF NOT EXISTS `message` (
   `sourceid` INT NULL COMMENT 'The id of the source message.\nThat means this message is the reply of the source message.',
   `sendtime` TIMESTAMP NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_sender_idx` (`sender` ASC),
-  INDEX `fk_receiver_idx` (`receiver` ASC),
+  INDEX `fk_sender_idx` (`senderid` ASC),
+  INDEX `fk_receiver_idx` (`receiverid` ASC),
   CONSTRAINT `fk_sender`
-    FOREIGN KEY (`sender`)
+    FOREIGN KEY (`senderid`)
     REFERENCES `users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_receiver`
-    FOREIGN KEY (`receiver`)
+    FOREIGN KEY (`receiverid`)
     REFERENCES `users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)

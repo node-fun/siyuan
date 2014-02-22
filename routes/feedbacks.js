@@ -21,7 +21,7 @@ module.exports = function (app) {
 	});
 
 	/**
-	 * GET /api/feedbacks/post
+	 * POST /api/feedbacks/post
 	 * @method 发送反馈
 	 * @param {String} [title] 标题
 	 * @param {String} body 内容

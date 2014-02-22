@@ -81,11 +81,8 @@ syModel.include({
 		return Promise.cast();
 	},
 	fetched: function (model) {
-		// appended
-		if (model.appended.length < 1) {
-			return Promise.cast();
-		}
 		var p = Promise.cast();
+		// appended
 		model.appended.forEach(function (k) {
 			p = p.then(function () {
 				return model.related(k).fetch();

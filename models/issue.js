@@ -25,19 +25,17 @@ Issue = module.exports = syBookshelf.Model.extend({
 		};
 	},
 
-	created: function () {
-		var self = this;
+	created: function (model) {
 		return Issue.__super__.created.apply(this, arguments)
 			.then(function () {
-				return self.user().fetch()
+				return model.user().fetch()
 					.then(function (user) {
-						var message = user.related('profile').get('name') + ' 发布了话题 <' + self.get('title') + '>';
-						Event.add(user.id, self.get('groupid'), 'issue', self.id, message);
-						return self;
+						var message = user.related('profile').get('name') + ' 发布了话题 <' + model.get('title') + '>';
+						Event.add(user.id, model.get('groupid'), 'issue', model.id, message);
 					});
 			});
 	},
-	fetched: function (model, attrs, options) {
+	fetched: function (model, resp, options) {
 		return Issue.__super__.fetched.apply(this, arguments)
 			.return(model).call('countComments')
 			.then(function () {

@@ -1,7 +1,7 @@
 {
 	"name": "siyuan",
 	"description": "An SNS backend framework, with Node and MySQL",
-	"version": "0.0.12",
+	"version": "0.0.13",
 	"private": true,
 	"main": "./app.js",
 	"dependencies": {

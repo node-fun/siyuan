@@ -86,36 +86,31 @@ User = module.exports = syBookshelf.Model.extend({
 		return this.belongsToMany(Cooperation, 'user_cooperation', 'userid', 'cooperationid');
 	},
 
-	created: function () {
-		var self = this;
+	created: function (model) {
 		return User.__super__.created.apply(this, arguments)
 			.then(function () {
-				var profileData = self.data('profile'),
+				var profileData = model.data('profile'),
 					profile = UserProfile.forge(profileData);
-				return profile.set('userid', self.id).save()
+				return profile.set('userid', model.id).save()
 					.catch(function (err) {
-						return self.destroy().throw(err);	// rollback
+						return model.destroy().throw(err);	// rollback
 					}).then(function () {
-						Event.add(self.id, null, 'user', self.id, '欢迎 ' + profileData['name'] + ' 加入思源群!');
-						return self;
+						Event.add(model.id, null, 'user', model.id, '欢迎 ' + profileData['name'] + ' 加入思源群!');
 					});
 			});
 	},
-	saving: function () {
-		var self = this;
+	saving: function (model) {
 		return User.__super__.saving.apply(this, arguments)
 			.then(function () {
 				// fix lower case
-				self.fixLowerCase(['username']);
-				if (self.hasChanged('password')) {
+				model.fixLowerCase(['username']);
+				if (model.hasChanged('password')) {
 					// encrypt password
-					self.set('password', encrypt(self.get('password')));
+					model.set('password', encrypt(model.get('password')));
 				}
-				return self;
 			});
 	},
-
-	fetched: function (model, attrs, options) {
+	fetched: function (model, resp, options) {
 		return User.__super__.fetched.apply(this, arguments)
 			.return(model).call('detectFollowed', options.req)
 			.then(function () {
@@ -128,6 +123,7 @@ User = module.exports = syBookshelf.Model.extend({
 					.call('countEvents');
 			});
 	},
+
 	countFollowship: function () {
 		var self = this;
 		return Followships.forge().query()

@@ -47,16 +47,15 @@ Activity = module.exports = syBookshelf.Model.extend({
 		return Activity.__super__
 			.saving.apply(this, arguments);
 	},
+
 	usership: function () {
 		return this.hasMany(UserActivities, fkActivity);
 	},
 
-	fetch: function (options) {
-		return Activity.__super__.fetch.call(this, options)
-			.then(function (activity) {
-				if (!activity) return activity;
-				return activity.countUsership();
-			})
+	fetched: function (model, attrs, options) {
+		return Activity.__super__.fetched.apply(this, arguments)
+			.return(model)
+			.call('countUsership');
 	},
 
 	countUsership: function () {

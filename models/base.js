@@ -186,6 +186,12 @@ syModel.Set = syCollection.include({
 	initialize: function () {
 		syCollection.__super__.initialize.apply(this, arguments);
 		this._data = {};
+		var self = this;
+		[
+			'fetching', 'fetched'
+		].forEach(function (k) {
+				self.on(k, self[k], self);
+			});
 	},
 
 	fetch: function (options) {
@@ -212,14 +218,16 @@ syModel.Set = syCollection.include({
 					qb.limit(limit);
 				});
 		}
-		return syCollection.__super__.fetch.call(this, options)
-			.then(function (collection) {
-				return Promise.cast(collection.models)
-					.map(function (model) {
-						return model.triggerThen('fetched',
-							model, model.attributes, options);
-					}).return(collection);
-			});
+		return syCollection.__super__.fetch.call(this, options);
+	},
+	fetched: function (obj, resp, options) {
+		if (obj instanceof syCollection) {
+			return Promise.cast(obj.models)
+				.map(function (model) {
+					return model.triggerThen('fetched',
+						model, model.attributes, options);
+				});
+		}
 	},
 
 	lister: null,

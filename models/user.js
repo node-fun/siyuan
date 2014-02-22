@@ -29,7 +29,7 @@ User = module.exports = syBookshelf.Model.extend({
 		'id', 'username', 'password', 'regtime',
 		'isonline', 'avatar', 'cover'
 	],
-	omitInJSON: ['password'],
+	omitInJSON: ['password', 'regtime'],
 	appended: ['profile'],
 	required: ['username', 'password'],
 	validators: {
@@ -225,9 +225,7 @@ User = module.exports = syBookshelf.Model.extend({
 			});
 	},
 	logout: function () {
-		return this.fetch().then(function (user) {
-			return user.set('isonline', 0).save();
-		});
+		return this.set('isonline', 0).save();
 	},
 
 	resetPassword: function (data) {
@@ -242,8 +240,7 @@ User = module.exports = syBookshelf.Model.extend({
 		});
 	},
 	updateProfile: function (data) {
-		return this.related('profile')
-			.set(data).save().return(this);
+		return this.related('profile').set(data).save();
 	}
 }, {
 	randomForge: function () {

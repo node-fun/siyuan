@@ -379,7 +379,7 @@ function addAd() {
 			content: '公告' + i + '内容，' +
 				'<p>此内容仅供测试</p>' +
 				'<p>正式上线请在后台删除此条公告</p>',
-			picture: '/ad/img/' + i + '.png'
+			picture: '/ad/img/' + i + '.jpg'
 		}) );
 	});
 	return ads.invokeThen('save')

@@ -51,10 +51,11 @@ module.exports = function (app) {
 	 * 含ad模型的所有字段
 	 */
 	app.get('/api/ads/view', function (req, res, next) {
-		Ad.forge(req.body)
+		Ad.forge({id: req.query['id']})
 			.fetch()
 			.then(function (ad) {
-				next(ad);
+				if(!ad) return next(errors[20603]);
+				return next(ad);
 			}).catch(next);
 	});
 
@@ -153,7 +154,7 @@ module.exports = function (app) {
 		if (!req.session.adminid) {
 			return next(errors(21301));
 		}
-		if (!req.body['name']) return next(errors(20007));
+		if (!req.body['name']) return next(errors(10008));
 		var file = './static/ad/img/' + req.body['name'];
 		fs.unlink(file, function (err) {
 			if (err) return next(err);

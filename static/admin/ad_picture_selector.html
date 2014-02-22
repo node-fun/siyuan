@@ -99,7 +99,8 @@
     function delfile(filename){
         console.log(filename);
         $.ajax({
-            url: '/api/ads/imgs/del?name='+filename,
+            url: '/api/ads/imgs/del',
+            data: {name: filename},
             success:function(d){
                 location.reload();
             }

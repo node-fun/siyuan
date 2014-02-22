@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <style>
         *{
             margin: 0;
@@ -22,7 +22,7 @@
 </head>
 <body>
     <div id="imgarea">
-        <a ><img src="/ad/img/1.png"/></a>
+        <a ><img src="/ad/img/1.jpg"/></a>
     </div>
     <script src="http://code.jquery.com/jquery.min.js"></script>
     <script>
@@ -44,6 +44,8 @@
                     cur = (cur+1)%len;
                     $(imgs[cur]).fadeIn('slow');
                 },3000);
+                //调整高度
+                $('#imgarea img').css({height: window.innerHeight});
             }
         })
     </script>

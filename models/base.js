@@ -194,6 +194,9 @@ syModel.Set = syCollection.include({
 			});
 	},
 
+	fetching: function () {
+		return Promise.cast();
+	},
 	fetch: function (options) {
 		options = options || {};
 		var req = options['req'];
@@ -221,13 +224,16 @@ syModel.Set = syCollection.include({
 		return syCollection.__super__.fetch.call(this, options);
 	},
 	fetched: function (obj, resp, options) {
+		var p = Promise.cast(obj);
+		// for collection
 		if (obj instanceof syCollection) {
-			return Promise.cast(obj.models)
+			return p.return(obj.models)
 				.map(function (model) {
 					return model.triggerThen('fetched',
 						model, model.attributes, options);
 				});
 		}
+		return p;
 	},
 
 	lister: null,

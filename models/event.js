@@ -21,8 +21,8 @@ Event = module.exports = syBookshelf.Model.extend({
 				var itemtype = model.get('itemtype'),
 					itemid = model.get('itemid');
 				return Entity.forge(itemtype, { id: itemid })
-					.then(function (entity) {
-						return !entity ? null : entity.fetch();
+					.then(function (shell) {
+						return !shell ? null : shell.fetch();
 					}).then(function (entity) {
 						return model.set({
 							typename: Entity.getModelName(itemtype),

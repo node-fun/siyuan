@@ -51,15 +51,15 @@ module.exports = function (app) {
 			}).then(function (model) {
 				return model.fetch();
 			}).then(function (entity) {
-				if (!entity) return Promise.reject(errors[20605]);
+				if (!entity) throw errors[20605];
 				return Starship.forge(
 						_.pick(req.body, ['userid', 'itemtype', 'itemid', 'remark'])
 					).save()
 					.catch(function (err) {
 						if (/^ER_DUP_ENTRY/.test(err.message)) {
-							return Promise.reject(errors[20506]);
+							throw errors[20506];
 						}
-						return Promise.reject(err);
+						throw err;
 					});
 			}).then(function () {
 				next({ msg: 'Entity starred' });
@@ -78,9 +78,9 @@ module.exports = function (app) {
 				_.pick(req.body, 'id')
 			).fetch()
 			.then(function (starship) {
-				if (!starship) return Promise.reject(errors[20603]);
+				if (!starship) throw errors[20603];
 				if (starship.get('userid') != req.user.id) {
-					return Promise.reject(errors[20102]);
+					throw errors[20102];
 				}
 				return starship.destroy();
 			}).then(function () {
@@ -101,9 +101,9 @@ module.exports = function (app) {
 				_.pick(req.body, 'id')
 			).fetch()
 			.then(function (starship) {
-				if (!starship) return Promise.reject(errors[20603]);
+				if (!starship) throw errors[20603];
 				if (starship.get('userid') != req.user.id) {
-					return Promise.reject(errors[20102]);
+					throw errors[20102];
 				}
 				return starship.set(
 					_.pick(req.body, 'remark')

@@ -1,6 +1,5 @@
 var _ = require('underscore'),
 	chance = new (require('chance'))(),
-	Promise = require('bluebird'),
 	errors = require('../lib/errors'),
 	syBookshelf = require('./base'),
 	UserProfile, UserProfiles;

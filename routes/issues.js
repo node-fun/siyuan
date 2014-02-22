@@ -56,7 +56,8 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.get('/api/issues/view', function (req, res, next) {
-		Issues.forge().fetch({ req: req, detailed: true, single: true })
+		Issue.forge({ id: req.query['id'] })
+			.fetch({ req: req, detailed: true })
 			.then(function (issue) {
 				next({ issue: issue });
 			}).catch(next);
@@ -100,9 +101,9 @@ module.exports = function (app) {
 		delete req.body['id'];
 		Issue.forge({ id: id }).fetch()
 			.then(function (issue) {
-				if (!issue) return Promise.rejected(errors[20603]);
+				if (!issue) throw errors[20603];
 				if (issue.get('userid') != user.id) {
-					return Promise.rejected(errors[20102]);
+					throw errors[20102];
 				}
 				return issue.set(req.body).save();
 			}).then(function () {
@@ -121,9 +122,9 @@ module.exports = function (app) {
 		if (!user) return next(errors[21301]);
 		Issue.forge({ id: req.body['id'] }).fetch()
 			.then(function (issue) {
-				if (!issue) return Promise.rejected(errors[20603]);
+				if (!issue) throw errors[20603];
 				if (issue.get('userid') != user.id) {
-					return Promise.rejected(errors[20102]);
+					throw errors[20102];
 				}
 				return issue.destroy();
 			}).then(function () {
@@ -143,7 +144,7 @@ module.exports = function (app) {
 		if (!user) return next(errors[21301]);
 		Issue.forge({ id: req.body['issueid'] }).fetch()
 			.then(function (issue) {
-				if (!issue) return Promise.rejected(errors[20603]);
+				if (!issue) throw errors[20603];
 				req.body['userid'] = user.id;
 				return IssueComment.forge(req.body).save()
 					.then(function (comment) {
@@ -178,9 +179,9 @@ module.exports = function (app) {
 		delete req.body['id'];
 		IssueComment.forge({ id: id }).fetch()
 			.then(function (comment) {
-				if (!comment) return Promise.rejected(errors[20603]);
+				if (!comment) throw errors[20603];
 				if (comment.get('userid') != user.id) {
-					return Promise.rejected(errors[20102]);
+					throw errors[20102];
 				}
 				return comment.set(req.body).save();
 			}).then(function () {
@@ -199,9 +200,9 @@ module.exports = function (app) {
 		if (!user) return next(errors[21301]);
 		IssueComment.forge({ id: req.body['id'] }).fetch()
 			.then(function (comment) {
-				if (!comment) return Promise.rejected(errors[20603]);
+				if (!comment) throw errors[20603];
 				if (comment.get('userid') != user.id) {
-					return Promise.rejected(errors[20102]);
+					throw errors[20102];
 				}
 				return comment.destroy();
 			}).then(function () {

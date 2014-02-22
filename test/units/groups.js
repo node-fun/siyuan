@@ -5,7 +5,7 @@ var assert = require('assert'),
 
 describe('groups', function () {
 	it('finds', function (done) {
-		request(apiHost + '/find', {
+		request(apiHost + '/list', {
 			qs: {
 				page: 1,
 				limit: 3

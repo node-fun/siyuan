@@ -86,56 +86,44 @@ User = module.exports = syBookshelf.Model.extend({
 		return this.belongsToMany(Cooperation, 'user_cooperation', 'userid', 'cooperationid');
 	},
 
-	created: function () {
-		var self = this;
+	created: function (model) {
 		return User.__super__.created.apply(this, arguments)
 			.then(function () {
-				var profileData = self.data('profile'),
+				var profileData = model.data('profile'),
 					profile = UserProfile.forge(profileData);
-				return profile.set('userid', self.id).save()
+				return profile.set('userid', model.id).save()
 					.catch(function (err) {
-						return self.destroy() // rollback
-							.then(function () {
-								return Promise.reject(err);
-							});
+						return model.destroy().throw(err);	// rollback
 					}).then(function () {
-						Event.add(self.id, null, 'user', self.id, '欢迎 ' + profileData['name'] + ' 加入思源群!');
-						return self;
+						Event.add(model.id, null, 'user', model.id, '欢迎 ' + profileData['name'] + ' 加入思源群!');
 					});
 			});
 	},
-	saving: function () {
-		var self = this;
+	saving: function (model) {
 		return User.__super__.saving.apply(this, arguments)
 			.then(function () {
 				// fix lower case
-				self.fixLowerCase(['username']);
-				if (self.hasChanged('password')) {
+				model.fixLowerCase(['username']);
+				if (model.hasChanged('password')) {
 					// encrypt password
-					self.set('password', encrypt(self.get('password')));
+					model.set('password', encrypt(model.get('password')));
 				}
-				return self;
+			});
+	},
+	fetched: function (model, resp, options) {
+		return User.__super__.fetched.apply(this, arguments)
+			.return(model).call('detectFollowed', options.req)
+			.then(function () {
+				if (!options['detailed']) return;
+				return Promise.cast(model)	// for detail
+					.call('countFollowship')
+					.call('countIssues')
+					.call('countPhotos')
+					.call('countStarship')
+					.call('countEvents');
 			});
 	},
 
-	fetched: function (model, attrs, options) {
-		return User.__super__.fetched.apply(this, arguments)
-			.then(function () {
-				return model.detectFollowed(options.req);
-			}).then(function () {
-				if (!options['detailed']) return Promise.resolve(model);
-				return model.countFollowship()
-					.then(function () {
-						return model.countIssues();
-					}).then(function () {
-						return model.countPhotos();
-					}).then(function () {
-						return model.countStarship();
-					}).then(function () {
-						return model.countEvents();
-					});
-			});
-	},
 	countFollowship: function () {
 		var self = this;
 		return Followships.forge().query()
@@ -211,9 +199,9 @@ User = module.exports = syBookshelf.Model.extend({
 		return self.save()
 			.catch(function (err) {
 				if (/^ER_DUP_ENTRY/.test(err.message)) {
-					return Promise.reject(errors[20506]);
+					throw errors[20506];
 				}
-				return Promise.reject(err);
+				throw err;
 			}).then(function () {
 				return self.fetch();
 			});
@@ -232,7 +220,7 @@ User = module.exports = syBookshelf.Model.extend({
 		}
 		return User.forge(loginData).fetch()
 			.then(function (user) {
-				if (!user) return Promise.reject(errors[21302]);
+				if (!user) throw errors[21302];
 				return user.set('isonline', 1).save();
 			});
 	},
@@ -248,17 +236,14 @@ User = module.exports = syBookshelf.Model.extend({
 			self = this;
 		return this.fetch().then(function () {
 			if (encrypt(oldPassword) != self.get('password')) {
-				return Promise.reject(errors[21301])
+				throw errors[21301];
 			}
 			return self.set('password', newPassword).save();
 		});
 	},
 	updateProfile: function (data) {
-		var self = this;
-		return this.related('profile').set(data).save()
-			.then(function () {
-				return self;
-			});
+		return this.related('profile')
+			.set(data).save().return(this);
 	}
 }, {
 	randomForge: function () {

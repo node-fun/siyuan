@@ -1,5 +1,4 @@
 var path = require('path'),
-	Promise = require('bluebird'),
 	chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
 	errors = require('../lib/errors'),
@@ -25,18 +24,16 @@ Photo = module.exports = syBookshelf.Model.extend({
 		return this.belongsTo(require('./user'), 'userid');
 	},
 
-	created: function () {
-		var self = this;
-		return Photo.__super__.created.call(self)
+	created: function (model) {
+		return Photo.__super__.created.call(this)
 			.then(function () {
-				return self.updateAsset('image', self.data('image'));
+				return model.updateAsset('image', model.data('image'));
 			});
 	},
-	destroying: function () {
-		var self = this;
-		return Photo.__super__.destroying.call(self)
+	destroying: function (model) {
+		return Photo.__super__.destroying.call(this)
 			.then(function () {
-				return self.deleteAsset('image');
+				return model.deleteAsset('image');
 			});
 	},
 

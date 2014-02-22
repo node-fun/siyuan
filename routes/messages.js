@@ -62,6 +62,8 @@ module.exports = function (app) {
 	 * 需登录
 	 * @method 发消息列表
 	 * @param {String} page/limit/order
+	 * @return {JSON}
+	 * 返回结果与 收消息列表(/api/messages/receivelist) 相似，只是'sender'变为'receiver'
 	 */
 	app.get('/api/messages/sendlist', function (req, res, next) {
 		var user = req.user;

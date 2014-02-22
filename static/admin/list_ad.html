@@ -48,11 +48,14 @@
             function del(id){
                 if(!confirm('真的要删除id为'+id+'的记录吗？'))return;
                 $.ajax({
-                    url: '/api/ads/del?id='+id,
+                    url: '/api/ads/del',
+                    data: {id: id},
                     type: "POST",
                     success: function(data){
                         if(data['msg']){
                             loadAdTable();
+                        }else{
+                            this.error();
                         }
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {

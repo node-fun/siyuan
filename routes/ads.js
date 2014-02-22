@@ -25,7 +25,7 @@ module.exports = function (app) {
 			})
 			.then(function (ads) {
 				next(ads);
-			});
+			}).catch(next);
 	});
 
 	/**
@@ -37,11 +37,10 @@ module.exports = function (app) {
 	 */
 	app.get('/api/ads/find', function (req, res, next) {
 		Ads.forge()
-			.fetch().then(
-			function (ads) {
+			.fetch()
+			.then(function (ads) {
 				next(ads);
-			}
-		);
+			}).catch(next);
 	});
 
 	/**
@@ -53,11 +52,10 @@ module.exports = function (app) {
 	 */
 	app.get('/api/ads/view', function (req, res, next) {
 		Ad.forge(req.body)
-			.fetch().then(
-			function (ad) {
+			.fetch()
+			.then(function (ad) {
 				next(ad);
-			}
-		);
+			}).catch(next);
 	});
 
 	/**
@@ -78,7 +76,7 @@ module.exports = function (app) {
 			.save()
 			.then(function () {
 				next({msg: 'ad added'});
-			});
+			}).catch(next);
 	});
 
 	/**
@@ -98,7 +96,7 @@ module.exports = function (app) {
 				ad.destroy().then(function () {
 					next({msg: 'ad deleted'});
 				});
-			});
+			}).catch(next);
 	});
 
 	/**

@@ -54,7 +54,7 @@ module.exports = function (app) {
 		Ad.forge({id: req.query['id']})
 			.fetch()
 			.then(function (ad) {
-				if(!ad) return next(errors[20603]);
+				if(!ad) return next(errors(20603));
 				return next(ad);
 			}).catch(next);
 	});

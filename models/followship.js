@@ -7,7 +7,6 @@ Followship = module.exports = syBookshelf.Model.extend({
 		'id', 'userid', 'followid', 'remark'
 	],
 	omitInJSON: ['id', 'userid', 'followid'],
-	appended: ['user', 'followee'],
 
 	user: function () {
 		return this.belongsTo(require('./user'), 'userid');

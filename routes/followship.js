@@ -21,7 +21,7 @@ module.exports = function (app) {
 			.then(function (collection) {
 				// relations fetching not enough
 				return Followships.forge().set(collection.models)
-					.fetch({ req: req, self: true });
+					.fetch({ req: req, self: true, related: ['followee'] });
 			}).then(function (following) {
 				next({ following: following });
 			}).catch(next);
@@ -39,7 +39,7 @@ module.exports = function (app) {
 		req.user.followers().fetch()
 			.then(function (collection) {
 				return Followships.forge().set(collection.models)
-					.fetch({ req: req, self: true });
+					.fetch({ req: req, self: true, related: ['user'] });
 			}).then(function (followers) {
 				next({ followers: followers });
 			}).catch(next);

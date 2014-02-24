@@ -53,14 +53,14 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.post('/api/followship/follow', function (req, res, next) {
-		var user = req.user;
-		if (!user) return next(errors(21301));
-		req.body['userid'] = user.id;
+		if (!req.user) return next(errors(21301));
+		req.body['userid'] = req.user.id;
 		User.forge({
 			id: req.body['followid']
 		}).fetch()
 			.then(function (user) {
 				if (!user) throw errors(20003);
+				if (user.id == req.user.id) throw errors(20801);
 				return Followship.forge(
 						_.pick(req.body, ['userid', 'followid', 'remark'])
 					).save()

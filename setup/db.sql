@@ -511,8 +511,14 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `pictures` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `issueid` INT NULL,
-  PRIMARY KEY (`id`))
+  `issueid` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_issueid_idx` (`issueid` ASC),
+  CONSTRAINT `fk_issueid`
+    FOREIGN KEY (`issueid`)
+    REFERENCES `issues` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 

@@ -61,6 +61,7 @@ module.exports = function (app) {
 	 * 支持page、limit、orders
 	 * @method 圈子成员列表
 	 * @param {Number} id
+	 * @param {BOOL} [isaccepted] 0-未通过，1-已通过， 不传值返回该圈子所有成员
 	 * @return {JSON}
 	 */
 	app.get('/api/groups/members', function (req, res, next) {
@@ -73,6 +74,8 @@ module.exports = function (app) {
 						req.query['orders'].forEach(function (order) {
 							qb.orderBy(order[0], order[1]);
 						});
+						if(req.query['isaccepted'])
+							qb.where('isaccepted', req.query['isaccepted']);
 					}).query('offset', req.query['offset'])
 					.query('limit', req.query['limit'])
 					.fetch({withRelated: ['user', 'user.profile']});
@@ -81,6 +84,64 @@ module.exports = function (app) {
 			}).catch(next);
 	})
 
+	/**
+	 * post /api/groups/members/accept <br>
+	 * 管理员或圈主可以操作
+	 * @method 接受加入申请
+	 * @param {Number} membershipid
+	 * @return {JSON}
+	 */
+	app.post('/api/groups/members/accept', function (req, res, next) {
+		if(!req.user) return next(errors(21301));
+		GroupMember.forge({id: req.body['membershipid']})
+			.fetch()
+			.then(function (groupMember) {
+				if(!groupMember) return next(errors(20603));
+				var groupid = groupMember.get('groupid');
+				//判断有没有权限操作
+				GroupMember.forge({groupid: groupid, userid: req.user.id})
+					.fetch()
+					.then(function(gm){
+						if( !(gm.get('isowner') || gm.get('isadmin')) ){
+							return next(errors(40017));
+						}else{
+							return groupMember.set('isaccepted', 1).save();
+						}
+					})
+			}).then(function (groupMember) {
+				next({msg: "group member accepted"});
+			}).catch(next);
+	})
+
+	/**
+	 * post /api/groups/members/reject <br>
+	 * 管理员或圈主可以操作
+	 * @method 拒绝加入申请
+	 * @param {Number} membershipid
+	 * @return {JSON}
+	 */
+	app.post('/api/groups/members/reject',  function (req, res, next) {
+		if(!req.user) return next(errors(21301));
+		GroupMember.forge({id: req.body['membershipid']})
+			.fetch()
+			.then(function (groupMember) {
+				if(!groupMember) return next(errors(20603));//这里返回的是[Object Object]，为什么
+				var groupid = groupMember.get('groupid');
+				//判断有没有权限操作
+				GroupMember.forge({groupid: groupid, userid: req.user.id})
+					.fetch()
+					.then(function(gm){
+						if( !(gm.get('isowner') || gm.get('isadmin')) ){
+							return next(errors(40017));
+						}else{
+							return groupMember.destroy();
+						}
+					})
+			}).then(function () {
+				next({msg: "group member rejected"});
+			}).catch(next);
+	});
+	
 	/**
 	 * get /api/groups/activities <br>
 	 * 支持page、limit、orders
@@ -373,7 +434,8 @@ module.exports = function (app) {
 	});
 
 	/**
-	 * POST /api/groups/remove
+	 * POST /api/groups/remove <br/>
+	 * 管理员或圈主可操作
 	 * @method 踢人出圈子
 	 * @param {Number} userid
 	 * @param {Number} groupid
@@ -400,7 +462,7 @@ module.exports = function (app) {
 							quit(u, req.body['groupid'], next);
 						});
 				}
-			});
+			}).catch(next);
 	});
 
 	/**

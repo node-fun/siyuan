@@ -94,6 +94,7 @@ CREATE TABLE IF NOT EXISTS `groups` (
   `description` VARCHAR(280) NULL,
   `createtime` DATETIME NULL,
   `avatar` VARCHAR(45) NULL,
+  `isaccepted` TINYINT(1) NULL,
   PRIMARY KEY (`id`),
   INDEX `id_idx` (`ownerid` ASC),
   UNIQUE INDEX `name_UNIQUE` (`name` ASC),
@@ -502,6 +503,16 @@ CREATE TABLE IF NOT EXISTS `message` (
     REFERENCES `users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `pictures`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `pictures` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `issueid` INT NULL,
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 

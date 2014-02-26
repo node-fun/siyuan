@@ -80,14 +80,15 @@ syModel.include({
 	fetching: function () {
 		return Promise.cast();
 	},
-	fetched: function (model) {
+	fetched: function (model, resp, options) {
 		var p = Promise.cast();
 		// appended
-		model.appended.forEach(function (k) {
-			p = p.then(function () {
-				return model.related(k).fetch();
+		model.appended.concat(options['related'] || [])
+			.forEach(function (k) {
+				p = p.then(function () {
+					return model.related(k).fetch();
+				});
 			});
-		});
 		return p;
 	},
 

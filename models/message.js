@@ -18,18 +18,6 @@ Message = module.exports = syBookshelf.Model.extend({
 		};
 	},
 	
-	fetched: function(model, resp, options){
-		var p = Message.__super__.fetched.apply(this, arguments);
-		if (options['related']) {
-			options['related'].forEach(function(k){
-				return p = p.then(function(){
-					return model.related(k).fetch();
-				});
-			});
-		}
-		return p;
-	},
-	
 	sender: function () {
 		return this.belongsTo(require('./user'), 'senderid');
 	},

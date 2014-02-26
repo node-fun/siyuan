@@ -21,7 +21,7 @@ module.exports = function (app) {
 			.then(function (collection) {
 				// relations fetching not enough
 				return Followships.forge().set(collection.models)
-					.fetch({ req: req, self: true });
+					.fetch({ req: req, self: true, related: ['followee'] });
 			}).then(function (following) {
 				next({ following: following });
 			}).catch(next);
@@ -39,7 +39,7 @@ module.exports = function (app) {
 		req.user.followers().fetch()
 			.then(function (collection) {
 				return Followships.forge().set(collection.models)
-					.fetch({ req: req, self: true });
+					.fetch({ req: req, self: true, related: ['user'] });
 			}).then(function (followers) {
 				next({ followers: followers });
 			}).catch(next);
@@ -53,14 +53,14 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.post('/api/followship/follow', function (req, res, next) {
-		var user = req.user;
-		if (!user) return next(errors(21301));
-		req.body['userid'] = user.id;
+		if (!req.user) return next(errors(21301));
+		req.body['userid'] = req.user.id;
 		User.forge({
 			id: req.body['followid']
 		}).fetch()
 			.then(function (user) {
 				if (!user) throw errors(20003);
+				if (user.id == req.user.id) throw errors(20801);
 				return Followship.forge(
 						_.pick(req.body, ['userid', 'followid', 'remark'])
 					).save()

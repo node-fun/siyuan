@@ -114,7 +114,7 @@ module.exports = function (app) {
 	})
 
 	/**
-	 * post /api/groups/members/reject <br>
+	 * POST /api/groups/members/reject <br>
 	 * 管理员或圈主可以操作
 	 * @method 拒绝加入申请
 	 * @param {Number} membershipid

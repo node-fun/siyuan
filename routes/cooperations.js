@@ -470,7 +470,6 @@ module.exports = function (app) {
 	 * POST /api/cooperations/accept
 	 * @method 发起人接受申请人
 	 * @param {Number} id userslist接口里面的那个id,不是userid
-	 * @param {Number} cooperationid 合作ID
 	 * @return {JSON}
 	 * <pre>
 	 *    {
@@ -478,27 +477,63 @@ module.exports = function (app) {
 	 *    }
 	 * </pre>
 	 */
-	app.post('/api/cooperations/accept', function (req, res, next) {
+		app.post('/api/cooperations/accept', function (req, res, next) {
+			var user = req.user;
+
+			if (!user) return next(errors(21301));
+			if (!req.body['id'])
+				return next(errors(10008));
+
+			UserCooperation.forge({ id: req.body['id'] })
+				.fetch()
+				.then(function (usership) {
+					if (!usership) throw errors(20603);
+					var cooperationid = usership.get('cooperationid'),
+						self = usership;
+					Cooperation.forge({ id: cooperationid })
+						.fetch()
+						.then(function (cooperation) {
+							ownerid = cooperation.get('ownerid');
+							if (user.id != ownerid) return next(errors(20102));
+							else return self.set({ 'isaccepted': true }).save()
+								.then(function () {
+									next({ msg: 'accept success' });
+								});
+						});
+				}).catch(next)
+		});
+
+	/**
+	 * POST /api/cooperations/reject
+	 * @method 拒绝加入申请
+	 * @param {Number} id
+	 */
+	app.post('/api/cooperations/reject', function (req, res, next) {
+
 		var user = req.user;
 
 		if (!user) return next(errors(21301));
-		if (!req.body['id'] || !req.body['cooperationid'])
+		if (!req.body['id'])
 			return next(errors(10008));
-		Cooperation.forge({ 'id': req.body['cooperationid'] })
-			.fetch()
-			.then(function (cooperation) {
-				var self = cooperation,
-					ownerid = self.get('ownerid');
-				if (user.id != ownerid) return Promise.rejected(errors(20102));
-				return UserCooperation.forge({ 'id': req.body['id'] }).fetch()
-					.then(function (usership) {
-						return usership.set({ 'isaccepted': true }).save();
-					}).then(function () {
-						next({ msg: 'accept success' });
-					});
-			}).catch(next);
-	});
 
+		UserCooperation.forge({ id: req.body['id'] })
+			.fetch()
+			.then(function (usership) {
+				if (!usership) throw errors(20603);
+				var cooperationid = usership.get('cooperationid'),
+					self = usership;
+				Cooperation.forge({ id: cooperationid })
+					.fetch()
+					.then(function (cooperation) {
+						ownerid = cooperation.get('ownerid');
+						if (user.id != ownerid) return next(errors(20102));
+						else return self.destroy()
+							.then(function () {
+								next({ msg: 'reject success' });
+							});
+					});
+			}).catch(next)
+	});
 
 	/**
 	 * GET /api/cooperations/my

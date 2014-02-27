@@ -413,7 +413,6 @@ module.exports = function (app) {
 	 * POST /api/activities/accept
 	 * @method 发起人接受申请人
 	 * @param {Number} id userslist接口里面的那个id,不是userid
-	 * @param {Number} activityid 活动id
 	 * @return {JSON}
 	 * <pre>{
 	 * 		msg: accept success  
@@ -423,25 +422,58 @@ module.exports = function (app) {
 		var user = req.user;
 
 		if (!user) return next(errors(21301));
-		if (!req.body['id'] || !req.body['activityid'])
+		if (!req.body['id'])
 			return next(errors(10008));
 
-		Activity.forge({ 'id': req.body['activityid'] })
+		UserActivity.forge({ id: req.body['id'] })
 			.fetch()
-			.then(function (activity) {
-				if (!activity) throw errors(20603);
-				var self = activity,
-					ownerid = self.get('ownerid');
-				if (user.id != ownerid) throw errors(20102);
-				return UserActivity.forge({ 'id': req.body['id'] }).fetch()
-					.then(function (usership) {
-						if (!usership) throw errors(20603);
-						return usership.set({ 'isaccepted': true }).save()
-							.then(function (activity) {
+			.then(function (usership) {
+				if (!usership) throw errors(20603);
+				var activityid = usership.get('activityid'),
+					self = usership;
+				Activity.forge({ id: activityid })
+					.fetch()
+					.then(function (activity) {
+						ownerid = activity.get('ownerid');
+						if (user.id != ownerid) return next(errors(20102));
+						else return self.set({ 'isaccepted': true }).save()
+							.then(function () {
 								next({ msg: 'accept success' });
 							});
 					});
-			}).catch(next);
+			}).catch(next)
+	});
+
+	/**
+	 * POST /api/activities/reject
+	 * @method 拒绝加入申请
+	 * @param {Number} id
+	 */
+	app.post('/api/activities/reject', function (req, res, next) {
+
+		var user = req.user;
+
+		if (!user) return next(errors(21301));
+		if (!req.body['id'])
+			return next(errors(10008));
+
+		UserActivity.forge({ id: req.body['id'] })
+			.fetch()
+			.then(function (usership) {
+				if (!usership) throw errors(20603);
+				var activityid = usership.get('activityid'),
+					self = usership;
+				Activity.forge({ id: activityid })
+					.fetch()
+					.then(function (activity) {
+						ownerid = activity.get('ownerid');
+						if (user.id != ownerid) return next(errors(20102));
+						else return self.destroy()
+							.then(function () {
+								next({ msg: 'reject success' });
+							});
+					});
+			}).catch(next)
 	});
 
 	/**

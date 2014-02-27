@@ -34,16 +34,16 @@ module.exports = function (app) {
 				"cover": null,
 				"profile": {
 					 "email": "he@gec.net",
-					 "name": "Nicolas Bailey",
-					 "gender": "f",
-					 "age": 45,
-					 "grade": 1988,
-					 "university": "Rizuuh University",
-					 "major": "Asecoeb",
-					 "summary": "Lubudzot ujumipji bu elahumi ze puezawuh acu bi ajbez pirwivu movatra ulazujtob bapbape."
-				 },
-				 "isfollowed": 1,
-	 		},
+	 "name": "Nicolas Bailey",
+	 "gender": "f",
+	 "age": 45,
+	 "grade": 1988,
+	 "university": "Rizuuh University",
+	 "major": "Asecoeb",
+	 "summary": "Lubudzot ujumipji bu elahumi ze puezawuh acu bi ajbez pirwivu movatra ulazujtob bapbape."
+	 },
+	 "isfollowed": 1,
+	 },
 	 ...
 	 ]
 	 }
@@ -72,23 +72,23 @@ module.exports = function (app) {
 		"cover": "/covers/1.jpg?t=1392728340928",
 		"profile": {
 			 "email": "jizrehce@heowo.edu",
-			 "name": "Ana Hunter",
-			 "gender": "m",
-			 "age": 45,
-			 "grade": 1987,
-			 "university": "Rurijuf University",
-			 "major": "Agakalot",
-			 "summary": "Zul ute juhjuwot bec wuwu bojnemob uszejow memolu fubipi omodicguv nisitucec heri.",
-			 "tag": "ma,hajo,ze"
-		 },
-		 "isfollowed": 0,
-		 "numFollowing": 4,
-		 "numFollowers": 6,
-		 "numIssues": 1,
-		 "numPhotos": 2,
-		 "numStarring": 3,
-		 "numEvents": 2
-		}
+	 "name": "Ana Hunter",
+	 "gender": "m",
+	 "age": 45,
+	 "grade": 1987,
+	 "university": "Rurijuf University",
+	 "major": "Agakalot",
+	 "summary": "Zul ute juhjuwot bec wuwu bojnemob uszejow memolu fubipi omodicguv nisitucec heri.",
+	 "tag": "ma,hajo,ze"
+	 },
+	 "isfollowed": 0,
+	 "numFollowing": 4,
+	 "numFollowers": 6,
+	 "numIssues": 1,
+	 "numPhotos": 2,
+	 "numStarring": 3,
+	 "numEvents": 2
+	 }
 	 }
 	 * </pre>
 	 */

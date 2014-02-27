@@ -1,6 +1,7 @@
 var chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
 	Event = require('./event'),
+	Picture = require('./picture'),
 	IssueComment = require('./issue-comment'),
 	IssueComments = IssueComment.Set,
 	Issue, Issues;
@@ -50,6 +51,9 @@ Issue = module.exports = syBookshelf.Model.extend({
 	},
 	comments: function () {
 		return this.hasMany(IssueComment, 'issueid');
+	},
+	pictures: function () {
+		return this.hasMany(Picture, 'issueid');
 	},
 
 	countComments: function () {

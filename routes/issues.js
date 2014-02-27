@@ -5,6 +5,8 @@
 var _ = require('underscore'),
 	Issue = require('../models/issue'),
 	Issues = Issue.Set,
+	Picture = require('../models/picture'),
+	Pictures = Picture.Set,
 	IssueComment = require('../models/issue-comment'),
 	mail = require('../lib/mail'),
 	errors = require('../lib/errors');
@@ -78,6 +80,26 @@ module.exports = function (app) {
 		delete req.body['id'];
 		Issue.forge(_.extend(req.body, { userid: user.id })).save()
 			.then(function (issue) {
+
+				if (req.files['picture1'])
+					Picture.forge({ issueid: issue.get('id') })
+						.save().then(function (issue) {
+							issue.updatePicture('avatar', req.files['picture1']['path'])
+								.then(function () {
+									if (req.files['picture2'])
+										Picture.forge({ issueid: issue.get('id') })
+											.save().then(function (issue) {
+												issue.updatePicture('avatar', req.files['picture2']['path'])
+													.then(function () {
+														if (req.files['picture3'])
+															Picture.forge({ issueid: issue.get('id') })
+																.save().then(function (issue) {
+																	issue.updatePicture('avatar', req.files['picture3']['path'])
+															})
+												})
+										})
+							});
+					});
 				next({
 					msg: 'Issue posted',
 					id: issue.id
@@ -208,4 +230,23 @@ module.exports = function (app) {
 				next({ msg: 'Comment deleted' });
 			}).catch(next);
 	});
+
+	/*app.post('/api/issues/pictures/update', function (req, res, next) {
+		*//*var user = req.user,
+		 picture1 = req.files['picture1'],
+		 picture2 = req.files['picture2'],
+		 picture3 = req.files['picture3'];
+		 if (!user) return next(errors(21301));
+		 if(!picture1 && !picture2 && !picture3) return next(errors(20007));*//*
+
+		Picture.forge({ id: req.body['id'] }).fetch()
+			.then(function (picture) {
+				console.log(JSON.stringify(picture));
+				return picture.updatePicture('a', 'b')
+				*//*.then(function () {
+				 next({ msg: 'pictures updated' });
+				 })*//*
+			})
+	})*/
+
 };

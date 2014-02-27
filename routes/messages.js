@@ -14,7 +14,7 @@ module.exports = function (app) {
 	 * @method 收消息列表
 	 * @param {String} page/limit/order
 	 * @return {JSON}
-	{
+	 {
 		"messages": [
 		{
 			"id": 2,
@@ -32,24 +32,24 @@ module.exports = function (app) {
 				"cover": "\\covers\\2.jpg?t=1393055835700",
 				"profile": {
 					"email": "ga@pahipkiw.io",
-					"name": "Francisco Brewer",
-					"gender": "f",
-					"age": 48,
-					"grade": 1984,
-					"university": "Depubiafi University",
-					"major": "Cupirisa",
-					"summary": "Nophowip dat hivig celala abma meumraj hawbetir set pikag watob benozveh hu ok za.",
-					"tag": "dipedkoj,cep,awuvir"
-				},
-				"isfollowed": 0
-			}
-		}
-	]
-	}
+	 "name": "Francisco Brewer",
+	 "gender": "f",
+	 "age": 48,
+	 "grade": 1984,
+	 "university": "Depubiafi University",
+	 "major": "Cupirisa",
+	 "summary": "Nophowip dat hivig celala abma meumraj hawbetir set pikag watob benozveh hu ok za.",
+	 "tag": "dipedkoj,cep,awuvir"
+	 },
+	 "isfollowed": 0
+	 }
+	 }
+	 ]
+	 }
 	 */
 	app.get('/api/messages/receivelist', function (req, res, next) {
 		var user = req.user;
-		if(!user) return next(errors(21301));
+		if (!user) return next(errors(21301));
 		req.query['receiverid'] = user.id;
 		Messages.forge().fetch({ req: req, related: ['sender'] })
 			.then(function (messages) {
@@ -67,30 +67,30 @@ module.exports = function (app) {
 	 */
 	app.get('/api/messages/sendlist', function (req, res, next) {
 		var user = req.user;
-		if(!user) return next(errors(21301));
+		if (!user) return next(errors(21301));
 		req.query['senderid'] = user.id;
 		Messages.forge().fetch({req: req, related: ['receiver'] })
 			.then(function (messages) {
 				next({ messages: messages});
 			}).catch(next);
 	});
-	
+
 	/**
 	 * GET /api/messages/unreadcount <br/>
 	 * 需登录
 	 * @method 未读消息数量
-	 * @return {JSON} 
-		{
-		  "count": 1
-		}
+	 * @return {JSON}
+	 {
+	  "count": 1
+	}
 	 */
 	app.get('/api/messages/unreadcount', function (req, res, next) {
 		var user = req.user;
-		if(!user) return next(errors[21301]);
+		if (!user) return next(errors[21301]);
 		Messages.forge().query()
 			.where({'receiverid': user.id, 'isread': 0})
 			.count('id')
-			.then(function(m){
+			.then(function (m) {
 				next({count: m[0]["count(`id`)"]});
 			}).catch(next);
 	});
@@ -101,21 +101,21 @@ module.exports = function (app) {
 	 * @param {Number} receiverid 收件人
 	 * @param {String} title 标题
 	 * @param {String} body 内容
-	 * @return {JSON} 
+	 * @return {JSON}
 	 * {
 			msg: 'message sended',
 			id: 1
 		}
 	 */
 	app.post('/api/messages/send', function (req, res, next) {
-		if(!req.user) return next(errors(21301));
+		if (!req.user) return next(errors(21301));
 		var q = req.query;
-		if(!q['receiverid'] || !q['title'] || !q['body']) return next(errors(10008));
+		if (!q['receiverid'] || !q['title'] || !q['body']) return next(errors(10008));
 		q['senderid'] = req.user.id;
 		q['sourceid'] = null;//发消息，不需要此参数
 		Message.forge(q)
 			.send()
-			.then(function(message) {
+			.then(function (message) {
 				next({
 					msg: 'message sended',
 					id: message.id
@@ -136,16 +136,16 @@ module.exports = function (app) {
 		}
 	 */
 	app.post('/api/messages/reply', function (req, res, next) {
-		if(!req.user) return next(errors(21301));
+		if (!req.user) return next(errors(21301));
 		req.query['senderid'] = req.user.id;
 		Message.forge({id: req.query['sourceid']})
 			.fetch()
-			.then(function(sourceMessage){
-				if(!sourceMessage) return next(errors(20603));
+			.then(function (sourceMessage) {
+				if (!sourceMessage) return next(errors(20603));
 				req.query['receiverid'] = sourceMessage.get('senderid');
 				return Message.forge(req.query)
 					.send()
-					.then(function(message) {
+					.then(function (message) {
 						next({
 							msg: 'message replied',
 							id: message.id
@@ -153,7 +153,7 @@ module.exports = function (app) {
 						sourceMessage.set({isreplied: 1}).save();
 					});
 			}).catch(next);
-		
+
 	});
 
 	/**
@@ -167,21 +167,21 @@ module.exports = function (app) {
 		}
 	 */
 	app.post('/api/messages/markread', function (req, res, next) {
-		if(!req.user) return next(errors(21301));
-		if(!req.query['id']) return next(errors(10008));
+		if (!req.user) return next(errors(21301));
+		if (!req.query['id']) return next(errors(10008));
 		Message.forge(_.pick(req.query, 'id'))
 			.fetch()
-			.then(function(message) {
-				if(message.get('receiverid') != req.user.id)
+			.then(function (message) {
+				if (message.get('receiverid') != req.user.id)
 					return next(errors(20102));
 				return message.set({isread: 1})
 					.save()
-					.then(function(m){
+					.then(function (m) {
 						next({
 							msg: 'message markread success',
 							id: m.id
 						});
-				});
+					});
 			}).catch(next);
 	});
 }

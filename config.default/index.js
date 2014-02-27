@@ -24,7 +24,7 @@ var assets = (function () {
 	[
 		'avatars', 'covers', 'photos',
 		'activities', 'cooperations',
-		'groups'
+		'groups', 'pictures'
 	].forEach(function (type) {
 		o[type] = _.extend({}, proto, {
 			dir: path.join(contentDir, type)

@@ -280,9 +280,9 @@ module.exports = function (app) {
 									});
 									//产生动态，但要先获取一下用户名
 									User.forge({id: req.body['userid']}).fetch()
-										.then(function(u){
+										.then(function (u) {
 											Event.add(user.id, m.get('groupid'), 'group', m.get('groupid'),
-												u.get('username')+ ' 成为圈子管理员');
+												u.get('username') + ' 成为圈子管理员');
 										});
 								});
 						});
@@ -328,9 +328,9 @@ module.exports = function (app) {
 									});
 									//产生动态，但要先获取一下用户名
 									User.forge({id: req.body['userid']}).fetch()
-										.then(function(u){
+										.then(function (u) {
 											Event.add(user.id, m.get('groupid'), 'group', m.get('groupid'),
-												u.get('username')+ ' 被撤销圈子管理员职位');
+												u.get('username') + ' 被撤销圈子管理员职位');
 										});
 								});
 						});
@@ -364,7 +364,7 @@ module.exports = function (app) {
 					next(errors(21301));
 				} else {
 					var userid = req.body['userid'];
-					if(!_.isArray(userid)){
+					if (!_.isArray(userid)) {
 						userid = [userid];
 					}
 					return join(user, userid, req.body['groupid'], next);
@@ -396,7 +396,7 @@ module.exports = function (app) {
 					next(errors(21301));
 				} else {
 					User.forge({id: req.body['userid']}).fetch()
-						.then(function(u){
+						.then(function (u) {
 							quit(u, req.body['groupid'], next);
 						});
 				}

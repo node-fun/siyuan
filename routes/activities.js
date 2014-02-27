@@ -49,30 +49,30 @@ module.exports = function (app) {
 			"cover": "/covers/17.jpg?t=1392704564505",
 			"profile": {
 			  "email": "hik@bi.net",
-		 "name": "Andre Woods",
-		 "gender": "m",
-		 "age": 27,
-		 "grade": 2002,
-		 "university": "Ihodage University",
-		 "major": "Hatef",
-		 "summary": "Guzal modige nolege pisiko bej nuzew newcig nimehi siwla in kerlosud vatzoc bipedse do nusle pe kemcoful lasozsa.",
-		 "tag": "heh,gagef,abnipar"
-		 },
-		 "numFollowing": 3,
-		 "numFollowers": 3,
-		 "numIssues": 4,
-		 "numPhotos": 4,
-		 "numStarring": 2,
-		 "numEvents": 4,
-		 "isfollowed": 0
-		 },
-		 "status": {
+	 "name": "Andre Woods",
+	 "gender": "m",
+	 "age": 27,
+	 "grade": 2002,
+	 "university": "Ihodage University",
+	 "major": "Hatef",
+	 "summary": "Guzal modige nolege pisiko bej nuzew newcig nimehi siwla in kerlosud vatzoc bipedse do nusle pe kemcoful lasozsa.",
+	 "tag": "heh,gagef,abnipar"
+	 },
+	 "numFollowing": 3,
+	 "numFollowers": 3,
+	 "numIssues": 4,
+	 "numPhotos": 4,
+	 "numStarring": 2,
+	 "numEvents": 4,
+	 "isfollowed": 0
+	 },
+	 "status": {
 			"id": 1,
 			"name": "????"
 		  },
-		 "numUsership": 2
-		 }
-		 ]
+	 "numUsership": 2
+	 }
+	 ]
 	 }
 	 </pre>
 	 */
@@ -121,7 +121,7 @@ module.exports = function (app) {
     ]</pre>
 	*/
 	app.get('/api/activities/history', function (req, res, next) {
-		UserActivitys.forge().fetch({ req:req })
+		UserActivitys.forge().fetch({ req: req })
 			.then(function (useractivitys) {
 				return useractivitys.mapThen(function (useractivity) {
 					return useractivity.load(['user']);

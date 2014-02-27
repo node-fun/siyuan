@@ -2,6 +2,7 @@ var chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
 	Event = require('./event'),
 	Picture = require('./picture'),
+	Pictures = Picture.Set,
 	IssueComment = require('./issue-comment'),
 	IssueComments = IssueComment.Set,
 	Issue, Issues;
@@ -37,12 +38,15 @@ Issue = module.exports = syBookshelf.Model.extend({
 	fetched: function (model, resp, options) {
 		return Issue.__super__.fetched.apply(this, arguments)
 			.return(model).call('countComments')
+			.call('countPictures')
 			.then(function () {
 				if (!options['detailed']) return;
 				return model.related('comments')	// for detail
 					.query(function (qb) {
 						qb.orderBy('id', 'desc');
-					}).fetch();
+					}).fetch().then(function () {
+						return model.related('pictures').fetch();
+					});
 			});
 	},
 
@@ -64,7 +68,17 @@ Issue = module.exports = syBookshelf.Model.extend({
 			.then(function (d) {
 				return self.data('numComments', d[0]["count(`id`)"]);
 			});
+	},
+	countPictures: function () {
+		var self = this;
+		return Pictures.forge().query()
+			.where('issueid', '=', self.id)
+			.count('id')
+			.then(function (d) {
+				return self.data('numPictures', d[0]["count(`id`)"]);
+			})
 	}
+
 }, {
 	randomForge: function () {
 		return Issue.forge({

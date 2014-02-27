@@ -72,6 +72,9 @@ module.exports = function (app) {
 	 * @param {String} body 内容
 	 * @param {String} [groupid] 圈子id，不传值表示校友交流，传值表示圈内分享
 	 * @param {String} [activityid] 活动id，不传值表示校友交流，传值表示活动分享
+	 * @param {File} [picture1] 1张图片 : picture1 一定要按照顺序
+	 * @param {File} [picture2] 2张图片 : picture2, picture2 一定要按照顺序
+	 * @param {File} [picture3] 3张图片 : picture1, picture2, picture3 一定要按照顺序
 	 * @return {JSON}
 	 */
 	app.post('/api/issues/post', function (req, res, next) {
@@ -80,21 +83,21 @@ module.exports = function (app) {
 		delete req.body['id'];
 		Issue.forge(_.extend(req.body, { userid: user.id })).save()
 			.then(function (issue) {
-
+				var issueid = issue.get('id');
 				if (req.files['picture1'])
-					Picture.forge({ issueid: issue.get('id') })
-						.save().then(function (issue) {
-							issue.updatePicture('avatar', req.files['picture1']['path'])
+					Picture.forge({ issueid: issueid })
+						.save().then(function (picture) {
+							picture.updatePicture('avatar', req.files['picture1']['path'])
 								.then(function () {
 									if (req.files['picture2'])
-										Picture.forge({ issueid: issue.get('id') })
-											.save().then(function (issue) {
-												issue.updatePicture('avatar', req.files['picture2']['path'])
+										Picture.forge({ issueid: issueid })
+											.save().then(function (picture) {
+												picture.updatePicture('avatar', req.files['picture2']['path'])
 													.then(function () {
 														if (req.files['picture3'])
-															Picture.forge({ issueid: issue.get('id') })
-																.save().then(function (issue) {
-																	issue.updatePicture('avatar', req.files['picture3']['path'])
+															Picture.forge({ issueid: issueid })
+																.save().then(function (picture) {
+																	picture.updatePicture('avatar', req.files['picture3']['path'])
 															})
 												})
 										})
@@ -230,23 +233,4 @@ module.exports = function (app) {
 				next({ msg: 'Comment deleted' });
 			}).catch(next);
 	});
-
-	/*app.post('/api/issues/pictures/update', function (req, res, next) {
-		*//*var user = req.user,
-		 picture1 = req.files['picture1'],
-		 picture2 = req.files['picture2'],
-		 picture3 = req.files['picture3'];
-		 if (!user) return next(errors(21301));
-		 if(!picture1 && !picture2 && !picture3) return next(errors(20007));*//*
-
-		Picture.forge({ id: req.body['id'] }).fetch()
-			.then(function (picture) {
-				console.log(JSON.stringify(picture));
-				return picture.updatePicture('a', 'b')
-				*//*.then(function () {
-				 next({ msg: 'pictures updated' });
-				 })*//*
-			})
-	})*/
-
 };

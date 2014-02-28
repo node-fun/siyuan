@@ -477,31 +477,31 @@ module.exports = function (app) {
 	 *    }
 	 * </pre>
 	 */
-		app.post('/api/cooperations/accept', function (req, res, next) {
-			var user = req.user;
+	app.post('/api/cooperations/accept', function (req, res, next) {
+		var user = req.user;
 
-			if (!user) return next(errors(21301));
-			if (!req.body['id'])
-				return next(errors(10008));
+		if (!user) return next(errors(21301));
+		if (!req.body['id'])
+			return next(errors(10008));
 
-			UserCooperation.forge({ id: req.body['id'] })
-				.fetch()
-				.then(function (usership) {
-					if (!usership) throw errors(20603);
-					var cooperationid = usership.get('cooperationid'),
-						self = usership;
-					Cooperation.forge({ id: cooperationid })
-						.fetch()
-						.then(function (cooperation) {
-							ownerid = cooperation.get('ownerid');
-							if (user.id != ownerid) return next(errors(20102));
-							else return self.set({ 'isaccepted': true }).save()
-								.then(function () {
-									next({ msg: 'accept success' });
-								});
-						});
-				}).catch(next)
-		});
+		UserCooperation.forge({ id: req.body['id'] })
+			.fetch()
+			.then(function (usership) {
+				if (!usership) throw errors(20603);
+				var cooperationid = usership.get('cooperationid'),
+					self = usership;
+				Cooperation.forge({ id: cooperationid })
+					.fetch()
+					.then(function (cooperation) {
+						ownerid = cooperation.get('ownerid');
+						if (user.id != ownerid) return next(errors(20102));
+						else return self.set({ 'isaccepted': true }).save()
+							.then(function () {
+								next({ msg: 'accept success' });
+							});
+					});
+			}).catch(next)
+	});
 
 	/**
 	 * POST /api/cooperations/reject

@@ -290,6 +290,7 @@ CREATE TABLE IF NOT EXISTS `cooperations` (
   `statusid` INT NOT NULL,
   `isprivate` TINYINT NULL,
   `regdeadline` DATETIME NULL,
+  `createtime` DATETIME NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_cooperations_co_status1_idx` (`statusid` ASC),
   INDEX `fk_cooperations_users1_idx` (`ownerid` ASC),
@@ -511,12 +512,27 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `pictures` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `issueid` INT NOT NULL,
+  `issueid` INT NULL,
+  `activityid` INT NULL,
+  `cooperationid` INT NULL,
+  `path` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_issueid_idx` (`issueid` ASC),
+  INDEX `fk_pictures_activities1_idx` (`activityid` ASC),
+  INDEX `fk_pictures_cooperations1_idx` (`cooperationid` ASC),
   CONSTRAINT `fk_issueid`
     FOREIGN KEY (`issueid`)
     REFERENCES `issues` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_pictures_activities1`
+    FOREIGN KEY (`activityid`)
+    REFERENCES `activities` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_pictures_cooperations1`
+    FOREIGN KEY (`cooperationid`)
+    REFERENCES `cooperations` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -546,4 +562,5 @@ INSERT INTO `co_status` (`id`, `name`) VALUES (1, '发布');
 INSERT INTO `co_status` (`id`, `name`) VALUES (2, '结束');
 
 COMMIT;
+
 

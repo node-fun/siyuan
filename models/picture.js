@@ -12,7 +12,7 @@ var fs = require('fs-extra'),
 
 Picture = module.exports = syBookshelf.Model.extend({
 	tableName: tbPicture,
-	fields: ['id', 'issueid'],
+	fields: ['id', 'issueid', 'activityid', 'cooperationid', 'path'],
 	fieldToAssets: { avatar: 'pictures'},
 
 	saving: function () {
@@ -22,32 +22,51 @@ Picture = module.exports = syBookshelf.Model.extend({
 	issue: function () {
 		return this.belongsTo(require('./issue'), 'issueid')
 	},
-
-	updatePicture: function (field, tmp) {
-		var self = this;
-		return self.related('issue').fetch().then(function (issue) {
-				var posttime = issue.get('posttime'),
-					type = self.fieldToAssets[field],
-					file = self.getPicturePath(type, posttime);
-			return new Promise(
-				function (resolve, reject) {
-					fs.mkdirp(path.dirname(file), function (err) {
-						if (err) return reject(errors[30000]);
-						fs.copy(tmp, file, function (err) {
-							if (err) return reject(errors[30003]);
-							resolve(self);
-						});
-					});
-				}).catch(function (err) {
-					return self;
-				})
-		});
+	activity: function () {
+		return this.belongsTo(require('./activity'), 'activityid');
+	},
+	cooperation: function () {
+		return this.belongsTo(require('./cooperation'), 'cooperationid');
 	},
 
-	getPicturePath: function (type, timestamp) {
-		var date = new Date(timestamp),
-			folder = (parseInt(date.getFullYear()) % 100) + '/' + (parseInt(date.getMonth()) + 1);
-		return path.join(config.assets[type].dir + '/' + folder, this.getAssetName(type));
+	updatePicture: function (field, tmp) {
+		var self = this, type, timeType;
+
+		if (self.get('activityid')) {
+			type = 'activity';
+			timeType = 'createtime';
+		}
+		if (self.get('cooperationid')) {
+			type = 'cooperation';
+			timeType = 'createtime';
+		}
+		if (self.get('issueid')) {
+			type = 'issue';
+			timeType = 'posttime';
+		}
+		return self.related(type).fetch().then(function (obj) {
+				var posttime = obj.get(timeType),
+					type = self.fieldToAssets[field],
+					date = new Date(posttime),
+					folder = (parseInt(date.getFullYear()) % 100) + '/' + (parseInt(date.getMonth()) + 1),
+					file = path.join(config.assets[type].dir + '/' + folder, self.getAssetName(type)),
+					thePath = '/' + folder + '/' + self.getAssetName(type);
+
+			return self.set({ path: thePath }).save().then(function () {
+				return new Promise(
+					function (resolve, reject) {
+						fs.mkdirp(path.dirname(file), function (err) {
+							if (err) return reject(errors[30000]);
+							fs.copy(tmp, file, function (err) {
+								if (err) return reject(errors[30003]);
+								resolve(self);
+							});
+						});
+					}).catch(function (err) {
+						return self;
+					})
+			});
+		});
 	}
 });
 

@@ -6,6 +6,8 @@ var fs = require('fs'),
 	ActivityStatus = require('./activity-status'),
 	UserActivity = require('./user-activity'),
 	UserActivities = UserActivity.Set,
+	Picture = require('./picture'),
+	Pictures = Picture.Set,
 	config = require('../config'),
 	fkActivity = 'activityid',
 	fkOwner = 'ownerid',
@@ -50,10 +52,15 @@ Activity = module.exports = syBookshelf.Model.extend({
 		return this.hasMany(UserActivities, fkActivity);
 	},
 
+	pictures: function () {
+		return this.hasMany(Picture, 'activityid');
+	},
+
 	fetched: function (model, attrs, options) {
 		return Activity.__super__.fetched.apply(this, arguments)
 			.return(model)
-			.call('countUsership');
+			.call('countUsership')
+			.call('countPictures');
 	},
 
 	countUsership: function () {
@@ -71,6 +78,15 @@ Activity = module.exports = syBookshelf.Model.extend({
 	},
 	user: function () {
 		return this.belongsTo(require('./user'), fkOwner);
+	},
+	countPictures: function () {
+		var self = this;
+		return Pictures.forge().query()
+			.where(fkActivity, '=', self.id)
+			.count('id')
+			.then(function (d) {
+				return self.data('numPictures', d[0]["count(`id`)"]);
+			});
 	}
 }, {
 	randomForge: function () {

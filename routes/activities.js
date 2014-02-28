@@ -2,6 +2,7 @@
  * @class 活动
  */
 var _ = require('underscore'),
+	Promise = require('bluebird'),
 	User = require('../models/user'),
 	Activity = require('../models/activity'),
 	Activities = Activity.Set,
@@ -9,6 +10,7 @@ var _ = require('underscore'),
 	UserActivitys = UserActivity.Set,
 	GroupMembers = require('../models/group-membership'),
 	Event = require('../models/event'),
+	Picture = require('../models/picture'),
 	errors = require('../lib/errors'),
 	config = require('../config'),
 	imageLimit = config.imageLimit;
@@ -325,8 +327,9 @@ module.exports = function (app) {
 		var user = req.user;
 
 		if (!user) return next(errors(21301));
-		if (!req.body['groupid'] || !req.body['content'] || !req.body['starttime'] || !req.body['duration'] || !req.body['statusid'] || !req.body['money'] || !req.body['name'] || !req.body['site'] || !req.body['regdeadline'] || !req.body['maxnum'])
-			return next(errors(10008));
+		delete req.body['id'];
+		//if (!req.body['groupid'] || !req.body['content'] || !req.body['starttime'] || !req.body['duration'] || !req.body['statusid'] || !req.body['money'] || !req.body['name'] || !req.body['site'] || !req.body['regdeadline'] || !req.body['maxnum'])
+			//return next(errors(10008));
 
 		//check the dude belong to group
 		GroupMembers.forge({
@@ -344,18 +347,43 @@ module.exports = function (app) {
 							ownerid: user.id
 						}, req.body)).save();
 					}).then(function (activity) {
-						Event.add(user.id, activity.get('groupid'), 'activity', activity.get('id'), user.get('username') + '创建了活动' + activity.get('name'));
-						return UserActivity.forge({
-							'userid': user.id,
-							'activityid': activity.id,
-							'isaccepted': 1
-						}).save()
-							.then(function (usership) {
-								next({
-									msg: 'create success',
-									id: usership.get('activityid')
+
+						var activityid = activity.id;
+						var maxNumPic = 3;
+						var p = Promise.cast();
+
+						var keyList = new Array();
+						for(var i=0; i < maxNumPic; i++) {
+							keyList.push('picture' + (i + 1));
+						}
+
+						_.every(keyList, function (v, i) {
+							var key = v;
+							if (req.files[key]) {
+								p = p.then(function () {
+									return Picture.forge({ activityid: activityid }).save()
+										.then(function (picture) {
+											return picture.updatePicture('avatar', req.files[key]['path']);
+										});
 								});
-							});
+								return true;
+							}
+						});
+						return p.then(function () {
+							Event.add(user.id, activity.get('groupid'), 'activity', activity.get('id'), user.get('username') + '创建了活动' + activity.get('name'));
+							return UserActivity.forge({
+								'userid': user.id,
+								'activityid': activity.id,
+								'isaccepted': 1
+							}).save()
+								.then(function (usership) {
+									next({
+										msg: 'create success',
+										id: usership.get('activityid')
+									});
+								});
+						})
+
 					})
 			}).catch(next);
 	});
@@ -364,6 +392,7 @@ module.exports = function (app) {
 	 * GET /api/activities/userslist
 	 * @method 获取活动人员名单
 	 * @param {Number} id 活动id
+	 * @param {Boolean} [isaccepted]
 	 * @return {Array}
 	 * <pre>{
 	"users": [
@@ -390,7 +419,6 @@ module.exports = function (app) {
 		if (!user) return next(errors(21301));
 		if (!req.query['id'])
 			return next(errors(10008));
-
 		Activity.forge({ id: req.query['id'] }).fetch()
 			.then(function (activity) {
 				if (!activity) throw errors(20603);
@@ -398,12 +426,14 @@ module.exports = function (app) {
 				return activity
 					.related('usership')
 					.query(function (qb) {
+						if (req.query['isaccepted'])
+							qb.where('isaccepted', req.query['isaccepted']);
 						req.query['orders'].forEach(function (order) {
 							qb.orderBy(order[0], order[1]);
 						});
 					}).query('offset', req.query['offset'])
 					.query('limit', req.query['limit'])
-					.fetch({withRelated: ['user', 'user.profile']})
+					.fetch({withRelated: ['user', 'user.profile']});
 			}).then(function (userships) {
 				next({ userships: userships });
 			}).catch(next);

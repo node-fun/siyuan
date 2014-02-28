@@ -22,11 +22,17 @@ var _ = require('underscore'),
 Cooperation = module.exports = syBookshelf.Model.extend({
 	tableName: tbCooperation,
 	fields: [
-		'id', 'name', 'description', 'company', 'avatar', 'statusid', 'ownerid', 'isprivate', 'regdeadline'
+		'id', 'name', 'description', 'company', 'avatar', 'statusid', 'ownerid', 'isprivate', 'regdeadline', 'createtime'
 	],
 
 	appended: ['user', 'status'],
 	fieldToAssets: { avatar: 'cooperations' },
+
+	defaults: function () {
+		return {
+			createtime: new Date()
+		}
+	},
 
 	toJSON: function () {
 		var self = this, Model = this.constructor,

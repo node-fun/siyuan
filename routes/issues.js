@@ -3,10 +3,10 @@
  * @class 话题
  */
 var _ = require('underscore'),
+	Promise = require('bluebird'),
 	Issue = require('../models/issue'),
 	Issues = Issue.Set,
 	Picture = require('../models/picture'),
-	Pictures = Picture.Set,
 	IssueComment = require('../models/issue-comment'),
 	mail = require('../lib/mail'),
 	errors = require('../lib/errors');
@@ -83,30 +83,32 @@ module.exports = function (app) {
 		delete req.body['id'];
 		Issue.forge(_.extend(req.body, { userid: user.id })).save()
 			.then(function (issue) {
-				var issueid = issue.get('id');
-				if (req.files['picture1'])
-					Picture.forge({ issueid: issueid })
-						.save().then(function (picture) {
-							picture.updatePicture('avatar', req.files['picture1']['path'])
-								.then(function () {
-									if (req.files['picture2'])
-										Picture.forge({ issueid: issueid })
-											.save().then(function (picture) {
-												picture.updatePicture('avatar', req.files['picture2']['path'])
-													.then(function () {
-														if (req.files['picture3'])
-															Picture.forge({ issueid: issueid })
-																.save().then(function (picture) {
-																	picture.updatePicture('avatar', req.files['picture3']['path'])
-															})
-												})
-										})
-							});
-					});
-				next({
-					msg: 'Issue posted',
-					id: issue.id
+				var issueid = issue.id;
+				var maxNumPic = 3;
+				var p = Promise.cast();
+
+				var keyList = new Array();
+				for(var i=0; i < maxNumPic; i++) {
+					keyList.push('picture' + (i + 1));
+				}
+				_.every(keyList, function (v, i) {
+					var key = v;
+					if (req.files[key]) {
+						p = p.then(function () {
+							return Picture.forge({ issueid: issueid }).save()
+								.then(function (picture) {
+									return picture.updatePicture('avatar', req.files[key]['path']);
+								});
+						});
+						return true;
+					}
 				});
+				return p.then(function () {
+					next({
+						msg: 'Issue posted',
+						id: issueid
+					});
+				})
 			}).catch(next);
 	});
 

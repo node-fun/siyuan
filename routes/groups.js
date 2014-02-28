@@ -74,7 +74,7 @@ module.exports = function (app) {
 						req.query['orders'].forEach(function (order) {
 							qb.orderBy(order[0], order[1]);
 						});
-						if(req.query['isaccepted'])
+						if (req.query['isaccepted'])
 							qb.where('isaccepted', req.query['isaccepted']);
 					}).query('offset', req.query['offset'])
 					.query('limit', req.query['limit'])
@@ -92,19 +92,19 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.post('/api/groups/members/accept', function (req, res, next) {
-		if(!req.user) return next(errors(21301));
+		if (!req.user) return next(errors(21301));
 		GroupMember.forge({id: req.body['membershipid']})
 			.fetch()
 			.then(function (groupMember) {
-				if(!groupMember) return next(errors(20603));
+				if (!groupMember) return next(errors(20603));
 				var groupid = groupMember.get('groupid');
 				//判断有没有权限操作
 				GroupMember.forge({groupid: groupid, userid: req.user.id})
 					.fetch()
-					.then(function(gm){
-						if( !(gm.get('isowner') || gm.get('isadmin')) ){
+					.then(function (gm) {
+						if (!(gm.get('isowner') || gm.get('isadmin'))) {
 							return next(errors(40017));
-						}else{
+						} else {
 							return groupMember.set('isaccepted', 1).save();
 						}
 					})
@@ -120,20 +120,20 @@ module.exports = function (app) {
 	 * @param {Number} membershipid
 	 * @return {JSON}
 	 */
-	app.post('/api/groups/members/reject',  function (req, res, next) {
-		if(!req.user) return next(errors(21301));
+	app.post('/api/groups/members/reject', function (req, res, next) {
+		if (!req.user) return next(errors(21301));
 		GroupMember.forge({id: req.body['membershipid']})
 			.fetch()
 			.then(function (groupMember) {
-				if(!groupMember) return next(errors(20603));//这里返回的是[Object Object]，为什么
+				if (!groupMember) return next(errors(20603));//这里返回的是[Object Object]，为什么
 				var groupid = groupMember.get('groupid');
 				//判断有没有权限操作
 				GroupMember.forge({groupid: groupid, userid: req.user.id})
 					.fetch()
-					.then(function(gm){
-						if( !(gm.get('isowner') || gm.get('isadmin')) ){
+					.then(function (gm) {
+						if (!(gm.get('isowner') || gm.get('isadmin'))) {
 							return next(errors(40017));
-						}else{
+						} else {
 							return groupMember.destroy();
 						}
 					})
@@ -141,7 +141,7 @@ module.exports = function (app) {
 				next({msg: "group member rejected"});
 			}).catch(next);
 	});
-	
+
 	/**
 	 * get /api/groups/activities <br>
 	 * 支持page、limit、orders

@@ -86,6 +86,20 @@ module.exports = function (app) {
 	});
 
 	/**
+	 * GET /api/activities/view
+	 * @method 活动详情
+	 * @param {Number} id 活动ID
+	 * @return {JSON}
+	 */
+	app.get('/api/activities/view', function (req, res, next) {
+		Activity.forge({ id: req.query['id'] })
+			.fetch({ req: req, detailed: true })
+			.then(function (activity) {
+				next({ activity: activity });
+			});
+	});
+
+	/**
 	 * GET /api/activities/history
 	 * @method 活动参加历史
 	 * @param {Number} [id] 申请id,就是usership的id
@@ -328,8 +342,8 @@ module.exports = function (app) {
 
 		if (!user) return next(errors(21301));
 		delete req.body['id'];
-		//if (!req.body['groupid'] || !req.body['content'] || !req.body['starttime'] || !req.body['duration'] || !req.body['statusid'] || !req.body['money'] || !req.body['name'] || !req.body['site'] || !req.body['regdeadline'] || !req.body['maxnum'])
-			//return next(errors(10008));
+		if (!req.body['groupid'] || !req.body['content'] || !req.body['starttime'] || !req.body['duration'] || !req.body['statusid'] || !req.body['money'] || !req.body['name'] || !req.body['site'] || !req.body['regdeadline'] || !req.body['maxnum'])
+			return next(errors(10008));
 
 		//check the dude belong to group
 		GroupMembers.forge({
@@ -347,16 +361,13 @@ module.exports = function (app) {
 							ownerid: user.id
 						}, req.body)).save();
 					}).then(function (activity) {
-
 						var activityid = activity.id;
 						var maxNumPic = 3;
 						var p = Promise.cast();
-
 						var keyList = new Array();
 						for(var i=0; i < maxNumPic; i++) {
 							keyList.push('picture' + (i + 1));
 						}
-
 						_.every(keyList, function (v, i) {
 							var key = v;
 							if (req.files[key]) {

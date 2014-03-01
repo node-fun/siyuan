@@ -50,7 +50,7 @@ Picture = module.exports = syBookshelf.Model.extend({
 					date = new Date(posttime),
 					folder = (parseInt(date.getFullYear()) % 100) + '/' + (parseInt(date.getMonth()) + 1),
 					file = path.join(config.assets[type].dir + '/' + folder, self.getAssetName(type)),
-					thePath = '/' + folder + '/' + self.getAssetName(type);
+					thePath = '/pictures' + '/' + folder + '/' + self.getAssetName(type);
 
 			return self.set({ path: thePath }).save().then(function () {
 				return new Promise(

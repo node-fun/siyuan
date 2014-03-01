@@ -373,18 +373,39 @@ module.exports = function (app) {
 				ownerid: user.id
 			}, req.body)).save()
 			.then(function (cooperation) {
-				Event.add(user.id, null, 'cooperation', cooperation.get('id'), user.get('username') + '创建了商务合作' + cooperation.get('name'));
-				return UserCooperation.forge({
-					userid: user.id,
-					cooperationid: cooperation.get('id'),
-					isaccepted: true
-				}).save().then(function (usercooperation) {
-						next({
-							msg: 'create success',
-							id: cooperation.get('id'),
-							isprivate: cooperation.get('isprivate')
+				var cooperationid = cooperation.id;
+				var maxNumPic = 3;
+				var p = Promise.cast();
+				var keyList = new Array();
+				for(var i=0; i < maxNumPic; i++) {
+					keyList.push('picture' + (i + 1));
+				}
+				_.every(keyList, function (v, i) {
+					var key = v;
+					if (req.files[key]) {
+						p = p.then(function () {
+							return Picture.forge({ cooperationid: cooperationid }).save()
+								.then(function (picture) {
+									return picture.updatePicture('avatar', req.files[key]['path']);
+								});
+						})
+						return true;
+					}
+				});
+				return p.then(function () {
+					Event.add(user.id, null, 'cooperation', cooperation.get('id'), user.get('username') + '创建了商务合作' + cooperation.get('name'));
+					return UserCooperation.forge({
+						userid: user.id,
+						cooperationid: cooperation.get('id'),
+						isaccepted: true
+					}).save().then(function (usercooperation) {
+							next({
+								msg: 'create success',
+								id: cooperation.get('id'),
+								isprivate: cooperation.get('isprivate')
+							});
 						});
-					});
+				});
 			}).catch(next);
 	});
 

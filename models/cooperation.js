@@ -11,6 +11,8 @@ var _ = require('underscore'),
 	CoStatus = require('./co-status'),
 	UserCooperation = require('./user-cooperation'),
 	UserCooperations = UserCooperation.Set,
+	Picture = require('./picture'),
+	Pictures = Picture.Set,
 	CoComment = require('./co-comment'),
 	Cooperation, Cooperations,
 	config = require('../config'),
@@ -60,12 +62,15 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 			.return(model)
 			.call('countComments')
 			.call('countUsership')
+			.call('countPictures')
 			.then(function () {
 				if (!options['detailed']) return;
 				return model.related('cocomments')
 					.query(function (qb) {
 						qb.orderBy('id', 'desc');
-					}).fetch();
+					}).fetch().then(function () {
+						return model.related('pictures').fetch();
+					});
 			})
 	},
 
@@ -89,12 +94,26 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 		return this.hasMany(CoComment, 'cooperationid');
 	},
 
+	pictures: function () {
+		return this.hasMany(Picture, 'cooperationid');
+	},
+
 	countComments: function () {
 		var self = this;
 		return this.cocomments().fetch()
 			.then(function (cocomments) {
 				var numComments = cocomments.length;
 				return self.data('numComments', numComments);
+			});
+	},
+
+	countPictures: function () {
+		var self = this;
+		return Pictures.forge().query()
+			.where(fkCooperation, '=', self.id)
+			.count('id')
+			.then(function (d) {
+				return self.data('numPictures', d[0]["count(`id`)"]);
 			});
 	}
 }, {

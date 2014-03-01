@@ -142,7 +142,7 @@ Cooperations = Cooperation.Set = syBookshelf.Collection.extend({
 		var query = req.query;
 		this.qbWhere(qb, req, query, ['id', 'statusid', 'ownerid', 'isprivate'], tbCooperation);
 		if (!req.query['fuzzy']) {
-			this.qbWhereLike(qb, req, query, ['name', 'company'], tbCooperation);
+			this.qbWhere(qb, req, query, ['name', 'company'], tbCooperation);
 		} else {
 			this.qbWhereLike(qb, req, query, ['name', 'description', 'company'], tbCooperation);
 		}

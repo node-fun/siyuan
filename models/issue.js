@@ -5,6 +5,7 @@ var chance = new (require('chance'))(),
 	Pictures = Picture.Set,
 	IssueComment = require('./issue-comment'),
 	IssueComments = IssueComment.Set,
+	tbIssue = 'issues',
 	Issue, Issues;
 
 Issue = module.exports = syBookshelf.Model.extend({
@@ -93,12 +94,13 @@ Issues = Issue.Set = syBookshelf.Collection.extend({
 	model: Issue,
 
 	lister: function (req, qb) {
+		var query = req.query;
 		this.allowNull(req.query, ['groupid', 'activityid']) //如果没有传值，就要给他取null
-			.qbWhere(qb, req, req.query, ['id', 'userid']);
+			.qbWhere(qb, req, query, ['id', 'userid', 'groupid', 'activityid'], tbIssue);
 		if (!req.query['fuzzy']) {
-			this.qbWhere(qb, req, req.query, ['title']);
+			this.qbWhere(qb, req, query, ['title'], tbIssue);
 		} else {
-			this.qbWhereLike(qb, req, req.query, ['title', 'body']);
+			this.qbWhereLike(qb, req, query, ['title', 'body'], tbIssue);
 		}
 	}
 });

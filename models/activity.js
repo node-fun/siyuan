@@ -121,9 +121,9 @@ Activities = Activity.Set = syBookshelf.Collection.extend({
 
 	lister: function (req, qb) {
 		var query = req.query;
-		this.qbWhere(qb, req, query, ['id', 'ownerid', 'statusid'], tbActivity)
+		this.qbWhere(qb, req, query, ['id', 'ownerid', 'statusid'], tbActivity);
 		if (!req.query['fuzzy']) {
-			this.qbWhereLike(qb, req, query, ['name', 'site'], tbActivity);
+			this.qbWhere(qb, req, query, ['name', 'site'], tbActivity);
 		} else {
 			this.qbWhereLike(qb, req, query, ['name', 'content', 'site'], tbActivity);
 		}

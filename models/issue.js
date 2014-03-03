@@ -40,13 +40,14 @@ Issue = module.exports = syBookshelf.Model.extend({
 		return Issue.__super__.fetched.apply(this, arguments)
 			.return(model).call('countComments')
 			.call('countPictures')
+			.then(function (issue) {
+				return model.related('pictures').fetch();
+			})
 			.then(function () {
 				if (!options['detailed']) return;
 				return model.related('comments')	// for detail
 					.query(function (qb) {
 						qb.orderBy('id', 'desc');
-					}).fetch().then(function () {
-						return model.related('pictures').fetch();
 					});
 			});
 	},

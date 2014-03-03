@@ -51,20 +51,6 @@ module.exports = function (app) {
 	});
 
 	/**
-	 * GET /api/issues/view
-	 * @method 话题详情
-	 * @param {Number} id 话题ID
-	 * @return {JSON}
-	 */
-	app.get('/api/issues/view', function (req, res, next) {
-		Issue.forge({ id: req.query['id'] })
-			.fetch({ req: req, detailed: true })
-			.then(function (issue) {
-				next({ issue: issue });
-			}).catch(next);
-	});
-
-	/**
 	 * POST /api/issues/post <br/>
 	 * 注意：groupid与activityid是二选一的
 	 * @method 发布话题

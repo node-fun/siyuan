@@ -63,14 +63,15 @@ Cooperation = module.exports = syBookshelf.Model.extend({
 			.call('countComments')
 			.call('countUsership')
 			.call('countPictures')
+			.then(function (cooperation) {
+				return model.related('pictures').fetch();
+			})
 			.then(function () {
 				if (!options['detailed']) return;
 				return model.related('cocomments')
 					.query(function (qb) {
 						qb.orderBy('id', 'desc');
-					}).fetch().then(function () {
-						return model.related('pictures').fetch();
-					});
+					}).fetch();
 			})
 	},
 

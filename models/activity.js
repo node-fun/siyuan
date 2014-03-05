@@ -61,8 +61,7 @@ Activity = module.exports = syBookshelf.Model.extend({
 			.return(model)
 			.call('countUsership')
 			.call('countPictures')
-			.then(function () {
-				if (!options['detailed']) return;
+			.then(function (activity) {
 				return model.related('pictures').fetch();
 			})
 	},

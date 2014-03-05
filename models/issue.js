@@ -48,7 +48,7 @@ Issue = module.exports = syBookshelf.Model.extend({
 				return model.related('comments')	// for detail
 					.query(function (qb) {
 						qb.orderBy('id', 'desc');
-					});
+					}).fetch();
 			});
 	},
 

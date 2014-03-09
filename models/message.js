@@ -3,10 +3,11 @@
  */
 var syBookshelf = require('./base'),
 	User = require('./user'),
-	Message, Messages;
+	Message, Messages,
+	tableName = 'message';
 
 Message = module.exports = syBookshelf.Model.extend({
-	tableName: 'message',
+	tableName: tableName,
 	fields: [
 		'id', 'senderid', 'receiverid', 'title', 'body', 'isread', 'isreplied', 'sourceid', 'sendtime'
 	],
@@ -50,5 +51,12 @@ Messages = Message.Set = syBookshelf.Collection.extend({
 	
 	lister: function (req, qb) {
 		this.qbWhere(qb, req, req.query, ['senderid', 'receiverid']);
+	}
+	
+}, {
+
+	unreadList: function (receiverid) {
+		return syBookshelf.knex
+			.raw('select mm.*, up.name sendername, u.avatar senderavatar from (select *, count(id) count from (select * from ' + tableName + ' where receiverid = '+ receiverid +' and isread != 1 ORDER BY sendtime desc) m GROUP BY senderid) mm, user_profiles up, users u where mm.senderid = up.userid and u.id = up.userid');
 	}
 });

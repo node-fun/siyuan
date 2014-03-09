@@ -57,9 +57,9 @@ Picture = module.exports = syBookshelf.Model.extend({
 				return new Promise(
 					function (resolve, reject) {
 						fs.mkdirp(path.dirname(file), function (err) {
-							if (err) return reject(errors(30000));
+							if (err) return reject(errors[30000]);
 							fs.copy(tmp, file, function (err) {
-								if (err) return reject(errors(30003));
+								if (err) return reject(errors[30003]);
 								resolve(self);
 							});
 						});

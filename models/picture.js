@@ -64,7 +64,7 @@ Picture = module.exports = syBookshelf.Model.extend({
 							});
 						});
 					}).catch(function (err) {
-						return self;
+						throw err;
 					})
 			});
 		});

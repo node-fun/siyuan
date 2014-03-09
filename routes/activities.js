@@ -368,18 +368,20 @@ module.exports = function (app) {
 						for(var i=0; i < maxNumPic; i++) {
 							keyList.push('picture' + (i + 1));
 						}
-						_.every(keyList, function (v, i) {
-							var key = v;
-							if (req.files[key]) {
-								p = p.then(function () {
-									return Picture.forge({ activityid: activityid }).save()
-										.then(function (picture) {
-											return picture.updatePicture('avatar', req.files[key]['path']);
-										});
-								});
-								return true;
-							}
-						});
+            if (req.files) {
+              _.every(keyList, function (v, i) {
+                var key = v;
+                if (req.files[key]) {
+                  p = p.then(function () {
+                    return Picture.forge({ activityid: activityid }).save()
+                      .then(function (picture) {
+                        return picture.updatePicture('avatar', req.files[key]['path']);
+                      });
+                  });
+                  return true;
+                }
+              });
+            }
 						return p.then(function () {
 							Event.add(user.id, activity.get('groupid'), 'activity', activity.get('id'), user.related('profile').get('name') + '创建了活动' + activity.get('name'));
 							return UserActivity.forge({

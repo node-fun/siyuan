@@ -189,7 +189,7 @@ module.exports = function (app) {
 			}, req.body))
 			.save()
 			.then(function (group) {
-				Event.add(user.id, null, 'group', group.id, user.get('username') + ' 创建了圈子' + group.get('name'));
+				Event.add(user.id, null, 'group', group.id, user.related('profile').get('name') + ' 创建了圈子' + group.get('name'));
 				return GroupMember.forge({
 					userid: user.id,
 					groupid: group.id,
@@ -343,7 +343,7 @@ module.exports = function (app) {
 									User.forge({id: req.body['userid']}).fetch()
 										.then(function (u) {
 											Event.add(user.id, m.get('groupid'), 'group', m.get('groupid'),
-												u.get('username') + ' 成为圈子管理员');
+												u.related('profile').get('name') + ' 成为圈子管理员');
 										});
 								});
 						});
@@ -391,7 +391,7 @@ module.exports = function (app) {
 									User.forge({id: req.body['userid']}).fetch()
 										.then(function (u) {
 											Event.add(user.id, m.get('groupid'), 'group', m.get('groupid'),
-												u.get('username') + ' 被撤销圈子管理员职位');
+												u.related('profile').get('name') + ' 被撤销圈子管理员职位');
 										});
 								});
 						});
@@ -576,7 +576,7 @@ function quit(user, groupid, next) {
 					next({
 						msg: 'quit group success'
 					});
-					Event.add(user.id, groupid, 'group', groupid, user.get('username') + ' 退出了圈子');
+					Event.add(user.id, groupid, 'group', groupid, user.related('profile').get('name') + ' 退出了圈子');
 				});
 		});
 }

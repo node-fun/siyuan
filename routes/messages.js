@@ -46,7 +46,7 @@ module.exports = function (app) {
 	 */
 	app.post('/api/messages/send', function (req, res, next) {
 		if (!req.user) return next(errors(21301));
-		var q = req.query;
+		var q = req.body;
 		if (!q['receiverid'] || !q['title'] || !q['body']) return next(errors(10008));
 		q['senderid'] = req.user.id;
 		q['sourceid'] = null;//发消息，不需要此参数

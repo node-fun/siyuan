@@ -190,7 +190,7 @@ module.exports = function (app) {
 
 	/**
 	 * GET /api/messages/unreadlist <br>
-	 * 需登录
+	 * 需登录，不分页
 	 * @method 未读消息列表
 	 * @return {JSON}
 	 * {msg:'no new messages'} <br>
@@ -250,6 +250,68 @@ module.exports = function (app) {
 					});
 					next({messages: messages});//返回查询结果
 				}
-			});
+			}).catch(next);
+	});
+
+	/**
+	 * GET /api/messages/record <br>
+	 * 需登录，支持limit,page,offset <br>
+	 * 注意这里的时间是降序排列的，由新到旧
+	 * @method 消息记录
+	 * @param friendid 好友的id
+	 * @return {JSON}
+	 * <pre>
+		{
+			"messages": [
+			{
+				"id": 4,
+				"senderid": 2,
+				"receiverid": 1,
+				"title": "2--->1",  //1发给2的消息
+				"body": null,
+				"isread": 0,
+				"isreplied": 0,
+				"sendtime": 1394436130000
+			},
+			{
+				"id": 1,
+				"senderid": 1,
+				"receiverid": 2,
+				"title": "1->2",  //2发给1的消息
+				"body": null,
+				"isread": 0,
+				"isreplied": 0,
+				"sendtime": 1394249018000
+			},
+			{
+				"id": 2,
+				"senderid": 2,
+				"receiverid": 1,
+				"title": "2->1",  //1发给2的消息
+				"body": null,
+				"isread": 0,
+				"isreplied": 0,
+				"sendtime": 1393056294000
+			}
+		]
+		}
+	 </pre>
+	 *
+	 */
+	app.get('/api/messages/record', function (req, res, next) {
+		if (!req.user) return next(errors(21301));
+		if (!req.query['friendid']) return next(errors(10008));
+		var userid = req.user.id,
+			friendid = req.query['friendid'];
+		Messages.forge().query(function (qb) {
+			qb.where('senderid', userid)
+				.andWhere('receiverid', friendid)
+				.orWhere('senderid', friendid)
+				.andWhere('receiverid', userid)
+				.orderBy('sendtime', 'desc');
+		}).fetch({req: req})
+			.then(function (m) {
+				next({messages: m});
+			}).catch(next);
 	});
 }

@@ -11,7 +11,7 @@ Message = module.exports = syBookshelf.Model.extend({
 	fields: [
 		'id', 'senderid', 'receiverid', 'title', 'body', 'isread', 'isreplied', 'sourceid', 'sendtime'
 	],
-	omitInJSON: ['senderid', 'receiverid', 'sourceid'],
+	omitInJSON: ['sourceid'],
 	
 	defaults: function () {
 		return {

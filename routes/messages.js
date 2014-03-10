@@ -62,7 +62,7 @@ module.exports = function (app) {
 
 	/**
 	 * GET /api/messages/list <br>
-	 * 需登录，不分页，返回的是当前登录用户的消息列表 <br>
+	 * 需登录，支持limit（默认10）、page（默认1），返回的是当前登录用户的消息列表 <br>
 	 * @method 消息列表
 	 * @return {JSON}
 	<pre>
@@ -102,7 +102,7 @@ module.exports = function (app) {
 	 */
 	app.get('/api/messages/list', function (req, res, next) {
 		if (!req.user) return next(errors(21301));
-		Messages.unreadList(req.user.id)
+		Messages.unreadList(req)
 			.then(function (resp) {
 				messages = resp[0];
 				messages.forEach(function(m){
@@ -113,6 +113,8 @@ module.exports = function (app) {
 					if (value != null) {
 						m['senderavatar'] += '?t=' + value;
 					}
+					//转timestamp
+					m['sendtime'] = m['sendtime'].getTime();
 				});
 				next({messages: messages});//返回查询结果
 			}).catch(next);
@@ -120,7 +122,7 @@ module.exports = function (app) {
 
 	/**
 	 * GET /api/messages/record <br>
-	 * 需登录，支持limit,page,offset <br>
+	 * 需登录，支持limit,page,offset,orders <br>
 	 * 注意这里的时间是降序排列的，由新到旧 <br>
 	 * 成功发送后此对话标记为已读 <br>
 	 * @method 与某人的消息记录

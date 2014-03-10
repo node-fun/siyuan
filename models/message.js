@@ -42,9 +42,15 @@ Messages = Message.Set = syBookshelf.Collection.extend({
 	
 }, {
 
-	unreadList: function (receiverid) {
+	unreadList: function (req) {
+		var receiverid = req.user.id,
+			lim = req.query['limit'] ? req.query['limit'] : 10,
+			page = req.query['page'] ? req.query['page'] : 1;
+		var offs = lim * (page-1);
+		var sql = 'select mm.*, up.name sendername, u.avatar senderavatar from (select *, -sum(isread-1) unreadcount from (select * from ' + tableName + ' where receiverid = '+ receiverid +' ORDER BY sendtime desc) m GROUP BY senderid) mm, user_profiles up, users u where mm.senderid = up.userid and u.id = up.userid ORDER BY sendtime DESC'
+			+ ' limit ' + lim + ' offset ' + offs;
 		return syBookshelf.knex
-			.raw('select mm.*, up.name sendername, u.avatar senderavatar from (select *, -sum(isread-1) unreadcount from (select * from ' + tableName + ' where receiverid = '+ receiverid +' ORDER BY sendtime desc) m GROUP BY senderid) mm, user_profiles up, users u where mm.senderid = up.userid and u.id = up.userid ORDER BY sendtime DESC');
+			.raw(sql);
 	},
 	
 	markRead: function(senderid, receiverid){

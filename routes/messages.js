@@ -61,12 +61,10 @@ module.exports = function (app) {
 	});
 
 	/**
-	 * GET /api/messages/unreadlist <br>
-	 * 需登录，不分页
-	 * @method 未读消息列表
+	 * GET /api/messages/list <br>
+	 * 需登录，不分页，返回的是当前登录用户的消息列表 <br>
+	 * @method 消息列表
 	 * @return {JSON}
-	 * {msg:'no new messages'} <br>
-	 * or <br>
 	<pre>
 	 {
         "messages":[
@@ -80,7 +78,7 @@ module.exports = function (app) {
 			"isreplied": 0,
 			"sourceid": null,
 			"sendtime": "2014-03-10T07:22:10.000Z",
-			"count": 2,     //此好友发来的未读消息数
+			"unreadcount": 2,     //此好友发来的未读消息数
 			"sendername": "Francisco Brewer",   //发送者的名字
 			"senderavatar": "\\avatars\\2.jpg?t=1393055835537"      //发送者头像
 		  },
@@ -94,7 +92,7 @@ module.exports = function (app) {
 			"isreplied": 0,
 			"sourceid": null,
 			"sendtime": "2014-03-09T03:23:44.000Z",
-			"count": 1,
+			"unreadcount": 1,
 			"sendername": "Griffin Estrada",
 			"senderavatar": "\\avatars\\3.jpg?t=1393055835500"
 		  }
@@ -102,34 +100,31 @@ module.exports = function (app) {
 	}
 	 </pre>
 	 */
-	app.get('/api/messages/unreadlist', function (req, res, next) {
+	app.get('/api/messages/list', function (req, res, next) {
 		if (!req.user) return next(errors(21301));
 		Messages.unreadList(req.user.id)
 			.then(function (resp) {
-				if(!resp){
-					next({msg:'no new messages'});
-				}else{
-					messages = resp[0];
-					messages.forEach(function(m){
-						//转换头像url
-						var value = m['senderavatar'];
-						m['senderavatar'] = path.join(config.assets['avatars'].dir, m['senderid'] + config.assets['avatars'].ext);
-						m['senderavatar'] = config.toStaticURI( m['senderavatar'] );
-						if (value != null) {
-							m['senderavatar'] += '?t=' + value;
-						}
-					});
-					next({messages: messages});//返回查询结果
-				}
+				messages = resp[0];
+				messages.forEach(function(m){
+					//转换头像url
+					var value = m['senderavatar'];
+					m['senderavatar'] = path.join(config.assets['avatars'].dir, m['senderid'] + config.assets['avatars'].ext);
+					m['senderavatar'] = config.toStaticURI( m['senderavatar'] );
+					if (value != null) {
+						m['senderavatar'] += '?t=' + value;
+					}
+				});
+				next({messages: messages});//返回查询结果
 			}).catch(next);
 	});
 
 	/**
 	 * GET /api/messages/record <br>
 	 * 需登录，支持limit,page,offset <br>
-	 * 注意这里的时间是降序排列的，由新到旧
-	 * @method 消息记录
-	 * @param friendid 好友的id
+	 * 注意这里的时间是降序排列的，由新到旧 <br>
+	 * 成功发送后此对话标记为已读 <br>
+	 * @method 与某人的消息记录
+	 * @param {Number} friendid 好友的id
 	 * @return {JSON}
 	 * <pre>
 		{
@@ -182,6 +177,8 @@ module.exports = function (app) {
 		}).fetch({req: req})
 			.then(function (m) {
 				next({messages: m});
+				//标记已读
+				Messages.markRead(friendid, userid).then(next);
 			}).catch(next);
 	});
 }

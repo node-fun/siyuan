@@ -30,20 +30,7 @@ Message = module.exports = syBookshelf.Model.extend({
 		return this.save();
 	}
 }, {
-	markRead: function(id){
-		return Message.forge({id: id})
-			.fetch()
-			.then(function(m){
-				return m.set({isread: 1}).save();
-			});
-	},
-	markReplied: function(id){
-		return Message.forge({id: id})
-			.fetch()
-			.then(function(m){
-				return m.set({isreplied: 1}).save();
-			});
-	}
+	
 });
 
 Messages = Message.Set = syBookshelf.Collection.extend({
@@ -57,6 +44,11 @@ Messages = Message.Set = syBookshelf.Collection.extend({
 
 	unreadList: function (receiverid) {
 		return syBookshelf.knex
-			.raw('select mm.*, up.name sendername, u.avatar senderavatar from (select *, count(id) count from (select * from ' + tableName + ' where receiverid = '+ receiverid +' and isread != 1 ORDER BY sendtime desc) m GROUP BY senderid) mm, user_profiles up, users u where mm.senderid = up.userid and u.id = up.userid');
+			.raw('select mm.*, up.name sendername, u.avatar senderavatar from (select *, -sum(isread-1) unreadcount from (select * from ' + tableName + ' where receiverid = '+ receiverid +' ORDER BY sendtime desc) m GROUP BY senderid) mm, user_profiles up, users u where mm.senderid = up.userid and u.id = up.userid ORDER BY sendtime DESC');
+	},
+	
+	markRead: function(senderid, receiverid){
+		return syBookshelf.knex
+			.raw('update ' + tableName + ' set isread=1 where isread!=1 and senderid=' + senderid + ' and receiverid=' + receiverid);
 	}
 });

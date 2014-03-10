@@ -263,7 +263,7 @@ module.exports = function (app) {
 					if (!(self.get('ownerid') == user.id)) {
 						throw errors(20102);
 					}
-					Event.add(user.id, activity.get('groupid'), 'activity', activity.get('id'), user.get('username') + '结束了活动' + activity.get('name'));
+					Event.add(user.id, activity.get('groupid'), 'activity', activity.get('id'), user.related('profile').get('name') + '结束了活动' + activity.get('name'));
 					return self.set({
 						'statusid': 4
 					}).save()
@@ -307,7 +307,7 @@ module.exports = function (app) {
 				if (user.id != ownerid) {
 					throw errors(20102);
 				}
-				Event.add(user.id, activity.get('groupid'), 'activity', activity.get('id'), user.get('username') + '更新了活动' + activity.get('name'));
+				Event.add(user.id, activity.get('groupid'), 'activity', activity.get('id'), user.related('profile').get('name') + '更新了活动' + activity.get('name'));
 				return activity.set(req.body).save()
 					.then(function (activity) {
 						next({
@@ -368,20 +368,22 @@ module.exports = function (app) {
 						for(var i=0; i < maxNumPic; i++) {
 							keyList.push('picture' + (i + 1));
 						}
-						_.every(keyList, function (v, i) {
-							var key = v;
-							if (req.files[key]) {
-								p = p.then(function () {
-									return Picture.forge({ activityid: activityid }).save()
-										.then(function (picture) {
-											return picture.updatePicture('avatar', req.files[key]['path']);
-										});
-								});
-								return true;
-							}
-						});
+            if (req.files) {
+              _.every(keyList, function (v, i) {
+                var key = v;
+                if (req.files[key]) {
+                  p = p.then(function () {
+                    return Picture.forge({ activityid: activityid }).save()
+                      .then(function (picture) {
+                        return picture.updatePicture('avatar', req.files[key]['path']);
+                      });
+                  });
+                  return true;
+                }
+              });
+            }
 						return p.then(function () {
-							Event.add(user.id, activity.get('groupid'), 'activity', activity.get('id'), user.get('username') + '创建了活动' + activity.get('name'));
+							Event.add(user.id, activity.get('groupid'), 'activity', activity.get('id'), user.related('profile').get('name') + '创建了活动' + activity.get('name'));
 							return UserActivity.forge({
 								'userid': user.id,
 								'activityid': activity.id,
@@ -610,7 +612,7 @@ module.exports = function (app) {
 		if (file['size'] > imageLimit) return next(errors(20006));
 		Activity.forge({ id: req.body['id'] }).fetch()
 			.then(function (activity) {
-				Event.add(user.id, activity.get('groupid'), 'activity', activity.get('id'), user.get('username') + '更新了活动' + activity.get('name'));
+				Event.add(user.id, activity.get('groupid'), 'activity', activity.get('id'), user.related('profile').get('name') + '更新了活动' + activity.get('name'));
 				return activity.updateAsset('avatar', file['path'])
 					.then(function () {
 						next({ msg: 'avatar updated' });

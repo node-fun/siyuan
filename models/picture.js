@@ -7,6 +7,7 @@ var fs = require('fs-extra'),
 	chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
 	Promise = require('bluebird'),
+	errors = require('../lib/errors'),
 	config = require('../config'),
 	tbPicture = 'pictures';
 
@@ -63,7 +64,7 @@ Picture = module.exports = syBookshelf.Model.extend({
 							});
 						});
 					}).catch(function (err) {
-						return self;
+						return self.destroy().throw(err);
 					})
 			});
 		});

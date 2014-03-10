@@ -290,7 +290,7 @@ module.exports = function (app) {
 					if (!(self.get('ownerid') == user.id)) {
 						return Promise.rejected(errors(20102));
 					}
-					Event.add(user.id, null, 'cooperation', cooperation.get('id'), user.get('username') + '结束了合作' + cooperation.get('name'));
+					Event.add(user.id, null, 'cooperation', cooperation.get('id'), user.related('profile').get('name') + '结束了合作' + cooperation.get('name'));
 					return self.set({
 						'statusid': 2
 					}).save()
@@ -334,7 +334,7 @@ module.exports = function (app) {
 				if (user.id != ownerid) {
 					return Promise.rejected(errors(20102));
 				}
-				Event.add(user.id, null, 'cooperation', cooperation.get('id'), user.get('username') + '更新了商务合作' + cooperation.get('name'));
+				Event.add(user.id, null, 'cooperation', cooperation.get('id'), user.related('profile').get('name') + '更新了商务合作' + cooperation.get('name'));
 				self.set(req.body).save()
 					.then(function (cooperation) {
 						next({
@@ -380,20 +380,22 @@ module.exports = function (app) {
 				for(var i=0; i < maxNumPic; i++) {
 					keyList.push('picture' + (i + 1));
 				}
-				_.every(keyList, function (v, i) {
-					var key = v;
-					if (req.files[key]) {
-						p = p.then(function () {
-							return Picture.forge({ cooperationid: cooperationid }).save()
-								.then(function (picture) {
-									return picture.updatePicture('avatar', req.files[key]['path']);
-								});
-						})
-						return true;
-					}
-				});
+        if (req.files) {
+          _.every(keyList, function (v, i) {
+            var key = v;
+            if (req.files[key]) {
+              p = p.then(function () {
+                return Picture.forge({ cooperationid: cooperationid }).save()
+                  .then(function (picture) {
+                    return picture.updatePicture('avatar', req.files[key]['path']);
+                  });
+              })
+              return true;
+            }
+          });
+        }
 				return p.then(function () {
-					Event.add(user.id, null, 'cooperation', cooperation.get('id'), user.get('username') + '创建了商务合作' + cooperation.get('name'));
+					Event.add(user.id, null, 'cooperation', cooperation.get('id'), user.related('profile').get('name') + '创建了商务合作' + cooperation.get('name'));
 					return UserCooperation.forge({
 						userid: user.id,
 						cooperationid: cooperation.get('id'),
@@ -753,7 +755,7 @@ module.exports = function (app) {
 		if (file['size'] > imageLimit) return next(errors(20006));
 		Cooperation.forge({ id: req.body['id'] }).fetch()
 			.then(function (cooperation) {
-				Event.add(user.id, null, 'cooperation', cooperation.get('id'), user.get('username') + '更新了商务合作' + cooperation.get('name'));
+				Event.add(user.id, null, 'cooperation', cooperation.get('id'), user.related('profile').get('name') + '更新了商务合作' + cooperation.get('name'));
 				cooperation.updateAsset('avatar', file['path'])
 					.then(function () {
 						next({ msg: 'avatar updated' });

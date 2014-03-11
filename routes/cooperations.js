@@ -374,7 +374,7 @@ module.exports = function (app) {
 			}, req.body)).save()
 			.then(function (cooperation) {
 				var cooperationid = cooperation.id;
-				var maxNumPic = 3;
+				var maxNumPic = 5;
 				var p = Promise.cast();
 				var keyList = new Array();
 				for(var i=0; i < maxNumPic; i++) {

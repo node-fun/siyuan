@@ -12,8 +12,12 @@ Feedback = module.exports = syBookshelf.Model.extend({
 			posttime: new Date()
 		};
 	}
-})
+});
 
 Feedbacks = Feedback.Set = syBookshelf.Collection.extend({
-	model: Feedback
+	model: Feedback,
+
+	lister: function (req, qb) {
+		this.qbWhere(qb, req, req.query, ['id', 'userid', 'type', 'versioncode', 'device'], tbFeedback);
+	}
 });

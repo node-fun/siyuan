@@ -7,10 +7,16 @@ Feedback = module.exports = syBookshelf.Model.extend({
 	fields: [
 		'id', 'userid', 'type', 'title', 'body', 'versioncode', 'device', 'posttime'
 	],
+	omitInJSON: ['userid'],
+	appended: ['user'],
+
 	defaults: function () {
 		return {
 			posttime: new Date()
 		};
+	},
+	user: function () {
+		return this.belongsTo(require('./user'), 'userid');
 	}
 });
 

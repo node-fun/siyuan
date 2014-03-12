@@ -170,9 +170,12 @@ module.exports = function (app) {
 	app.post('/api/users/login', function (req, res, next) {
 		User.forge(req.body).login()
 			.then(function (user) {
+				req.session['userid'] = user.id;
+				// make a heartbeat
+				req.session['stamp'] = Date.now();
 				next({
 					msg: 'User logged in',
-					id: req.session['userid'] = user.id
+					id: user.id
 				});
 			}).catch(next);
 	});
@@ -183,12 +186,13 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.post('/api/users/logout', function (req, res, next) {
-		var user = req.user;
-		if (!user) return next(errors(21301));
-		user.logout()
-			.then(function () {
-				next({ msg: 'User logged out' });
-			}).catch(next);
+		if (!req.user) return next(errors(21301));
+		req.session.destroy(function () {
+			req.user.logout()
+				.then(function () {
+					next({ msg: 'User logged out' });
+				}).catch(next);
+		});
 	});
 
 	/**
@@ -199,9 +203,8 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.post('/api/users/password/reset', function (req, res, next) {
-		var user = req.user;
-		if (!user) return next(errors(21301));
-		user.resetPassword(req.body)
+		if (!req.user) return next(errors(21301));
+		req.user.resetPassword(req.body)
 			.then(function () {
 				next({ msg: 'Password reset' });
 			}).catch(next);
@@ -222,9 +225,8 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.post('/api/users/profile/update', function (req, res, next) {
-		var user = req.user;
-		if (!user) return next(errors(21301));
-		user.updateProfile(req.body)
+		if (!req.user) return next(errors(21301));
+		req.user.updateProfile(req.body)
 			.then(function () {
 				next({ msg: 'Profile updated' });
 			}).catch(next);
@@ -237,13 +239,12 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.post('/api/users/avatar/update', function (req, res, next) {
-		var user = req.user,
-			file = req.files['avatar'];
-		if (!user) return next(errors(21301));
+		var file = req.files['avatar'];
+		if (!req.user) return next(errors(21301));
 		if (!file) return next(errors(20007));
 		if (file['type'] != 'image/jpeg') return next(errors(20005));
 		if (file['size'] > config.imageLimit) return next(errors(20006));
-		user.updateAsset('avatar', file['path'])
+		req.user.updateAsset('avatar', file['path'])
 			.then(function () {
 				next({ msg: 'Avatar updated' });
 			}).catch(next);
@@ -256,13 +257,12 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.post('/api/users/cover/update', function (req, res, next) {
-		var user = req.user,
-			file = req.files['cover'];
-		if (!user) return next(errors(21301));
+		var file = req.files['cover'];
+		if (!req.user) return next(errors(21301));
 		if (!file) return next(errors(20007));
 		if (file['type'] != 'image/jpeg') return next(errors(20005));
 		if (file['size'] > config.imageLimit) return next(errors(20006));
-		user.updateAsset('cover', file['path'])
+		req.user.updateAsset('cover', file['path'])
 			.then(function () {
 				next({ msg: 'Cover updated' });
 			}).catch(next);

@@ -22,14 +22,15 @@ module.exports = function (app) {
 	}
 	 */
 	app.get('/api/messages/unreadcount', function (req, res, next) {
-		var user = req.user;
-		if (!user) return next(errors[21301]);
+		if (!req.user) return next(errors(21301));
 		Messages.forge().query()
-			.where({'receiverid': user.id, 'isread': 0})
+			.where({'receiverid': req.user.id, 'isread': 0})
 			.count('id')
 			.then(function (m) {
 				next({count: m[0]["count(`id`)"]});
 			}).catch(next);
+		// make a heartbeat
+		req.session['stamp'] = Date.now();
 	});
 
 	/**

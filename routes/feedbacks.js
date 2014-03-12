@@ -14,7 +14,7 @@ module.exports = function (app) {
 	 * @param {String} page/limit/order
 	 */
 	app.get('/api/feedbacks/list', function (req, res, next) {
-		Feedbacks.list(req.query)
+		Feedbacks.forge().fetch({ req: req })
 			.then(function (feedbacks) {
 				next({ feedbacks: feedbacks});
 			}).catch(next);
@@ -30,12 +30,10 @@ module.exports = function (app) {
 	 * @param {String} [device] 设备型号（手机型号）
 	 */
 	app.post('/api/feedbacks/post', function (req, res, next) {
-		var user = req.user;
-		if (!user) return next(errors(21301));
+		if (!req.user) return next(errors(21301));
 		if (!req.body['body'] || !req.body['type'] || !req.body['versioncode'])
 			return next(errors(10008));
-		delete req.body['id'];
-		Feedback.forge(_.extend(req.body, {userid: user.id}))
+		Feedback.forge(_.extend(req.body, { userid: req.user.id }))
 			.save()
 			.then(function (feedback) {
 				next({
@@ -44,4 +42,4 @@ module.exports = function (app) {
 				});
 			}).catch(next);
 	});
-}
+};

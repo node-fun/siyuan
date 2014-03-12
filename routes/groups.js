@@ -57,6 +57,28 @@ module.exports = function (app) {
 	});
 
 	/**
+	 * GET /api/groups/view
+	 * @method 圈子详情
+	 * @param {Number} [id] 圈子ID
+	 * @return {JSON}
+	 * {"group":{......}}
+	 */
+	app.get('/api/groups/view', function (req, res, next) {
+		Group.forge({ id: req.query['id'] })
+			.fetch({ req: req })
+			.then(function (group) {
+				return group.countMembership()
+					.then(function () {
+						return group.countActivities();
+					}).then(function () {
+						return group.load(['owner', 'owner.profile']);
+					}).then(function (g) {
+						return next({ group: g });
+					});
+			}).catch(next);
+	});
+	
+	/**
 	 * get /api/groups/members <br>
 	 * 支持page、limit、orders
 	 * @method 圈子成员列表

@@ -5,6 +5,7 @@ var _ = require('underscore'),
 	User = require('./models/user'),
 	Admin = require('./models/admin'),
 	config = require('./config'),
+	sessionStore = new express.session.MemoryStore(),
 	app = express();
 
 app.set('views', config.adminDir);
@@ -20,7 +21,7 @@ app.use(function (req, res, next) {
 });
 app.use(express.methodOverride(config.methodKey));
 app.use(express.cookieParser(config.secret));
-app.use(express.session());
+app.use(express.session({ store: sessionStore }));
 
 // middlewares
 app.use(function (req, res, next) {
@@ -49,6 +50,20 @@ app.use(function (req, res, next) {
 			});
 	}
 });
+
+// regularly clean
+var cleanCycle = 5 * 60 * 1000;
+setInterval(function () {
+	var now = Date.now();
+	_.each(sessionStore.sessions, function (str, sid) {
+		var sess = JSON.parse(str);
+		if (sess.userid && now - sess.stamp > cleanCycle) {
+			delete sessionStore.sessions[sid];
+			User.forge({ id: sess.userid }).logout();
+		}
+	});
+}, cleanCycle);
+
 app.use('/api', require('./lib/api/parser'));
 app.use('/api', require('./lib/api/sender'));
 // routes

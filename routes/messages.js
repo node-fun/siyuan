@@ -11,7 +11,7 @@ var Message = require('../models/message'),
 	errors = require('../lib/errors');
 
 module.exports = function (app) {
-	
+
 	/**
 	 * GET /api/messages/unreadcount <br/>
 	 * 需登录
@@ -31,6 +31,9 @@ module.exports = function (app) {
 			}).catch(next);
 		// make a heartbeat
 		req.session['stamp'] = Date.now();
+		if (0 == req.user.get('isonline')) {
+			req.user.set('isonline', 1).save();
+		}
 	});
 
 	/**

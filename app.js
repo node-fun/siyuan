@@ -52,14 +52,15 @@ app.use(function (req, res, next) {
 });
 
 // regularly clean
-var cleanCycle = 5 * 60 * 1000;
+var onlineTimeout = 5 * 60 * 1000,
+	cleanCycle = onlineTimeout / 5;
 setInterval(function () {
 	var now = Date.now();
-	_.each(sessionStore.sessions, function (str, sid) {
+	_.each(sessionStore.sessions, function (str) {
 		var sess = JSON.parse(str);
 		if (sess.userid && now - sess.stamp > cleanCycle) {
-			delete sessionStore.sessions[sid];
-			User.forge({ id: sess.userid }).logout();
+			User.forge({ id: sess.userid })
+				.set('isonline', 0).save();
 		}
 	});
 }, cleanCycle);

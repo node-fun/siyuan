@@ -109,7 +109,7 @@ module.exports = function (app) {
 		if (!req.user) return next(errors(21301));
 		req.query = _.omit(req.query, ['id']);
 		req.query['id'] = req.user.id;
-		Users.forge().fetch({ req: req, detailed: true, single: true })
+		User.forge().fetch({ req: req, detailed: true })
 			.then(function (user) {
 				next({ user: user });
 			}).catch(next);

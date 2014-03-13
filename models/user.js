@@ -110,13 +110,19 @@ User = module.exports = syBookshelf.Model.extend({
 				}
 			});
 	},
+
 	fetched: function (model, resp, options) {
 		return User.__super__.fetched.apply(this, arguments)
-			.return(model).call('detectFollowed', options['followingids'])
 			.then(function () {
 				if (!options['detailed']) return;
 				return Promise.cast(model)	// for detail
-					.call('countFollowship')
+					.then(function () {
+						if (options.req && options.req.user) {
+							return options.req.user.getFollowingIds();
+						}
+					}).then(function (followingids) {
+						return model.detectFollowed(followingids);
+					}).call('countFollowship')
 					.call('countIssues')
 					.call('countPhotos')
 					.call('countStarship')
@@ -173,6 +179,15 @@ User = module.exports = syBookshelf.Model.extend({
 			.count('id')
 			.then(function (d) {
 				return self.data('numEvents', d[0]["count(`id`)"]);
+			});
+	},
+
+	getFollowingIds: function () {
+		return this.following().fetch()
+			.then(function (followships) {
+				return followships.map(function (followship) {
+					return followship.get('followid');
+				});
 			});
 	},
 	detectFollowed: function (followingids) {
@@ -253,11 +268,9 @@ Users = User.Set = syBookshelf.Collection.extend({
 		return Users.__super__.fetching.apply(this, arguments)
 			.then(function () {
 				if (options.req && options.req.user) {
-					return options.req.user.following().fetch()
-						.then(function (following) {
-							options['followingids'] = following.map(function (followship) {
-								return followship.get('followid');
-							});
+					return options.req.user.getFollowingIds()
+						.then(function (followingids) {
+							options['followingids'] = followingids;
 						});
 				}
 			});

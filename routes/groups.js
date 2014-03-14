@@ -215,7 +215,8 @@ module.exports = function (app) {
 				return GroupMember.forge({
 					userid: user.id,
 					groupid: group.id,
-					isowner: 1
+					isowner: 1,
+					isaccepted: 1
 				}).save()
 					.then(function (groupMember) {
 						next({
@@ -450,7 +451,7 @@ module.exports = function (app) {
 					if (!_.isArray(userid)) {
 						userid = [userid];
 					}
-					return join(user, userid, req.body['groupid'], next);
+					return join(user, userid, req.body['groupid'], next, 1);
 				}
 			});
 	});
@@ -562,12 +563,13 @@ module.exports = function (app) {
  * @param next
  * @returns {*}
  */
-function join(user, userid, groupid, next) {
+function join(user, userid, groupid, next, accepted) {
 	var members = GroupMember.Set.forge();
 	for (var i = 0; i < userid.length; i++) {
 		members.add(GroupMember.forge({
 			'userid': userid[i],
-			'groupid': groupid
+			'groupid': groupid,
+			'isaccepted': accepted ? accepted : 0
 		}));
 	}
 	//不能重复加入，在数据库里控制

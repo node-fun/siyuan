@@ -114,15 +114,15 @@ User = module.exports = syBookshelf.Model.extend({
 	fetched: function (model, resp, options) {
 		return User.__super__.fetched.apply(this, arguments)
 			.then(function () {
+				if (options.req && options.req.user) {
+					return options.req.user.getFollowingIds();
+				}
+			}).then(function (followingids) {
+				return model.detectFollowed(followingids);
+			}).then(function () {
 				if (!options['detailed']) return;
 				return Promise.cast(model)	// for detail
-					.then(function () {
-						if (options.req && options.req.user) {
-							return options.req.user.getFollowingIds();
-						}
-					}).then(function (followingids) {
-						return model.detectFollowed(followingids);
-					}).call('countFollowship')
+					.call('countFollowship')
 					.call('countIssues')
 					.call('countPhotos')
 					.call('countStarship')

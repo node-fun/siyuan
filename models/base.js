@@ -37,7 +37,7 @@ syModel.include({
 		if (this.required.some(function (k) {
 			return self.get(k) == null;
 		})) {
-			return Promise.reject(errors[10008]);
+			return Promise.reject(errors(10008));
 		}
 		var err = null;
 		if (_.some(this.validators, function (validator, k) {
@@ -148,9 +148,9 @@ syModel.include({
 		return new Promise(
 			function (resolve, reject) {
 				fs.mkdirp(path.dirname(file), function (err) {
-					if (err) return reject(errors[30000]);
+					if (err) return reject(errors(30000));
 					fs.copy(tmp, file, function (err) {
-						if (err) return reject(errors[30003]);
+						if (err) return reject(errors(30003));
 						resolve(self);
 					});
 				});
@@ -167,7 +167,7 @@ syModel.include({
 			self = this;
 		return new Promise(function (resolve, reject) {
 			fs.unlink(file, function (err) {
-				if (err) return reject(errors[30002]);
+				if (err) return reject(errors(30002));
 				resolve(self);
 			});
 		});

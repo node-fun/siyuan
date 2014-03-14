@@ -107,9 +107,8 @@ module.exports = function (app) {
 	 */
 	app.get('/api/users/i', function (req, res, next) {
 		if (!req.user) return next(errors(21301));
-		req.query = _.omit(req.query, ['id']);
-		req.query['id'] = req.user.id;
-		User.forge().fetch({ req: req, detailed: true })
+		User.forge({ id: req.user.id })
+			.fetch({ req: req, detailed: true })
 			.then(function (user) {
 				next({ user: user });
 			}).catch(next);

@@ -91,18 +91,20 @@ module.exports = function (app) {
 				for(var i=0; i < maxNumPic; i++) {
 					keyList.push('picture' + (i + 1));
 				}
-				_.every(keyList, function (v, i) {
-					var key = v;
-					if (req.files[key]) {
-						p = p.then(function () {
-							return Picture.forge({ issueid: issueid }).save()
-								.then(function (picture) {
-									return picture.updatePicture('avatar', req.files[key]['path']);
-								});
-						});
-						return true;
-					}
-				});
+				if (req.files) {
+					_.every(keyList, function (v, i) {
+						var key = v;
+						if (req.files[key]) {
+							p = p.then(function () {
+								return Picture.forge({ issueid: issueid }).save()
+									.then(function (picture) {
+										return picture.updatePicture('avatar', req.files[key]['path']);
+									});
+							});
+							return true;
+						}
+					});
+				}
 				return p.then(function () {
 					next({
 						msg: 'Issue posted',

@@ -30,7 +30,10 @@ Message = module.exports = syBookshelf.Model.extend({
 		return this.save();
 	}
 }, {
-	
+	//Send system message.
+	send: function (receiverid, body) {
+		return Message.forge({senderid: 0, receiverid: receiverid, body: body}).save();
+	}
 });
 
 Messages = Message.Set = syBookshelf.Collection.extend({

@@ -6,6 +6,7 @@ var _ = require('underscore'),
 	Group = require('../models/group'),
 	GroupMember = require('../models/group-membership'),
 	Event = require('../models/event'),
+	Message = require('../models/message'),
 	errors = require('../lib/errors'),
 	config = require('../config'),
 	imageLimit = config.imageLimit,
@@ -108,18 +109,20 @@ module.exports = function (app) {
 
 	/**
 	 * post /api/groups/members/accept <br>
-	 * 管理员或圈主可以操作
+	 * 管理员或圈主可以操作 <br>
+	 * 会有系统消息通知用户
 	 * @method 接受加入申请
 	 * @param {Number} membershipid
 	 * @return {JSON}
 	 */
 	app.post('/api/groups/members/accept', function (req, res, next) {
 		if (!req.user) return next(errors(21301));
+		var groupid, memberid;
 		GroupMember.forge({id: req.body['membershipid']})
 			.fetch()
 			.then(function (groupMember) {
 				if (!groupMember) return next(errors(20603));
-				var groupid = groupMember.get('groupid');
+				groupid = groupMember.get('groupid');
 				//判断有没有权限操作
 				GroupMember.forge({groupid: groupid, userid: req.user.id})
 					.fetch()
@@ -127,28 +130,35 @@ module.exports = function (app) {
 						if (!(gm.get('isowner') || gm.get('isadmin'))) {
 							return next(errors(40017));
 						} else {
+							memberid = groupMember.get('userid');
 							return groupMember.set('isaccepted', 1).save();
 						}
 					})
 			}).then(function (groupMember) {
 				next({msg: "group member accepted"});
+				Group.forge({id: groupid}).fetch()
+					.then(function (g) {
+						Message.send(memberid, '您已被管理员批准加入圈子 '+ g.get('name'));
+					});
 			}).catch(next);
 	})
 
 	/**
 	 * POST /api/groups/members/reject <br>
-	 * 管理员或圈主可以操作
+	 * 管理员或圈主可以操作 <br>
+	 * 会有系统消息通知用户
 	 * @method 拒绝加入申请
 	 * @param {Number} membershipid
 	 * @return {JSON}
 	 */
 	app.post('/api/groups/members/reject', function (req, res, next) {
 		if (!req.user) return next(errors(21301));
+		var groupid, memberid;
 		GroupMember.forge({id: req.body['membershipid']})
 			.fetch()
 			.then(function (groupMember) {
 				if (!groupMember) return next(errors(20603));//这里返回的是[Object Object]，为什么
-				var groupid = groupMember.get('groupid');
+				groupid = groupMember.get('groupid');
 				//判断有没有权限操作
 				GroupMember.forge({groupid: groupid, userid: req.user.id})
 					.fetch()
@@ -156,11 +166,16 @@ module.exports = function (app) {
 						if (!(gm.get('isowner') || gm.get('isadmin'))) {
 							return next(errors(40017));
 						} else {
+							memberid = groupMember.get('userid');
 							return groupMember.destroy();
 						}
 					})
 			}).then(function () {
 				next({msg: "group member rejected"});
+				Group.forge({id: groupid}).fetch()
+					.then(function (g) {
+						Message.send(memberid, '管理员拒绝您加入圈子 '+ g.get('name'));
+					});
 			}).catch(next);
 	});
 
@@ -235,7 +250,8 @@ module.exports = function (app) {
 	});
 
 	/**
-	 * post /api/groups/join
+	 * post /api/groups/join <br>
+	 * 会有系统消息通知圈子人
 	 * @method 加入圈子
 	 * @param {Number} groupid 圈子id
 	 * @return {JSON} {  
@@ -245,7 +261,18 @@ module.exports = function (app) {
 	app.post('/api/groups/join', function (req, res, next) {
 		var user = req.user;
 		if (!user) return next(errors(21301));
-		join(user, [user.id], req.body['groupid'], next);
+		var groupid = req.body['groupid'];
+		if(!groupid) return next(errors(10008));
+		join(user, [user.id], groupid, next)
+			.then(function (ret) {
+				if(ret){
+					//发系统消息
+					Group.forge({id: groupid}).fetch()
+						.then(function (g) {
+							Message.send(g.get('ownerid'), '有用户申请加入圈子 '+g.get('name')+' ，请查看');
+						});
+				}
+			});
 	});
 
 	/**
@@ -425,7 +452,8 @@ module.exports = function (app) {
 	/**
 	 * POST /api/groups/pull <br/>
 	 * 注意：必须是管理员或圈主才能拉好友进圈子，<br/>
-	 * 可以传多个userid
+	 * 可以传多个userid <br>
+	 * 会有系统消息通知用户
 	 * @method 拉好友进圈子
 	 * @param {Number} userid
 	 * @param {Number} groupid
@@ -439,19 +467,31 @@ module.exports = function (app) {
 		if (!user) {
 			return next(errors(21301));
 		}
+		var userid,
+			groupid = req.body['groupid'];
 		GroupMember.forge({
 			userid: user.id,
-			groupid: req.body['groupid']
+			groupid: groupid
 		}).fetch()
 			.then(function (m) {
 				if (!m.get('isadmin') && !m.get('isowner')) {
 					next(errors(21301));
 				} else {
-					var userid = req.body['userid'];
+					userid = req.body['userid'];
 					if (!_.isArray(userid)) {
 						userid = [userid];
 					}
-					return join(user, userid, req.body['groupid'], next, 1);
+					return join(user, userid, groupid, next, 1);
+				}
+			}).then(function (ret) {
+				if(ret){
+					//发系统消息
+					Group.forge({id: groupid}).fetch()
+						.then(function (g) {
+							for (var i=0; i<userid.length; i++){
+								Message.send(userid[i], '管理员已邀请您进入圈子 '+g.get('name'));
+							}
+						});
 				}
 			});
 	});
@@ -577,12 +617,14 @@ function join(user, userid, groupid, next, accepted) {
 		.then(function () {
 			next({msg: 'join group success'});
 			Event.add(user.id, groupid, 'group', groupid, '圈子里来了新成员');
+			return true;
 		}).catch(function (err) {
 			if (/^ER_DUP_ENTRY/.test(err.message)) {
 				next(errors(20506));
 			} else {
 				next(err);
 			}
+			return false;
 		});
 }
 

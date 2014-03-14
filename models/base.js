@@ -240,7 +240,7 @@ syModel.Set = syCollection.include({
 	lister: null,
 	allowNull: function (query, keys) {
 		keys.forEach(function (k) {
-			if (query[k] == '') query[k] = null;
+			if (!query[k]) query[k] = null;
 		});
 		return this;
 	},

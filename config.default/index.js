@@ -92,5 +92,6 @@ var config = module.exports = {
 			username: 'admin1',
 			password: '123'
 		}
-	]
+	],
+	systemid: 1 /*treat the system as a user, will use this id while sending system message*/
 };

@@ -3,6 +3,7 @@
  */
 var syBookshelf = require('./base'),
 	User = require('./user'),
+	config = require('../config'),
 	Message, Messages,
 	tableName = 'message';
 
@@ -32,7 +33,7 @@ Message = module.exports = syBookshelf.Model.extend({
 }, {
 	//Send system message.
 	send: function (receiverid, body) {
-		return Message.forge({senderid: 0, receiverid: receiverid, body: body}).save();
+		return Message.forge({senderid: config.systemid, receiverid: receiverid, body: body}).save();
 	}
 });
 

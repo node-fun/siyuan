@@ -7,6 +7,7 @@ var fs = require('fs-extra'),
 	env = config.env,
 	connConfig = config.db.connection,
 	dbName = connConfig.database,
+	syBookshelf = require('../models/base'),
 	User = require('../models/user'),
 	Users = User.Set,
 	Followship = require('../models/followship'),
@@ -76,7 +77,8 @@ execsql.config(connConfig)
 			if (err) throw err;
 			console.log('database setup');
 			if (env != 'production') {
-				addUsers()
+				addSystemUser()//please make this first to ensure the systemid is 1
+					.then(addUsers)
 					.then(addFollowship)
 					.then(addAdmins)
 					.then(addGroups)
@@ -94,7 +96,8 @@ execsql.config(connConfig)
 					.then(done)
 					.catch(done);
 			} else {
-				addAd()
+				addSystemUser()//please make this first to ensure the systemid is 1
+					.then(addAd)
 					.then(addAdmins)
 					.then(done)
 					.catch(done);
@@ -138,6 +141,24 @@ function addUsers() {
 			console.log('%d users added', users.length);
 		}).catch(done);
 }
+
+//add a system user for sending system message
+function addSystemUser() {
+	return User.forge({
+		username: 'System',
+		password: chance.string(),
+		avatar: null,
+		profile: {
+			name: 'System',
+			email: config.smtp.auth.user,
+			summary: 'This is the system account.'
+		}
+	}).register()
+		.then(function () {
+			console.log('%d system user added',1);
+		}).catch(done);
+}
+
 function addFollowship() {
 	var followships = Followships.forge();
 	_.times(numFollowship, function () {

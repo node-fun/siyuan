@@ -10,6 +10,7 @@ var _ = require('underscore'),
 	UserActivitys = UserActivity.Set,
 	GroupMembers = require('../models/group-membership'),
 	Event = require('../models/event'),
+	Message = require('../models/message'),
 	Picture = require('../models/picture'),
 	errors = require('../lib/errors'),
 	config = require('../config'),
@@ -164,7 +165,7 @@ module.exports = function (app) {
 
 		if (!user) return next(errors(21301));
 		if (!req.body['id']) return next(errors(10008));
-
+		var activityid = req.body['id'];
 		Activity.forge({ id: req.body['id'] })
 			.fetch()
 			.then(function (activity) {
@@ -179,7 +180,8 @@ module.exports = function (app) {
 					'activityid': activity.get('id'),
 					'isaccepted': false
 				}).save()
-					.then(function () {
+					.then(function (uesrship) {
+
 						next({ msg: 'join activity success' });
 					}).catch(function (err) {
 						if (/^ER_DUP_ENTRY/.test(err.message)) {
@@ -465,6 +467,7 @@ module.exports = function (app) {
 		var user = req.user;
 
 		if (!user) return next(errors(21301));
+		var activityid, memberid;
 		if (!req.body['id'])
 			return next(errors(10008));
 
@@ -472,17 +475,20 @@ module.exports = function (app) {
 			.fetch()
 			.then(function (usership) {
 				if (!usership) throw errors(20603);
-				var activityid = usership.get('activityid'),
-					self = usership;
+				activityid = usership.get('activityid'),
+				memberid = usership.get('userid');
 				Activity.forge({ id: activityid })
 					.fetch()
 					.then(function (activity) {
 						ownerid = activity.get('ownerid');
 						if (user.id != ownerid) return next(errors(20102));
-						else return self.set({ 'isaccepted': true }).save()
-							.then(function () {
-								next({ msg: 'accept success' });
-							});
+						else return self.set({ 'isaccepted': true }).save();
+					});
+			}).then(function (a) {
+				next({ msg: 'accept success' });
+				Activity.forge({ id: activityid }).fetch()
+					.then(function (a) {
+						Message.send(memberid, '您已被管理员批准加入活动 ' + a.get('name'));
 					});
 			}).catch(next)
 	});
@@ -493,28 +499,31 @@ module.exports = function (app) {
 	 * @param {Number} id
 	 */
 	app.post('/api/activities/reject', function (req, res, next) {
-
 		var user = req.user;
-
 		if (!user) return next(errors(21301));
+		var activityid, memberid;
 		if (!req.body['id'])
 			return next(errors(10008));
-
 		UserActivity.forge({ id: req.body['id'] })
 			.fetch()
 			.then(function (usership) {
 				if (!usership) throw errors(20603);
-				var activityid = usership.get('activityid'),
-					self = usership;
+				var self = usership;
+				activityid = usership.get('activityid');
+				memberid = usership.get('userid');
+				if (usership.get('isaccepted')) throw errors(40016);
 				Activity.forge({ id: activityid })
 					.fetch()
 					.then(function (activity) {
-						ownerid = activity.get('ownerid');
+						var ownerid = activity.get('ownerid');
 						if (user.id != ownerid) return next(errors(20102));
-						else return self.destroy()
-							.then(function () {
-								next({ msg: 'reject success' });
-							});
+						else return self.destroy();
+					});
+			}).then(function () {
+				next({ msg: 'reject success' });
+				Activity.forge({ id: activityid }).fetch()
+					.then(function (a) {
+							Message.send(memberid, '管理员拒绝您加入活动 ' + a.get('name'));
 					});
 			}).catch(next)
 	});

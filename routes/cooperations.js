@@ -60,7 +60,8 @@ module.exports = function (app) {
 	 },
 	 "status": {
         "id": 1,
-        "name": "??"
+        "name": "发布"
+        // 1对应发布 2对应结束
       }
 	 }
 	 ]

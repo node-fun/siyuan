@@ -8,6 +8,7 @@ var _ = require('underscore'),
 	Issues = Issue.Set,
 	Picture = require('../models/picture'),
 	IssueComment = require('../models/issue-comment'),
+	Starship = require('../models/starship'),
 	mail = require('../lib/mail'),
 	errors = require('../lib/errors');
 
@@ -174,6 +175,14 @@ module.exports = function (app) {
 			.then(function (issue) {
 				if (!issue) throw errors(20603);
 				req.body['userid'] = user.id;
+				//auto star
+				Starship.forge({
+					userid: user.id,
+					itemtype: 2,
+					itemid: issue.get('id'),
+					remark: 'issue'
+				}).save()
+				.catch(function (err) {});
 				return IssueComment.forge(req.body).save()
 					.then(function (comment) {
 						var author = issue.related('user');

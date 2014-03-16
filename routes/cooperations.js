@@ -7,12 +7,14 @@ var _ = require('underscore'),
 	Cooperation = require('../models/cooperation'),
 	Cooperations = Cooperation.Set,
 	UserCooperation = require('../models/user-cooperation'),
-	UserCooperations = UserCooperation.Set;
-GroupMember = require('../models/group-membership'),
+	UserCooperations = UserCooperation.Set,
+	GroupMember = require('../models/group-membership'),
 	GroupMembers = GroupMember.Set,
 	CoComment = require('../models/co-comment'),
 	CoComments = CoComment.Set,
+	Starship = require('../models/starship'),
 	Event = require('../models/event'),
+	mail = require('../lib/mail'),
 	errors = require('../lib/errors'),
 	config = require('../config'),
 	imageLimit = config.imageLimit;
@@ -663,16 +665,36 @@ module.exports = function (app) {
 	app.post('/api/cooperations/comments/post', function (req, res, next) {
 		var user = req.user;
 		if (!user) return next(errors(21301));
-		Cooperation.forge({ 'id': req.body['cooperationid'] }).fetch()
+		if (!req.body['cooperationid']) return next(errors(10008));
+		var cooperationid = req.body['cooperationid'];
+		Cooperation.forge({ 'id': cooperationid }).fetch()
 			.then(function (cooperation) {
 				if (!cooperation) return Promise.rejected(errors(20603));
 				req.body['userid'] = user.id;
-				return CoComment.forge(req.body).save();
-			}).then(function (cocomment) {
-				next({
-					msg: 'Comment posted',
-					id: cocomment.id
-				});
+				//auto star
+				Starship.forge({
+					userid: user.id,
+					itemtype: 4,
+					itemid: cooperationid,
+					remark: 'business'
+				}).save()
+				.catch(function (err) {});
+				return CoComment.forge(req.body).save()
+					.then(function (cocomment) {
+						var author = cooperation.related('user');
+						mail({
+							to: author.related('profile').get('email'),
+							subject: '有用户询问您的商务合作',
+							text: [
+								'您发布的商务合作 <' + cooperation.get('name') + '>',
+								'得到了 @' + user.related('profile').get('name') + ' 的评论!'
+							].join('\n')
+						});
+						next({
+							msg: 'Comment posted',
+							id: cocomment.id
+						});
+					});
 			}).catch(next);
 	});
 

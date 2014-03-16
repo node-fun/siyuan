@@ -4,6 +4,7 @@
 var _ = require('underscore'),
 	chance = new (require('chance'))(),
 	syBookshelf = require('./base'),
+	Starship = require('./starship'),
 	tbCoComment = 'co_comments',
 	CoComment, CoComments;
 
@@ -21,6 +22,23 @@ CoComment = module.exports = syBookshelf.Model.extend({
 	},
 	user: function () {
 		return this.belongsTo(require('./user'), 'userid');
+	},
+
+	saved: function (model) {
+		return CoComment.__super__.saved.apply(this, arguments)
+			.then(function () {
+				// auto star
+				return Starship.forge({
+					itemtype: 2,
+					itemid: model.get('cooperationid'),
+					userid: model.get('userid')
+				}).save()
+					.catch(function (err) {
+						if (!/^ER_DUP_ENTRY/.test(err.message)) {
+							throw err;
+						}
+					});
+			});
 	}
 }, {
 	randomForge: function () {

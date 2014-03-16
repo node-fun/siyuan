@@ -12,7 +12,6 @@ var _ = require('underscore'),
 	GroupMembers = GroupMember.Set,
 	CoComment = require('../models/co-comment'),
 	CoComments = CoComment.Set,
-	Starship = require('../models/starship'),
 	Event = require('../models/event'),
 	mail = require('../lib/mail'),
 	errors = require('../lib/errors'),
@@ -671,14 +670,6 @@ module.exports = function (app) {
 			.then(function (cooperation) {
 				if (!cooperation) return Promise.rejected(errors(20603));
 				req.body['userid'] = user.id;
-				//auto star
-				Starship.forge({
-					userid: user.id,
-					itemtype: 4,
-					itemid: cooperationid,
-					remark: 'business'
-				}).save()
-				.catch(function (err) {});
 				return CoComment.forge(req.body).save()
 					.then(function (cocomment) {
 						var author = cooperation.related('user');

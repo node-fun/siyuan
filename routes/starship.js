@@ -30,8 +30,8 @@ module.exports = function (app) {
 	/**
 	 * POST /api/starship/star
 	 * @method 收藏资源
-	 * @param {Number} itemtype 类别ID
-	 * @param {Number} itemid 资源ID
+	 * @param {Number} itemtype 实体类别
+	 * @param {Number} itemid 实体ID
 	 * @param {Number} [remark] 备注
 	 * @return {JSON}
 	 */
@@ -68,13 +68,15 @@ module.exports = function (app) {
 	/**
 	 * POST /api/starship/unstar
 	 * @method 取消收藏
-	 * @param {Number} id 收藏ID
+	 * @param {Number} [id] 收藏ID
+	 * @param {Number} [itemtype] 实体类别
+	 * @param {Number} [itemid] 实体ID
 	 * @return {JSON}
 	 */
 	app.post('/api/starship/unstar', function (req, res, next) {
 		if (!req.user) return next(errors(21301));
 		Starship.forge(
-				_.pick(req.body, 'id')
+				_.pick(req.body, ['id', 'itemtype', 'itemid'])
 			).fetch()
 			.then(function (starship) {
 				if (!starship) throw errors(20603);

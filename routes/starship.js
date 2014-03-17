@@ -21,7 +21,7 @@ module.exports = function (app) {
 		if (!req.user) return next(errors(21301));
 		req.query = _.omit(req.query, ['id']);
 		req.query['userid'] = req.user.id;
-		return Starships.forge().fetch({ req: req })
+		Starships.forge().fetch({ req: req })
 			.then(function (starring) {
 				next({ starring: starring });
 			}).catch(next);

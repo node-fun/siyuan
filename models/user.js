@@ -282,6 +282,10 @@ Users = User.Set = syBookshelf.Collection.extend({
 		qb.join(tbProfile, tbProfile + '.userid', '=', tbUser + '.id');
 		this.qbWhere(qb, req, query, ['id', 'isonline'], tbUser)
 			.qbWhere(qb, req, profile, ['gender'], tbProfile);
+		// ignore system user
+		this.query(function (qb) {
+			qb.where(tbUser + '.id', '<>', config.systemid);
+		});
 		if (!req.query['fuzzy']) {
 			this.qbWhere(qb, req, query, ['username'], tbUser)
 				.qbWhere(qb, req, profile, ['name'], tbProfile);

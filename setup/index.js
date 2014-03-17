@@ -49,9 +49,9 @@ var fs = require('fs-extra'),
 	numPhotos = numUsers * 3,
 	numStarship = numUsers * 4,
 	numEvents = numUsers * 4,
-	numCooperations = 20,
-	numUserCooperations = 100,
-	numCoComments = numCooperations * 8,
+	numCooperations = ~~(numUsers / 5),
+	numUserCooperations = numCooperations * 3,
+	numCoComments = numCooperations * 3,
 	sqlFile = __dirname + '/db.sql';
 
 // copy directories
@@ -155,7 +155,7 @@ function addSystemUser() {
 		}
 	}).register()
 		.then(function () {
-			console.log('%d system user added',1);
+			console.log('%d system user added', 1);
 		}).catch(done);
 }
 
@@ -341,7 +341,7 @@ function addStarship() {
 	_.times(numStarship, function () {
 		var starship = Starship.forge({
 			userid: _.random(1, numUsers),
-			itemtype: _.sample(Starship.typesAllowed),
+			itemtype: config.entities.indexOf(_.sample(Starship.typesAllowed)) + 1,
 			itemid: _.random(1, 20),
 			remark: chance.word()
 		});
@@ -395,13 +395,13 @@ function addAd() {
 		numAds = 3;
 	_.times(numAds, function (i) {
 		i += 1;
-		ads.add( Ad.forge({
+		ads.add(Ad.forge({
 			title: '公告' + i,
 			content: '公告' + i + '内容，' +
 				'<p>此内容仅供测试</p>' +
 				'<p>正式上线请在后台删除此条公告</p>',
 			picture: '/ad/img/' + i + '.jpg'
-		}) );
+		}));
 	});
 	return ads.invokeThen('save')
 		.then(function () {

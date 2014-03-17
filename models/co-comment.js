@@ -29,7 +29,7 @@ CoComment = module.exports = syBookshelf.Model.extend({
 			.then(function () {
 				// auto star
 				return Starship.forge({
-					itemtype: 2,
+					itemtype: 4,
 					itemid: model.get('cooperationid'),
 					userid: model.get('userid')
 				}).save()

@@ -81,6 +81,8 @@ module.exports = function (app) {
 			.then(function (starship) {
 				if (!starship) throw errors(20603);
 				if (starship.get('userid') != req.user.id) {
+					console.log('userid1:' + starship.get('userid'));
+					console.log('userid2:' + req.user.id);
 					throw errors(20102);
 				}
 				return starship.destroy();

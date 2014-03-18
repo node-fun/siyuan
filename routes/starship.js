@@ -38,7 +38,6 @@ module.exports = function (app) {
 	app.post('/api/starship/star', function (req, res, next) {
 		if (!req.user) return next(errors(21301));
 		req.body['userid'] = req.user.id;
-		console.log(req.body['userid']);
 		// type limitation in starship
 		if (!~Starship.typesAllowed.map(function (name) {
 			return config.entities.indexOf(name) + 1;
@@ -76,14 +75,13 @@ module.exports = function (app) {
 	 */
 	app.post('/api/starship/unstar', function (req, res, next) {
 		if (!req.user) return next(errors(21301));
+		req.body['userid'] = req.user.id;
 		Starship.forge(
-				_.pick(req.body, ['id', 'itemtype', 'itemid'])
+				_.pick(req.body, ['userid', 'itemtype', 'itemid'])
 			).fetch()
 			.then(function (starship) {
 				if (!starship) throw errors(20603);
 				if (starship.get('userid') != req.user.id) {
-					console.log('userid1:' + starship.get('userid'));
-					console.log('userid2:' + req.user.id);
 					throw errors(20102);
 				}
 				return starship.destroy();

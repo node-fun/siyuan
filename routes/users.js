@@ -52,6 +52,15 @@ module.exports = function (app) {
 	app.get('/api/users/list', function (req, res, next) {
 		Users.forge().fetch({ req: req })
 			.then(function (users) {
+				if (!req.user) return users;
+				return req.user.getFollowingIds()
+					.then(function (followingIds) {
+						users.map(function (user) {
+							user.detectFollowed(followingIds);
+						});
+						return users;
+					});
+			}).then(function (users) {
 				next({ users: users });
 			}).catch(next);
 	});
@@ -96,6 +105,12 @@ module.exports = function (app) {
 		User.forge({ id: req.query['id'] })
 			.fetch({ req: req, detailed: true })
 			.then(function (user) {
+				if (!req.user) return user;
+				return req.user.getFollowingIds()
+					.then(function (followingIds) {
+						return user.detectFollowed(followingIds);
+					});
+			}).then(function (user) {
 				next({ user: user });
 			}).catch(next);
 	});

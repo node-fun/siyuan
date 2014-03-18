@@ -38,6 +38,7 @@ module.exports = function (app) {
 	app.post('/api/starship/star', function (req, res, next) {
 		if (!req.user) return next(errors(21301));
 		req.body['userid'] = req.user.id;
+		console.log(req.body['userid']);
 		// type limitation in starship
 		if (!~Starship.typesAllowed.map(function (name) {
 			return config.entities.indexOf(name) + 1;

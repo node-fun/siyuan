@@ -55,6 +55,11 @@ User = module.exports = syBookshelf.Model.extend({
 			regtime: new Date()
 		};
 	},
+	initialize: function () {
+		User.__super__.initialize.apply(this, arguments);
+		this.data('isfollowed', 0);
+	},
+
 	profile: function () {
 		return this.hasOne(UserProfile, 'userid');
 	},
@@ -114,12 +119,6 @@ User = module.exports = syBookshelf.Model.extend({
 	fetched: function (model, resp, options) {
 		return User.__super__.fetched.apply(this, arguments)
 			.then(function () {
-				if (options.req && options.req.user) {
-					return options.req.user.getFollowingIds();
-				}
-			}).then(function (followingids) {
-				return model.detectFollowed(followingids);
-			}).then(function () {
 				if (!options['detailed']) return;
 				return Promise.cast(model)	// for detail
 					.call('countFollowship')
@@ -191,8 +190,7 @@ User = module.exports = syBookshelf.Model.extend({
 			});
 	},
 	detectFollowed: function (followingids) {
-		this.data('isfollowed', _.contains(followingids, this.id));
-		return Promise.resolve(this);
+		return this.set('isfollowed', _.contains(followingids, this.id));
 	},
 
 	register: function () {
@@ -263,18 +261,6 @@ User = module.exports = syBookshelf.Model.extend({
 
 Users = User.Set = syBookshelf.Collection.extend({
 	model: User,
-
-	fetching: function (obj, columns, options) {
-		return Users.__super__.fetching.apply(this, arguments)
-			.then(function () {
-				if (options.req && options.req.user) {
-					return options.req.user.getFollowingIds()
-						.then(function (followingids) {
-							options['followingids'] = followingids;
-						});
-				}
-			});
-	},
 
 	lister: function (req, qb) {
 		var query = req.query,

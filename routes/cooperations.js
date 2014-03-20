@@ -163,7 +163,7 @@ module.exports = function (app) {
 					'cooperationid': id
 				}).fetch()
 					.then(function (usercooperation) {
-						if (usercooperation != null) return Promise.rejected(errors(40002));
+						if (usercooperation != null) throw errors(40002);
 						if (!isprivate) {
 							UserCooperation.forge({
 								'userid': user.id,
@@ -196,7 +196,7 @@ module.exports = function (app) {
 												}
 											});
 									}).then(function (groupmembers) {
-											if (!isfounded) return Promise.rejected(errors(21301));
+											if (!isfounded) throw errors(21301);
 											return UserCooperation.forge({
 												'userid': user.id,
 												'cooperationid': id,
@@ -251,7 +251,7 @@ module.exports = function (app) {
 						}).fetch()
 							.then(function (usership) {
 								if (usership.get('isaccepted') == 1)
-									return Promise.rejected(errors(40016));
+									throw errors(40016);
 								return usership.destroy()
 									.then(function () {
 										next({
@@ -260,7 +260,7 @@ module.exports = function (app) {
 									});
 							})
 					else
-						return Promise.rejected(errors(20605));
+						throw errors(20605);
 				});
 			}).catch(next);
 	});
@@ -285,12 +285,12 @@ module.exports = function (app) {
 			.fetch()
 			.then(function (cooperation) {
 				if (cooperation == null) {
-					return Promise.rejected(errors(20603));
+					throw errors(20603);
 				}
 				var self = cooperation;
 				return self.load(['usership']).then(function (cooperation) {
 					if (!(self.get('ownerid') == user.id)) {
-						return Promise.rejected(errors(20102));
+						throw errors(20102);
 					}
 					Event.add(user.id, null, 'cooperation', cooperation.get('id'), user.related('profile').get('name') + '结束了合作' + cooperation.get('name'));
 					return self.set({
@@ -334,7 +334,7 @@ module.exports = function (app) {
 				var self = cooperation;
 				var ownerid = cooperation.get('ownerid');
 				if (user.id != ownerid) {
-					return Promise.rejected(errors(20102));
+					throw errors(20102);
 				}
 				Event.add(user.id, null, 'cooperation', cooperation.get('id'), user.related('profile').get('name') + '更新了商务合作' + cooperation.get('name'));
 				self.set(req.body).save()
@@ -379,23 +379,23 @@ module.exports = function (app) {
 				var maxNumPic = 5;
 				var p = Promise.cast();
 				var keyList = new Array();
-				for(var i=0; i < maxNumPic; i++) {
+				for (var i = 0; i < maxNumPic; i++) {
 					keyList.push('picture' + (i + 1));
 				}
-        if (req.files) {
-          _.every(keyList, function (v, i) {
-            var key = v;
-            if (req.files[key]) {
-              p = p.then(function () {
-                return Picture.forge({ cooperationid: cooperationid }).save()
-                  .then(function (picture) {
-                    return picture.updatePicture('avatar', req.files[key]['path']);
-                  });
-              })
-              return true;
-            }
-          });
-        }
+				if (req.files) {
+					_.every(keyList, function (v, i) {
+						var key = v;
+						if (req.files[key]) {
+							p = p.then(function () {
+								return Picture.forge({ cooperationid: cooperationid }).save()
+									.then(function (picture) {
+										return picture.updatePicture('avatar', req.files[key]['path']);
+									});
+							})
+							return true;
+						}
+					});
+				}
 				return p.then(function () {
 					Event.add(user.id, null, 'cooperation', cooperation.get('id'), user.related('profile').get('name') + '创建了商务合作' + cooperation.get('name'));
 					return UserCooperation.forge({
@@ -662,29 +662,31 @@ module.exports = function (app) {
 	 * </pre>
 	 */
 	app.post('/api/cooperations/comments/post', function (req, res, next) {
-		var user = req.user;
-		if (!user) return next(errors(21301));
+		if (!req.user) return next(errors(21301));
 		if (!req.body['cooperationid']) return next(errors(10008));
 		var cooperationid = req.body['cooperationid'];
 		Cooperation.forge({ 'id': cooperationid }).fetch()
 			.then(function (cooperation) {
-				if (!cooperation) return Promise.rejected(errors(20603));
+				if (!cooperation) throw errors(20603);
 				req.body['userid'] = user.id;
 				return CoComment.forge(req.body).save()
 					.then(function (cocomment) {
-						var author = cooperation.related('user');
-						mail({
-							to: author.related('profile').get('email'),
-							subject: '有用户询问您的商务合作',
-							text: [
-								'您发布的商务合作 <' + cooperation.get('name') + '>',
-								'得到了 @' + user.related('profile').get('name') + ' 的评论!'
-							].join('\n')
-						});
 						next({
 							msg: 'Comment posted',
 							id: cocomment.id
 						});
+					}).then(function () {
+						var author = cooperation.related('user');
+						if (author.id != req.user.id) {
+							mail({
+								to: author.related('profile').get('email'),
+								subject: '有用户询问您的商务合作',
+								text: [
+									'您发布的商务合作 <' + cooperation.get('name') + '>',
+									'得到了 @' + req.user.related('profile').get('name') + ' 的评论!'
+								].join('\n')
+							});
+						}
 					});
 			}).catch(next);
 	});
@@ -708,9 +710,9 @@ module.exports = function (app) {
 		delete req.body['id'];
 		CoComment.forge({ 'id': id }).fetch()
 			.then(function (cocomment) {
-				if (!cocomment) return Promise.rejected(errors(20603));
+				if (!cocomment) throw errors(20603);
 				if (cocomment.get('userid') != user.id) {
-					return Promise.rejected(errors(20102));
+					throw errors(20102);
 				}
 				return cocomment.set(req.body).save();
 			}).then(function (cooperation) {
@@ -738,9 +740,9 @@ module.exports = function (app) {
 		if (!user) return next(errors(21301));
 		CoComment.forge({ 'id': req.body['id'] }).fetch()
 			.then(function (cocomment) {
-				if (!cocomment) return Promise.rejected(errors(20603));
+				if (!cocomment) throw errors(20603);
 				if (cocomment.get('userid') != user.id) {
-					return Promise.rejected(errors(20102));
+					throw errors(20102);
 				}
 				return cocomment.destroy();
 			}).then(function () {

@@ -88,7 +88,7 @@ module.exports = function (app) {
 				var p = Promise.cast();
 
 				var keyList = new Array();
-				for(var i=0; i < maxNumPic; i++) {
+				for (var i = 0; i < maxNumPic; i++) {
 					keyList.push('picture' + (i + 1));
 				}
 				if (req.files) {
@@ -168,27 +168,29 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.post('/api/issues/comments/post', function (req, res, next) {
-		var user = req.user;
-		if (!user) return next(errors(21301));
+		if (!req.user) return next(errors(21301));
 		Issue.forge({ id: req.body['issueid'] }).fetch()
 			.then(function (issue) {
 				if (!issue) throw errors(20603);
 				req.body['userid'] = user.id;
 				return IssueComment.forge(req.body).save()
 					.then(function (comment) {
-						var author = issue.related('user');
-						mail({
-							to: author.related('profile').get('email'),
-							subject: '您的话题被评论了',
-							text: [
-								'您发布的话题 <' + issue.get('title') + '>',
-								'得到了 @' + user.related('profile').get('name') + ' 的评论!'
-							].join('\n')
-						});
 						next({
 							msg: 'Comment posted',
 							id: comment.id
 						});
+					}).then(function () {
+						var author = issue.related('user');
+						if (author.id != req.user.id) {
+							mail({
+								to: author.related('profile').get('email'),
+								subject: '您的话题被评论了',
+								text: [
+									'您发布的话题 <' + issue.get('title') + '>',
+									'得到了 @' + req.user.related('profile').get('name') + ' 的评论!'
+								].join('\n')
+							});
+						}
 					});
 			}).catch(next);
 	});

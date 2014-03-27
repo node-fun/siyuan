@@ -78,10 +78,9 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.post('/api/issues/post', function (req, res, next) {
-		var user = req.user;
-		if (!user) return next(errors(21301));
+		if (!req.user) return next(errors(21301));
 		delete req.body['id'];
-		Issue.forge(_.extend(req.body, { userid: user.id })).save()
+		Issue.forge(_.extend(req.body, { userid: req.user.id })).save()
 			.then(function (issue) {
 				var issueid = issue.id;
 				var maxNumPic = 3;
@@ -123,14 +122,13 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.post('/api/issues/update', function (req, res, next) {
-		var user = req.user;
-		if (!user) return next(errors(21301));
+		if (!req.user) return next(errors(21301));
 		var id = req.body['id'];
 		delete req.body['id'];
 		Issue.forge({ id: id }).fetch()
 			.then(function (issue) {
 				if (!issue) throw errors(20603);
-				if (issue.get('userid') != user.id) {
+				if (issue.get('userid') != req.user.id) {
 					throw errors(20102);
 				}
 				return issue.set(req.body).save();
@@ -146,12 +144,11 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.post('/api/issues/delete', function (req, res, next) {
-		var user = req.user;
-		if (!user) return next(errors(21301));
+		if (!req.user) return next(errors(21301));
 		Issue.forge({ id: req.body['id'] }).fetch()
 			.then(function (issue) {
 				if (!issue) throw errors(20603);
-				if (issue.get('userid') != user.id) {
+				if (issue.get('userid') != req.user.id) {
 					throw errors(20102);
 				}
 				return issue.destroy();
@@ -172,7 +169,7 @@ module.exports = function (app) {
 		Issue.forge({ id: req.body['issueid'] }).fetch()
 			.then(function (issue) {
 				if (!issue) throw errors(20603);
-				req.body['userid'] = user.id;
+				req.body['userid'] = req.user.id;
 				return IssueComment.forge(req.body).save()
 					.then(function (comment) {
 						next({
@@ -203,14 +200,13 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.post('/api/issues/comments/update', function (req, res, next) {
-		var user = req.user;
-		if (!user) return next(errors(21301));
+		if (!req.user) return next(errors(21301));
 		var id = req.body['id'];
 		delete req.body['id'];
 		IssueComment.forge({ id: id }).fetch()
 			.then(function (comment) {
 				if (!comment) throw errors(20603);
-				if (comment.get('userid') != user.id) {
+				if (comment.get('userid') != req.user.id) {
 					throw errors(20102);
 				}
 				return comment.set(req.body).save();
@@ -226,12 +222,11 @@ module.exports = function (app) {
 	 * @return {JSON}
 	 */
 	app.post('/api/issues/comments/delete', function (req, res, next) {
-		var user = req.user;
-		if (!user) return next(errors(21301));
+		if (!req.user) return next(errors(21301));
 		IssueComment.forge({ id: req.body['id'] }).fetch()
 			.then(function (comment) {
 				if (!comment) throw errors(20603);
-				if (comment.get('userid') != user.id) {
+				if (comment.get('userid') != req.user.id) {
 					throw errors(20102);
 				}
 				return comment.destroy();

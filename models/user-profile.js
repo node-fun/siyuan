@@ -15,7 +15,7 @@ UserProfile = module.exports = syBookshelf.Model.extend({
 	required: ['name'],
 	validators: {
 		email: function (v) {
-			if (!/([a-z0-9]*[-_]?[a-z0-9]+)*@([a-z0-9]*[-_]?[a-z0-9]+)+[\.][a-z]{2,3}([\.][a-z]{2})?$/i.test(v)) {
+			if (v && !/([a-z0-9]*[-_]?[a-z0-9]+)*@([a-z0-9]*[-_]?[a-z0-9]+)+[\.][a-z]{2,3}([\.][a-z]{2})?$/i.test(v)) {
 				return errors(21312);
 			}
 		}

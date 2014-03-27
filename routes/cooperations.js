@@ -668,7 +668,7 @@ module.exports = function (app) {
 		Cooperation.forge({ 'id': cooperationid }).fetch()
 			.then(function (cooperation) {
 				if (!cooperation) throw errors(20603);
-				req.body['userid'] = user.id;
+				req.body['userid'] = req.user.id;
 				return CoComment.forge(req.body).save()
 					.then(function (cocomment) {
 						next({

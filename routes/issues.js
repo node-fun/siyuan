@@ -19,6 +19,7 @@ module.exports = function (app) {
 	 * @param {Number} [userid] 作者ID
 	 * @param {String} [title] 标题
 	 * @param {String} [body] 内容 (仅限搜索)
+	 * @param {Number} [bodylimit] body截断字数限制
 	 * @param {String} [groupid] 圈子id，不传值表示校友交流，传值表示圈内分享
 	 * @param {String} [activityid] 活动id，不传值表示校友交流，传值表示活动分享
 	 * @return {JSON}

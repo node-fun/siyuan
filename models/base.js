@@ -141,6 +141,15 @@ syModel.include({
 		});
 	},
 
+	cutFields: function (limits) {
+		var self = this;
+		_.each(limits, function (limit, field) {
+			var val = self.get(field).substr(0, limit);
+			self.set(field, val);
+		});
+		return Promise.resolve(this);
+	},
+
 	updateAsset: function (field, tmp) {
 		var type = this.fieldToAssets[field],
 			file = this.getAssetPath(type),
@@ -172,7 +181,6 @@ syModel.include({
 			});
 		});
 	},
-
 	getAssetName: function (type) {
 		return this.id + config.assets[type].ext;
 	},

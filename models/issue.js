@@ -40,6 +40,11 @@ Issue = module.exports = syBookshelf.Model.extend({
 		return Issue.__super__.fetched.apply(this, arguments)
 			.return(model).call('countComments')
 			.call('countPictures')
+			.call('cutFields', (function (query) {
+				return {
+					body: +query['bodylimit'] || Infinity
+				};
+			})(options.req && options.req.query || {}))
 			.then(function () {
 				return model.related('pictures').fetch();
 			}).then(function () {
